@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: qa-harness
+Version: 0.1.0
+Summary: QA verification harness for the Claude Code feature development lifecycle
+Author-email: Jessica Gertig <jessica@polymer.co>
+License: Proprietary
+Requires-Python: >=3.10
+Requires-Dist: requests>=2.32.0
+Requires-Dist: pyyaml>=6.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: pytest-mock>=3.12.0; extra == "dev"
+Requires-Dist: responses>=0.24.0; extra == "dev"

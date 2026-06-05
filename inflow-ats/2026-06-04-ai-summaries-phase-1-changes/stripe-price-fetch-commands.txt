@@ -1,0 +1,10 @@
+# Fetch the AI credit pack prices from Stripe (read-only). Pick ONE.
+
+# ── Option 1: Rails console (paste into an open `rails c`) ──
+Stripe::Price.list(lookup_keys: %w[ai_credit_pack_top_up_small ai_credit_pack_top_up_large ai_credit_pack_subscription_small_monthly ai_credit_pack_subscription_large_monthly], active: true, expand: ["data.product"])
+
+# ── Option 2: Stripe CLI (duplicate it directly against Stripe) ──
+stripe prices list --active -d "lookup_keys[0]=ai_credit_pack_top_up_small" -d "lookup_keys[1]=ai_credit_pack_top_up_large" -d "lookup_keys[2]=ai_credit_pack_subscription_small_monthly" -d "lookup_keys[3]=ai_credit_pack_subscription_large_monthly" -d "expand[0]=data.product"
+
+# ── Option 3: hit the existing app endpoint (returns ALL active prices, unfiltered) ──
+# GET /api/v1/billing/prices   (BillingController#prices — Stripe::Price.list active, limit 20)

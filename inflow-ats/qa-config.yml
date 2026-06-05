@@ -1,0 +1,92 @@
+pipeline: inflow-ats
+source_repo: /Users/jessica/wrk/wrk-corp/inflow-ats
+
+server:
+  start_command: |
+    source ~/.nvm/nvm.sh && nvm use > /dev/null 2>&1 &&
+    RAILS_ENV=test bundle exec rails s -p 5007
+  sidekiq_command: |
+    source ~/.nvm/nvm.sh && nvm use > /dev/null 2>&1 &&
+    RAILS_ENV=test bundle exec sidekiq
+  base_url: http://app.lvh.me:5007
+  port: 5007
+  health_check_path: /
+  startup_timeout_seconds: 180
+
+seed:
+  cleanup_endpoint: DELETE /cypress/cleanup
+  available_endpoints:
+    - method: POST
+      path: /cypress/users
+      params: {setActivePaidSubscription: bool, setCancelledSubscription: bool, setGodAdmin: bool, setFreeV2Subscription: bool}
+      creates: "Default user (Rezu May) + org (Acme Inc)"
+    - method: POST
+      path: /cypress/users/add_users
+      requires: [/cypress/users]
+      creates: "3 Faker users in the default org"
+    - method: POST
+      path: /cypress/users/add_second_org
+      params: {setActivePaidSubscription: bool}
+      requires: [/cypress/users]
+      creates: "Perry Anker + Patents LLC"
+    - method: POST
+      path: /cypress/users/create_member_and_assign_to_job
+      requires: [/cypress/users, /cypress/jobs]
+      creates: "Taylor Brooks, assigned to first job"
+    - method: POST
+      path: /cypress/jobs
+      params: {published: bool, title: string}
+      requires: [/cypress/users]
+      creates: "A job in the default org"
+    - method: POST
+      path: /cypress/candidates
+      params: {amount: int}
+      requires: [/cypress/jobs]
+      creates: "N candidates on the default job"
+    - method: POST
+      path: /cypress/organizations/create_paid_subscription
+      requires: [/cypress/users]
+      creates: "Active paid subscription on default org"
+    - method: POST
+      path: /cypress/organizations/create_active_free_subscription
+      requires: [/cypress/users]
+      creates: "Active free subscription on default org"
+    - method: POST
+      path: /cypress/organizations/cancel_subscription
+      requires: [/cypress/users]
+      creates: "Cancelled subscription on default org"
+    - method: POST
+      path: /cypress/organizations/create_complete_subscription
+      requires: [/cypress/users]
+      creates: "Complete subscription with real Stripe on default org"
+    - method: POST
+      path: /cypress/admin_users/create_god_admin
+      creates: "God admin user"
+    - method: GET
+      path: /cypress/invites/{email_base64}
+      returns: "{accept_url: string}"
+    - method: GET
+      path: /cypress/individual_app/careers_page_subscriptions/{id}
+      returns: "Careers page subscription data"
+
+auth:
+  default_user: rezu.may@wrkhq.com
+  instructions: |
+    1. Navigate to {base_url}/auth
+    2. Fill the email input (input[name="email"]) with the user's email
+    3. Click "Continue with email"
+    4. Wait for the dev workaround div containing a link with href matching "magic_links/validate"
+    5. Extract that link's href and navigate to it
+    6. Login is complete when the page redirects to the dashboard
+
+script_runner:
+  command: test_frr
+  file_extension: .rb
+
+verification_layers:
+  - script_runner
+  - rspec
+  - cypress
+  - playwright_mcp
+
+qa_team_size: 3

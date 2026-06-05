@@ -1,0 +1,15 @@
+## Kickstart from existing spec
+claude_old --append-system-prompt-file ~/claude-hub/features/kickstart-from-spec.md
+
+## Full harness from scratch (spec writing onward)
+claude_old --append-system-prompt-file ~/claude-hub/features/LIFECYCLE.md
+
+## Individual phases (manual runs)
+claude_old --append-system-prompt-file ~/claude-hub/features/spec-writing-prompt.md
+claude_old --append-system-prompt-file ~/claude-hub/features/generate-review-angles-prompt.md
+claude_old --append-system-prompt-file ~/claude-hub/features/spec-review-prompt.md
+claude_old --append-system-prompt-file ~/claude-hub/features/_base-template.md
+claude_old --append-system-prompt-file ~/claude-hub/features/plan-review-prompt.md
+claude_old --append-system-prompt-file ~/claude-hub/features/impl-prompt.md
+claude_old --append-system-prompt-file ~/claude-hub/features/impl-review-prompt.md
+claude_old --append-system-prompt-file ~/claude-hub/features/hardening-prompt.md

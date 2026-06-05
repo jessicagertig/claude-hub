@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Internal Alert Color Swatches</title>
+<style>
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; background:#1e1f22; color:#eee; margin:0; padding:32px; }
+  h1 { font-size:20px; font-weight:600; margin:0 0 4px; }
+  p.sub { color:#9aa0a6; margin:0 0 28px; font-size:13px; }
+  h2 { font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:#9aa0a6; margin:32px 0 12px; }
+  .grid { display:flex; flex-wrap:wrap; gap:16px; }
+  .swatch { width:200px; border-radius:10px; overflow:hidden; background:#2b2d31; box-shadow:0 1px 3px rgba(0,0,0,.4); }
+  .chip { height:96px; }
+  .meta { padding:10px 12px; }
+  .name { font-weight:600; font-size:14px; }
+  .hex { font-family:ui-monospace, Menlo, monospace; font-size:12px; color:#9aa0a6; margin-top:2px; }
+  /* Discord-style embed preview */
+  .embed { display:flex; background:#2b2d31; border-radius:6px; overflow:hidden; max-width:440px; margin:8px 0; }
+  .bar { width:5px; flex:0 0 5px; }
+  .ebody { padding:10px 14px; }
+  .etitle { font-weight:700; font-size:15px; color:#fff; }
+  .edesc { font-size:13px; color:#c7ccd1; margin-top:3px; }
+</style>
+</head>
+<body>
+  <h1>Internal Alert — Color Swatches</h1>
+  <p class="sub">Candidate colors for the “New Free Trial Started 🌱🌟” signup alert, plus the palette already in use.</p>
+
+  <h2>Yellow candidates for the signup alert</h2>
+  <div class="grid">
+    <div class="swatch"><div class="chip" style="background:#F1C40F"></div><div class="meta"><div class="name">Sunflower</div><div class="hex">0xF1C40F</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#FFD700"></div><div class="meta"><div class="name">Gold</div><div class="hex">0xFFD700</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#FFFF00"></div><div class="meta"><div class="name">Pure yellow</div><div class="hex">0xFFFF00</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#2ECC71"></div><div class="meta"><div class="name">Bright green</div><div class="hex">0x2ECC71</div></div></div>
+  </div>
+
+  <h2>Already decided (LinkedIn)</h2>
+  <div class="grid">
+    <div class="swatch"><div class="chip" style="background:#FF1493"></div><div class="meta"><div class="name">Deep pink — trial</div><div class="hex">0xFF1493</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#1ABC9C"></div><div class="meta"><div class="name">Teal — non-trial</div><div class="hex">0x1ABC9C</div></div></div>
+  </div>
+
+  <h2>Existing palette in use</h2>
+  <div class="grid">
+    <div class="swatch"><div class="chip" style="background:#3498db"></div><div class="meta"><div class="name">Blue — plan changed</div><div class="hex">0x3498db</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#00ff00"></div><div class="meta"><div class="name">Green — free→paid</div><div class="hex">0x00ff00</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#FFA500"></div><div class="meta"><div class="name">Orange — downgrade</div><div class="hex">0xFFA500</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#ff0000"></div><div class="meta"><div class="name">Red — failure</div><div class="hex">0xff0000</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#594172"></div><div class="meta"><div class="name">Purple — support</div><div class="hex">0x594172</div></div></div>
+  </div>
+
+  <h2>Signup embed preview (each yellow)</h2>
+  <div class="embed"><div class="bar" style="background:#F1C40F"></div><div class="ebody"><div class="etitle">🌱 New Free Trial Started 🌟</div><div class="edesc">Sunflower 0xF1C40F</div></div></div>
+  <div class="embed"><div class="bar" style="background:#FFD700"></div><div class="ebody"><div class="etitle">🌱 New Free Trial Started 🌟</div><div class="edesc">Gold 0xFFD700</div></div></div>
+  <div class="embed"><div class="bar" style="background:#FFFF00"></div><div class="ebody"><div class="etitle">🌱 New Free Trial Started 🌟</div><div class="edesc">Pure yellow 0xFFFF00</div></div></div>
+  <div class="embed"><div class="bar" style="background:#2ECC71"></div><div class="ebody"><div class="etitle">🌱 New Free Trial Started 🌟</div><div class="edesc">Bright green 0x2ECC71</div></div></div>
+</body>
+</html>

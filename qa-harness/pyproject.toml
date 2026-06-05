@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qa-harness"
+version = "0.1.0"
+description = "QA verification harness for the Claude Code feature development lifecycle"
+requires-python = ">=3.10"
+authors = [
+    { name = "Jessica Gertig", email = "jessica@polymer.co" },
+]
+license = { text = "Proprietary" }
+dependencies = [
+    "requests>=2.32.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-mock>=3.12.0",
+    "responses>=0.24.0",
+]
+
+[project.scripts]
+qa-harness = "qa_harness.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["qa_harness*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --tb=short"
