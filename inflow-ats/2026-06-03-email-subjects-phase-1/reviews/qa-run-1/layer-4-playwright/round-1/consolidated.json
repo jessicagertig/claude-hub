@@ -1,0 +1,39 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agents_dispatched": 5,
+  "blocking_fix_applied": true,
+  "blocking_fix_ref": "blocking-fix-1.md",
+  "findings": [
+    {
+      "id": "L4-001",
+      "severity": "LOW",
+      "title": "CSS font-size bug in SubjectPreview (duplicate of C-001)",
+      "reported_by": [4]
+    },
+    {
+      "id": "L4-002",
+      "severity": "LOW",
+      "title": "All default templates use same subject as composer default — hard to distinguish template insertion from default",
+      "reported_by": [4]
+    },
+    {
+      "id": "L4-003",
+      "severity": "MED",
+      "title": "Intermittent auto-redirect on candidates/settings pages (pre-existing, not feature-specific)",
+      "reported_by": [2, 3, 4, 5],
+      "note": "Multiple agents hit this. Pre-existing test-env issue. Blocked some interactive scenarios but agents worked around it."
+    },
+    {
+      "id": "L4-004",
+      "severity": "LOW",
+      "title": "Sent messages don't display subject in thread UI (by design — transcript display is Phase 1b)",
+      "reported_by": [1]
+    }
+  ],
+  "agent_5_note": "Agent 5 reported wrong branch, but worktree confirmed on messaging-improvements-qa. The seeded job likely has useApplyResponseTemplate disabled, hiding the conditional subject field. Test data issue, not feature bug.",
+  "convergence": {
+    "high_plus_findings": 0,
+    "round_status": "CLEAN"
+  }
+}

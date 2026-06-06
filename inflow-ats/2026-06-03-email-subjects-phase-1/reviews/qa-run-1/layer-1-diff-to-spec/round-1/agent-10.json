@@ -1,0 +1,77 @@
+{
+  "agent_index": 10,
+  "focus_area": "Frontend: template modals, automation modal, and job setup",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx",
+      "line": 308,
+      "requirement": "SubjectPreview styled component (also: spec known failure pattern #1)",
+      "description": "SubjectPreview uses `font-size: ${t.text.sm};` but `t.text.sm` is a complete CSS declaration that already includes the `font-size:` property. This produces invalid CSS like `font-size: font-size: 0.875rem;`. Every other file in the codebase uses `t.text.sm` standalone in a template literal array (e.g., `${[t.text.sm]}`), never inside a `font-size:` property. The spec assignment explicitly asked to check for this bug, and it is present. Fix: replace `font-size: ${t.text.sm};` with `${t.text.sm}` (standalone)."
+    },
+    {
+      "id": "F2",
+      "severity": "MED",
+      "file": "app/javascript/ats/src/components/modals/HiringStageAutomationModal.tsx",
+      "line": "401-406 (source file, not in diff)",
+      "requirement": "Automation modal's existing-template preview should show subject",
+      "description": "The spec says 'Automation modal's existing-template preview: show the saved template's subject as-is.' The existing-template preview section (lines 401-406 in the source file) renders `selectedTemplate.body` via `dangerouslySetInnerHTML` but does NOT render `selectedTemplate.subject`. The diff does not modify this section. When a user selects an existing template in the automation modal, they see the body preview but have no visibility into the template's subject. Fix: add subject display above the body preview in the existing-template preview section, similar to how ChannelMessageTemplateSelectionModal's PreviewSelection shows `mailMerge.subjectRaw`."
+    },
+    {
+      "id": "F3",
+      "severity": "MED",
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateModal.tsx",
+      "line": "93 (post-diff handleSubmit else branch)",
+      "requirement": "Validation repopulation of subject with default on error",
+      "description": "The spec's validation strategy says 'On submit with a cleared field, fire the standard form-error AND repopulate the field with the rendered default so the user sees the baseline.' BulkMessageModal (diff lines 176-178) and ChannelMessageNew (diff lines 452-455) both repopulate subject with the default when validation fails with a blank subject. ChannelMessageTemplateModal does NOT — its handleSubmit else branch only calls `setErrors(validationErrors)` without repopulating the subject. A user who clears the subject field and submits will see the error but the field remains empty, requiring manual re-entry of the default. Fix: add `if (!subject || subject.trim() === '') { setChannelMessageTemplate(prev => ({...prev, subject: defaultSubject})); }` in the validation-failure branch."
+    },
+    {
+      "id": "F4",
+      "severity": "LOW",
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateModal.tsx",
+      "line": 262,
+      "requirement": "ChannelMessageTemplateModal: subject input in form",
+      "description": "The subject input's onChange handler is `handleChangeChannelMessageName`. While this handler works correctly because it uses the `[name]: value` dynamic key pattern and `name=\"subject\"` is set on the input, the handler name is misleading — it was originally written for the template name field. Every other surface in the diff creates a dedicated handler for subject changes (e.g., `handleChangeSubject`, `handleChangeNewTemplateSubject`). This is a code clarity issue, not a functional bug."
+    }
+  ],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "1. ChannelMessageTemplateModal: Props type includes subject",
+      "2. ChannelMessageTemplateModal: state initialized with subject (defaulting to '{{JobTitle}} at {{OrganizationName}}' if null)",
+      "3. ChannelMessageTemplateModal: subject input in form",
+      "4. ChannelMessageTemplateModal: subject passed to validateChannelMessageTemplate",
+      "5. ChannelMessageTemplateModal: subject sent in create/update mutation",
+      "6. ChannelMessageTemplateSelectionModal: preview shows subject from mailMerge.subjectRaw",
+      "7. ChannelMessageTemplateSelectionModal: styled SubjectPreview component",
+      "8. HiringStageAutomationModal: newTemplateSubject state for inline create",
+      "9. HiringStageAutomationModal: subject input in inline template form",
+      "10. HiringStageAutomationModal: subject included in validation and create calls",
+      "11. HiringStageAutomationModal: subject reset on discard/success",
+      "12. JobSetupAutomations: applyResponseTemplateSubject in job state",
+      "13. JobSetupAutomations: subject input in apply response template section",
+      "14. JobSetupAutomations: subject sent in updateJob mutation",
+      "Extra: Check SubjectPreview for t.text.sm bug"
+    ],
+    "implemented": [
+      "1. ChannelMessageTemplateModal: Props type includes subject — diff line 223 adds `subject` to Props type",
+      "2. ChannelMessageTemplateModal: state initialized with subject — diff lines 234-238 default to '{{JobTitle}} at {{OrganizationName}}' if null",
+      "3. ChannelMessageTemplateModal: subject input in form — diff lines 261-268 add FormInput with name='subject'",
+      "4. ChannelMessageTemplateModal: subject passed to validateChannelMessageTemplate — diff lines 250-254",
+      "5. ChannelMessageTemplateModal: subject sent in create/update mutation — state includes subject, handleCreate/handleUpdate spread `...channelMessageTemplate` which includes subject",
+      "6. ChannelMessageTemplateSelectionModal: preview shows subject from mailMerge.subjectRaw — diff lines 285-289",
+      "7. ChannelMessageTemplateSelectionModal: styled SubjectPreview component — diff lines 301-311 (but has t.text.sm bug, see F1)",
+      "8. HiringStageAutomationModal: newTemplateSubject state for inline create — diff line 324",
+      "9. HiringStageAutomationModal: subject input in inline template form — diff lines 385-392",
+      "10. HiringStageAutomationModal: subject included in validation and create calls — diff lines 360 and 369",
+      "11. HiringStageAutomationModal: subject reset on discard/success — diff lines 332, 339, 377",
+      "12. JobSetupAutomations: applyResponseTemplateSubject in job state — diff line 547",
+      "13. JobSetupAutomations: subject input in apply response template section — diff lines 568-575",
+      "14. JobSetupAutomations: subject sent in updateJob mutation — diff line 563"
+    ],
+    "missing": [
+      "Automation modal's existing-template preview does not show subject (see F2)",
+      "ChannelMessageTemplateModal validation-failure repopulation of subject (see F3)"
+    ]
+  }
+}

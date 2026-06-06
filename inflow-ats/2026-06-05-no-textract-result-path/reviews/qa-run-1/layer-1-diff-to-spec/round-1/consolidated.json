@@ -1,0 +1,23 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agents_dispatched": 5,
+  "findings": [],
+  "spec_coverage": {
+    "total_requirements": 6,
+    "implemented": 6,
+    "missing": 0,
+    "details": [
+      "Change 1 (SubmitResumeToTextract update textract_result_id): IMPLEMENTED - exact match",
+      "Change 2 (GetResumeTextFromTextractJob exhaustion cleanup): IMPLEMENTED - behavioral match, class method extraction is structural choice",
+      "Change 3 (AiJobApplicationSummary nil guard): IMPLEMENTED - exact match",
+      "Change 1 test: IMPLEMENTED - covers textract_result_id update and job enqueue",
+      "Change 2 test: IMPLEMENTED - covers summary destruction, broadcast, nil user, missing job_application",
+      "Change 3 test: IMPLEMENTED - covers nil guard on status transition to succeeded"
+    ]
+  },
+  "convergence": {
+    "findings_count": 0,
+    "clean_round": true
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "agent": 3,
+  "round": 2,
+  "focus": "Template subject update — does updating a template's subject affect previously-sent messages?",
+  "scripts_run": [
+    "/tmp/qa-l2r2-agent3-template-subject-update.rb"
+  ],
+  "findings": [],
+  "tests_run": 20,
+  "tests_passed": 20,
+  "tests_failed": 0,
+  "summary": "All 20 tests passed. Template subject updates work correctly across all tested scenarios: (1) Creating a template with subject A and sending a message correctly stores the rendered subject on the channel_message record. (2) Updating the template to subject B does NOT retroactively change previously-sent messages — they retain their original subject A. (3) New messages created after the update correctly use subject B. (4) render_template_message correctly returns all subject variants (subject_raw, subject_html, template_subject_html) using the latest template subject. (5) Setting template subject to nil is handled gracefully — render_template_message returns empty strings, and previously-sent messages remain unchanged. (6) The automation path (HiringStageMessageAutomationJob) correctly reads template.subject at execution time, meaning template updates are picked up for future automated messages. (7) The mailer fallback logic works correctly: when channel_message.subject is nil or empty, the fallback to '{job_title} at {org_name}' activates; when present, the stored subject is used.",
+  "architecture_notes": "The design correctly decouples template subjects from sent messages. ChannelMessage has its own 'subject' column (string) that stores a snapshot of the rendered subject at send time. ChannelMessageTemplate has a separate 'subject' column. There is no foreign key or live reference from channel_message back to the template — the subject value is copied/rendered at message creation time. This is the same pattern used for the body field. The automation path (HiringStageMessageAutomationJob) reads template.subject fresh each time the job executes, so template updates are picked up for future automation sends. The mailer (ChannelMessageMailer#notify_candidate) uses @channel_message.subject.presence with a fallback to '{job_title} at {org_name}'."
+}

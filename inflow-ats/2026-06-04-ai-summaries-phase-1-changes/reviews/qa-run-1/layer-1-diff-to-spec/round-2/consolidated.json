@@ -1,0 +1,28 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "findings": [
+    {
+      "id": "l1-r2-001",
+      "severity": "MED",
+      "title": "stripe_checkout_session_id validation relaxed for one-off purchases (beyond spec)",
+      "spec_requirement": "Note #9B-5 specifies validation relaxation only for subscription records created at checkout",
+      "evidence": "Implementation has: validates :stripe_checkout_session_id, presence: true, if: -> { one_off? && stripe_invoice_id.blank? }. The spec only shows subscription-related relaxation. This additional relaxation is necessary for the invoice.paid top-up flow (Note #4) where one-off purchases are created from invoices without checkout sessions. Functionally correct but undocumented scope deviation.",
+      "recommendation": "Non-blocking. The relaxation is required by the invoice.paid top-up flow."
+    }
+  ],
+  "prior_findings_review": {
+    "l1-r1-001": "CONFIRMED MED - name field missing from CREDIT_PACKS_BY_LOOKUP_KEY. No runtime consumer.",
+    "l1-r1-002": "CONFIRMED MED - amount_cents_paid: 0 at checkout. Overwritten on invoice.paid.",
+    "l1-r1-003": "CONFIRMED MED - extra props to child components. Benign.",
+    "l1-r1-004": "CONFIRMED MED - README missing 2 on-demand tasks (ai:relevance_benchmark, ai:comparison_benchmark)."
+  },
+  "spec_coverage": {
+    "total_requirements": 33,
+    "implemented": 33,
+    "missing": 0
+  },
+  "high_findings": 0,
+  "blocker_findings": 0,
+  "notes": "Round 2 adversarial review found 1 additional MED finding. No HIGH or BLOCKER findings. All 33 spec requirements confirmed implemented. Prior findings all confirmed, none invalidated. This constitutes 2 consecutive clean rounds (0 HIGH+). Layer 1 converged."
+}

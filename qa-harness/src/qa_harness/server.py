@@ -32,22 +32,38 @@ STATE_FILE = "/tmp/qa-harness-state.json"
 class ServerManager:
     """Manages a test server and supporting processes as subprocesses."""
 
-    def __init__(self, config: ServerConfig, source_repo: str):
+    def __init__(self, config: ServerConfig, source_repo: str, config_path: Optional[str] = None):
         self.config = config
         self.source_repo = source_repo
+        self.config_path = config_path
         self._procs: list[tuple[subprocess.Popen, str]] = []
         self._cleanup_registered = False
         self._started_at: Optional[str] = None
+        self._detached = False
 
     def is_running(self) -> bool:
         return len(self._procs) > 0
 
-    def start(self) -> None:
+    def start(self, detach: bool = False) -> None:
         """Kill existing processes on port, start server + supporting processes,
-        poll health check, print READY."""
+        poll health check.
+
+        Args:
+            detach: If True (CLI mode), subprocesses survive after the
+                parent Python process exits. No atexit/signal cleanup is
+                registered. If False (context-manager mode), cleanup
+                handlers are registered so subprocesses are terminated
+                when the parent exits.
+        """
+        self._detached = detach
         self._kill_existing_processes()
 
         env = os.environ.copy()
+        # Enforce RAILS_ENV=test defensively, matching the analog
+        # (inflow_bootstrap.py). The spec's hard rules require
+        # RAILS_ENV=test always -- we must not rely on config commands
+        # to include it inline.
+        env["RAILS_ENV"] = "test"
 
         # Start the main server
         logger.info(
@@ -67,7 +83,8 @@ class ServerManager:
             proc = self._start_subprocess(cmd, label, env)
             self._procs.append((proc, label))
 
-        self._register_cleanup()
+        if not detach:
+            self._register_cleanup()
         self._wait_for_health()
         self._started_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
         self._write_state_file()
@@ -202,13 +219,27 @@ class ServerManager:
     def _start_subprocess(
         self, command: str, label: str, env: dict
     ) -> subprocess.Popen:
-        """Start a subprocess via bash -c wrapper. Logs command and PID."""
+        """Start a subprocess via bash -c wrapper. Logs command and PID.
+
+        In detach mode (CLI start/stop), stdout goes to DEVNULL so the
+        child survives after the parent Python process exits. With PIPE,
+        the child receives SIGPIPE when the parent exits and the pipe
+        closes. In attached mode (context manager), stdout goes to PIPE
+        so the parent can read subprocess output.
+        """
+        if self._detached:
+            stdout_target = subprocess.DEVNULL
+            stderr_target = subprocess.DEVNULL
+        else:
+            stdout_target = subprocess.PIPE
+            stderr_target = subprocess.STDOUT
+
         proc = subprocess.Popen(
             ["bash", "-c", command],
             cwd=self.source_repo,
             env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
+            stdout=stdout_target,
+            stderr=stderr_target,
         )
         logger.info("Started %s (pid %d)", label, proc.pid)
         return proc
@@ -273,6 +304,7 @@ class ServerManager:
     def _write_state_file(self) -> None:
         """Write process state to /tmp for stop/status commands."""
         state = {
+            "config_path": self.config_path,
             "base_url": self.config.base_url,
             "port": self.config.port,
             "pids": [proc.pid for proc, _ in self._procs],

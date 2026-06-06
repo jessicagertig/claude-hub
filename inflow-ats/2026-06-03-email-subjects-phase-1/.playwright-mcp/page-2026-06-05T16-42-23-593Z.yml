@@ -1,0 +1,20 @@
+- generic [ref=e48]:
+  - generic [ref=e49]:
+    - link [ref=e51] [cursor=pointer]:
+      - /url: https://polymer.co
+      - img [ref=e54]
+    - heading "Verify it is you" [level=2] [ref=e56]
+    - generic [ref=e57]:
+      - paragraph [ref=e58]: We sent an email to rezu.may@wrkhq.com.
+      - paragraph [ref=e59]: In that email you'll find a link that will bring you back to the site and will log you in.
+      - paragraph [ref=e60]:
+        - text: If for some reason you do not receive the email, contact us at
+        - link "support@polymer.co" [ref=e61] [cursor=pointer]:
+          - /url: mailto:support@polymer.co
+        - text: .
+  - link "Log out" [ref=e63] [cursor=pointer]:
+    - /url: /logout
+  - generic [ref=e64]:
+    - heading "**** DEVELOPMENT ONLY WORKAROUND ****" [level=2] [ref=e65]
+    - link "Click here to confirm email" [ref=e66] [cursor=pointer]:
+      - /url: http://app.lvh.me:5007/magic_links/validate?token=T21tY4ztcpdnmhBggaWA

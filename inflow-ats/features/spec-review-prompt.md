@@ -1,6 +1,6 @@
 # Inflow ATS — Iterative Adversarial Spec Review
 
-You are running iterative adversarial review on a feature spec for inflow-ats (Rails API + React frontend). Goal: drive the spec to TWO CONSECUTIVE FULL PASSES — two rounds in a row that produce ZERO new BLOCKER or HIGH findings AND require ZERO spec amendments. Stop when that criterion is met, or after 5 rounds (whichever comes first).
+You are running iterative adversarial review on a feature spec for inflow-ats (Rails API + React frontend). Goal: drive the spec to TWO CONSECUTIVE FULL PASSES — two rounds in a row that produce ZERO new MED, HIGH, or BLOCKER findings AND require ZERO spec amendments. Stop when that criterion is met, or after 50 rounds (whichever comes first).
 
 ## Ground rules
 
@@ -85,7 +85,7 @@ For each angle listed in `reviews/REVIEW-ANGLES.md`, write a file in the round d
 ```
 
 ### Step 4: Apply amendments to the spec
-For every BLOCKER and HIGH finding, apply the concrete fix to the spec now. Verify the edit by re-reading the patched section.
+For every MED, HIGH, and BLOCKER finding, apply the concrete fix to the spec now. Verify the edit by re-reading the patched section.
 
 ### Step 5: Write the round verdict
 Write `reviews/spec-round-N/verdict.md`:
@@ -105,10 +105,10 @@ Write `reviews/spec-round-N/verdict.md`:
 ```
 
 ### Step 6: Decide loop continuation
-- If this round produced 0 BLOCKER and 0 HIGH and required 0 amendments, mark it PASS.
+- If this round produced 0 BLOCKER, 0 HIGH, and 0 MED and required 0 amendments, mark it PASS.
 - If the previous round ALSO passed, STOP. Declare TWO CONSECUTIVE FULL PASSES.
 - Otherwise, start the next round.
-- If round count reaches 5 without two consecutive passes, stop and escalate to Jessica with the remaining gaps.
+- If round count reaches 50 without two consecutive passes, stop and escalate to Jessica with the remaining gaps.
 
 ## Termination output
 
@@ -127,11 +127,11 @@ When the loop ends, write `reviews/SPEC-REVIEW-COMPLETE.md` containing:
 
 ## What success looks like
 
-The spec survives two consecutive reviews across all 8 angles with no required amendments. `reviews/SPEC-REVIEW-COMPLETE.md` declares READY. The plain English summary + blast radius are included for a quick sanity check without reading the full spec.
+The spec survives two consecutive reviews across all angles with no MED+ findings and no required amendments. `reviews/SPEC-REVIEW-COMPLETE.md` declares READY. The plain English summary + blast radius are included for a quick sanity check without reading the full spec.
 
 ## What failure looks like
 
-After 5 rounds, still finding BLOCKER/HIGH issues. Write a clear escalation note: list the unresolved issues, what you tried, what you recommend Jessica do next (deepen scope, accept certain risks, re-design a sub-component).
+After 50 rounds, still finding MED+ issues. Write a clear escalation note: list the unresolved issues, what you tried, what you recommend Jessica do next (deepen scope, accept certain risks, re-design a sub-component).
 
 ## After the agent finishes
 

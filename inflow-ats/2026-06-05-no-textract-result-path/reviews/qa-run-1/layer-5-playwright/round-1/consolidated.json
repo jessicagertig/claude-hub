@@ -1,0 +1,12 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "findings": [],
+  "notes": "Backend-only fix with no frontend changes. Verified: (1) App loads and renders correctly, (2) AI summary section displays properly on candidate overview, (3) No new console errors from model changes (all 7 errors are pre-existing: heap SDK 404, history deprecation, Redux reducer warnings), (4) Candidates view works with the modified AiJobApplicationSummary model (optional: true on textract_result association).",
+  "agents_dispatched": 1,
+  "verification_scope": "Smoke test - no user-facing UI changes to verify. Changes are: (1) backend FK update in service, (2) job exhaustion cleanup, (3) nil guard in model callback. None produce new visible UI elements.",
+  "convergence": {
+    "findings_count": 0,
+    "clean_round": true
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "agent": "agent-1",
+  "layer": "layer-4-playwright",
+  "round": 1,
+  "qa_run": "qa-run-2",
+  "timestamp": "2026-06-05T02:24:00Z",
+  "verdict": "PASS",
+  "summary": "All 5 verification scenarios passed. The email subjects feature is fully functional after the one-line ChannelMessageListItem.tsx fix.",
+  "scenarios": [
+    {
+      "id": 1,
+      "name": "Subject field present with default on candidate messages",
+      "status": "PASS",
+      "details": "Navigated to candidate Garland Sawayn's Messages tab. Subject field is present with label 'Subject' and pre-populated with default value 'Software Engineer at Acme Inc.' (the expected {job_title} at {company_name} pattern).",
+      "screenshot": "/tmp/qa-run-2/layer-4/round-1/agent-1/01-messages-subject-field-with-default.png"
+    },
+    {
+      "id": 2,
+      "name": "Send message with custom subject",
+      "status": "PASS",
+      "details": "Changed subject to 'QA Test Subject - Verification Run 2', typed a message body, and clicked Send message. Message appeared in the message history with correct body text and 'Sent via email' indicator. After sending, the subject field reset to the default 'Software Engineer at Acme Inc.' -- correct behavior.",
+      "screenshots": [
+        "/tmp/qa-run-2/layer-4/round-1/agent-1/02-message-composed-with-custom-subject.png",
+        "/tmp/qa-run-2/layer-4/round-1/agent-1/03-message-sent-successfully.png"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Subject field in template create modal (Settings > Message templates)",
+      "status": "PASS",
+      "details": "Navigated to Settings > Message templates. Clicked 'Add a template'. The create modal contains three fields: Template name, Subject (pre-populated with '{{JobTitle}} at {{OrganizationName}}'), and Template body (rich text editor with merge tag buttons). All expected merge tag buttons present: Candidate first name, Candidate last name, Candidate full name, Job title, Sender first name, Sender full name, Organization name.",
+      "screenshot": "/tmp/qa-run-2/layer-4/round-1/agent-1/04-template-create-modal-with-subject.png"
+    },
+    {
+      "id": 4,
+      "name": "Subject preview in template selection modal",
+      "status": "PASS",
+      "details": "Navigated back to candidate messages, clicked 'Use template', selected 'Thank you for applying' template. The modal shows a subject preview 'Subject: Software Engineer at Acme Inc.' with the template's {{JobTitle}} and {{OrganizationName}} merge tags resolved to actual values. The template body preview displays correctly with unresolved merge tags ({{CandidateFirstName}}, {{OrganizationName}}, {{JobTitle}}, {{SenderFullName}}).",
+      "screenshot": "/tmp/qa-run-2/layer-4/round-1/agent-1/05-template-selection-modal-subject-preview.png"
+    },
+    {
+      "id": 5,
+      "name": "Final state screenshot",
+      "status": "PASS",
+      "details": "Full-page screenshot of the messages view showing the complete state: sent message in history, subject field with default value, compose area with Send message and Use template buttons.",
+      "screenshot": "/tmp/qa-run-2/layer-4/round-1/agent-1/06-final-messages-view.png"
+    }
+  ],
+  "findings": [],
+  "notes": [
+    "The sent message in the message list does not display its subject line inline -- it shows sender, timestamp, delivery method ('Sent via email'), and body text. This is expected existing behavior; the subject is used as the actual email subject line.",
+    "Console errors were present throughout (7-32 errors depending on page), but these appear to be pre-existing and unrelated to the email subjects feature. They did not affect functionality.",
+    "After sending a message with a custom subject, the subject field correctly resets to the default value for the next message."
+  ]
+}

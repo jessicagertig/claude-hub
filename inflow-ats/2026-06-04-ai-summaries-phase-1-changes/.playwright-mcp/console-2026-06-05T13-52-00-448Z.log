@@ -1,0 +1,51 @@
+[      74ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[      86ms] [INFO] %cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:34
+[      87ms] [ERROR] Warning: Please use `require("history").createBrowserHistory` instead of `require("history/createBrowserHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[      87ms] [ERROR] Warning: Please use `require("history").createHashHistory` instead of `require("history/createHashHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[      93ms] [ERROR] Warning: Please use `require("history").createMemoryHistory` instead of `require("history/createMemoryHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[      93ms] [ERROR] Warning: Please use `require("history").PathUtils` instead of `require("history/PathUtils")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[      98ms] [ERROR] You are currently using minified code outside of NODE_ENV === "production". This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or setting mode to production in webpack (https://webpack.js.org/concepts/mode/) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     103ms] [ERROR] You are currently using minified code outside of NODE_ENV === 'production'. This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     103ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     103ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     103ms] [LOG] [store/index.js] store.getState() {} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:264
+[     150ms] [LOG] %c
+
+
+[App] render background-color: #b0d219 {props: Object, queryClient: e} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     152ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/usage, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     158ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     159ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/usage, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     166ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0
+[     168ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/flipper/features} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     169ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/usage, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     196ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     197ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/usage, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     206ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: 17083} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     207ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/usage, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     247ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/organizations/17083} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     248ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/usage, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     264ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 17083, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     277ms] [WARNING] @reach/tooltip styles not found. If you are using a bundler like webpack or parcel include this in the entry file of your app before any of your own styles:
+
+    import "@reach/tooltip/styles.css";
+
+  Otherwise you'll need to include them some other way:
+
+    <link rel="stylesheet" type="text/css" href="node_modules/@reach/tooltip/styles.css" />
+
+  For more information visit https://ui.reach.tech/styling.
+   @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     278ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: 17083} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     282ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/usage, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     287ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 17083, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     295ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/usage, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     300ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 17083, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     313ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me/job_application_notifications/has_unread} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     344ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/ai_credits} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     356ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     356ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/usage, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     362ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 17083, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     377ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/organizations/17083} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     378ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/usage, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     383ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 17083, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70

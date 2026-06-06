@@ -1,0 +1,35 @@
+{
+  "reviewer": "agent-1",
+  "round": 1,
+  "layer": "layer-1-diff-to-spec",
+  "qa_run": "qa-run-2",
+  "focus": "ChannelMessageListItem.tsx fix verification + ChannelMessageTemplateModal caller audit",
+  "verdict": "PASS_WITH_NOTES",
+  "findings": [
+    {
+      "id": "R2-L1-A1-F1",
+      "severity": "MED",
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx",
+      "line": 207,
+      "title": "t.text.sm used inside font-size declaration produces invalid CSS",
+      "description": "Line 207 reads `font-size: ${t.text.sm};`. Per pipeline Known Failure Pattern #1, `t.text.sm` is a complete CSS declaration that already includes `font-size:`. This produces `font-size: font-size: 0.875rem;` (invalid CSS). The browser silently drops the rule, so the SubjectPreview text falls back to the inherited font-size instead of the intended small size. Should be `${t.text.sm};` standalone (no `font-size:` prefix).",
+      "spec_reference": "Not a spec violation — this is a codebase convention violation (Emotion theme utilities). Flagged because it was already identified in qa-run-1 and the fix has not been applied.",
+      "recommendation": "Replace `font-size: ${t.text.sm};` with `${t.text.sm};` on line 207 of ChannelMessageTemplateSelectionModal.tsx."
+    }
+  ],
+  "questions_answered": {
+    "q1_subject_empty_string_spec_compliant": {
+      "answer": "YES",
+      "reasoning": "Passing `subject: \"\"` is spec-compliant. ChannelMessageTemplateModal's useState initializer (line 49-52) does `props.channelMessageTemplate.subject || defaultSubject`. Since `\"\"` is falsy, the `||` branch fires and the modal defaults to `\"{{JobTitle}} at {{OrganizationName}}\"`. This matches the spec's Data flow section: 'Bulk modal, template create/edit modal, automation modal's inline-create-template: show variables literally' because no single candidate context applies when creating a new template. The ChannelMessageListItem 'Create template' action opens the modal in create mode (isEditing=false) to make a new template from the message body, so the literal-variable default is correct."
+    },
+    "q2_other_callers_same_issue": {
+      "answer": "One other caller exists in AccountChannelMessageTemplates.tsx; it does NOT have this issue because it was never missing the field in the same way.",
+      "reasoning": "AccountChannelMessageTemplates.tsx has two call paths: (1) 'new template' passes `{}` (empty object) — `subject` is undefined, which is falsy, so `|| defaultSubject` fires correctly. (2) 'edit template' passes the full channelMessageTemplate object fetched from the API — the serializer now exposes `subject`, so it arrives with the stored subject value (or null for legacy templates, which triggers the `|| defaultSubject` fallback). Both paths work correctly. The ChannelMessageListItem fix was the only caller that was actively constructing a literal object with `{ id, name, body }` but omitting `subject`, which caused a TypeScript type error against the updated Props type `{ id; name; body; subject }`. The empty-object `{}` case in AccountChannelMessageTemplates doesn't trigger this because TypeScript's structural typing allows `{}` to be assigned to the Props type with all optional-typed fields (the `id; name; body; subject` shorthand declarations have implicit `any` types)."
+    },
+    "q3_fix_introduces_new_problems": {
+      "answer": "NO — the fix does not introduce new problems.",
+      "reasoning": "The fix adds `subject: \"\"` to the object literal. The modal treats this identically to `undefined` or `null` (all falsy → defaultSubject). The created template will have the default subject pre-populated in the form. On submit, the subject value flows through validateChannelMessageTemplate (which requires it to be non-empty) and then through createChannelMessageTemplate to the API. The API permits and sanitizes :subject. No new code path is affected."
+    }
+  },
+  "notes": "The ChannelMessageListItem fix is clean and spec-compliant. The only open item is the CSS issue in ChannelMessageTemplateSelectionModal.tsx (F1 above), which is a carryover from qa-run-1 and not introduced by this fix."
+}

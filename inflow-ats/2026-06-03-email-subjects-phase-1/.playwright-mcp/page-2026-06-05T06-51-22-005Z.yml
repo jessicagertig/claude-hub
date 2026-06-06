@@ -1,0 +1,277 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e11]:
+        - img [ref=e12]
+        - heading "Polymer" [level=1] [ref=e15]
+      - list [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e19]:
+            - generic [ref=e20]: RM
+            - generic [ref=e21]: Rezu May
+          - generic:
+            - generic:
+              - link "Account settings":
+                - /url: /account
+              - button "Contact us"
+              - button "Help docs":
+                - text: Help docs
+                - img
+              - button "Changelog":
+                - text: Changelog
+                - img
+              - link "Log out":
+                - /url: /logout
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e25]:
+          - generic [ref=e27] [cursor=pointer]:
+            - generic [ref=e29]: A
+            - img [ref=e31]
+          - generic [ref=e36]: Acme Inc.
+        - generic [ref=e38]:
+          - img [ref=e41] [cursor=pointer]
+          - generic:
+            - generic:
+              - link "Your organizations":
+                - /url: /organization/manage
+      - generic [ref=e46]:
+        - img [ref=e47]
+        - textbox "Search candidates" [ref=e50]
+      - generic [ref=e52]:
+        - link [ref=e54] [cursor=pointer]:
+          - /url: /notifications
+          - img [ref=e55]
+        - link [ref=e59] [cursor=pointer]:
+          - /url: /hire/settings/organization
+          - img [ref=e60]
+    - generic [ref=e63]:
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - link "Navigate back to all jobs" [ref=e67] [cursor=pointer]:
+            - /url: /jobs
+            - img [ref=e68]
+          - heading "Software Engineer" [level=2] [ref=e70]
+        - generic [ref=e72]:
+          - img [ref=e75] [cursor=pointer]
+          - generic:
+            - generic:
+              - button "Add new candidate"
+              - button "Import candidates"
+              - button "Export candidates"
+              - button "Export resumes"
+      - generic [ref=e79]:
+        - generic [ref=e80]:
+          - generic [ref=e81]:
+            - link "Inbox 3" [ref=e82] [cursor=pointer]:
+              - /url: /jobs/15824/stages/110741/applicants
+              - generic [ref=e83]:
+                - img [ref=e84]
+                - generic [ref=e87]: Inbox
+              - text: "3"
+            - link "Screen 0" [ref=e88] [cursor=pointer]:
+              - /url: /jobs/15824/stages/110742/applicants
+              - generic [ref=e89]:
+                - img [ref=e90]
+                - generic [ref=e92]: Screen
+              - text: "0"
+            - link "Interview 0" [ref=e93] [cursor=pointer]:
+              - /url: /jobs/15824/stages/110743/applicants
+              - generic [ref=e94]:
+                - img [ref=e95]
+                - generic [ref=e97]: Interview
+              - text: "0"
+            - link "Decide 0" [ref=e98] [cursor=pointer]:
+              - /url: /jobs/15824/stages/110744/applicants
+              - generic [ref=e99]:
+                - img [ref=e100]
+                - generic [ref=e102]: Decide
+              - text: "0"
+            - link "Offer 0" [ref=e103] [cursor=pointer]:
+              - /url: /jobs/15824/stages/110745/applicants
+              - generic [ref=e104]:
+                - img [ref=e105]
+                - generic [ref=e107]: Offer
+              - text: "0"
+            - link "Hired 0" [ref=e108] [cursor=pointer]:
+              - /url: /jobs/15824/stages/110746/applicants
+              - generic [ref=e109]:
+                - img [ref=e110]
+                - generic [ref=e113]: Hired
+              - text: "0"
+            - link "Archived 0" [ref=e114] [cursor=pointer]:
+              - /url: /jobs/15824/stages/110747/applicants
+              - generic [ref=e115]:
+                - img [ref=e116]
+                - generic [ref=e119]: Archived
+              - text: "0"
+          - separator
+          - generic [ref=e120]:
+            - link "Job setup" [ref=e121] [cursor=pointer]:
+              - /url: /jobs/15824/setup
+              - generic [ref=e122]:
+                - img [ref=e123]
+                - generic [ref=e126]: Job setup
+              - img [ref=e127]
+            - link "Distribution" [ref=e130] [cursor=pointer]:
+              - /url: /jobs/15824/distribution
+              - generic [ref=e131]:
+                - img [ref=e132]
+                - generic [ref=e138]: Distribution
+              - img [ref=e139]
+        - generic [ref=e142]:
+          - generic [ref=e143]:
+            - link "Job details" [ref=e144] [cursor=pointer]:
+              - /url: /jobs/15824/setup/details
+              - generic [ref=e146]: Job details
+              - img [ref=e147]
+            - link "Job description" [ref=e149] [cursor=pointer]:
+              - /url: /jobs/15824/setup/description
+              - generic [ref=e151]: Job description
+              - img [ref=e152]
+            - link "Application form" [ref=e154] [cursor=pointer]:
+              - /url: /jobs/15824/setup/application
+              - generic [ref=e156]: Application form
+              - img [ref=e157]
+            - link "Document template" [ref=e159] [cursor=pointer]:
+              - /url: /jobs/15824/setup/document
+              - generic [ref=e161]: Document template
+              - img [ref=e162]
+            - link "Hiring stages" [ref=e164] [cursor=pointer]:
+              - /url: /jobs/15824/setup/stages
+              - generic [ref=e166]: Hiring stages
+              - img [ref=e167]
+            - link "Hiring team" [ref=e169] [cursor=pointer]:
+              - /url: /jobs/15824/setup/team
+              - generic [ref=e171]: Hiring team
+              - img [ref=e172]
+            - link "Automations" [ref=e174] [cursor=pointer]:
+              - /url: /jobs/15824/setup/automations
+              - generic [ref=e176]: Automations
+              - img [ref=e177]
+            - separator
+            - generic [ref=e179]:
+              - generic [ref=e180]: Job post
+              - generic [ref=e181]:
+                - img [ref=e182]
+                - link "jobs.lvh.me:5007/acme-inc/15824" [ref=e185] [cursor=pointer]:
+                  - /url: http://jobs.lvh.me:5007/acme-inc/15824
+            - separator
+            - generic [ref=e187]:
+              - button "Share job post" [ref=e188] [cursor=pointer]:
+                - generic [ref=e189]: Share job post
+              - generic [ref=e190]:
+                - img [ref=e193] [cursor=pointer]
+                - generic:
+                  - generic:
+                    - button "Clone job":
+                      - generic: Clone job
+                    - button "Hide job post"
+                    - button "Archive job"
+          - generic [ref=e199]:
+            - generic [ref=e200]:
+              - heading "Job details" [level=2] [ref=e203]
+              - paragraph [ref=e204]: Here's where you can edit the general information for this job. This includes things such as the job-type, hiring location, and if it's remote-friendly.
+              - generic [ref=e205]:
+                - generic [ref=e206]:
+                  - heading "Basic information" [level=4] [ref=e209]
+                  - generic [ref=e210]:
+                    - generic [ref=e212]:
+                      - text: Title
+                      - generic [ref=e213]: (required)
+                    - textbox "Title" [ref=e215]: Software Engineer
+                  - generic [ref=e216]:
+                    - generic [ref=e218]: Category
+                    - paragraph [ref=e219]:
+                      - generic [ref=e220]:
+                        - text: You can add, remove, and edit job categories in
+                        - link "App settings" [ref=e221] [cursor=pointer]:
+                          - /url: /hire/settings/categories
+                        - text: .
+                    - generic [ref=e223]:
+                      - generic [ref=e224]:
+                        - generic [ref=e225]: Sales & Marketing
+                        - textbox [ref=e228]
+                      - generic [ref=e229]:
+                        - img [ref=e231] [cursor=pointer]
+                        - img [ref=e234]
+                  - generic [ref=e236]:
+                    - generic [ref=e238]: Employment type
+                    - generic [ref=e240]:
+                      - generic [ref=e241]:
+                        - generic [ref=e242]: Full-time
+                        - textbox [ref=e245]
+                      - img [ref=e248]
+                - generic [ref=e250]:
+                  - heading "Hiring location" [level=4] [ref=e253]
+                  - generic [ref=e254]:
+                    - generic [ref=e256]: Country
+                    - generic [ref=e258]:
+                      - generic [ref=e259]:
+                        - generic [ref=e260]: Select...
+                        - textbox [ref=e263]
+                      - img [ref=e266]
+                  - generic [ref=e268]:
+                    - generic [ref=e270]: City
+                    - textbox "City" [ref=e272]:
+                      - /placeholder: ""
+                - generic [ref=e273]:
+                  - heading "Distribution" [level=4] [ref=e276]
+                  - paragraph [ref=e277]: Check the status of external job board integrations below.
+                  - generic [ref=e279]:
+                    - generic [ref=e281]:
+                      - img [ref=e283]
+                      - generic [ref=e285]:
+                        - text: LinkedIn
+                        - paragraph [ref=e286]: Not enabled for your organization
+                    - link "Enable in settings" [ref=e287] [cursor=pointer]:
+                      - /url: /hire/settings/integrations/linkedin
+                      - generic [ref=e288]: Enable in settings
+                - generic [ref=e289]:
+                  - heading "Remote options" [level=4] [ref=e292]
+                  - generic [ref=e293]:
+                    - generic [ref=e295]: Is this job remote or hybrid?
+                    - generic [ref=e297]:
+                      - generic [ref=e298]:
+                        - generic [ref=e299]: No remote
+                        - textbox [ref=e302]
+                      - img [ref=e305]
+                - generic [ref=e307]:
+                  - heading "Salary or wage" [level=4] [ref=e310]
+                  - generic [ref=e311]:
+                    - generic [ref=e313]: Display
+                    - generic [ref=e315]:
+                      - generic [ref=e316]:
+                        - generic [ref=e317]: Not shown
+                        - textbox [ref=e320]
+                      - img [ref=e323]
+                - generic [ref=e325]:
+                  - heading "Additional options" [level=4] [ref=e328]
+                  - generic [ref=e329]:
+                    - generic [ref=e331]: Video URL
+                    - paragraph [ref=e332]: If you have a relevant video on YouTube or Vimeo, you can provide the web address for it here to have it displayed on the job post.
+                    - generic [ref=e333]:
+                      - generic [ref=e334]: https://
+                      - textbox "Video URL" [ref=e335]:
+                        - /placeholder: ...
+                  - generic [ref=e336]:
+                    - generic [ref=e338]: Map location
+                    - paragraph [ref=e339]: If the job has a physical location associated with it, you can provide a street address here to have it displayed on a map in the job post.
+                    - generic [ref=e341]:
+                      - generic [ref=e342]:
+                        - generic [ref=e343]: Search for a location...
+                        - textbox [ref=e346]
+                      - img [ref=e349]
+                  - generic [ref=e351]:
+                    - generic [ref=e353]: Job post social media image
+                    - paragraph [ref=e354]: You can provide a custom social media image that will be specific to this job. By default, the social media image set for your job board will be used.
+                    - generic [ref=e356]:
+                      - generic [ref=e357]:
+                        - generic [ref=e358]: Default
+                        - textbox [ref=e361]
+                      - img [ref=e364]
+            - button "Save changes" [ref=e367] [cursor=pointer]:
+              - generic [ref=e368]: Save changes
+  - generic:
+    - generic: More options
+    - tooltip "More options" [ref=e369]

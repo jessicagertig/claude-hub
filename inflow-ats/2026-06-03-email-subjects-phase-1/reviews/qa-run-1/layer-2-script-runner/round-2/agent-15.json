@@ -1,0 +1,291 @@
+{
+  "agent": 15,
+  "round": 2,
+  "focus": "Stress the full lifecycle with unusual combinations",
+  "timestamp": "2026-06-05T00:43:00-05:00",
+  "tests": [
+    {
+      "name": "Template created with original subject",
+      "status": "pass",
+      "expected": "Original: {{JobTitle}} for {{CandidateFirstName}}",
+      "actual": "Original: {{JobTitle}} for {{CandidateFirstName}}"
+    },
+    {
+      "name": "First render subject_raw matches expectations",
+      "status": "pass",
+      "expected": "Original: Software Engineer for Loma",
+      "actual": "Original: Software Engineer for Loma"
+    },
+    {
+      "name": "Message created with rendered subject",
+      "status": "pass",
+      "expected": "Original: Software Engineer for Loma",
+      "actual": "Original: Software Engineer for Loma"
+    },
+    {
+      "name": "Template subject updated successfully",
+      "status": "pass",
+      "expected": "Updated: {{OrganizationName}} - {{JobTitle}}",
+      "actual": "Updated: {{OrganizationName}} - {{JobTitle}}"
+    },
+    {
+      "name": "Original message subject unchanged after template update",
+      "status": "pass",
+      "expected": "Original: Software Engineer for Loma",
+      "actual": "Original: Software Engineer for Loma",
+      "details": "Message ID 481 should be independent of template"
+    },
+    {
+      "name": "Second render subject_raw reflects updated template",
+      "status": "pass",
+      "expected": "Updated: Acme Inc. - Software Engineer",
+      "actual": "Updated: Acme Inc. - Software Engineer"
+    },
+    {
+      "name": "Second render subject_html contains span tags with new values",
+      "status": "pass",
+      "expected": "Contains Acme Inc. and Software Engineer",
+      "actual": "Updated: <span class='mail-merge-tag'>Acme Inc.</span> - <span class='mail-merge-tag'>Software Engineer</span>"
+    },
+    {
+      "name": "First and second render subjects differ (template change effective)",
+      "status": "pass",
+      "expected": "Different subjects",
+      "actual": "render1=Original: Software Engineer for Loma, render2=Updated: Acme Inc. - Software Engineer"
+    },
+    {
+      "name": "Two messages with different subjects coexist on same channel",
+      "status": "pass",
+      "expected": "Different subjects",
+      "actual": "msg1=Original: Software Engineer for Loma, msg2=Updated: Acme Inc. - Software Engineer"
+    },
+    {
+      "name": "Three templates created with identical subjects",
+      "status": "pass",
+      "expected": "{{JobTitle}} at {{OrganizationName}}",
+      "actual": "a={{JobTitle}} at {{OrganizationName}}, b={{JobTitle}} at {{OrganizationName}}, c={{JobTitle}} at {{OrganizationName}}"
+    },
+    {
+      "name": "All three renders produce identical subject_raw",
+      "status": "pass",
+      "expected": "Software Engineer at Acme Inc.",
+      "actual": "a=Software Engineer at Acme Inc., b=Software Engineer at Acme Inc., c=Software Engineer at Acme Inc."
+    },
+    {
+      "name": "Each render produces a unique body (no body confusion)",
+      "status": "pass",
+      "expected": "A=BODY_A, B=BODY_B, C=BODY_C markers present",
+      "actual": "a_has_A=true, b_has_B=true, c_has_C=true"
+    },
+    {
+      "name": "No cross-contamination between template bodies",
+      "status": "pass",
+      "expected": "No cross-contamination",
+      "actual": "a_has_B=false, a_has_C=false, b_has_A=false"
+    },
+    {
+      "name": "No invalid tags detected for any template",
+      "status": "pass",
+      "expected": "All false",
+      "actual": "a=false, b=false, c=false"
+    },
+    {
+      "name": "Subject HTML identical across templates with same subject",
+      "status": "pass",
+      "expected": "Identical subject_html",
+      "actual": "All three match"
+    },
+    {
+      "name": "Template subject HTML identical across templates with same subject",
+      "status": "pass",
+      "expected": "Identical template_subject_html",
+      "actual": "All three match"
+    },
+    {
+      "name": "Changing B's subject doesn't affect A or C",
+      "status": "pass",
+      "expected": "A and C unchanged, B changed",
+      "actual": "a=Software Engineer at Acme Inc., b=Different: Loma, c=Software Engineer at Acme Inc."
+    },
+    {
+      "name": "Single message created successfully via CreateChannelMessage",
+      "status": "pass",
+      "expected": "success",
+      "actual": "success"
+    },
+    {
+      "name": "Single message has correct subject stored",
+      "status": "pass",
+      "expected": "Interview Update: Software Engineer",
+      "actual": "Interview Update: Software Engineer"
+    },
+    {
+      "name": "Bulk-style message created successfully",
+      "status": "pass",
+      "expected": "persisted",
+      "actual": "true"
+    },
+    {
+      "name": "Bulk message has correct subject stored",
+      "status": "pass",
+      "expected": "Interview Update: Software Engineer",
+      "actual": "Interview Update: Software Engineer"
+    },
+    {
+      "name": "Single and bulk messages are different records",
+      "status": "pass",
+      "expected": "Different IDs",
+      "actual": "single=483, bulk=484"
+    },
+    {
+      "name": "Both messages have same subject text",
+      "status": "pass",
+      "expected": "Interview Update: Software Engineer",
+      "actual": "single=Interview Update: Software Engineer, bulk=Interview Update: Software Engineer"
+    },
+    {
+      "name": "Messages are on different channels (different candidates)",
+      "status": "pass",
+      "expected": "Different channel IDs",
+      "actual": "single_channel=1474, bulk_channel=1475"
+    },
+    {
+      "name": "Single message mailer uses stored subject (not fallback)",
+      "status": "pass",
+      "expected": "Interview Update: Software Engineer",
+      "actual": "Interview Update: Software Engineer"
+    },
+    {
+      "name": "Bulk message mailer uses stored subject (not fallback)",
+      "status": "pass",
+      "expected": "Interview Update: Software Engineer",
+      "actual": "Interview Update: Software Engineer"
+    },
+    {
+      "name": "Bulk message with parsed placeholder subject persists correctly",
+      "status": "pass",
+      "expected": "Re: Verlene - Software Engineer",
+      "actual": "Re: Verlene - Software Engineer"
+    },
+    {
+      "name": "Message with nil subject persists (nil stored)",
+      "status": "pass",
+      "expected": "nil",
+      "actual": "nil"
+    },
+    {
+      "name": "Nil subject message falls back to default in mailer",
+      "status": "pass",
+      "expected": "Software Engineer at Acme Inc.",
+      "actual": "Software Engineer at Acme Inc."
+    },
+    {
+      "name": "Automation path message created successfully",
+      "status": "pass",
+      "expected": "success",
+      "actual": "success"
+    },
+    {
+      "name": "Automation message subject has placeholders resolved",
+      "status": "pass",
+      "expected": "Acme Inc.: Update on Software Engineer",
+      "actual": "Acme Inc.: Update on Software Engineer"
+    },
+    {
+      "name": "Automation message subject has no raw {{}} placeholders",
+      "status": "pass",
+      "expected": "No {{}} in subject",
+      "actual": "Acme Inc.: Update on Software Engineer"
+    },
+    {
+      "name": "Automation message body has placeholders resolved",
+      "status": "pass",
+      "expected": "Body contains Loma",
+      "actual": "Body includes candidate first name"
+    },
+    {
+      "name": "Automation message sent_by is sent_by_organization",
+      "status": "pass",
+      "expected": "sent_by_organization",
+      "actual": "sent_by_organization"
+    },
+    {
+      "name": "Manual path message created successfully",
+      "status": "pass",
+      "expected": "success",
+      "actual": "success"
+    },
+    {
+      "name": "Manual message subject matches automation message subject",
+      "status": "pass",
+      "expected": "Acme Inc.: Update on Software Engineer",
+      "actual": "Acme Inc.: Update on Software Engineer"
+    },
+    {
+      "name": "Automation and manual subjects are identical",
+      "status": "pass",
+      "expected": "Acme Inc.: Update on Software Engineer",
+      "actual": "auto=Acme Inc.: Update on Software Engineer, manual=Acme Inc.: Update on Software Engineer"
+    },
+    {
+      "name": "Manual message subject has no raw {{}} placeholders",
+      "status": "pass",
+      "expected": "No {{}} in subject",
+      "actual": "Acme Inc.: Update on Software Engineer"
+    },
+    {
+      "name": "Automation with nil subject template succeeds",
+      "status": "pass",
+      "expected": "success",
+      "actual": "success"
+    },
+    {
+      "name": "Automation nil subject stored as empty string after parse_text",
+      "status": "pass",
+      "expected": "empty string",
+      "actual": "\"\""
+    },
+    {
+      "name": "Empty string subject triggers mailer fallback (from nil template)",
+      "status": "pass",
+      "expected": "Software Engineer at Acme Inc.",
+      "actual": "Software Engineer at Acme Inc."
+    },
+    {
+      "name": "Automation with empty string subject succeeds",
+      "status": "pass",
+      "expected": "success",
+      "actual": "success"
+    },
+    {
+      "name": "Empty string subject stored as empty string",
+      "status": "pass",
+      "expected": "empty string",
+      "actual": "\"\""
+    },
+    {
+      "name": "Empty string subject triggers mailer fallback (from empty template)",
+      "status": "pass",
+      "expected": "Software Engineer at Acme Inc.",
+      "actual": "Software Engineer at Acme Inc."
+    },
+    {
+      "name": "Special characters preserved in rendered subject",
+      "status": "pass",
+      "expected": "Re: Héllo & Welcome — «Loma» ✓",
+      "actual": "Re: Héllo & Welcome — «Loma» ✓"
+    },
+    {
+      "name": "Special characters preserved through automation path",
+      "status": "pass",
+      "expected": "Re: Héllo & Welcome — «Loma» ✓",
+      "actual": "Re: Héllo & Welcome — «Loma» ✓"
+    }
+  ],
+  "summary": {
+    "pass": 45,
+    "fail": 0,
+    "error": 0
+  },
+  "findings": []
+}

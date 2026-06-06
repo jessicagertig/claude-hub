@@ -1,0 +1,234 @@
+- generic [ref=e8]:
+  - generic [ref=e9]:
+    - generic [ref=e11]:
+      - img [ref=e12]
+      - heading "Polymer" [level=1] [ref=e15]
+    - list [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: RM
+          - generic [ref=e21]: Rezu May
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e27] [cursor=pointer]:
+          - generic [ref=e29]: A
+          - img [ref=e31]
+        - generic [ref=e36]: Acme Inc.
+      - generic [ref=e38]:
+        - img [ref=e41] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - generic [ref=e46]:
+      - img [ref=e47]
+      - textbox "Search candidates" [ref=e50]
+    - generic [ref=e52]:
+      - link [ref=e54] [cursor=pointer]:
+        - /url: /notifications
+        - img [ref=e55]
+      - link [ref=e59] [cursor=pointer]:
+        - /url: /hire/settings/organization
+        - img [ref=e60]
+  - generic [ref=e63]:
+    - generic [ref=e64]:
+      - generic [ref=e65]:
+        - link "Navigate back to all jobs" [ref=e67] [cursor=pointer]:
+          - /url: /jobs
+          - img [ref=e68]
+        - heading "Software Engineer" [level=2] [ref=e70]
+      - generic [ref=e72]:
+        - img [ref=e75] [cursor=pointer]
+        - generic:
+          - generic:
+            - button "Add new candidate"
+            - button "Import candidates"
+            - button "Export candidates"
+            - button "Export resumes"
+    - generic [ref=e79]:
+      - generic [ref=e80]:
+        - generic [ref=e81]:
+          - link "Inbox 3" [active] [ref=e82] [cursor=pointer]:
+            - /url: /jobs/15819/stages/110706/applicants
+            - generic [ref=e83]:
+              - img [ref=e84]
+              - generic [ref=e87]: Inbox
+            - text: "3"
+          - link "Screen 0" [ref=e88] [cursor=pointer]:
+            - /url: /jobs/15819/stages/110707/applicants
+            - generic [ref=e89]:
+              - img [ref=e90]
+              - generic [ref=e92]: Screen
+            - text: "0"
+          - link "Interview 0" [ref=e93] [cursor=pointer]:
+            - /url: /jobs/15819/stages/110708/applicants
+            - generic [ref=e94]:
+              - img [ref=e95]
+              - generic [ref=e97]: Interview
+            - text: "0"
+          - link "Decide 0" [ref=e98] [cursor=pointer]:
+            - /url: /jobs/15819/stages/110709/applicants
+            - generic [ref=e99]:
+              - img [ref=e100]
+              - generic [ref=e102]: Decide
+            - text: "0"
+          - link "Offer 0" [ref=e103] [cursor=pointer]:
+            - /url: /jobs/15819/stages/110710/applicants
+            - generic [ref=e104]:
+              - img [ref=e105]
+              - generic [ref=e107]: Offer
+            - text: "0"
+          - link "Hired 0" [ref=e108] [cursor=pointer]:
+            - /url: /jobs/15819/stages/110711/applicants
+            - generic [ref=e109]:
+              - img [ref=e110]
+              - generic [ref=e113]: Hired
+            - text: "0"
+          - link "Archived 0" [ref=e114] [cursor=pointer]:
+            - /url: /jobs/15819/stages/110712/applicants
+            - generic [ref=e115]:
+              - img [ref=e116]
+              - generic [ref=e119]: Archived
+            - text: "0"
+        - separator
+        - generic [ref=e120]:
+          - link "Job setup" [ref=e121] [cursor=pointer]:
+            - /url: /jobs/15819/setup
+            - generic [ref=e122]:
+              - img [ref=e123]
+              - generic [ref=e126]: Job setup
+            - img [ref=e127]
+          - link "Distribution" [ref=e130] [cursor=pointer]:
+            - /url: /jobs/15819/distribution
+            - generic [ref=e131]:
+              - img [ref=e132]
+              - generic [ref=e138]: Distribution
+            - img [ref=e139]
+      - generic [ref=e370]:
+        - generic [ref=e371]:
+          - generic [ref=e372]:
+            - generic [ref=e373]:
+              - checkbox [ref=e375]
+              - heading "Inbox" [level=3] [ref=e377]
+            - generic [ref=e378]:
+              - img [ref=e381] [cursor=pointer]
+              - generic:
+                - generic:
+                  - button "Message candidates"
+                  - button "Move candidates"
+          - generic [ref=e385]:
+            - generic [ref=e386]:
+              - checkbox [ref=e388]
+              - link "Lincoln McDermott" [ref=e390] [cursor=pointer]:
+                - /url: /jobs/15819/stages/110706/applicants/12137
+                - generic [ref=e392]: Lincoln McDermott
+                - img [ref=e393]
+            - generic [ref=e395]:
+              - checkbox [ref=e397]
+              - link "Remona Kuphal" [ref=e399] [cursor=pointer]:
+                - /url: /jobs/15819/stages/110706/applicants/12136
+                - generic [ref=e401]: Remona Kuphal
+                - img [ref=e402]
+            - generic [ref=e404]:
+              - checkbox [ref=e406]
+              - link "Omar Murray" [ref=e408] [cursor=pointer]:
+                - /url: /jobs/15819/stages/110706/applicants/12135
+                - generic [ref=e410]: Omar Murray
+                - img [ref=e411]
+        - generic [ref=e414]:
+          - generic [ref=e415]:
+            - generic [ref=e416]:
+              - generic [ref=e417]:
+                - heading "Lincoln McDermott" [level=1] [ref=e418]
+                - generic [ref=e419]:
+                  - generic [ref=e420]: Manually added
+                  - img [ref=e423]
+              - generic [ref=e426]:
+                - link "Overview" [ref=e427] [cursor=pointer]:
+                  - /url: /jobs/15819/stages/110706/applicants/12137/overview
+                  - generic [ref=e428]:
+                    - img [ref=e429]
+                    - generic [ref=e432]: Overview
+                  - img [ref=e433]
+                - link "Resume" [ref=e435] [cursor=pointer]:
+                  - /url: /jobs/15819/stages/110706/applicants/12137/resume
+                  - generic [ref=e436]:
+                    - img [ref=e437]
+                    - generic [ref=e440]: Resume
+                  - img [ref=e441]
+                - link "Messages" [ref=e443] [cursor=pointer]:
+                  - /url: /jobs/15819/stages/110706/applicants/12137/messages
+                  - generic [ref=e444]:
+                    - img [ref=e445]
+                    - generic [ref=e447]: Messages
+                  - img [ref=e448]
+                - link "Files" [ref=e450] [cursor=pointer]:
+                  - /url: /jobs/15819/stages/110706/applicants/12137/files
+                  - generic [ref=e451]:
+                    - img [ref=e452]
+                    - generic [ref=e456]: Files
+                  - img [ref=e457]
+                - link "Private notes" [ref=e459] [cursor=pointer]:
+                  - /url: /jobs/15819/stages/110706/applicants/12137/notes
+                  - generic [ref=e460]:
+                    - img [ref=e461]
+                    - generic [ref=e464]: Private notes
+                  - img [ref=e465]
+              - separator
+              - generic [ref=e467]:
+                - generic [ref=e468]: Contact information
+                - generic [ref=e469]:
+                  - img [ref=e470]
+                  - link "rex.schiller@ratke.net" [ref=e473] [cursor=pointer]:
+                    - /url: mailto:rex.schiller@ratke.net
+            - generic [ref=e475]:
+              - button "Move to Screen" [ref=e476] [cursor=pointer]:
+                - generic [ref=e477]: Move to Screen
+              - generic [ref=e478]:
+                - img [ref=e481] [cursor=pointer]
+                - generic:
+                  - generic:
+                    - button "Edit candidate"
+                    - button "Move to stage M":
+                      - text: Move to stage
+                      - generic: M
+              - button "Archive" [ref=e486] [cursor=pointer]:
+                - generic [ref=e487]: Archive
+          - generic [ref=e489]:
+            - generic [ref=e490]:
+              - heading "Overview" [level=2] [ref=e492]
+              - generic [ref=e494]:
+                - img [ref=e497] [cursor=pointer]
+                - generic:
+                  - generic:
+                    - button "Add hiring document H":
+                      - text: Add hiring document
+                      - generic: H
+            - generic "List of activities that have occured on this application" [ref=e501]:
+              - generic [ref=e503]:
+                - img [ref=e505]
+                - text: Manually added by Rezu May
+                - generic [ref=e508]: ‧
+                - generic [ref=e509]: 1min
+              - generic [ref=e510]:
+                - button "Add a comment" [ref=e511] [cursor=pointer]:
+                  - generic [ref=e512]: Add a comment
+                - link "Start a review" [ref=e513] [cursor=pointer]:
+                  - /url: /applicants/2uwvct3nnzrd/reviews/new
+                  - generic [ref=e514]: Start a review
+                - button "Request a review" [ref=e515] [cursor=pointer]:
+                  - generic [ref=e517]: Request a review

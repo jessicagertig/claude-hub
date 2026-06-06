@@ -1,0 +1,88 @@
+{
+  "agent_index": 2,
+  "focus_area": "Controllers: permitting and sanitization",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "1. ChannelMessagesController: permit :subject alongside :body",
+      "2. ChannelMessagesController: sanitize subject same as body",
+      "3. BulkChannelMessagesController: permit :subject alongside :body",
+      "4. BulkChannelMessagesController: sanitize subject same as body",
+      "5. BulkChannelMessagesController: include subject in the hand-built literal hash (critical - subject silently drops without this)",
+      "6. ChannelMessageTemplatesController: permit :subject alongside :name, :body, :position",
+      "7. JobsController: permit :apply_response_template_subject",
+      "8. JobsController: sanitize apply_response_template_subject",
+      "9. HiringStageMessageAutomationsController: do NOT permit :subject (automations inherit from template)",
+      "10. CandidatesController anonymization: add text_replacer calls for subject (first_name and last_name)"
+    ],
+    "implemented": [
+      "1. ChannelMessagesController: permit :subject alongside :body",
+      "2. ChannelMessagesController: sanitize subject same as body",
+      "3. BulkChannelMessagesController: permit :subject alongside :body",
+      "4. BulkChannelMessagesController: sanitize subject same as body",
+      "5. BulkChannelMessagesController: include subject in the hand-built literal hash (critical - subject silently drops without this)",
+      "6. ChannelMessageTemplatesController: permit :subject alongside :name, :body, :position",
+      "7. JobsController: permit :apply_response_template_subject",
+      "8. JobsController: sanitize apply_response_template_subject",
+      "9. HiringStageMessageAutomationsController: do NOT permit :subject (automations inherit from template)",
+      "10. CandidatesController anonymization: add text_replacer calls for subject (first_name and last_name)"
+    ],
+    "missing": []
+  },
+  "notes": [
+    {
+      "type": "verification",
+      "description": "Requirement 1 (ChannelMessagesController permit): Diff line 58 changes `.permit(:body)` to `.permit(:body, :subject)`. Correct.",
+      "verified": true
+    },
+    {
+      "type": "verification",
+      "description": "Requirement 2 (ChannelMessagesController sanitize): Diff line 64 adds `next_params[:subject] = sanitize(next_params[:subject]) if next_params.key?(:subject)` — identical guard pattern to the existing body sanitization at line 63. Correct.",
+      "verified": true
+    },
+    {
+      "type": "verification",
+      "description": "Requirement 3 (BulkChannelMessagesController permit): Diff line 18 changes `.permit(:body, :hiring_stage_id, ...)` to `.permit(:body, :subject, :hiring_stage_id, ...)`. Correct.",
+      "verified": true
+    },
+    {
+      "type": "verification",
+      "description": "Requirement 4 (BulkChannelMessagesController sanitize): Diff line 20 adds `next_params[:subject] = sanitize(next_params[:subject]) if next_params.key?(:subject)` — identical guard pattern to the existing body sanitization at line 19. Correct.",
+      "verified": true
+    },
+    {
+      "type": "verification",
+      "description": "Requirement 5 (BulkChannelMessagesController hand-built hash): Diff line 9 adds `subject: bulk_channel_message_params[:subject]` in the hand-built literal hash alongside `body: bulk_channel_message_params[:body]`. This is the critical spec requirement that prevents subject from silently dropping. Correctly implemented.",
+      "verified": true
+    },
+    {
+      "type": "verification",
+      "description": "Requirement 6 (ChannelMessageTemplatesController permit): Diff line 46 changes `.permit(:name, :body, :position)` to `.permit(:name, :body, :subject, :position)`. No sanitization added — consistent with existing behavior (this controller does not include Sanitizer and does not sanitize body). Correct.",
+      "verified": true
+    },
+    {
+      "type": "verification",
+      "description": "Requirement 7 (JobsController permit): Diff line 76 adds `:apply_response_template_subject` to the permitted params list, placed immediately after the existing `:apply_response_template`. Correct.",
+      "verified": true
+    },
+    {
+      "type": "verification",
+      "description": "Requirement 8 (JobsController sanitize): Diff lines 84-86 add a new `if sanitized_params.key?(:apply_response_template_subject)` block with `sanitize()` call, following the exact same guard pattern as the existing `apply_response_template` sanitization at lines 268-272. Correct.",
+      "verified": true
+    },
+    {
+      "type": "verification",
+      "description": "Requirement 9 (HiringStageMessageAutomationsController no-permit): Confirmed the diff does not touch `hiring_stage_message_automations_controller.rb`. Verified the source file's existing permit list is `(:channel_message_template_id, :hiring_stage_id, :frequency, :enabled)` — no subject. Correct.",
+      "verified": true
+    },
+    {
+      "type": "verification",
+      "description": "Requirement 10 (CandidatesController anonymization): Diff lines 32-33 add `channel_message.subject = text_replacer(channel_message.subject, real_first_name, name_replacement)` and the matching `real_last_name` call. Placement is after the existing body_sanitized_html calls and before `channel_message.save!`. The `text_replacer` method (line 225 of source) handles nil/blank gracefully (`return text if text.blank?`), so historical messages with NULL subject will not raise. Correct.",
+      "verified": true
+    },
+    {
+      "type": "cross-area-note",
+      "description": "Diff line 307 (ChannelMessageTemplateSelectionModal.tsx) has `font-size: ${t.text.sm};` which matches the Known Failure Pattern #1 documented in the pipeline CLAUDE.md — t.text.sm is a complete CSS declaration including `font-size:`, so this produces invalid CSS (`font-size: font-size: 0.875rem;`). This file is outside my focus area (frontend, not controllers) but is worth flagging for the frontend reviewer."
+    }
+  ]
+}

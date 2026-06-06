@@ -1,53 +1,67 @@
 # Hardening Report
 
-Rules added to `/Users/jessica/claude-hub/CLAUDE.md` under a new "Known Failure Patterns" section, based on actual failures from the QA Verification Harness spec and implementation reviews.
+Rules added to `/Users/jessica/claude-hub/CLAUDE.md` under "Known Failure Patterns," based on actual failures from the QA Verification Harness spec, plan, and implementation reviews (both original runs and redos).
 
-## Rules added
+## Previously added rules (5)
 
-### 1. Stale references after amendments
+These were added by the first hardening pass and remain unchanged:
 
-**Rule:** When amending a spec or document, search the entire document for every other reference to the old concept and update them all in the same amendment.
+1. **Stale references after amendments** -- spec rounds 2-3 stale `test_frr` and "in parallel" references
+2. **Do not discard information callers need** -- impl round 1 (old) hardcoded `status_code: 200`
+3. **Verify preconditions before network calls** -- spec round 1 seed/cleanup without health check
+4. **Account for shared-resource conflicts in multi-agent designs** -- spec rounds 1-2 parallel agents racing on browser/database
+5. **Do not embed pipeline-specific names in generic infrastructure** -- spec round 1 `test_frr` as generic name
 
-**Failures:** Spec Round 2 found 3 stale `test_frr` references and a stale "Phase 7" reference, both left behind by Round 1 amendments. Spec Round 3 found a stale "in parallel" reference contradicting the sequential model introduced in Round 2. This pattern repeated across two consecutive rounds -- amendments that fix one location but leave stale references elsewhere.
+## Newly added rules (3)
 
-**Frequency:** 3 occurrences across 2 rounds. Clear pattern.
+### 6. Hard rules cannot be rationalized away by plans
 
-### 2. Do not discard information callers need
+**Rule:** When a spec or global CLAUDE.md states a hard rule, the implementation must enforce it defensively even if another mechanism also provides it. Defense in depth is the point.
 
-**Rule:** When a helper function has access to data its callers need (status codes, error details, metadata), return that data. Do not force callers to hardcode substitutes.
+**Failures:**
+- Impl review (redo) Round 1, HIGH-1: Plan rationalized omitting `env["RAILS_ENV"] = "test"` because the config's server command includes it inline. But the spec says "RAILS_ENV=test always" as a hard rule, and the analog enforces it defensively. A config author could omit it from the command string and the harness would silently start a dev-mode server.
+- Plan review (old) Pass 1, Finding 2: Plan characterized `env = os.environ.copy()` without modification as "kept identical from InflowBootstrap" when the analog actually DOES modify env. The rationalization was accepted at plan review but caught at impl review.
 
-**Failure:** Impl Round 1: `_request` returned only the parsed response body, discarding `response.status_code`. `_execute_step` hardcoded `"status_code": 200` for every request. QA agents consuming this output would get misleading evidence about what actually happened.
+**Frequency:** Surfaced in both plan review and impl review. The plan rationalized away the hard rule, the plan review accepted the rationalization, and the impl review caught it. The pattern -- "another layer handles it so I don't need to" -- bypasses defense-in-depth.
 
-**Frequency:** 1 occurrence, but the pattern (helper function silently drops metadata that the caller then fakes) generalizes broadly.
+### 7. Verify the execution lifecycle matches before copying an analog pattern
 
-### 3. Verify preconditions before network calls
+**Rule:** When adapting code from an analog, check whether the new code has the same process lifecycle (long-lived vs. fire-and-forget, parent-stays-alive vs. parent-exits). Patterns correct for a long-lived context manager can be fatal for a CLI that spawns children and exits.
 
-**Rule:** Before making HTTP calls to a service, verify the service is alive. Opaque connection timeouts are not acceptable when a precondition check would produce an actionable error.
+**Failures:**
+- Impl review (redo) Round 3, HIGH-4: atexit handler copied from the analog (a long-lived context manager used inside `runner.py`) killed server subprocesses immediately when the `qa-harness start` CLI process exited after printing "READY." The analog stays alive for the entire pipeline run; the CLI exits after spawning.
+- Impl review (redo) Round 4, HIGH-5: `subprocess.PIPE` from the same analog caused child processes to die via SIGPIPE when the parent exited. The analog reads subprocess output throughout its lifetime; the CLI never reads it.
 
-**Failure:** Spec Round 1: seed/cleanup commands made HTTP calls without checking whether the server was running.
+**Frequency:** 2 HIGH findings across 2 consecutive rounds, both from the same root cause (different execution lifecycle). HIGH-4 was fixed but HIGH-5 persisted because the same lifecycle mismatch manifested through a different mechanism (SIGPIPE instead of atexit). This is the strongest pattern in the redo reviews -- the fix for one symptom did not address the underlying cause, and a second symptom appeared the next round.
 
-**Frequency:** 1 occurrence, but a universal infrastructure pattern.
+### 8. Check whether target artifacts already exist before proposing creation
 
-### 4. Account for shared-resource conflicts in multi-agent designs
+**Rule:** Before a plan says "create file X" or "add section Y," verify that X does not already exist and that Y is not already present. If the artifact exists, say "verify" or "update if needed," not "create" or "add."
 
-**Rule:** When multiple agents share a resource, explicitly state whether they run in parallel or sequentially and document the isolation mechanism.
+**Failures:**
+- Plan review Pass 1, HIGH-1: Plan said "Add Phase 8 section to LIFECYCLE.md" but LIFECYCLE.md already had Phase 8 defined at lines 115-128.
+- Plan review Pass 1, HIGH-2: Plan put `prompts/qa-prompt.md` inside the qa-harness package at a non-standard path, but the prompt already existed at `~/claude-hub/features/qa-prompt.md` (the location the lifecycle's search mechanism expects). The implementation agent would have created a duplicate in the wrong location.
 
-**Failures:** Spec Round 1: parallel agents sharing one Playwright browser session would race. Spec Round 2: parallel agents sharing one database would destroy each other's data during cleanup. Both required switching to sequential execution.
-
-**Frequency:** 2 occurrences across 2 rounds. Clear pattern.
-
-### 5. Do not embed pipeline-specific names in generic infrastructure
-
-**Rule:** Use pipeline-agnostic names when building cross-pipeline infrastructure. Rename pipeline-specific terminology before putting it in the generic layer.
-
-**Failure:** Spec Round 1: `test_frr` (a Rails/Foreman concept) was used as the generic name for "run a test script," with an incorrect definition.
-
-**Frequency:** 1 occurrence, but the pattern (leaking pipeline-specific concepts into shared infra) generalizes.
+**Frequency:** 2 HIGH findings in the same pass, both "create something that already exists." The plan author did not check the filesystem before proposing creation.
 
 ## Findings NOT added (one-offs or already covered)
 
-- **Missing seed endpoints from catalog** -- specific to this feature's data requirements, not a generalizable pattern.
-- **Unspecified team size default** -- borderline; decided this is covered by the shared-resource conflicts rule (team size only mattered because of its interaction with parallelism and resource sharing). A standalone "specify all operational defaults" rule would be too vague.
-- **`stop_from_state_file` sends SIGTERM without waiting** -- MED severity, process lifecycle detail. Not elevated to a rule.
-- **`validate_plan` does not check params** -- MED severity, acceptable for v1 per plan risk notes.
-- **No MED threshold in convergence protocol** -- LOW, by design.
+- **HIGH-2 (state file missing config_path):** Implementation omitted a field the plan specified. This is a one-off omission, not a generalizable pattern -- there is no rule that would prevent "forgot to include a field" beyond "read the plan."
+
+- **Spec round 1 missing seed endpoints:** Specific to this feature's data catalog. Not a generalizable pattern.
+
+- **Spec round 1 endpoint ordering dependencies undocumented:** Specific to seed data design. Could generalize to "document ordering dependencies for operations that have implicit prerequisites" but this is too vague to be actionable.
+
+- **Spec round 1 unspecified team size default:** Covered by rule 4 (shared-resource conflicts). Team size only mattered because of its interaction with parallelism and resource sharing.
+
+- **All MED findings across all rounds:** Non-blocking, and none repeated across multiple rounds in a pattern that would justify a new rule.
+
+## Pattern analysis
+
+The 8 rules cluster into three themes:
+
+**Document consistency (rules 1, 8):** Keep specs, plans, and documents internally consistent. Don't leave stale references; don't propose creating things that already exist.
+
+**Defensive implementation (rules 2, 3, 6):** Don't discard information, don't skip precondition checks, don't rationalize away hard rules. The implementation should be robust even when other layers also provide the same protection.
+
+**Architecture awareness (rules 4, 5, 7):** Understand the execution model. Don't copy patterns across different lifecycles. Don't embed pipeline-specific concepts in generic layers. Don't share resources without explicit isolation.

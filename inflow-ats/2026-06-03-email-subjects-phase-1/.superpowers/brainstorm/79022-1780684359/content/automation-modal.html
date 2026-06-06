@@ -1,0 +1,110 @@
+<h2>Hiring Stage Automation Modal — Two States</h2>
+<p class="subtitle">The modal has two modes: selecting an existing template (with preview), and creating a new template inline.</p>
+
+<div class="split">
+
+  <!-- State 1: Template selected with preview -->
+  <div class="mockup">
+    <div class="mockup-header">Existing template selected — preview with subject</div>
+    <div class="mockup-body" style="padding: 0;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 24px;">
+        <!-- Modal header -->
+        <div style="font-size: 18px; font-weight: 600; color: #111; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb;">Edit automation</div>
+        <p style="font-size: 13px; color: #6b7280; margin-bottom: 20px;">When a candidate is moved to the selected hiring stage, a message will be sent to them using the selected template.</p>
+
+        <!-- Hiring stage select -->
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 13px; font-weight: 500; color: #374151; display: block; margin-bottom: 6px;">Hiring stage</label>
+          <div style="border: 1px solid #d1d5db; border-radius: 5px; padding: 8px 12px; font-size: 14px; color: #374151; background: #f9fafb;">Screen</div>
+        </div>
+
+        <!-- Frequency select -->
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 13px; font-weight: 500; color: #374151; display: block; margin-bottom: 6px;">Frequency</label>
+          <div style="border: 1px solid #d1d5db; border-radius: 5px; padding: 8px 12px; font-size: 14px; color: #374151;">Once per candidate</div>
+        </div>
+
+        <!-- Template select + add button -->
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 13px; font-weight: 500; color: #374151; display: block; margin-bottom: 4px;">Message template</label>
+          <p style="font-size: 12px; color: #9ca3af; margin-bottom: 6px;">Select an existing message template or create a new one.</p>
+          <div style="display: flex; align-items: flex-end; gap: 8px;">
+            <div style="flex: 1; border: 1px solid #d1d5db; border-radius: 5px; padding: 8px 12px; font-size: 14px; color: #374151;">Thank you for applying</div>
+            <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; color: #6b7280; flex-shrink: 0;">
+              <svg style="width: 1.25em; height: 1.25em; stroke: currentColor; fill: none; stroke-width: 1.75px;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview with subject (THE FIX) -->
+        <div style="border: 1px solid #e5e7eb; border-radius: 6px; background: #f9fafb; padding: 16px; max-height: 200px; overflow-y: auto;">
+          <div style="font-weight: 600; font-size: 13px; color: #1f2937; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #e5e7eb;">Subject: {{JobTitle}} at {{OrganizationName}}</div>
+          <div style="font-size: 14px; color: #374151; line-height: 1.6;">
+            <p style="margin: 0 0 8px;">Hello {{CandidateFirstName}},</p>
+            <p style="margin: 0 0 8px;">Thank you for your application. We appreciate your interest in joining the <strong>{{OrganizationName}}</strong> team. We will review your application for {{JobTitle}} shortly, and get back to you as soon as possible.</p>
+            <p style="margin: 0;">Best regards,<br>{{SenderFullName}}</p>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+          <div style="padding: 8px 16px; border-radius: 6px; font-size: 13px; color: #374151; cursor: pointer;">Cancel</div>
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px;">Save automation</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- State 2: Creating new template inline -->
+  <div class="mockup">
+    <div class="mockup-header">Inline create — new template with subject field</div>
+    <div class="mockup-body" style="padding: 0;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 24px;">
+        <!-- Modal header -->
+        <div style="font-size: 18px; font-weight: 600; color: #111; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb;">Create new template</div>
+        <p style="font-size: 13px; color: #6b7280; margin-bottom: 20px;">Create a new message template. Once saved, it will be selected for this automation.</p>
+
+        <!-- Template name -->
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 13px; font-weight: 500; color: #374151; display: block; margin-bottom: 6px;">Template name</label>
+          <input type="text" placeholder="" style="width: 100%; border: 1px solid #d1d5db; border-radius: 5px; padding: 8px 12px; font-size: 14px; font-family: inherit; outline: none; box-sizing: border-box;" />
+        </div>
+
+        <!-- Subject -->
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 13px; font-weight: 500; color: #374151; display: block; margin-bottom: 6px;">Subject</label>
+          <input type="text" value="{{JobTitle}} at {{OrganizationName}}" style="width: 100%; border: 1px solid #d1d5db; border-radius: 5px; padding: 8px 12px; font-size: 14px; color: #374151; font-family: inherit; outline: none; box-sizing: border-box;" />
+        </div>
+
+        <!-- Template body -->
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 13px; font-weight: 500; color: #374151; display: block; margin-bottom: 6px;">Template body</label>
+          <div style="border: 1px solid #d1d5db; border-radius: 5px; padding: 12px; min-height: 120px; font-size: 14px; color: #9ca3af;">Type your template message here...</div>
+        </div>
+
+        <!-- Merge tag buttons -->
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px;">
+          <span style="font-size: 11px; background: #f3f4f6; border: 1px solid #e5e7eb; padding: 4px 8px; border-radius: 4px; color: #6b7280; cursor: pointer;">Candidate first name</span>
+          <span style="font-size: 11px; background: #f3f4f6; border: 1px solid #e5e7eb; padding: 4px 8px; border-radius: 4px; color: #6b7280; cursor: pointer;">Job title</span>
+          <span style="font-size: 11px; background: #f3f4f6; border: 1px solid #e5e7eb; padding: 4px 8px; border-radius: 4px; color: #6b7280; cursor: pointer;">Organization name</span>
+        </div>
+
+        <!-- Buttons -->
+        <div style="display: flex; justify-content: flex-end; gap: 12px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+          <div style="padding: 8px 16px; border-radius: 6px; font-size: 13px; color: #374151; cursor: pointer;">Discard</div>
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px;">Save template</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <h3>What changed from before</h3>
+  <ul>
+    <li><strong>Left (existing template):</strong> Preview now shows "Subject: {{JobTitle}} at {{OrganizationName}}" above the body — this was the C-002 MED fix already applied in code</li>
+    <li><strong>Right (inline create):</strong> Subject field between name and body with the default pre-populated — already implemented</li>
+  </ul>
+  <p style="margin-top: 12px; color: #999;">Both states use standard FormInput fields since this is a modal form context, not the compact inline-edit pattern from the composer.</p>
+</div>

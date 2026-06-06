@@ -1,0 +1,9 @@
+# angle-2: controller-restructuring-and-route-alignment — Round 5
+
+## Findings
+
+- F1 [MED] `app/controllers/api/v1/organization_ai_credit_purchases_controller.rb:112` / `cancel` authorizes via `BillingPolicy#cancel_subscription?` but spec says `BillingPolicy#checkout?` for `cancel` / The spec authorization table says `checkout`, `purchase_top_up`, `cancel` all use `BillingPolicy`. The `cancel` action uses `authorize :billing, :cancel_subscription?` which is a real method in `BillingPolicy` (line 36). This is likely the intended authorization (canceling a subscription requires cancel permission, not checkout permission), so the spec table may be slightly ambiguous. The implementation is defensible but deviates from how the spec reads. No blocking issue.
+
+- F2 [MED] `db/migrate/20260605035312_rename_auto_generate_ai_summaries_setting_to_auto_generate_ai_summaries.rb` / New migration created despite spec saying "No new database migrations are created" / The spec explicitly states: "No new database migrations are created. All migrations are dev-only features -- they are edited in place and re-run." The plan (Phase B) specifies editing the existing migration `20260408040701` in place and renaming it. Instead, the implementation BOTH edited the existing migration AND created a brand new migration `20260605035312`. This new migration has defensive `column_exists?` guards, suggesting it was added by a fix agent to handle the case where the in-place edit hadn't been rolled back. The new migration should be deleted; it contradicts the spec's "no new migrations" constraint.
+
+No other issues found. The controllers follow the spec patterns correctly. Policies are properly renamed. Routes match the spec structure. The balance controller correctly uses `render_one`. The purchases controller correctly delegates `checkout`/`purchase_top_up` authorization to `BillingPolicy`.

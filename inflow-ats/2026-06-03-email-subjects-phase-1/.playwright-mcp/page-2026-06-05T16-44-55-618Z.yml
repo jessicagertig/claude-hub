@@ -1,0 +1,127 @@
+- generic [ref=e8]:
+  - generic [ref=e9]:
+    - generic [ref=e11]:
+      - img [ref=e12]
+      - heading "Polymer" [level=1] [ref=e15]
+    - list [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: RM
+          - generic [ref=e21]: Rezu May
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e27] [cursor=pointer]:
+          - generic [ref=e29]: A
+          - img [ref=e31]
+        - generic [ref=e36]: Acme Inc.
+      - generic [ref=e38]:
+        - img [ref=e41] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - generic [ref=e46]:
+      - img [ref=e47]
+      - textbox "Search candidates" [ref=e50]
+    - generic [ref=e52]:
+      - link [ref=e54] [cursor=pointer]:
+        - /url: /notifications
+        - img [ref=e55]
+      - link [active] [ref=e59] [cursor=pointer]:
+        - /url: /hire/settings/organization
+        - img [ref=e60]
+  - generic [ref=e63]:
+    - generic [ref=e228]:
+      - img [ref=e231] [cursor=pointer]
+      - heading "App settings" [level=2] [ref=e234]
+    - generic [ref=e235]:
+      - generic [ref=e236]:
+        - link "User preferences" [ref=e238] [cursor=pointer]:
+          - /url: /hire/settings/preferences
+          - generic [ref=e240]: User preferences
+          - img [ref=e241]
+        - separator
+        - generic [ref=e243]: Admin
+        - generic [ref=e244]:
+          - link "Organization" [ref=e245] [cursor=pointer]:
+            - /url: /hire/settings/organization
+            - generic [ref=e247]: Organization
+            - img [ref=e248]
+          - link "Team" [ref=e250] [cursor=pointer]:
+            - /url: /hire/settings/team
+            - generic [ref=e252]: Team
+            - img [ref=e253]
+          - link "Message templates" [ref=e255] [cursor=pointer]:
+            - /url: /hire/settings/message_templates
+            - generic [ref=e257]: Message templates
+            - img [ref=e258]
+          - link "Review templates" [ref=e260] [cursor=pointer]:
+            - /url: /hire/settings/review_templates
+            - generic [ref=e262]: Review templates
+            - img [ref=e263]
+          - link "Job board" [ref=e265] [cursor=pointer]:
+            - /url: /hire/settings/jobboard
+            - generic [ref=e267]: Job board
+            - img [ref=e268]
+          - link "Job categories" [ref=e270] [cursor=pointer]:
+            - /url: /hire/settings/categories
+            - generic [ref=e272]: Job categories
+            - img [ref=e273]
+          - link "Integrations" [ref=e275] [cursor=pointer]:
+            - /url: /hire/settings/integrations
+            - generic [ref=e277]: Integrations
+            - img [ref=e278]
+          - link "Plan & billing" [ref=e280] [cursor=pointer]:
+            - /url: /hire/settings/billing
+            - generic [ref=e282]: Plan & billing
+            - img [ref=e283]
+      - generic [ref=e287]:
+        - generic [ref=e288]:
+          - heading "Organization management" [level=2] [ref=e291]
+          - paragraph [ref=e292]: Here's where you can edit and update your organization's information and display settings.
+          - generic [ref=e293]:
+            - generic [ref=e294]:
+              - heading "Basic information" [level=4] [ref=e297]
+              - generic [ref=e298]:
+                - generic [ref=e300]: Organization name
+                - textbox "Organization name" [ref=e302]: Acme Inc.
+              - generic [ref=e303]:
+                - generic [ref=e305]: Organization website URL
+                - paragraph [ref=e306]: If you supply a website URL, it will appear on your job board as a link.
+                - generic [ref=e307]:
+                  - generic [ref=e308]: https://
+                  - textbox "Organization website URL" [ref=e309]:
+                    - /placeholder: ...
+              - generic [ref=e310]:
+                - generic [ref=e312]: How remote is your organization?
+                - generic [ref=e314]:
+                  - generic [ref=e315]:
+                    - generic [ref=e316]: No remote
+                    - textbox [ref=e319]
+                  - img [ref=e322]
+            - generic [ref=e324]:
+              - heading "Display settings" [level=4] [ref=e327]
+              - generic [ref=e328]:
+                - generic [ref=e330]: Organization info display visibility
+                - paragraph [ref=e331]: Choose who can see the job board subscriber count and published job count on navigation bar.
+                - generic [ref=e333]:
+                  - generic [ref=e334]:
+                    - generic [ref=e335]: All team members
+                    - textbox [ref=e338]
+                  - img [ref=e341]
+        - button "Save changes" [ref=e344] [cursor=pointer]:
+          - generic [ref=e345]: Save changes

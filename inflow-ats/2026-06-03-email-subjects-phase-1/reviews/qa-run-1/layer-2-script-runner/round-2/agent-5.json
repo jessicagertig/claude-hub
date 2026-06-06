@@ -1,0 +1,118 @@
+{
+  "agent": 5,
+  "round": 2,
+  "focus": "Does the subject actually reach Emails::SendTemplateEmail correctly? Does add_subject raise on any edge case?",
+  "scripts": [
+    "/tmp/qa-l2r2-agent5-01-add-subject-edge-cases.rb",
+    "/tmp/qa-l2r2-agent5-02-mailer-subject-flow.rb",
+    "/tmp/qa-l2r2-agent5-03-html-entities-flow.rb",
+    "/tmp/qa-l2r2-agent5-04-newline-subject-header.rb",
+    "/tmp/qa-l2r2-agent5-05-sanitize-subject-transform.rb",
+    "/tmp/qa-l2r2-agent5-06-end-to-end-subject-mangling.rb"
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "MED",
+      "title": "sanitize() HTML-encodes ampersands in plain-text subjects",
+      "description": "The channel_messages_controller and bulk_channel_messages_controller both apply sanitize() to the subject field (added in Phase 1a commit e7f272279). sanitize() uses Sanitize.fragment() which is an HTML parser designed for body content. When applied to plain-text subjects, a raw '&' (e.g., user types 'R&D Department') becomes '&amp;D Department'. This literal '&amp;' is stored in the database and passed through the mailer to Mailgun as the email Subject header. The recipient sees '&amp;' in their email subject instead of '&'.",
+      "reproduction": "rails runner: SanitizerTester.new.sanitize('R&D Department') returns 'R&amp;D Department'",
+      "affected_files": [
+        "app/controllers/api/v1/channel_messages_controller.rb:37",
+        "app/controllers/api/v1/bulk_channel_messages_controller.rb:83"
+      ],
+      "root_cause": "sanitize() was copied from the body field pattern, but body is HTML content (from ProseMirror) while subject is plain text (from a regular <input> element). The HTML sanitizer is inappropriate for plain-text input.",
+      "suggested_fix": "Replace sanitize() for subject with a plain-text sanitizer that strips control characters and trims whitespace but does NOT HTML-encode special characters. For example: next_params[:subject] = next_params[:subject].to_s.gsub(/[\\r\\n\\t]/, ' ').strip"
+    },
+    {
+      "id": "F2",
+      "severity": "MED",
+      "title": "sanitize() strips angle-bracket content from subjects, silently truncating user input",
+      "description": "When a user types a subject containing angle brackets like 'RE: <Please Read> Your Application', the sanitize() method interprets '<Please Read>' as an HTML tag and strips it. The stored subject becomes 'RE:  Your Application' (with a double space where the stripped content was). The user is never notified that part of their subject was removed.",
+      "reproduction": "rails runner: SanitizerTester.new.sanitize('RE: <Please Read> Your Application') returns 'RE:  Your Application'",
+      "affected_files": [
+        "app/controllers/api/v1/channel_messages_controller.rb:37",
+        "app/controllers/api/v1/bulk_channel_messages_controller.rb:83"
+      ],
+      "root_cause": "Same as F1 -- sanitize() treats the plain-text subject as HTML and strips unrecognized tags.",
+      "suggested_fix": "Same fix as F1 -- use a plain-text sanitizer for subject."
+    },
+    {
+      "id": "F3",
+      "severity": "LOW",
+      "title": "sanitize() preserves allowed HTML tags (e.g., <b>) in subject lines",
+      "description": "If a subject contains allowed HTML tags like '<b>URGENT</b>', sanitize() keeps them because <b> is in Sanitize::Config::RELAXED's allowed list. These literal HTML tags end up in the email Subject header where they display as raw '<b>URGENT</b>' text to the recipient. This is unlikely in practice since the subject input is a plain <input> element (not a rich text editor), but could occur through the API or through template mail-merge.",
+      "reproduction": "rails runner: SanitizerTester.new.sanitize('<b>URGENT</b> - Application Update') returns '<b>URGENT</b> - Application Update' unchanged",
+      "affected_files": [
+        "app/controllers/api/v1/channel_messages_controller.rb:37",
+        "app/controllers/api/v1/bulk_channel_messages_controller.rb:83"
+      ],
+      "root_cause": "Same as F1.",
+      "suggested_fix": "Same fix as F1."
+    },
+    {
+      "id": "F4",
+      "severity": "LOW",
+      "title": "No newline/CRLF stripping in subject at any layer",
+      "description": "Neither the controller sanitize(), the model validation (CustomChannelMessageValidator), nor SendTemplateEmail#add_subject strips or rejects newlines (LF, CR, CRLF) in subject values. A subject containing '\\r\\n' passes validation, is saved to the database, and is passed raw to Mailgun's MessageBuilder. While the Mailgun API itself likely strips or rejects CRLF in the Subject header (preventing header injection attacks), the app does no defense-in-depth. A ChannelMessage with subject 'Legit\\r\\nBcc: evil@attacker.com' passes model validation without errors.",
+      "reproduction": "rails runner: cm = channel.channel_messages.build(body: '<p>Test</p>', subject: \"Legit\\r\\nBcc: evil@attacker.com\", sent_by: :sent_by_organization, ...) => cm.valid? returns true",
+      "affected_files": [
+        "app/validators/custom_channel_message_validator.rb",
+        "app/services/emails/send_template_email.rb:72-75"
+      ],
+      "root_cause": "CustomChannelMessageValidator only checks for {{placeholder}} patterns. add_subject only checks blank?. No layer validates or strips control characters.",
+      "suggested_fix": "Add newline/CR stripping in the controller before saving (as part of the plain-text sanitizer suggested in F1), or add a model-level validation rejecting subjects containing \\r or \\n."
+    },
+    {
+      "id": "F5",
+      "severity": "LOW",
+      "title": "add_subject raises RuntimeError instead of a typed error on blank subjects",
+      "description": "SendTemplateEmail#add_subject raises a bare RuntimeError ('No subject provided') when subject is blank. This is consistent with the other add_* methods in the same class (add_from, add_template, etc.) so it is by-design, but a nil/blank subject reaching this point indicates a bug in the caller. The mailer has a fallback (subject.presence || default), so this should never fire in the notify_candidate path, but a future caller could hit it.",
+      "reproduction": "rails runner: Emails::SendTemplateEmail.new({subject: nil}).__send__(:add_subject, nil) raises RuntimeError 'No subject provided'",
+      "affected_files": [
+        "app/services/emails/send_template_email.rb:72-75"
+      ],
+      "root_cause": "Design choice consistent with the rest of the class. Not a bug, just a robustness observation.",
+      "suggested_fix": "No change needed -- this is defense-in-depth and the mailer correctly applies the fallback before reaching this point."
+    }
+  ],
+  "non_findings": [
+    {
+      "area": "Subject fallback in notify_candidate",
+      "result": "PASS -- when subject is nil or empty, the mailer correctly falls back to '#{job.title} at #{org.name}'. Verified with both nil and empty string subjects."
+    },
+    {
+      "area": "Subject with emoji",
+      "result": "PASS -- emoji characters pass through all layers (sanitize, model, mailer, MessageBuilder) without modification."
+    },
+    {
+      "area": "Subject with unicode (em-dash, apostrophe, etc.)",
+      "result": "PASS -- standard unicode characters pass through all layers correctly."
+    },
+    {
+      "area": "Subject with quotes",
+      "result": "PASS -- both single and double quotes pass through sanitize() and all subsequent layers without modification."
+    },
+    {
+      "area": "Subject with special chars (#, %, +, /)",
+      "result": "PASS -- these characters all pass through correctly."
+    },
+    {
+      "area": "Very long subjects",
+      "result": "PASS -- 1000-character subjects and 200-emoji subjects pass through without truncation or error at the app level."
+    },
+    {
+      "area": "CustomChannelMessageValidator on subject",
+      "result": "PASS -- correctly rejects subjects containing {{placeholder}} patterns."
+    },
+    {
+      "area": "Automation path parse_text for subject",
+      "result": "PASS -- CreateStageAutomationMessage correctly applies parse_text() to subject, performing variable substitution ({{CandidateFirstName}}, etc.) and .scrub for malformed UTF-8."
+    },
+    {
+      "area": "notify_team subject",
+      "result": "PASS -- notify_team (inbound message to hiring team) generates its own subject ('#{job.title} - New message from #{candidate.full_name}') and does not use channel_message.subject. This is correct behavior since inbound messages should not control the notification subject to the team."
+    }
+  ],
+  "summary": "Found 2 MED and 3 LOW findings. The core issue is F1+F2: the Phase 1a implementation applied the HTML body sanitizer (Sanitize.fragment via the Sanitizer concern) to the plain-text subject field. This causes ampersands to be HTML-encoded ('&' -> '&amp;') and angle-bracket content to be silently stripped. Both are realistic user inputs (e.g., 'R&D Department', 'RE: <ref> ...'). The fix is to replace sanitize() with a plain-text-appropriate sanitizer for the subject field. F3-F5 are lower-severity observations about HTML tag preservation and missing control-character validation."
+}

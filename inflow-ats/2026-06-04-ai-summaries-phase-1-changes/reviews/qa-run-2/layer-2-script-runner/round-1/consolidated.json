@@ -1,0 +1,27 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 2,
+  "findings": [],
+  "scripts_run": [
+    {
+      "name": "qa-run-2-backend-verify.rb",
+      "result": "PASS",
+      "checks": [
+        "balance serializer has current_period_end_at",
+        "4 credit pack keys",
+        "auto_generate_ai_summaries enum exists",
+        "default value is default",
+        "should_auto_generate_ai_summaries? exists",
+        "CreateAiCreditBalanceTransaction exists",
+        "BulkJobApplicationAiSummaryResultMailer exists",
+        "period_overdue? removed",
+        "reset_ai_credits_if_overdue removed",
+        "process_ai_credit_resets exists"
+      ]
+    }
+  ],
+  "high_findings": 0,
+  "blocker_findings": 0,
+  "notes": "The blocking fix was frontend-only (import rename). All backend business logic remains unchanged from qa-run-1. Clean round."
+}

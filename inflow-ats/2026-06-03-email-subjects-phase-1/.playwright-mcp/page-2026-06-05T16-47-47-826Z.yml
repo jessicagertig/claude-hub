@@ -1,0 +1,112 @@
+- generic [ref=e8]:
+  - generic [ref=e9]:
+    - generic [ref=e11]:
+      - img [ref=e12]
+      - heading "Polymer" [level=1] [ref=e15]
+    - list [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: RM
+          - generic [ref=e21]: Rezu May
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e27] [cursor=pointer]:
+          - generic [ref=e29]: A
+          - img [ref=e31]
+        - generic [ref=e36]: Acme Inc.
+      - generic [ref=e38]:
+        - img [ref=e41] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - generic [ref=e46]:
+      - img [ref=e47]
+      - textbox "Search candidates" [ref=e50]
+    - generic [ref=e52]:
+      - link [ref=e54] [cursor=pointer]:
+        - /url: /notifications
+        - img [ref=e55]
+      - link [ref=e59] [cursor=pointer]:
+        - /url: /hire/settings/organization
+        - img [ref=e60]
+  - generic [ref=e63]:
+    - generic [ref=e64]:
+      - generic [ref=e65]:
+        - heading "Your assigned jobs View all active jobs View archived jobs" [level=2] [ref=e66]:
+          - generic [ref=e67]:
+            - generic [ref=e68] [cursor=pointer]:
+              - text: Your assigned jobs
+              - img [ref=e69]
+            - generic:
+              - generic:
+                - link "View all active jobs":
+                  - /url: /jobs/all
+                - link "View archived jobs":
+                  - /url: /jobs/archived
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - generic [ref=e73]: "0"
+            - text: Job Board Subscribers
+          - generic [ref=e74]:
+            - generic [ref=e75]: "1"
+            - text: Published Job
+      - button "Create new job" [ref=e78] [cursor=pointer]:
+        - generic [ref=e79]: Create new job
+    - generic [ref=e81]:
+      - generic [ref=e83]:
+        - text: You have 1 job assignment
+        - link "View job board" [ref=e84] [cursor=pointer]:
+          - /url: http://jobs.lvh.me:5007/acme-inc
+          - text: View job board
+          - img [ref=e85]
+      - generic [ref=e89] [cursor=pointer]:
+        - generic [ref=e90]:
+          - heading "Software Engineer" [level=2] [ref=e92]
+          - generic [ref=e93]:
+            - generic [ref=e94]: Sales & Marketing
+            - generic [ref=e95]: Full-time
+            - generic [ref=e96]: Location not specified
+        - generic [ref=e97]:
+          - generic [ref=e98]:
+            - link [ref=e100]:
+              - /url: /jobs/16205/setup/details
+              - img [ref=e101]
+            - generic [ref=e104]:
+              - img [ref=e107]
+              - generic:
+                - generic:
+                  - link "View job post":
+                    - /url: http://jobs.lvh.me:5007/acme-inc/16205
+                    - text: View job post
+                    - img
+                  - button "Hide job post":
+                    - generic: Hide job post
+                  - button "Clone job":
+                    - generic: Clone job
+                  - button "Archive job"
+          - list [ref=e112]:
+            - listitem [ref=e113]:
+              - generic [ref=e114]:
+                - img [ref=e115]
+                - generic [ref=e118]: Inbox
+              - generic [ref=e119]: "3"
+            - listitem [ref=e120]:
+              - generic [ref=e121]:
+                - img [ref=e122]
+                - generic [ref=e125]: Total candidates
+              - generic [ref=e126]: "3"

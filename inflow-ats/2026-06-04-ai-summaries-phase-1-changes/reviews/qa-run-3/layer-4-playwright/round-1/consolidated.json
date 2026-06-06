@@ -1,0 +1,16 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "run": 3,
+  "findings": [],
+  "areas_verified": [
+    "Plato AI container navigation: Settings/Billing/Usage tabs render correctly",
+    "Default redirect: /hire/settings/plato-ai redirects to /hire/settings/plato-ai/settings",
+    "AI Settings page: auto-generate toggle, hiring team credit control, notifications section",
+    "AI Billing page: credit balance display (Monthly: 25, Purchased: 0, Total: 25), subscribe/top-up buttons",
+    "AI Usage page: credit balance, usage bar (25 of 50), reset date (Jul 05, 2026 -- no RangeError)",
+    "Job Setup AI Settings: auto-generation dropdown with 'Use organization default' value",
+    "API endpoints: /ai_credits (401), /ai_credit_purchases (401), /ai_credit_purchases/prices (401) -- routes working",
+    "Console: 0 new errors (9 pre-existing: history imports, Redux, Heap 404)"
+  ]
+}

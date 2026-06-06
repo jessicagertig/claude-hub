@@ -1,0 +1,24 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agents_dispatched": 5,
+  "findings": [],
+  "files_reviewed": [
+    "app/services/submit_resume_to_textract.rb",
+    "app/jobs/get_resume_text_from_textract_job.rb",
+    "app/models/ai_job_application_summary.rb",
+    "spec/services/submit_resume_to_textract_spec.rb",
+    "spec/jobs/get_resume_text_from_textract_job_spec.rb",
+    "spec/models/ai_job_application_summary_spec.rb"
+  ],
+  "observations": [
+    "cleanup_orphaned_summary has no exception handling, consistent with existing exhaustion block pattern in bulk_generate_ai_summaries_job.rb",
+    "find_by returns first matching record if multiple exist; spec acknowledges race condition is low risk",
+    "update_columns correctly skips callbacks, matching existing pattern in same file",
+    "Test stubs for has_resume, has_resume_docx_to_pdf, resume, and find_by_id are all appropriate"
+  ],
+  "convergence": {
+    "findings_count": 0,
+    "clean_round": true
+  }
+}

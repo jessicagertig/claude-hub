@@ -1,0 +1,22 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 1,
+  "focus_area": "Change 1 (SubmitResumeToTextract) + Change 1 test",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "Change 1: find textract_processing summary with nil textract_result_id in submit_resume",
+      "Change 1: call update_columns(textract_result_id: @textract_result.id)",
+      "Change 1: location inside if @textract_result.save block",
+      "Change 1 test: create spec file",
+      "Change 1 test: setup with textract_processing summary",
+      "Change 1 test: stub TextractResumeParser::Client",
+      "Change 1 test: call submit_resume",
+      "Change 1 test: assert textract_result_id updated",
+      "Change 1 test: assert GetResumeTextFromTextractJob enqueued"
+    ],
+    "all_implemented": true,
+    "notes": "All Change 1 requirements fully implemented. Query conditions match spec exactly. Location matches spec exactly."
+  }
+}

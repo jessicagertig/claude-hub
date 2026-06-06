@@ -1,0 +1,63 @@
+{
+  "agent": 2,
+  "round": 2,
+  "focus": "Concurrent bulk sends with different subjects; varchar limits; duplicate detection",
+  "scripts": [
+    "/tmp/qa-l2r2-agent2-concurrent-bulk.rb",
+    "/tmp/qa-l2r2-agent2-duplicate-detection.rb",
+    "/tmp/qa-l2r2-agent2-long-subject.rb",
+    "/tmp/qa-l2r2-agent2-placeholder-edge.rb"
+  ],
+  "findings": [
+    {
+      "severity": "LOW",
+      "id": "DUP-1",
+      "title": "duplicate_message_exists? ignores subject field",
+      "detail": "duplicate_message_exists? checks only (channel_id, body), ignoring subject. If a user sends the same body text with subject 'First Subject Line' and then tries to resend with corrected subject 'CORRECTED Subject Line', the second message is silently dropped by the BulkChannelMessageSendJob duplicate guard. The subject field is new (Phase 1a), but the duplicate check was not updated to consider it. This is LOW because: (1) the scenario of same body + different subject is uncommon in normal usage, (2) the duplicate check is a safety net against double-clicks, not a primary feature, and (3) the user could change the body slightly to work around it. However, it means the subject cannot be corrected via a resend.",
+      "location": "app/models/channel_message.rb:49-51 (duplicate_message_exists?), app/jobs/channel_messages/bulk_channel_message_send_job.rb:18-19",
+      "verified": true,
+      "test_method": "Sent two bulk messages to same candidate with identical body but different subjects. Second was silently dropped."
+    },
+    {
+      "severity": "LOW",
+      "id": "LONG-2",
+      "title": "No length validation on subject field",
+      "detail": "A 500-character subject was stored without error or truncation. PostgreSQL's varchar (string in Rails) without an explicit limit accepts any length. No model-level length validation exists. While email subjects > 78 chars violate RFC 2822 and most email clients truncate around 60-70 chars, the backend happily stores arbitrarily long subjects. This is LOW because: (1) the frontend likely enforces a maxlength on the input, (2) email clients truncate naturally, and (3) there is no data corruption or error -- just a poor UX if the subject is too long.",
+      "location": "app/models/channel_message.rb:25 (validates :subject, custom_channel_message: true -- only checks for unresolved placeholders, no length check)",
+      "verified": true,
+      "test_method": "Stored subjects of 255, 500, and 275 chars (via mail merge expansion) without error."
+    },
+    {
+      "severity": "LOW",
+      "id": "PLACEHOLDER-4",
+      "title": "HTML/script tags stored verbatim in subject",
+      "detail": "Subject containing '<script>alert(\"xss\")</script>' was stored without sanitization. This is LOW because: (1) the subject is used in the email subject: header where HTML is not rendered by email clients, (2) the mailer passes it directly to the template engine as a subject parameter, not embedded in HTML body, (3) React's default JSX rendering escapes string values in the frontend, preventing DOM XSS. Defense-in-depth would suggest sanitizing, but the actual attack surface is minimal.",
+      "location": "app/jobs/channel_messages/bulk_channel_message_send_job.rb:14 (parse_text does not sanitize HTML)",
+      "verified": true,
+      "test_method": "Stored subject '<script>alert(\"xss\")</script> Job Opening' verbatim."
+    }
+  ],
+  "passed_tests": [
+    {
+      "test": "concurrent_bulk_sends_no_cross_contamination",
+      "detail": "Two BulkChannelMessageSendJob.perform_now calls with different subjects for overlapping candidate sets. All 4 messages (2 per batch) received the correct subject. The overlapping candidate (shared between both batches) correctly received both messages with their respective subjects. No cross-contamination detected.",
+      "method": "Batch A (2 candidates, subject A) and Batch B (2 candidates, 1 overlapping, subject B) run sequentially via perform_now. Verified each message's subject matches its batch."
+    },
+    {
+      "test": "unresolved_placeholder_in_subject_rejected",
+      "detail": "Subject containing '{{UnknownField}}' was correctly rejected by the custom_channel_message validator. The RecordInvalid exception was raised and caught by the job's rescue clause.",
+      "method": "Sent bulk message with subject '{{UnknownField}}' -- parse_text does not resolve it, validator catches the remaining {{...}} pattern, create! raises RecordInvalid."
+    },
+    {
+      "test": "resolved_placeholders_in_subject_work",
+      "detail": "Subject '{{CandidateFirstName}}, re: {{JobTitle}}' was correctly expanded to 'Hello Burl, re: Software Engineer' before storage.",
+      "method": "Verified parse_text resolves all known placeholders in subject identically to body."
+    },
+    {
+      "test": "nil_and_empty_subject_handled",
+      "detail": "Both nil and empty string subjects stored successfully (as ''). Mailer fallback 'JobTitle at OrgName' correctly triggers via .presence check.",
+      "method": "parse_text returns '' for blank input. Mailer line 116: @channel_message.subject.presence || fallback."
+    }
+  ],
+  "summary": "No HIGH findings. Three LOW findings: (1) duplicate detection ignores subject, (2) no length validation on subject, (3) HTML stored verbatim in subject. All are defense-in-depth improvements, not functional bugs. The core concurrent-bulk-send scenario is clean -- no subject cross-contamination."
+}

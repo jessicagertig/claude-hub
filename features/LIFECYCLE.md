@@ -94,9 +94,22 @@ If re-entering from Phase 6 (failure report exists), tell the sub-agent to read 
 
 **Prompt file:** `impl-review-prompt.md`
 
-Iterative adversarial review of the implementation. The sub-agent runs the impl angles from `reviews/REVIEW-ANGLES.md`. Up to 5 rounds total across all re-entries between Phase 5 and Phase 6. Goal: two consecutive clean passes.
+Adversarial review of the implementation. The orchestrator manages the Phase 5↔6 loop — each review round is a FRESH sub-agent session running ALL angles from `reviews/REVIEW-ANGLES.md`. Goal: two consecutive clean passes.
 
-If a round fails: the sub-agent writes `reviews/impl-round-N/FAILURE-REPORT.md`. Go back to Phase 5 — spawn a new impl sub-agent to fix the issues, then return here for the next round.
+**The orchestrator loop:**
+
+1. Spawn a fresh Phase 6 sub-agent. It runs all angles against the current state of the code and writes findings to `reviews/impl-round-N/`.
+2. If the round FAILS (any HIGH+) → the sub-agent writes `reviews/impl-round-N/FAILURE-REPORT.md`. Go to step 3.
+3. Spawn a Phase 5 sub-agent to fix the issues listed in the failure report.
+4. After the fix, spawn a NEW Phase 6 sub-agent (fresh session, all angles, full scrutiny of the entire codebase including the fix agent's changes). Go to step 1.
+
+**Exit condition:** The loop exits when a Phase 6 round produces 0 HIGH+ findings — a full adversarial review across all angles that finds nothing to fix. Write `reviews/IMPL-REVIEW-COMPLETE.md`.
+
+**Escalation (round cap hit):** If the loop reaches 50 rounds without a clean pass, write `reviews/IMPL-REVIEW-ESCALATION.md` listing: all unresolved HIGH+ findings, all fixes applied during the loop that have NOT been followed by a clean review round (unreviewed fixes), and the full round history. Stop and present to the user. The unreviewed fixes are the most critical part — those are code changes that shipped into the branch without passing adversarial review.
+
+Every Phase 6 round is a fresh agent. The fix agent's changes get the same adversarial scrutiny as the original implementation — all angles, not just "did the fix resolve the original finding." This is critical: fix agents can write substantial new code that introduces new issues.
+
+**Round cap:** 50 total rounds across all iterations of the loop.
 
 **Gate:** `reviews/IMPL-REVIEW-COMPLETE.md` exists and says APPROVED. If ESCALATE: stop and present to the user.
 
@@ -116,15 +129,20 @@ The sub-agent reads all failure reports and round verdicts, extracts lessons, an
 
 **Prompt file:** `qa-prompt.md`
 
-The sub-agent is the QA orchestrator. It starts the test server via `qa-harness start`, dispatches a seed planner, then runs up to 5 rounds of QA agents. Each round spawns `qa_team_size` (default 3) fresh QA agents sequentially. Goal: two consecutive clean passes (no HIGH+ findings changed).
+The sub-agent is the QA orchestrator. It runs the feature through four sequential verification layers, each a gate before the next:
 
-The orchestrator owns server lifecycle (start once, stop once). Individual QA agents do NOT start or stop the server. Agents execute sequentially because they share the same server and database.
+1. **Layer 1: Diff-to-spec review** (no server) — 5-30 agents verify every spec requirement has a corresponding implementation. Most intensive layer.
+2. **Layer 2: Script runner** (server, no browser) — 15+ agents write and run temporary scripts to exercise business logic.
+3. **Layer 3: Regression suites** (server, no browser) — single agent runs existing RSpec/Cypress tests.
+4. **Layer 4: Playwright MCP** (server + browser) — 15+ agents verify the feature works in the UI.
 
-If HIGH+ findings exist after a round, the orchestrator writes a failure report and loops back to Phase 5 (implementation), skipping Phase 6 on re-entry. After the fix, QA resumes at the next round number.
+Each layer converges via two consecutive clean rounds (HIGH+ only — MEDs are collected but don't block). If HIGH+ findings exist at any layer, the orchestrator sends a failure report to Phase 5 (impl), skips Phase 6 on re-entry, then **restarts from Layer 1 in a new run directory** (`qa-run-N/`). This ensures a fix at a later layer doesn't break compliance at an earlier one. A final consolidated MED report is produced at the end for the user to review.
+
+**Prerequisites:** The QA harness must be installed (`pip install -e ~/claude-hub/qa-harness`) and the Playwright MCP must be connected in the session. The qa-prompt.md checks both before starting.
 
 **Config:** The pipeline must have `~/claude-hub/<pipeline>/qa-config.yml` declaring server commands, seed endpoints, auth instructions, and verification layers.
 
-**Gate:** `reviews/QA-COMPLETE.md` exists and says APPROVED. If the 5-round cap is hit without convergence, `reviews/QA-ESCALATION.md` is written instead -- stop and present to the user.
+**Gate:** `reviews/QA-COMPLETE.md` exists and says APPROVED. If any layer hits the 50-round cap without convergence, `reviews/QA-ESCALATION.md` is written instead — stop and present to the user.
 
 ---
 

@@ -1,0 +1,114 @@
+{
+  "agent": "agent-3",
+  "scope": "Template Create/Edit Modal + Bulk Message Modal",
+  "timestamp": "2026-06-05T16:55:00Z",
+  "surfaces_tested": [
+    {
+      "surface": "Template Create/Edit Modal",
+      "route": "/hire/settings/message_templates",
+      "screenshots": [
+        {
+          "file": "screenshots/05-template-create-edit/01-template-list-page.png",
+          "description": "Message templates list page showing 3 default templates (Thank you for applying, Scheduling, Rejection) with Add a template button"
+        },
+        {
+          "file": "screenshots/05-template-create-edit/02-create-modal-with-subject-field.png",
+          "description": "Create new template modal showing Subject field pre-populated with '{{JobTitle}} at {{OrganizationName}}' default, empty Template name and Template body fields, merge token buttons at bottom"
+        },
+        {
+          "file": "screenshots/05-template-create-edit/03-template-saved-in-list.png",
+          "description": "Templates list now showing 4th template 'QA Test Template' created by Rezu May, confirming successful save"
+        },
+        {
+          "file": "screenshots/05-template-create-edit/04-edit-modal-showing-saved-subject.png",
+          "description": "Edit template modal showing persisted custom subject 'Follow-up: Interview Scheduling at {{OrganizationName}}' and body text, confirming round-trip persistence"
+        }
+      ],
+      "findings": [
+        {
+          "id": "TMPL-1",
+          "severity": "PASS",
+          "summary": "Subject field present in Create template modal with correct default",
+          "detail": "The 'Create new template' modal includes a 'Subject' field between 'Template name' and 'Template body'. The field is pre-populated with '{{JobTitle}} at {{OrganizationName}}' as specified in the feature design."
+        },
+        {
+          "id": "TMPL-2",
+          "severity": "PASS",
+          "summary": "Custom subject persists through create/save/edit cycle",
+          "detail": "Created a template with custom subject 'Follow-up: Interview Scheduling at {{OrganizationName}}'. After save, re-opening the template in edit mode showed the custom subject correctly persisted. The template body also persisted correctly."
+        },
+        {
+          "id": "TMPL-3",
+          "severity": "PASS",
+          "summary": "Edit template modal shows persisted subject",
+          "detail": "The 'Edit template' modal correctly displays the previously saved custom subject line. The modal title changes to 'Edit template' (vs 'Create new template') and the save button changes to 'Update template' (vs 'Create template')."
+        },
+        {
+          "id": "TMPL-4",
+          "severity": "PASS",
+          "summary": "Merge token buttons available for subject and body",
+          "detail": "Both create and edit modals show merge token buttons: Candidate first name, Candidate last name, Candidate full name, Job title, Sender first name, Sender full name, Organization name."
+        },
+        {
+          "id": "TMPL-5",
+          "severity": "INFO",
+          "summary": "Template list shows creator attribution",
+          "detail": "Default templates show 'Created by Polymer', user-created templates show 'Created by Rezu May'. This is existing behavior, not new to the subject feature."
+        }
+      ]
+    },
+    {
+      "surface": "Bulk Message Modal",
+      "route": "/jobs/:jobId/stages/:stageId/applicants (via Message candidates action)",
+      "screenshots": [
+        {
+          "file": "screenshots/04-bulk-message-modal/01-bulk-modal-with-subject.png",
+          "description": "Bulk 'Message candidates' modal showing Template dropdown (Select...), Subject field with '{{JobTitle}} at {{OrganizationName}}' default, empty Message body, merge token buttons, Send message/Cancel buttons. Header reads 'Send a message to 3 candidates'."
+        },
+        {
+          "file": "screenshots/04-bulk-message-modal/02-bulk-modal-template-selected.png",
+          "description": "Bulk message modal after selecting 'QA Test Template' - Subject field updated to 'Follow-up: Interview Scheduling at {{OrganizationName}}' and Message body populated with template content."
+        }
+      ],
+      "findings": [
+        {
+          "id": "BULK-1",
+          "severity": "PASS",
+          "summary": "Subject field present in bulk message modal with correct default",
+          "detail": "The bulk 'Message candidates' modal includes a 'Subject' field between 'Template' dropdown and 'Message body'. Default value is '{{JobTitle}} at {{OrganizationName}}'."
+        },
+        {
+          "id": "BULK-2",
+          "severity": "PASS",
+          "summary": "Template selection populates subject in bulk modal",
+          "detail": "Selecting 'QA Test Template' from the Template dropdown correctly populated the Subject field with the template's custom subject ('Follow-up: Interview Scheduling at {{OrganizationName}}') and the Message body with the template's body text."
+        },
+        {
+          "id": "BULK-3",
+          "severity": "PASS",
+          "summary": "Bulk modal correctly counts selected candidates",
+          "detail": "Modal header correctly displays 'Send a message to 3 candidates within this hiring stage' when all 3 inbox candidates are selected."
+        },
+        {
+          "id": "BULK-4",
+          "severity": "INFO",
+          "summary": "Template dropdown shows all templates including user-created ones",
+          "detail": "The Template dropdown in the bulk modal listed all 4 templates: Thank you for applying, Scheduling, Rejection, QA Test Template. The user-created template appeared correctly alongside the system defaults."
+        },
+        {
+          "id": "BULK-5",
+          "severity": "NOTE",
+          "summary": "Template dropdown displays 'Select...' after template is applied",
+          "detail": "After selecting QA Test Template, the Template dropdown still shows 'Select...' as its display text (visible in screenshot 02). This appears to be existing behavior for the react-select component - the template is applied (subject and body are populated) but the dropdown resets to placeholder. This may be intentional (one-time apply behavior) but could confuse users who expect to see the template name displayed."
+        }
+      ]
+    }
+  ],
+  "overall_verdict": "PASS",
+  "summary": "Both surfaces (Template Create/Edit Modal and Bulk Message Modal) correctly implement the Subject field feature. The Subject field appears in the correct position with the correct default value '{{JobTitle}} at {{OrganizationName}}'. Custom subjects persist through the create/save/edit cycle. Template selection in the bulk modal correctly populates the subject field with the template's custom subject. No blocking issues found.",
+  "environment_notes": [
+    "The SPA has aggressive navigation behavior that redirects away from settings pages. This required using browser_run_code_unsafe with JavaScript click() calls to interact with settings modals before the redirect fires.",
+    "The redirect appears to be triggered by React Router state management, not by ActionCable or WebSocket events.",
+    "Server: http://app.lvh.me:5007, User: rezu.may@wrkhq.com (admin), Organization: Acme Inc."
+  ]
+}

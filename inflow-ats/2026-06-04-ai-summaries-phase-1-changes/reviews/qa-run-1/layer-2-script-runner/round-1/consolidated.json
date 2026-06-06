@@ -1,0 +1,40 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "findings": [],
+  "scripts_run": [
+    {
+      "name": "qa-l2-verify-credit-packs.rb",
+      "result": "PASS",
+      "checks": ["4 pack keys", "credit amounts", "kind classification", "AiCreditPacks removed", "RoleCategoryGroups removed"]
+    },
+    {
+      "name": "qa-l2-verify-enum-rename.rb",
+      "result": "PASS",
+      "checks": ["enum values default/enabled/disabled", "old enum removed", "cascade method renamed", "org method renamed", "org default settings"]
+    },
+    {
+      "name": "qa-l2-verify-models.rb",
+      "result": "PASS",
+      "checks": ["PlanFeatureGate fallback", "AI_DAILY_CREDIT_ALLOCATION", "overdue methods removed", "process_ai_credit_resets exists", "ConsumeAiCredits renamed", "BulkJobApplicationAiSummaryResultMailer exists", "admin_recipients method exists"]
+    },
+    {
+      "name": "qa-l2-verify-validation.rb",
+      "result": "PASS",
+      "checks": ["subscription pre-checkout valid", "subscription with sub_id valid", "one_off with checkout valid", "one_off with invoice valid", "old lookup key rejected"]
+    },
+    {
+      "name": "qa-l2-verify-routes.rb",
+      "result": "PASS",
+      "checks": ["balance show route", "5 purchase routes", "old routes removed"]
+    },
+    {
+      "name": "qa-l2-verify-retry-order.rb",
+      "result": "PASS",
+      "checks": ["retry_on after discard_on", "notify methods exist"]
+    }
+  ],
+  "high_findings": 0,
+  "blocker_findings": 0,
+  "notes": "6 verification scripts covering all major business logic changes. All passed. No HIGH or BLOCKER findings."
+}

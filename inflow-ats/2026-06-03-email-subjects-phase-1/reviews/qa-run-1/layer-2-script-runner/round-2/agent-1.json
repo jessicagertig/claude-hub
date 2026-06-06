@@ -1,0 +1,76 @@
+{
+  "agent_index": 1,
+  "focus": "XSS injection via subject field — can a malicious subject bypass sanitization and render as HTML?",
+  "scripts_run": [
+    {
+      "path": "/tmp/qa-l2r2-agent1-01-sanitizer-xss.rb",
+      "description": "Sanitizer#sanitize XSS vector stripping: script tags, event handlers, javascript: URIs, SVG onload, meta refresh, data URIs, nested script tags, null byte injection, HTML entity encoding",
+      "tests": 15,
+      "passed": 12,
+      "failed": 3,
+      "notes": "3 'failures' are false positives on closer analysis: (1) iframe srcdoc crashes the sanitizer (pre-existing quipr_iframe bug, not XSS escape), (2) nested script tags output 'ipt>alert(1)ipt>' which is plain text (not executable), (3) null byte injection output 'alert(1)Test' which is plain text (script tags were stripped). The Sanitize gem with RELAXED config correctly strips all tested XSS vectors from content that passes through Sanitizer#sanitize."
+    },
+    {
+      "path": "/tmp/qa-l2r2-agent1-02-channel-message-xss-persistence.rb",
+      "description": "Channel message XSS persistence through controller sanitize path vs direct model save",
+      "tests": 10,
+      "passed": 10,
+      "failed": 0,
+      "notes": "Controller-sanitized path: all XSS vectors stripped before persistence. Direct save path: XSS persists raw (no model-level defense), but controller always sanitizes before save. Notable: Sanitize::Config::RELAXED preserves 'safe' HTML tags like <div>, <img>, <a>, <b> in subjects — these aren't XSS but are inappropriate for email subject lines."
+    },
+    {
+      "path": "/tmp/qa-l2r2-agent1-03-template-subject-xss.rb",
+      "description": "Channel message TEMPLATE subject XSS: ChannelMessageTemplatesController does NOT sanitize subjects. XSS payloads persist in templates and flow unsanitized into render_template_message outputs (subject_html, subject_raw, template_subject_html).",
+      "tests": 15,
+      "passed": 0,
+      "failed": 15,
+      "notes": "ALL 15 tests failed. Every XSS vector (<script>, onclick, onerror, javascript:, svg onload) persisted in the template subject, and all three render_template_message output fields (subject_html, subject_raw, template_subject_html) contained the unsanitized XSS content. However, frontend analysis shows subjectHtml and templateSubjectHtml are NOT used in the React frontend — only subjectRaw is used, and it's rendered via React JSX text interpolation ({mailMerge.subjectRaw}) which auto-escapes. This significantly reduces the severity from HIGH to MED."
+    },
+    {
+      "path": "/tmp/qa-l2r2-agent1-04-mailer-subject-xss.rb",
+      "description": "Mailer subject XSS behavior through sanitized path, fallback behavior, and HTML tag preservation",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "notes": "Controller path correctly sanitizes XSS. Pure-XSS subjects sanitize to empty string and trigger the fallback ('Job Title at Org Name'). HTML tags like <b>, <i> survive RELAXED sanitization and persist in email subjects — email clients render these as literal angle-bracket text, not formatting, which may cause display issues."
+    },
+    {
+      "path": "/tmp/qa-l2r2-agent1-05-sanitizer-iframe-crash.rb",
+      "description": "Sanitizer#sanitize crashes on iframe elements without valid src attribute due to quipr_iframe transformer bug",
+      "tests": 4,
+      "passed": 1,
+      "failed": 3,
+      "notes": "Pre-existing bug in quipr_iframe transformer: URI.parse(node['src']) crashes with URI::InvalidURIError when src is nil, and iframe_uri.host.include?('quipr') crashes with NoMethodError when host is nil. This affects any content (body or subject) processed through Sanitizer#sanitize that contains an iframe without a valid src. Could be used as a denial-of-service vector."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "MED",
+      "title": "ChannelMessageTemplatesController does not sanitize template subjects, allowing XSS payloads to persist and flow through render_template_message",
+      "description": "The ChannelMessageTemplatesController#channel_message_template_params method (line 61) permits :subject but does NOT call sanitize() on it, unlike ChannelMessagesController and BulkChannelMessagesController which both sanitize subject. This allows XSS payloads (<script>, onclick, onerror, javascript: URIs, SVG onload) to persist in channel_message_templates.subject. When render_template_message is called (via ChannelMessageTemplatesMailMergeController#show), the unsanitized subject flows directly into subject_html, subject_raw, and template_subject_html in the response JSON. Severity is MED rather than HIGH because: (1) the frontend currently only uses subjectRaw via React JSX text interpolation which auto-escapes, and subjectHtml/templateSubjectHtml are returned by the API but never rendered in the frontend; (2) only authenticated organization users with template management permissions can create/update templates; (3) there is no current code path that renders these fields via dangerouslySetInnerHTML. However, this is a stored XSS time-bomb: any future frontend change that renders subjectHtml or templateSubjectHtml as raw HTML would immediately become exploitable. The fix is to add sanitize() calls for :subject in channel_message_template_params, matching the pattern in ChannelMessagesController.",
+      "file": "app/controllers/api/v1/channel_message_templates_controller.rb",
+      "line": 61,
+      "evidence": "Template with subject '<script>alert('xss')</script>Follow Up - {{{CandidateFirstName}}}' persisted with XSS intact. render_template_message returned subject_html: '<script>alert('xss')</script>Follow Up - <span class='mail-merge-tag'>Loma</span>'"
+    },
+    {
+      "id": "F2",
+      "severity": "LOW",
+      "title": "Sanitizer#sanitize with RELAXED config preserves HTML tags in email subjects (semantic mismatch)",
+      "description": "The Sanitize::Config::RELAXED config is designed for rich HTML body content and allows tags like <b>, <i>, <p>, <div>, <img>, <a>. When applied to email subjects (which are plain text in email headers), these tags survive and persist in the subject field. For example, '<b>Important</b> - Interview with <i>Polymer</i>' persists unchanged. While not a security vulnerability (no executable content), this is a semantic mismatch: (1) email subject headers render angle brackets as literal text, producing garbled display like '<b>Important</b>'; (2) the frontend text input for subject would display raw HTML tags; (3) the Sanitizer module is shared between body and subject but RELAXED is only appropriate for body. A subject-specific sanitization that strips ALL HTML tags (using Sanitize.fragment with empty elements list, or Rails::Html::FullSanitizer) would be more appropriate.",
+      "file": "app/controllers/api/v1/channel_messages_controller.rb",
+      "line": 37,
+      "evidence": "sanitize('<b>Important</b> - Interview with <i>Polymer</i>') returns '<b>Important</b> - Interview with <i>Polymer</i>' unchanged. These tags persist in the email subject header."
+    },
+    {
+      "id": "F3",
+      "severity": "LOW",
+      "title": "Sanitizer#sanitize crashes on iframe elements without valid src attribute (pre-existing, not subject-specific)",
+      "description": "The quipr_iframe transformer in Sanitizer#sanitize calls URI.parse(node['src']) without nil-checking node['src'], causing URI::InvalidURIError when src is absent or nil. Additionally, iframe_uri.host.include?('quipr') crashes with NoMethodError when the host is nil (e.g., empty src=''). This is a pre-existing bug that affects any content processed through Sanitizer#sanitize containing an iframe without a valid src. It can cause 500 errors in the channel_messages and bulk_channel_messages controllers if iframe tags appear in the body or subject. While unlikely to occur naturally in subject lines, it could be triggered intentionally for denial of service.",
+      "file": "app/utils/sanitizer.rb",
+      "line": 45,
+      "evidence": "sanitize('<iframe>test</iframe>') raises URI::InvalidURIError: bad URI(is not URI?): nil. sanitize('<iframe src=\"\">test</iframe>') raises NoMethodError: undefined method 'include?' for nil:NilClass"
+    }
+  ],
+  "summary": "Ran 49 tests across 5 scripts focused on XSS injection via the subject field. Found 1 MED and 2 LOW issues. The primary finding (F1) is that ChannelMessageTemplatesController does not sanitize template subjects, allowing stored XSS payloads to persist in templates and flow unsanitized through render_template_message API responses. Currently not exploitable because the React frontend auto-escapes the relevant fields, but this is a defense-in-depth gap that could become a stored XSS vulnerability with any frontend change. The ChannelMessagesController and BulkChannelMessagesController correctly sanitize subjects via Sanitizer#sanitize, which effectively strips script tags, event handlers, javascript: URIs, and other XSS vectors. Two lower-severity issues: the RELAXED Sanitize config is too permissive for plain-text email subjects (allows HTML formatting tags), and the quipr_iframe transformer crashes on iframes without valid src attributes."
+}

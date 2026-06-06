@@ -1,0 +1,26 @@
+{
+  "agent_index": 5,
+  "focus_area": "Automation pipeline",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "HiringStageMessageAutomationJob: add subject: automation.channel_message_template.subject to message_params",
+      "CreateStageAutomationMessage: rename parse_body to parse_text",
+      "parse_text takes a text argument (generalized from reading @message_params[:body] internally)",
+      "parse_text returns empty string if text is blank",
+      "Call parse_text for both body and subject in the merge",
+      "parse_text keeps .html_safe at the end (existing behavior, harmless for subject)",
+      "parse_text keeps .scrub and all gsub substitutions"
+    ],
+    "implemented": [
+      "HiringStageMessageAutomationJob: add subject: automation.channel_message_template.subject to message_params",
+      "CreateStageAutomationMessage: rename parse_body to parse_text",
+      "parse_text takes a text argument (generalized from reading @message_params[:body] internally)",
+      "parse_text returns empty string if text is blank",
+      "Call parse_text for both body and subject in the merge",
+      "parse_text keeps .html_safe at the end (existing behavior, harmless for subject)",
+      "parse_text keeps .scrub and all gsub substitutions"
+    ],
+    "missing": []
+  }
+}

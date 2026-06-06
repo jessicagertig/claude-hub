@@ -1,0 +1,197 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e7]:
+      - img [ref=e8]
+      - heading "Polymer" [level=1] [ref=e11]
+    - list [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e15]:
+          - generic [ref=e16]: RM
+          - generic [ref=e17]: Rezu May
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - generic [ref=e23] [cursor=pointer]:
+          - generic [ref=e25]: A
+          - img [ref=e27]
+        - generic [ref=e32]: Acme Inc.
+      - generic [ref=e34]:
+        - img [ref=e37] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - generic [ref=e42]:
+      - img [ref=e43]
+      - textbox "Search candidates" [ref=e46]
+    - generic [ref=e48]:
+      - link [ref=e50] [cursor=pointer]:
+        - /url: /notifications
+        - img [ref=e51]
+      - link [ref=e55] [cursor=pointer]:
+        - /url: /hire/settings/organization
+        - img [ref=e56]
+  - generic [ref=e59]:
+    - generic [ref=e123]:
+      - generic [ref=e124]:
+        - link "Navigate back to all jobs" [ref=e126] [cursor=pointer]:
+          - /url: /jobs
+          - img [ref=e127]
+        - heading "Round 2 Test Job" [level=2] [ref=e129]
+      - generic [ref=e131]:
+        - img [ref=e134] [cursor=pointer]
+        - generic:
+          - generic:
+            - button "Add new candidate"
+            - button "Import candidates"
+            - button "Export candidates"
+            - button "Export resumes"
+    - generic [ref=e138]:
+      - generic [ref=e139]:
+        - generic [ref=e140]:
+          - link "Inbox 2" [ref=e141] [cursor=pointer]:
+            - /url: /jobs/17083/stages/119554/applicants
+            - generic [ref=e142]:
+              - img [ref=e143]
+              - generic [ref=e146]: Inbox
+            - text: "2"
+          - link "Screen 0" [ref=e147] [cursor=pointer]:
+            - /url: /jobs/17083/stages/119555/applicants
+            - generic [ref=e148]:
+              - img [ref=e149]
+              - generic [ref=e151]: Screen
+            - text: "0"
+          - link "Interview 0" [ref=e152] [cursor=pointer]:
+            - /url: /jobs/17083/stages/119556/applicants
+            - generic [ref=e153]:
+              - img [ref=e154]
+              - generic [ref=e156]: Interview
+            - text: "0"
+          - link "Decide 0" [ref=e157] [cursor=pointer]:
+            - /url: /jobs/17083/stages/119557/applicants
+            - generic [ref=e158]:
+              - img [ref=e159]
+              - generic [ref=e161]: Decide
+            - text: "0"
+          - link "Offer 0" [ref=e162] [cursor=pointer]:
+            - /url: /jobs/17083/stages/119558/applicants
+            - generic [ref=e163]:
+              - img [ref=e164]
+              - generic [ref=e166]: Offer
+            - text: "0"
+          - link "Hired 0" [ref=e167] [cursor=pointer]:
+            - /url: /jobs/17083/stages/119559/applicants
+            - generic [ref=e168]:
+              - img [ref=e169]
+              - generic [ref=e172]: Hired
+            - text: "0"
+          - link "Archived 0" [ref=e173] [cursor=pointer]:
+            - /url: /jobs/17083/stages/119560/applicants
+            - generic [ref=e174]:
+              - img [ref=e175]
+              - generic [ref=e178]: Archived
+            - text: "0"
+        - separator
+        - generic [ref=e179]:
+          - link "Job setup" [ref=e180] [cursor=pointer]:
+            - /url: /jobs/17083/setup
+            - generic [ref=e181]:
+              - img [ref=e182]
+              - generic [ref=e185]: Job setup
+            - img [ref=e186]
+          - link "Distribution" [ref=e189] [cursor=pointer]:
+            - /url: /jobs/17083/distribution
+            - generic [ref=e190]:
+              - img [ref=e191]
+              - generic [ref=e197]: Distribution
+            - img [ref=e198]
+      - generic [ref=e351]:
+        - generic [ref=e352]:
+          - link "Job details" [ref=e353] [cursor=pointer]:
+            - /url: /jobs/17083/setup/details
+            - generic [ref=e355]: Job details
+            - img [ref=e356]
+          - link "Job description" [ref=e358] [cursor=pointer]:
+            - /url: /jobs/17083/setup/description
+            - generic [ref=e360]: Job description
+            - img [ref=e361]
+          - link "Application form" [ref=e363] [cursor=pointer]:
+            - /url: /jobs/17083/setup/application
+            - generic [ref=e365]: Application form
+            - img [ref=e366]
+          - link "Document template" [ref=e368] [cursor=pointer]:
+            - /url: /jobs/17083/setup/document
+            - generic [ref=e370]: Document template
+            - img [ref=e371]
+          - link "Hiring stages" [ref=e373] [cursor=pointer]:
+            - /url: /jobs/17083/setup/stages
+            - generic [ref=e375]: Hiring stages
+            - img [ref=e376]
+          - link "Hiring team" [ref=e378] [cursor=pointer]:
+            - /url: /jobs/17083/setup/team
+            - generic [ref=e380]: Hiring team
+            - img [ref=e381]
+          - link "Automations" [ref=e383] [cursor=pointer]:
+            - /url: /jobs/17083/setup/automations
+            - generic [ref=e385]: Automations
+            - img [ref=e386]
+          - link "AI settings" [ref=e388] [cursor=pointer]:
+            - /url: /jobs/17083/setup/ai
+            - generic [ref=e390]: AI settings
+            - img [ref=e391]
+          - separator
+          - generic [ref=e393]:
+            - generic [ref=e394]: Job post
+            - generic [ref=e395]:
+              - img [ref=e396]
+              - link "jobs.lvh.me:5007/acme-inc/17083" [ref=e399] [cursor=pointer]:
+                - /url: http://jobs.lvh.me:5007/acme-inc/17083
+          - separator
+          - generic [ref=e401]:
+            - button "Share job post" [ref=e402] [cursor=pointer]:
+              - generic [ref=e403]: Share job post
+            - generic [ref=e404]:
+              - img [ref=e407] [cursor=pointer]
+              - generic:
+                - generic:
+                  - button "Clone job":
+                    - generic: Clone job
+                  - button "Hide job post"
+                  - button "Archive job"
+        - generic [ref=e584]:
+          - generic [ref=e585]:
+            - heading "AI settings" [level=2] [ref=e588]
+            - paragraph [ref=e589]: Configure AI-powered features for this job. Each AI applicant summary consumes one credit from your organization's balance.
+            - generic [ref=e590]:
+              - heading "Applicant summaries" [level=4] [ref=e593]
+              - generic [ref=e594]:
+                - generic [ref=e596]: Auto-generation
+                - paragraph [ref=e597]: Automatically generate an AI summary for each new applicant to this job.
+                - generic [ref=e598]:
+                  - generic [ref=e612]:
+                    - paragraph [ref=e613]
+                    - paragraph [ref=e614]: option Use organization default focused, 1 of 3. 3 results available. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                  - generic [ref=e599]:
+                    - generic [ref=e600]:
+                      - generic [ref=e601]: Use organization default
+                      - textbox [active] [ref=e604]
+                    - img [ref=e607]
+                  - generic [ref=e616]:
+                    - generic [ref=e617]: Use organization default
+                    - generic [ref=e618]: Enabled — auto-generate for every new applicant
+                    - generic [ref=e619]: Disabled — only generate on demand
+          - button "Save changes" [ref=e610] [cursor=pointer]:
+            - generic [ref=e611]: Save changes

@@ -1,0 +1,46 @@
+{
+  "agent_index": 6,
+  "focus_area": "Bulk send pipeline",
+  "findings": [
+    {
+      "id": "R2-BULK-1",
+      "severity": "MED",
+      "file": "app/jobs/channel_messages/bulk_channel_message_send_job.rb",
+      "description": "RecordInvalid rescue does not handle :subject validation errors — user gets no growl notification when subject validation fails",
+      "detail": "The RecordInvalid rescue block (lines 23-32 pre-diff, unchanged by this diff) checks e.record.errors.messages[:message] and e.record.errors.messages[:body] but never checks e.record.errors.messages[:subject]. The implementation adds `validates :subject, custom_channel_message: true` to the ChannelMessage model. If a subject contains an unsubstituted {{...}} placeholder (e.g., user types {{SomethingInvalid}} in the subject), parse_text won't substitute it, the CustomChannelMessageValidator fires, create! raises RecordInvalid with an error on :subject, neither the :message nor :body branch matches, and broadcast_error_message is never called. The error IS logged (Rails.logger.error e), but the user sees no growl notification — the message silently fails for that candidate. This violates Known Failure Pattern #2 in the pipeline CLAUDE.md: when adding a new field that parallels an existing field, apply ALL existing patterns. The :body error handling pattern should be extended to :subject.",
+      "spec_ref": "Spec section 'Rename parse_body to parse_text' and model section 'validates :subject, custom_channel_message: true'; pipeline CLAUDE.md Known Failure Pattern #2 (parallel-field features)",
+      "recommendation": "Add an elsif branch after the :body check: `elsif e.record&.errors&.messages&.[](:subject).present? then message = e.record.errors.messages[:subject].first; broadcast_error_message(user, message)`"
+    },
+    {
+      "id": "R2-BULK-2",
+      "severity": "LOW",
+      "file": "app/jobs/channel_messages/bulk_channel_message_send_job.rb",
+      "description": "duplicate_message_exists? check does not consider subject — two sends with different subjects but identical bodies are treated as duplicates",
+      "detail": "ChannelMessage.duplicate_message_exists?(channel.id, channel_message_params[:body]) checks only the body column. Post-implementation, if a user sends a bulk message with body B and subject A, then later sends another bulk message with the same body B but a different subject C, the second send is blocked for any candidate who received the first. This is arguably correct behavior (the duplicate check is an anti-spam guard, and same-body is a reasonable proxy for 'duplicate message'), and the spec does not mention duplicate_message_exists? at all. Flagging as LOW because the existing behavior is defensible, but it's worth noting that the duplicate concept no longer captures the full message identity now that messages have both body and subject.",
+      "spec_ref": "N/A — spec does not mention duplicate_message_exists?",
+      "recommendation": "No change required for phase 1a. If this becomes a user-facing issue, consider updating duplicate_message_exists? to check both body and subject."
+    }
+  ],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "Rename parse_body to parse_text",
+      "parse_text takes (user, job_application, text) arguments",
+      "parse_text returns empty string if text is blank",
+      "Call parse_text for both body and subject in the merge",
+      "parse_text keeps .scrub and all gsub substitutions",
+      "parse_text does NOT call .html_safe",
+      "Existing create! with rescue handling preserved"
+    ],
+    "implemented": [
+      "Rename parse_body to parse_text",
+      "parse_text takes (user, job_application, text) arguments",
+      "parse_text returns empty string if text is blank",
+      "Call parse_text for both body and subject in the merge",
+      "parse_text keeps .scrub and all gsub substitutions",
+      "parse_text does NOT call .html_safe",
+      "Existing create! with rescue handling preserved"
+    ],
+    "missing": []
+  },
+  "round_2_notes": "Round 2 focused on the four specific areas called out in the task: nil subject handling (safe — parse_text returns '' for blank, mailer has fallback), duplicate_message_exists? scope (LOW — body-only check is defensible), error broadcasting (MED — subject validation errors are silently swallowed), and race conditions (none introduced — job processes candidates sequentially via find_each, same as pre-implementation)."
+}

@@ -1,0 +1,39 @@
+{
+  "layer": "regression",
+  "round": 1,
+  "run": 3,
+  "suites_run": {
+    "rspec": {
+      "ran": true,
+      "initial_result": "192 examples, 6 failures",
+      "failures": [
+        {
+          "file": "spec/services/plan_feature_gate_ai_credits_spec.rb:50",
+          "error": "Expected nil but got 5 -- test expected old behavior before Note #31 fallback fix",
+          "severity": "HIGH",
+          "fix": "Updated test to expect DAILY_AI_CREDIT_ALLOCATION fallback value"
+        },
+        {
+          "file": "spec/interactors/reset_daily_ai_credits_spec.rb:16,33,43",
+          "error": "Tests do not enable :AI_DAILY_CREDITS Flipper flag added by Note #8",
+          "severity": "HIGH",
+          "fix": "Added Flipper.enable(:AI_DAILY_CREDITS, organization) to before block"
+        },
+        {
+          "file": "spec/interactors/queue_bulk_ai_summary_jobs_spec.rb:41,62",
+          "error": "Tests do not enable :AI_APPLICANT_SUMMARY Flipper flag or seed credits",
+          "severity": "HIGH",
+          "fix": "Added Flipper.enable(:AI_APPLICANT_SUMMARY, organization) and seeded monthly_credits_remaining"
+        }
+      ],
+      "post_fix_result": "198 examples, 0 failures",
+      "note": "All 6 failures were in NEW test files introduced by this feature. The tests were missing Flipper flag setup that the corresponding application code requires. Fixes are test-only (no application code changed)."
+    },
+    "cypress": {
+      "ran": true,
+      "summary": "33 specs, 53 tests, 0 failures (via pre-commit hook)",
+      "note": "Cypress runs as part of the pre-commit hook on every commit"
+    }
+  },
+  "findings": []
+}

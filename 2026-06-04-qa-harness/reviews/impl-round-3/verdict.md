@@ -1,18 +1,22 @@
-# Round 3 Verdict: PASS
+# Round 3 Verdict: FAIL
 
 ## Summary
 
-| Severity | Count | Details |
-|---|---|---|
-| BLOCKER | 0 | |
-| HIGH | 0 | |
-| MED | 3 | Carried from Round 1, all acceptable for v1 |
-| LOW | 2 | Carried from Round 1, by design |
+| Angle | BLOCKER | HIGH | MED |
+|-------|---------|------|-----|
+| server-lifecycle | 0 | 1 | 2 (carried) |
+| seed-data-design | 0 | 0 | 2 (carried) |
+| convergence-protocol | 0 | 0 | 0 |
+| playwright-mcp-integration | 0 | 0 | 0 |
+| pipeline-scalability | 0 | 0 | 2 (carried) |
+| lifecycle-integration | 0 | 0 | 0 |
+| claude-md-compliance | 0 | 0 | 0 |
+| **Total** | **0** | **1** | **6** |
 
-No new findings in Round 3. All HIGH+ issues from prior rounds have been fixed and verified. The remaining MED and LOW findings are stable across three rounds.
+## NEW HIGH finding:
 
-## Pass criteria
+1. **HIGH-4 (server-lifecycle):** atexit handler kills subprocesses immediately when `qa-harness start` CLI process exits after printing "READY". The server would start and then immediately die.
 
-0 BLOCKER + 0 HIGH = PASS. This is consecutive pass 2 of 2.
+## Verdict: FAIL (0 BLOCKER + 1 HIGH)
 
-**Two consecutive clean passes achieved. Review is complete.**
+The pass counter resets to 0. Fix required before next round.

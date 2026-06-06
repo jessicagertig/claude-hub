@@ -1,0 +1,217 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e7]:
+      - img [ref=e8]
+      - heading "Polymer" [level=1] [ref=e11]
+    - list [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e15]:
+          - generic [ref=e16]: RM
+          - generic [ref=e17]: Rezu May
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - generic [ref=e23] [cursor=pointer]:
+          - generic [ref=e25]: A
+          - img [ref=e27]
+        - generic [ref=e32]: Acme Inc.
+      - generic [ref=e34]:
+        - img [ref=e37] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - generic [ref=e42]:
+      - img [ref=e43]
+      - textbox "Search candidates" [ref=e46]
+    - generic [ref=e48]:
+      - link [ref=e50] [cursor=pointer]:
+        - /url: /notifications
+        - img [ref=e51]
+      - link [ref=e55] [cursor=pointer]:
+        - /url: /hire/settings/organization
+        - img [ref=e56]
+  - generic [ref=e59]:
+    - generic [ref=e60]:
+      - generic [ref=e61]:
+        - link "Navigate back to all jobs" [ref=e63] [cursor=pointer]:
+          - /url: /jobs
+          - img [ref=e64]
+        - heading "Software Engineer" [level=2] [ref=e66]
+      - generic [ref=e68]:
+        - img [ref=e71] [cursor=pointer]
+        - generic:
+          - generic:
+            - button "Add new candidate"
+            - button "Import candidates"
+            - button "Export candidates"
+            - button "Export resumes"
+    - generic [ref=e75]:
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - link "Inbox 3" [ref=e78] [cursor=pointer]:
+            - /url: /jobs/16205/stages/113408/applicants
+            - generic [ref=e79]:
+              - img [ref=e80]
+              - generic [ref=e83]: Inbox
+            - text: "3"
+          - link "Screen 0" [ref=e84] [cursor=pointer]:
+            - /url: /jobs/16205/stages/113409/applicants
+            - generic [ref=e85]:
+              - img [ref=e86]
+              - generic [ref=e88]: Screen
+            - text: "0"
+          - link "Interview 0" [ref=e89] [cursor=pointer]:
+            - /url: /jobs/16205/stages/113410/applicants
+            - generic [ref=e90]:
+              - img [ref=e91]
+              - generic [ref=e93]: Interview
+            - text: "0"
+          - link "Decide 0" [ref=e94] [cursor=pointer]:
+            - /url: /jobs/16205/stages/113411/applicants
+            - generic [ref=e95]:
+              - img [ref=e96]
+              - generic [ref=e98]: Decide
+            - text: "0"
+          - link "Offer 0" [ref=e99] [cursor=pointer]:
+            - /url: /jobs/16205/stages/113412/applicants
+            - generic [ref=e100]:
+              - img [ref=e101]
+              - generic [ref=e103]: Offer
+            - text: "0"
+          - link "Hired 0" [ref=e104] [cursor=pointer]:
+            - /url: /jobs/16205/stages/113413/applicants
+            - generic [ref=e105]:
+              - img [ref=e106]
+              - generic [ref=e109]: Hired
+            - text: "0"
+          - link "Archived 0" [ref=e110] [cursor=pointer]:
+            - /url: /jobs/16205/stages/113414/applicants
+            - generic [ref=e111]:
+              - img [ref=e112]
+              - generic [ref=e115]: Archived
+            - text: "0"
+        - separator
+        - generic [ref=e116]:
+          - link "Job setup" [ref=e117] [cursor=pointer]:
+            - /url: /jobs/16205/setup
+            - generic [ref=e118]:
+              - img [ref=e119]
+              - generic [ref=e122]: Job setup
+            - img [ref=e123]
+          - link "Distribution" [ref=e126] [cursor=pointer]:
+            - /url: /jobs/16205/distribution
+            - generic [ref=e127]:
+              - img [ref=e128]
+              - generic [ref=e134]: Distribution
+            - img [ref=e135]
+      - generic [ref=e138]:
+        - generic [ref=e139]:
+          - link "Job details" [ref=e140] [cursor=pointer]:
+            - /url: /jobs/16205/setup/details
+            - generic [ref=e142]: Job details
+            - img [ref=e143]
+          - link "Job description" [ref=e145] [cursor=pointer]:
+            - /url: /jobs/16205/setup/description
+            - generic [ref=e147]: Job description
+            - img [ref=e148]
+          - link "Application form" [ref=e150] [cursor=pointer]:
+            - /url: /jobs/16205/setup/application
+            - generic [ref=e152]: Application form
+            - img [ref=e153]
+          - link "Document template" [ref=e155] [cursor=pointer]:
+            - /url: /jobs/16205/setup/document
+            - generic [ref=e157]: Document template
+            - img [ref=e158]
+          - link "Hiring stages" [ref=e160] [cursor=pointer]:
+            - /url: /jobs/16205/setup/stages
+            - generic [ref=e162]: Hiring stages
+            - img [ref=e163]
+          - link "Hiring team" [ref=e165] [cursor=pointer]:
+            - /url: /jobs/16205/setup/team
+            - generic [ref=e167]: Hiring team
+            - img [ref=e168]
+          - link "Automations" [ref=e170] [cursor=pointer]:
+            - /url: /jobs/16205/setup/automations
+            - generic [ref=e172]: Automations
+            - img [ref=e173]
+          - separator
+          - generic [ref=e175]:
+            - generic [ref=e176]: Job post
+            - generic [ref=e177]:
+              - img [ref=e178]
+              - link "jobs.lvh.me:5007/acme-inc/16205" [ref=e181] [cursor=pointer]:
+                - /url: http://jobs.lvh.me:5007/acme-inc/16205
+          - separator
+          - generic [ref=e183]:
+            - button "Share job post" [ref=e184] [cursor=pointer]:
+              - generic [ref=e185]: Share job post
+            - generic [ref=e186]:
+              - img [ref=e189] [cursor=pointer]
+              - generic:
+                - generic:
+                  - button "Clone job":
+                    - generic: Clone job
+                  - button "Hide job post"
+                  - button "Archive job"
+        - generic [ref=e195]:
+          - generic [ref=e196]:
+            - heading "Automations" [level=2] [ref=e199]
+            - paragraph [ref=e200]: Here's where you can configure automations to save time during the hiring process.
+            - generic [ref=e201]:
+              - heading "Application confirmation" [level=4] [ref=e204]
+              - generic [ref=e205]:
+                - generic [ref=e207]: Custom confirmation message
+                - paragraph [ref=e208]: Automatically send a message to new candidates when an application is received. If enabled, your message will be sent instead of the default confirmation from Polymer.
+                - generic [ref=e210]:
+                  - generic [ref=e211]:
+                    - generic [ref=e212]: Enabled
+                    - textbox [ref=e215]
+                  - img [ref=e218]
+              - generic [ref=e221]:
+                - generic [ref=e222]:
+                  - generic [ref=e224]: Subject
+                  - textbox "Subject" [ref=e226]:
+                    - /placeholder: ""
+                    - text: "Your application for {{JobTitle}}"
+                - generic [ref=e227]:
+                  - generic [ref=e229]: Message template
+                  - generic [ref=e230]:
+                    - generic [ref=e232]:
+                      - paragraph [ref=e233]: "Hello {{CandidateFirstName}},"
+                      - paragraph [ref=e234]: "This is a confirmation that your application for the {{JobTitle}} position with {{OrganizationName}} was submitted successfully."
+                    - generic [ref=e236]:
+                      - button [ref=e238] [cursor=pointer]:
+                        - img [ref=e239]
+                      - button [ref=e243] [cursor=pointer]:
+                        - img [ref=e244]
+                      - button [ref=e247] [cursor=pointer]:
+                        - img [ref=e248]
+                      - button [ref=e251] [cursor=pointer]:
+                        - img [ref=e252]
+                    - generic [ref=e255]:
+                      - button "Candidate first name" [ref=e256] [cursor=pointer]:
+                        - generic [ref=e257]: Candidate first name
+                      - button "Candidate last name" [ref=e258] [cursor=pointer]:
+                        - generic [ref=e259]: Candidate last name
+                      - button "Candidate full name" [ref=e260] [cursor=pointer]:
+                        - generic [ref=e261]: Candidate full name
+                      - button "Job title" [ref=e262] [cursor=pointer]:
+                        - generic [ref=e263]: Job title
+                      - button "Organization name" [ref=e264] [cursor=pointer]:
+                        - generic [ref=e265]: Organization name
+          - button "Save changes" [active] [ref=e267] [cursor=pointer]:
+            - generic [ref=e268]: Save changes

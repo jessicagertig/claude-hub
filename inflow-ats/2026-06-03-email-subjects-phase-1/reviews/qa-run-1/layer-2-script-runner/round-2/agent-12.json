@@ -1,0 +1,37 @@
+{
+  "agent": 12,
+  "round": 2,
+  "focus": "BulkChannelMessageSendJob error handling — C-006 runtime verification",
+  "scripts": [
+    "/tmp/qa-l2r2-agent12-bulk-subject-error.rb"
+  ],
+  "seed_plan": "paid-user-with-job-and-candidates.json",
+  "findings": [
+    {
+      "id": "C-006-CONFIRMED",
+      "severity": "MED",
+      "title": "BulkChannelMessageSendJob rescue block silently swallows :subject validation errors",
+      "file": "app/jobs/channel_messages/bulk_channel_message_send_job.rb",
+      "lines": "26-35",
+      "description": "The RecordInvalid rescue block (lines 26-35) checks e.record.errors for :message and :body, but never checks for :subject. When a channel message fails validation due to a subject-only error (e.g., unsubstituted {{InvalidVar}} placeholder), the rescue catches the exception, logs it, but neither branch matches — so broadcast_error_message is never called. The user receives no growl notification that their bulk message failed. The job continues to the next candidate without crashing, but every candidate's message silently fails.",
+      "evidence": {
+        "test_1_validator_catches_subject": "PASS — `validates :subject, custom_channel_message: true` correctly rejects {{InvalidVar}} in subject. Error added to :subject key.",
+        "test_2_create_bang_raises": "PASS — create! raises ActiveRecord::RecordInvalid with error on :subject only (:body and :message are empty).",
+        "test_3_rescue_block_misses_subject": "BUG CONFIRMED — Reproducing the exact rescue logic: e.record.errors.messages = {:subject=>[\"Message not sent. An invalid placeholder...\"]}, :message error present? false, :body error present? false, :subject error present? true. Neither branch matches. No broadcast_error_message called.",
+        "test_4_job_doesnt_crash": "PASS — Job processes all candidates without crashing. 0 messages created (all had invalid subject). But no user notification for any failure.",
+        "test_5_body_error_handled": "PASS — Body errors ARE handled: :body branch fires, broadcast_error_message would be called. Confirms asymmetry with :subject.",
+        "test_6_both_errors": "Body error takes precedence (first branch match). Subject error is present but ignored. User only sees body error message."
+      },
+      "impact": "When a user sends a bulk message with an invalid placeholder in the subject line only (valid body), messages silently fail for every candidate. No growl notification is shown. The user believes messages were sent successfully. This is a silent data loss scenario.",
+      "suggested_fix": "Add an elsif branch after the :body check at line 32: `elsif e.record&.errors&.messages&.[](:subject).present?` -> `message = e.record&.errors&.messages&.[](:subject)&.first` -> `broadcast_error_message(user, message)`. The error message from the validator already says 'Message not sent. An invalid placeholder formatted like {{Something}} was found.' which is user-friendly enough.",
+      "pre_existing": true,
+      "notes": "This bug pattern existed before the email-subjects-phase-1 feature (the rescue block only ever checked :message and :body). However, before subject validation was added (`validates :subject, custom_channel_message: true`), there was no way for :subject to fail validation, so the missing branch was dormant. The phase-1 change activated the bug by adding subject validation without updating the rescue block to handle subject errors."
+    }
+  ],
+  "tests_run": 6,
+  "tests_passed": 6,
+  "high_findings": 0,
+  "med_findings": 1,
+  "low_findings": 0,
+  "summary": "All 6 tests passed. C-006 is CONFIRMED at runtime: BulkChannelMessageSendJob's RecordInvalid rescue block (lines 26-35) only checks :message and :body errors. Subject-only validation failures are silently swallowed — no user notification is broadcast. The bug was dormant before phase-1 because subject had no validation; the addition of `validates :subject, custom_channel_message: true` activated it. Severity remains MED because the user receives no feedback when bulk messages fail due to invalid subject placeholders, but no data corruption occurs and the job does not crash."
+}

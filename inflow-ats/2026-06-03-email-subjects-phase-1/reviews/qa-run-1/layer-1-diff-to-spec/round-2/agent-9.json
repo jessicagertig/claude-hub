@@ -1,0 +1,66 @@
+{
+  "agent": 9,
+  "round": 2,
+  "focus_area": "Frontend: validation schemas, single-send composer, and bulk modal",
+  "files_reviewed": [
+    "app/javascript/shared/lib/validateWithYup.ts",
+    "app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageNew.tsx",
+    "app/javascript/ats/src/components/modals/BulkMessageModal.tsx",
+    "app/javascript/shared/queryHooks/useBulkMessage.ts"
+  ],
+  "also_read_for_context": [
+    "app/javascript/shared/queryHooks/useChannelMessageTemplate.ts",
+    "app/javascript/shared/queryHooks/api.ts",
+    "app/javascript/ats/src/components/forms/FormInput/index.js",
+    "app/javascript/shared/lib/formHelpers.ts",
+    "app/javascript/ats/src/components/forms/FormContainer/index.js",
+    "app/javascript/ats/src/components/modals/ChannelMessageTemplateModal.tsx",
+    "app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx"
+  ],
+  "round_2_focus_areas_investigated": [
+    {
+      "question": "Does the single-send default subject render correctly when job.title or org.name contain special characters?",
+      "answer": "No issue. The default subject is built via JavaScript template literal (`${jobApplication.job.title} at ${jobApplication.job.organizationName}`) producing a plain string. React's controlled `value` prop on the `<input>` element handles HTML escaping automatically. Special characters (ampersands, quotes, angle brackets, Unicode) are safely rendered by the browser as text content of the input, not interpreted as HTML."
+    },
+    {
+      "question": "Does the validation error display correctly for subject?",
+      "answer": "Yes. Traced the full error flow: yup's `validateSchema` produces errors keyed by field path (e.g., `{ subject: { label, fieldError, groupError } }`). FormInput receives `errors={errors}` and `name=\"subject\"`, then `errorTextViaYupOrRailsOrJoi` looks up `errors[\"subject\"]` and returns the `fieldError` string. FormLabel renders it inline next to the field. FormContainer's `handleErrorsObject` calls `prettyErrorsArray` which maps over keys and returns each field's `groupError` for the form-level error summary. Both display paths work correctly for a field named `subject`."
+    },
+    {
+      "question": "Is the subject field order correct (above body per spec)?",
+      "answer": "Yes. In ChannelMessageNew, the `<Styled.SubjectField>` containing `<FormInput>` appears immediately before `<Styled.NewMessageField>` (the ProseMirrorEditor body field). In BulkMessageModal, the subject `<FormInput>` appears after the template FormSelect and before `<Styled.TemplateInput>` (the body editor area). Both place subject above body."
+    },
+    {
+      "question": "What happens if mailMerge.subjectRaw is undefined during template insertion?",
+      "answer": "Safe in both surfaces. ChannelMessageNew guards with `if (mailMerge?.subjectRaw)` -- if undefined/null/empty-string, the existing subject value is preserved (no-op). BulkMessageModal uses `template.subject || defaultSubject` -- if the template's subject is falsy, it falls back to `\"{{JobTitle}} at {{OrganizationName}}\"`. The backend also guards against null template subjects: `Mustache::Template.new(channel_message_template.subject || '')` ensures nil subjects produce empty string `subject_raw` on the API response, which the falsy guard correctly ignores."
+    },
+    {
+      "question": "Are there any TypeScript type mismatches?",
+      "answer": "No. ChannelMessageTemplateModal Props type adds `subject` to `channelMessageTemplate: { id; name; body; subject }`. `validateSingleMessage` has correctly typed params `fields: { subject: string; body: string }`. `useBulkMessage`'s destructured params are untyped (matching the pre-existing codebase pattern -- `validateBulkMessage` also uses `fields: {}`). The API layer's `allKeysToCamel` (in `api.ts`) correctly converts backend `subject_raw` to frontend `subjectRaw`."
+    }
+  ],
+  "new_findings": [],
+  "prior_findings_still_valid": [
+    {
+      "id": "C-001",
+      "severity": "MED",
+      "summary": "CSS font-size bug in SubjectPreview -- `font-size: ${t.text.sm}` produces invalid CSS because `t.text.sm` is already a complete declaration. Confirmed still present in the diff at ChannelMessageTemplateSelectionModal.tsx.",
+      "still_valid": true
+    },
+    {
+      "id": "C-003",
+      "severity": "MED",
+      "summary": "Template modal missing subject repopulation on validation error -- ChannelMessageTemplateModal's handleSubmit sets errors but does not repopulate subject with the default when the user clears it. Confirmed still present.",
+      "still_valid": true
+    }
+  ],
+  "additional_observations": [
+    {
+      "note": "In ChannelMessageNew, the pre-existing empty-body early return (`if (!editorRef.current.state() || serializedState === \"<p></p>\") { setIsDirty(false); return; }`) fires BEFORE the new yup validation. If a user clears both the body and the subject, the early return fires, no validation error is shown, and the subject is NOT repopulated with the default. The yup validation (and its subject repopulation logic) only runs when the body has content. This is consistent with the pre-existing behavior (empty body was always silently ignored) and not a regression, but it means the spec's 'repopulate on validation error' contract is not triggered in the both-fields-empty edge case. Severity: INFO -- not a behavioral regression and the edge case self-corrects on the next submit attempt if the user types body content."
+    },
+    {
+      "note": "The BulkMessageModal's handleSubmit correctly passes `subject` to `validateBulkMessage`, but the `handleSendBulkMessage` function reads `subject` from component state rather than from the validated output. This is safe because validation only confirms non-emptiness (it doesn't transform the value), but it's a minor inconsistency with how `body` is read fresh from `editorRef.current.serializedState()` at send time. Severity: INFO -- no behavioral impact since subject is a plain string state variable, not an editor with a separate serialization step."
+    }
+  ],
+  "verdict": "PASS -- no new HIGH or BLOCKER findings. All Round 2 focus areas investigated thoroughly. The two prior MED findings (C-001, C-003) remain valid. Implementation in this area is correct and complete per spec."
+}

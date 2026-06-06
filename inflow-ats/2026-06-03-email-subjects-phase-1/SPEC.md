@@ -138,8 +138,10 @@ This is a checklist for the implementation plan, not a code spec.
   - the single-send composer in the candidate's messages tab,
   - the bulk message modal,
   - the template create/edit modal,
-  - and the automation modal's inline-create-template flow.
+  - the automation modal's inline-create-template flow,
+  - and the job setup automations page's apply response template editor.
   Pre-populate each surface with its appropriate rendered default per the per-surface rules in Data flow.
+- **Mail merge tag insertion into subject.** For the four surfaces with mail merge tag buttons (bulk message modal, template create/edit modal, automation inline-create-template, job setup automations apply response template), the subject input is rendered inside `Editor.tsx` rather than as a separate form field. The mail merge tag buttons require ProseMirror's internal `state` and `dispatch` to insert into the body, and a ref to the subject `<input>` to insert at the cursor position in the subject — both must be in the same scope. The editor tracks which field last received focus and routes tag insertion accordingly: subject-focused inserts into the subject input at cursor position; body-focused inserts into the ProseMirror body via dispatch. `Editor.tsx` accepts `defaultSubject` to initialize the subject and exposes `subjectState()` and `replaceSubject(value)` on `editorRef.current`. Parent forms read the subject at submit time via `subjectState()`. All subject-related state is gated behind `enableMessageMailMergeMenuBar`; callers without this flag are unaffected. The single-send composer (`ChannelMessageNew.tsx`) does not use `enableMessageMailMergeMenuBar` and keeps its subject input outside `Editor.tsx`.
 - In the candidate's messages tab, display the selected template's subject (rendered with the candidate's variable values) above the body preview in the template selection modal.
 - Do not change the transcript UI in phase 1a.
 

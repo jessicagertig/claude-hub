@@ -1,0 +1,63 @@
+{
+  "agent_index": 8,
+  "focus_area": "Mail-merge render_template_message and anonymization",
+  "round": 2,
+  "round_2_instructions": "Look harder at: is Redcarpet correctly excluded from the subject pipeline? Does the placeholder wrapping order matter (normalize then wrap vs wrap then normalize)? Are the three subject Mustache passes using the correct option sets? Is there any risk of HTML injection via subject_html going into dangerouslySetInnerHTML?",
+  "prior_finding_reassessment": {
+    "C-004": {
+      "original_severity": "LOW",
+      "reassessed_severity": "LOW",
+      "rationale": "Confirmed no change needed. The original body code also does not deduplicate: `Mustache::Template.new(body).tags` can return duplicate tag names if the same tag appears multiple times, and the original `used_tags - known_tags` does not deduplicate the result either (Array#- removes ALL occurrences of elements in the right-hand array, so duplicates of invalid tags survive). The new code concatenating body_invalid_tags + subject_invalid_tags is consistent with existing behavior. The `invalid_tags` array is only used for `has_invalid_tags` (emptiness check) and passed to the frontend, which currently only checks `has_invalid_tags` (a boolean). Cosmetic only."
+    }
+  },
+  "findings": [
+    {
+      "id": "R8-R2-F1",
+      "severity": "NO_FINDING",
+      "category": "verification",
+      "summary": "Redcarpet correctly excluded from subject pipeline",
+      "detail": "Body pipeline: Redcarpet -> Mustache(body) for raw, Mustache(html) for message_html and template_html. Subject pipeline: Mustache(subject_prepared) for all three outputs (subject_raw, subject_html, template_subject_html). No Redcarpet step in the subject path. This matches the spec exactly: 'Subject's pipeline is Mustache (substitution) -> Mustache (spanification) -- no Redcarpet.' Verified."
+    },
+    {
+      "id": "R8-R2-F2",
+      "severity": "NO_FINDING",
+      "category": "verification",
+      "summary": "Placeholder wrapping order is identical between body and subject",
+      "detail": "Both body and subject follow the same order: (1) normalize triple braces to double braces via gsub('{{{','{{').gsub('}}}','}}'), (2) wrap known tags in triple braces via placeholder_options(sender).keys loop, (3) Unicode cleanup (zero-width chars, non-breaking spaces). The order matters: step 1 ensures any user-entered triple-brace sequences are reduced to double, step 2 then converts known double-brace tags to triple-brace (which Mustache renders without HTML escaping, needed for the span-containing values), step 3 cleans up whitespace. Reversing steps 1+2 would fail (triple-brace tags would be reduced then re-expanded, but unknown triple-brace tags would incorrectly survive). The implementation has the correct order for both body and subject."
+    },
+    {
+      "id": "R8-R2-F3",
+      "severity": "NO_FINDING",
+      "category": "verification",
+      "summary": "Three subject Mustache passes use correct option sets",
+      "detail": "subject_raw uses placeholder_options(sender) -- plain text values, for the rendered subject used in sending/display. subject_html uses placeholder_options_with_spans(sender) -- span-wrapped values with actual data, for preview with variable highlighting. template_subject_html uses placeholder_options_with_spans_unfilled -- span-wrapped placeholder names (e.g., '{{CandidateFirstName}}' shown as styled spans), for the unfilled template preview. These mirror the body's three passes (message_raw, message_html, template_html) with the same option sets. The key difference is that body's spanified passes (message_html, template_html) use the Redcarpet-processed `html` variable while subject's passes use `subject_prepared` directly -- correct because subject has no Markdown step."
+    },
+    {
+      "id": "R8-R2-F4",
+      "severity": "NO_FINDING",
+      "category": "verification",
+      "summary": "No HTML injection risk from subject_html in phase 1a",
+      "detail": "subject_html is generated but NOT consumed in any dangerouslySetInnerHTML in phase 1a. The only frontend consumption of subject data from render_template_message is mailMerge.subjectRaw, rendered via JSX text interpolation ({mailMerge.subjectRaw}) in ChannelMessageTemplateSelectionModal's SubjectPreview component. JSX auto-escapes this, preventing any HTML injection. The subject_html and template_subject_html values are returned in the API response payload for future use (likely phase 1b template preview) but are not rendered as HTML in phase 1a. Note: the ChannelMessageTemplatesController does NOT sanitize the template subject before storage, but this is consistent with existing behavior -- the template body is also not sanitized at the template controller level. Sanitization happens at the ChannelMessagesController/BulkChannelMessagesController level when the template is used to create an actual message."
+    }
+  ],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "Subject pipeline: Mustache substitution + spanification (NO Redcarpet)",
+      "Subject source from channel_message_template.subject with fallback to empty string",
+      "Same placeholder wrapping (triple-brace conversion) applied to subject",
+      "Same Unicode cleanup applied to subject",
+      "Three Mustache outputs: subject_raw, subject_html, template_subject_html",
+      "Widen invalid_tags computation to include subject tags",
+      "Response hash includes all subject keys",
+      "Anonymization: text_replacer for subject (both names)"
+    ],
+    "round_2_deep_verification": {
+      "redcarpet_exclusion": "VERIFIED -- subject_prepared never passes through Redcarpet. Only body does (line 779-781). Subject goes directly to Mustache.render.",
+      "placeholder_wrapping_order": "VERIFIED -- order is normalize -> wrap -> cleanup for both body and subject. Order is correct and identical.",
+      "mustache_option_sets": "VERIFIED -- three passes use placeholder_options (plain), placeholder_options_with_spans (spanified with data), placeholder_options_with_spans_unfilled (spanified with placeholder names). Same sets as body. Input is subject_prepared (not a Redcarpet-processed form), which is correct since subject has no Markdown step.",
+      "html_injection_risk": "VERIFIED SAFE for phase 1a -- subject_html not consumed in dangerouslySetInnerHTML. subjectRaw consumed via JSX auto-escaping only. Template-level sanitization absence is consistent with body's existing behavior.",
+      "anonymization_null_safety": "VERIFIED -- text_replacer returns text unchanged when text.blank?, so nil subjects on historical messages are handled safely."
+    },
+    "missing": []
+  }
+}

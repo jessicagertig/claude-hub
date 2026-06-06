@@ -1,0 +1,75 @@
+[     158ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[     512ms] [INFO] %cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-dbd4805ed5dcd0aa4393.chunk.js:38733
+[     514ms] [ERROR] Warning: Please use `require("history").createBrowserHistory` instead of `require("history/createBrowserHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-dbd4805ed5dcd0aa4393.chunk.js:8419
+[     514ms] [ERROR] Warning: Please use `require("history").createHashHistory` instead of `require("history/createHashHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-dbd4805ed5dcd0aa4393.chunk.js:8419
+[     533ms] [ERROR] Warning: Please use `require("history").createMemoryHistory` instead of `require("history/createMemoryHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-dbd4805ed5dcd0aa4393.chunk.js:8419
+[     533ms] [ERROR] Warning: Please use `require("history").PathUtils` instead of `require("history/PathUtils")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-dbd4805ed5dcd0aa4393.chunk.js:8419
+[     583ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/vendors~ats_application-2f4a5e108816168b4853.chunk.js:145570
+[     583ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/vendors~ats_application-2f4a5e108816168b4853.chunk.js:145570
+[     584ms] [LOG] [store/index.js] store.getState() {} @ http://app.lvh.me:5007/packs-test/js/ats_application-91933bff156d3ee35ca4.chunk.js:10860
+[     586ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0
+[     589ms] [LOG] %c
+
+
+[App] render background-color: #b0d219 {props: Object, queryClient: QueryClient} @ http://app.lvh.me:5007/packs-test/js/ats_application-91933bff156d3ee35ca4.chunk.js:42822
+[     594ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-91933bff156d3ee35ca4.chunk.js:43019
+[     651ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: undefined} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application-3c14b037ca897684a03d.chunk.js:3376
+[     654ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-91933bff156d3ee35ca4.chunk.js:43019
+[     662ms] [ERROR] Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s darkModeAllowed darkmodeallowed 
+    in button (created by EmotionCssPropInternal)
+    in EmotionCssPropInternal (created by LargeButton)
+    in LargeButton (created by GoogleSSOButton_Styled-GoogleButton)
+    in GoogleSSOButton_Styled-GoogleButton (created by GoogleSSOButton)
+    in form (created by GoogleSSOButton)
+    in GoogleSSOButton (created by AuthForm)
+    in div (created by Styled_Styled-GoogleSSOWrapper)
+    in Styled_Styled-GoogleSSOWrapper (created by AuthForm)
+    in div (created by Styled_Styled-AuthForm)
+    in Styled_Styled-AuthForm (created by AuthForm)
+    in AuthForm (created by Auth)
+    in div (created by Auth)
+    in div (created by Styled_Styled-Form)
+    in Styled_Styled-Form (created by Auth)
+    in div (created by Styled_Styled-FormContent)
+    in Styled_Styled-FormContent (created by Auth)
+    in div (created by Styled_Styled-UI)
+    in Styled_Styled-UI (created by SessionsLayout)
+    in div (created by Styled_Styled-Container)
+    in Styled_Styled-Container (created by SessionsLayout)
+    in SessionsLayout (created by Auth)
+    in Auth (created by Route)
+    in Route (created by withRouter(Auth))
+    in withRouter(Auth) (created by Route)
+    in Route (created by AppAuthed)
+    in Switch (created by AppAuthed)
+    in ModalProvider (created by AppAuthed)
+    in ToastProvider (created by AppAuthed)
+    in GlobalChannelContextProvider (created by AppAuthed)
+    in ErrorBoundary (created by AppAuthed)
+    in CurrentSessionProvider (created by AppAuthed)
+    in WindowSizeProvider (created by AppAuthed)
+    in div (created by AppAuthRouter_Styled-AppWrapper)
+    in AppAuthRouter_Styled-AppWrapper (created by AppAuthed)
+    in ThemeProvider (created by AppAuthed)
+    in AppAuthed (created by AuthedLogoutDecision)
+    in AuthedLogoutDecision (created by Route)
+    in Route (created by withRouter(AuthedLogoutDecision))
+    in withRouter(AuthedLogoutDecision) (created by App)
+    in PageviewTrackerInner (created by Route)
+    in Route (created by withRouter(PageviewTrackerInner))
+    in withRouter(PageviewTrackerInner) (created by PostHogProvider)
+    in PostHogProvider (created by PostHogProvider)
+    in PostHogProvider (created by App)
+    in Router (created by BrowserRouter)
+    in BrowserRouter (created by App)
+    in ColorSchemeProvider (created by App)
+    in QueryClientProvider (created by App)
+    in App @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-dbd4805ed5dcd0aa4393.chunk.js:17480
+[     668ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-dbd4805ed5dcd0aa4393.chunk.js:279
+[     669ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-dbd4805ed5dcd0aa4393.chunk.js:279
+[     669ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-dbd4805ed5dcd0aa4393.chunk.js:279
+[     669ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-dbd4805ed5dcd0aa4393.chunk.js:279
+[     669ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-dbd4805ed5dcd0aa4393.chunk.js:279
+[     669ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-dbd4805ed5dcd0aa4393.chunk.js:279
+[     685ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/flipper/features} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-b7cea72e85cd66462445.chunk.js:2882
+[     686ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-91933bff156d3ee35ca4.chunk.js:43019

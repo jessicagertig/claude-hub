@@ -1,5 +1,6 @@
 pipeline: inflow-ats
 source_repo: /Users/jessica/wrk/wrk-corp/inflow-ats
+base_branch: develop
 
 server:
   start_command: |
@@ -69,6 +70,35 @@ seed:
       path: /cypress/individual_app/careers_page_subscriptions/{id}
       returns: "Careers page subscription data"
 
+  feature_flags:
+    description: |
+      Seed plans should enable all flags listed below.
+      If your new feature is gated by a feature flag not on this list, add it to the seed plan as well.
+      MVP_REPORTING is intentionally off. Do not enable it.
+      Note: Flipper cloud sync is not working in the test environment.
+      Flags added since the sync stopped (HIRING_STAGE_AUTOMATIONS, AI_APPLICANT_SUMMARY)
+      must be enabled manually via the API calls below.
+    enable_steps:
+      - "POST /api/v1/flipper/features with body {name: FLAG_NAME} to create the flag"
+      - "POST /api/v1/flipper/features/FLAG_NAME/boolean to enable it"
+    disable_step: "DELETE /api/v1/flipper/features/FLAG_NAME/boolean"
+    all_known_flags:
+      - CUSTOM_DOMAINS                       # enable
+      - NOTIFICATION_SUMMARY_COUNTS          # enable
+      - ANONYMIZE_CANDIDATES                 # enable
+      - DISCORD_INTEGRATION                  # enable
+      - SLACK_INTEGRATION                    # enable
+      - LINKEDIN_INTEGRATION                 # enable
+      - ZAPIER_INTEGRATION                   # enable
+      - MVP_REPORTING                        # DO NOT enable
+      - X_HIRING_INTEGRATION                 # enable
+      - WHATJOBS_INTEGRATION                 # enable
+      - HIRING_STAGE_AUTOMATIONS             # enable
+      - WEBFLOW_UPDATE_ALERTS                # enable
+      - SLACK_INTEGRATION_GRANULAR_SETTINGS  # enable
+      - ORGANIZATION_DATA_EXPORTS            # enable
+      - CUSTOMER_API                         # enable
+
 auth:
   default_user: rezu.may@wrkhq.com
   instructions: |
@@ -77,7 +107,7 @@ auth:
     3. Click "Continue with email"
     4. Wait for the dev workaround div containing a link with href matching "magic_links/validate"
     5. Extract that link's href and navigate to it
-    6. Login is complete when the page redirects to the dashboard
+    6. Login is complete when the page redirects to the jobs list (/jobs). Wait for the redirect to finish.
 
 script_runner:
   command: test_frr
@@ -89,4 +119,94 @@ verification_layers:
   - cypress
   - playwright_mcp
 
-qa_team_size: 3
+qa_team_size: 15
+
+navigation:
+  note: "After login, the redirect lands on the jobs list automatically. Do not navigate manually."
+
+  jobs_list:
+    how: "Login redirect lands here. This is the starting point for all navigation."
+    layout: "List of jobs. Click a job title to open it."
+
+    job_page:
+      how: "Click a job title in the jobs list"
+      layout: "Nested columns. Column 1 (far left) always shows hiring stages (Inbox, Screen, Interview, etc.) and never changes."
+      published_default: "Candidates view — Inbox stage selected"
+      unpublished_default: "Job setup — Job details section open"
+
+      candidates_view:
+        how: "Shown by default when opening a published job"
+        column_1: "Hiring stages — click a stage name to switch stages"
+        column_2: "Candidate list for the selected stage"
+        column_3: "Candidate header — contact info, action buttons, and tabs: Overview, Resume, Messages, Files, Private notes"
+        column_4: "Content area for whichever tab is selected in column 3"
+        note: "The first candidate auto-shows unless the stage is empty. Click a different candidate name in column 2 to switch."
+
+        overview_tab:
+          how: "Default tab in column 3"
+          content: "Hiring stage movements, add a comment, start a review, request a review"
+
+        messages_tab:
+          how: "Click 'Messages' tab in column 3"
+
+        resume_tab:
+          how: "Click 'Resume' tab in column 3"
+
+        files_tab:
+          how: "Click 'Files' tab in column 3"
+
+        private_notes_tab:
+          how: "Click 'Private notes' tab in column 3"
+
+        move_candidate:
+          how: "Click the three-dot overflow menu on the candidate (data-testid='job-application-sidebar-overlow-menu'), then click 'Move to stage'"
+
+        bulk_actions:
+          how: "Select candidates using checkboxes in column 2, then open the three-dot menu at the top right of the stages column. Bulk actions are in that menu but only work if candidates are selected."
+
+      job_setup:
+        how: "Click 'Job setup' in the job page navigation"
+        column_1: "Hiring stages (same as candidates view — never changes)"
+        column_2: "Setup sections — Job details, Job description, Application form, Document template, Hiring stages, Hiring team, Automations. The 'Publish job post' button is also in this column."
+        column_3: "Content area for whichever section is selected in column 2"
+
+        automations:
+          how: "Click 'Automations' in column 2"
+
+  app_settings:
+    how: "In the app header (top bar), click the gear icon (tooltip: 'App settings')"
+    admin_lands_on: "Organization settings"
+    member_lands_on: "User preferences"
+    layout: "Left sidebar with navigation links. Some sections (e.g., Integrations) have a second column with sub-navigation before the content area. Others go directly to content."
+
+    admin_sidebar_links:
+      organization:
+        how: "Click 'Organization' in the sidebar"
+      team:
+        how: "Click 'Team' in the sidebar"
+      message_templates:
+        how: "Click 'Message templates' in the sidebar"
+      review_templates:
+        how: "Click 'Review templates' in the sidebar"
+      job_board:
+        how: "Click 'Job board' in the sidebar"
+      job_categories:
+        how: "Click 'Job categories' in the sidebar"
+      integrations:
+        how: "Click 'Integrations' in the sidebar"
+      plan_and_billing:
+        how: "Click 'Plan & billing' in the sidebar"
+
+    member_sidebar_links:
+      message_templates:
+        how: "Click 'Message templates' in the sidebar"
+      review_templates:
+        how: "Click 'Review templates' in the sidebar"
+      user_preferences:
+        how: "Click 'User preferences' in the sidebar"
+
+  admin_dashboard:
+    how: "God admin only. Click the user avatar dropdown in the top right, then click 'Admin - Dashboard'"
+
+  global_search:
+    how: "Click the search input with placeholder 'Search candidates', type a candidate name, click the result"

@@ -1,45 +1,55 @@
-# Server Lifecycle — Round 1 Findings
+# server-lifecycle — Round 1 Findings
 
-## Angle: server-lifecycle
+## HIGH-1: No defensive RAILS_ENV=test enforcement
 
-### Finding 1: `_execute_step` hardcodes status_code 200 (HIGH)
+**Severity:** HIGH
 
-In `seed.py`, `_execute_step` always returns `"status_code": 200` in the result dict regardless of the actual HTTP response status code. The response object is not propagated from `_request`, so the actual status code is lost.
+**File:** `src/qa_harness/server.py`, line 50
 
-```python
-def _execute_step(self, step: dict) -> dict:
-    ...
-    try:
-        result = self._request(method, path, body)
-        return {
-            "endpoint": f"{method} {path}",
-            "status_code": 200,          # <-- hardcoded
-            "response_body": result,
-        }
-```
+**Finding:** The `start` method copies the current environment verbatim (`env = os.environ.copy()`) without setting `RAILS_ENV=test`. The analog (`inflow_bootstrap.py`, line 72) explicitly sets `env["RAILS_ENV"] = "test"` as a safety measure.
 
-The `_request` method returns the parsed JSON body (or None for 204), not the response object. So `_execute_step` cannot report the actual status code.
+The plan (section 5, server.py "Kept identical" notes) says this omission is intentional because "the config's server command includes RAILS_ENV=test inline." But the spec's hard rules (section "Constraints and requirements / Test environment safety") say `RAILS_ENV=test` always -- this is a HARD RULE. Relying on the config command to include it inline means:
 
-This is a HIGH because the CLI's `cmd_seed` prints `result['status_code']` to stdout, and QA agents use this output to verify seed operations succeeded. A misleading "200" when the actual status was 201 or 204 produces incorrect evidence in QA findings.
+1. A config author can omit it and the harness will silently start a dev/production server
+2. The spec says the harness must enforce this, not delegate enforcement to config authors
+3. The analog enforces it defensively even though its hardcoded commands also include it
 
-**Fix:** Have `_request` return a tuple of `(status_code, body)` or a result dict, so `_execute_step` can include the real status code.
+The plan's reasoning directly contradicts the spec's hard rule. The harness MUST set `RAILS_ENV=test` in the subprocess environment, just as the analog does.
 
-### Finding 2: No health check for supporting process death during QA rounds (MED)
+**Fix:** Add `env["RAILS_ENV"] = "test"` after `env = os.environ.copy()` in `ServerManager.start()`.
 
-`_wait_for_health` checks for premature exit of the **main server process** only (via `self._procs[0]`). If a supporting process (e.g., Sidekiq) dies during a QA round, the harness does not detect it. The spec mentions this as an open question (REVIEW-ANGLES.md: "Does the spec handle Sidekiq dying independently of Rails?").
+---
 
-The analog (`inflow_bootstrap.py`) also only checks the Rails process, so this is consistent with the analog. But in the QA harness context, where rounds may run for extended periods, a dead Sidekiq could cause async-dependent features to silently fail.
+## HIGH-2: State file missing config_path
 
-This is MED because it matches the analog behavior and is documented as an open question.
+**Severity:** HIGH
 
-### Finding 3: `stop_from_state_file` does not wait for graceful shutdown (MED)
+**File:** `src/qa_harness/server.py`, lines 273-286 and `src/qa_harness/cli.py`, lines 57-79
 
-The `stop_from_state_file` function sends SIGTERM to PIDs from the state file but does not wait for them to actually terminate. Contrast with `ServerManager.stop()` which does `proc.wait(timeout=10)` with SIGKILL fallback.
+**Finding:** The plan (section 5, CLI design, line ~389) specifies the state file must include `"config_path"`. The implementation's `_write_state_file` omits it. This causes a usability problem: `qa-harness stop` requires loading the config (to construct `ServerConfig` for the fallback kill-by-port), but if the user is in a different working directory than when they ran `start`, `resolve_config_path` fails because there's no `qa-config.yml` in the cwd.
 
-If the orchestrator calls `qa-harness stop` and then immediately starts a new round or exits, processes may still be running. The next `start` mitigates this (it kills by port first), but the `STOPPED` output printed by `cmd_stop` is premature.
+The qa-prompt.md (Step 8, line 225) shows `qa-harness stop --config ~/claude-hub/<pipeline>/qa-config.yml` -- so the orchestrator always passes `--config`. But the state file SHOULD store config_path for robustness and to match the plan's specification.
 
-This is MED because the `start` command's `_kill_existing_processes` provides a safety net.
+**Fix:** Add `config_path` parameter to `_write_state_file` and store it in the state JSON. Have `cmd_stop` try reading it from the state file as a fallback before failing on config resolution.
 
-### Finding 4: Analog match is strong (PASS NOTE)
+---
 
-The core lifecycle -- `_kill_pids_from_command` via `os.system` with temp files, `_wait_for_health` polling with premature exit detection, `_register_cleanup` with atexit + signal handlers, `stop` with SIGTERM/SIGKILL/wait -- matches `inflow_bootstrap.py` almost line-for-line. The `bash -c` wrapper, `cwd` setting, and `env = os.environ.copy()` are all preserved. Good.
+## MED-1: No check for supporting process premature exit during health polling
+
+**Severity:** MED
+
+**File:** `src/qa_harness/server.py`, lines 225-228
+
+**Finding:** `_wait_for_health` only checks premature exit on `self._procs[0]` (the main server process). If a supporting process (e.g., Sidekiq) dies during startup, the harness won't detect it until later. The analog only checks Rails too (line 196), so this matches the analog. Noting as MED because supporting process death during startup is a legitimate edge case.
+
+---
+
+## MED-2: _extract_process_keyword has a limited hardcoded keyword list
+
+**Severity:** MED
+
+**File:** `src/qa_harness/server.py`, lines 369-371
+
+**Finding:** The keyword extraction for `pgrep -f` relies on a hardcoded list: `["sidekiq", "puma", "unicorn", "rails", "node", "next"]`. A pipeline with a non-listed supporting process (e.g., a custom worker) would fall through to the "first word after exec" heuristic, which may match too broadly or not at all. The plan acknowledges this risk (section 11, Risk 2) but doesn't mitigate it.
+
+Not blocking because the primary kill mechanism uses tracked PIDs from Popen, and pgrep is only for orphan cleanup.

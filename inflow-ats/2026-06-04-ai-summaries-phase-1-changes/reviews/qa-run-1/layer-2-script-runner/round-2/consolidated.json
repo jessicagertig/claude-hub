@@ -1,0 +1,28 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "findings": [],
+  "scripts_run": [
+    {
+      "name": "qa-l2-round2-verify.rb",
+      "result": "PASS",
+      "checks": [
+        "Flipper guard in ResetDailyAiCredits",
+        "TextractResult broadcast rename + errorMessage",
+        "Sentry.capture_exception in Organization",
+        "saved_change_to_id? removed",
+        "should_auto_generate_ai_summaries? in textract_result",
+        "CreateAiCreditBalanceTransaction in textract_result",
+        "prompt_text removed from summary.update (still in AiApiRequest.create as expected)",
+        "Mailer templates renamed",
+        "is_admin? fixed to is_admin",
+        "2 deliver_later calls on BulkJobApplicationAiSummaryResultMailer"
+      ],
+      "notes": "Initial script false-alarmed on prompt_text in generate.rb because the search was file-wide. The prompt_text at line 308 is inside AiApiRequest.create (the create_ai_api_request method), which is correct per spec Note #26 and plan step C.6.3."
+    }
+  ],
+  "prior_findings_review": "No prior findings to review (Round 1 had 0 findings)",
+  "high_findings": 0,
+  "blocker_findings": 0,
+  "notes": "Second consecutive clean round. Layer 2 converged. All business logic verified via rails runner scripts."
+}

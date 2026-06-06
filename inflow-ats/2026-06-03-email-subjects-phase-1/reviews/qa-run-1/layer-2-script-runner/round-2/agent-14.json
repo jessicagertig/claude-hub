@@ -1,0 +1,67 @@
+{
+  "agent": 14,
+  "round": 2,
+  "layer": "layer-2-script-runner",
+  "purpose": "Validate/invalidate LOW findings from Round 1",
+  "timestamp": "2026-06-05T00:00:00Z",
+  "findings": [
+    {
+      "id": "L2-001",
+      "original_severity": "LOW",
+      "revised_severity": "MED",
+      "status": "VALIDATED",
+      "title": "text.blank? raises ArgumentError on malformed UTF-8 before text.scrub can clean it",
+      "description": "In both BulkChannelMessageSendJob#parse_text (line 52) and CreateStageAutomationMessage#parse_text (line 34), `text.blank?` is called before `text.scrub`. When text contains malformed UTF-8 bytes, String#blank? (ActiveSupport 6.1.7.7, Ruby 3.1.6) internally uses regex matching (/\\A\\s*\\z/) which raises ArgumentError: 'invalid byte sequence in UTF-8'. The .scrub call on line 58/38 would fix the encoding, but it never executes because the exception is thrown first.",
+      "evidence": {
+        "script": "/tmp/qa-l2r2-agent14-utf8-blank.rb",
+        "ruby_version": "3.1.6",
+        "rails_version": "6.1.7.7",
+        "activesupport_version": "6.1.7.7",
+        "blank_source": "activesupport-6.1.7.7/lib/active_support/core_ext/object/blank.rb:121",
+        "test_results": {
+          "single_invalid_byte_0xFF": ".blank? raised ArgumentError: invalid byte sequence in UTF-8; .scrub.blank? succeeded",
+          "invalid_continuation_0xC0_0x01": ".blank? raised ArgumentError; .scrub.blank? succeeded",
+          "truncated_multibyte_0xE0_0x80": ".blank? raised ArgumentError; .scrub.blank? succeeded",
+          "mixed_valid_invalid": ".blank? raised ArgumentError; .scrub.blank? succeeded",
+          "only_invalid_bytes": ".blank? raised ArgumentError; .scrub.blank? succeeded",
+          "valid_utf8": ".blank? returned false (no exception)",
+          "empty_string": ".blank? returned true (no exception)"
+        }
+      },
+      "affected_files": [
+        "app/jobs/channel_messages/bulk_channel_message_send_job.rb (lines 52, 58)",
+        "app/interactors/channel_messages/create_stage_automation_message.rb (lines 34, 38)"
+      ],
+      "fix": "Swap the order: call .scrub before .blank?, e.g., `return '' if text.scrub.blank?` then continue with the already-scrubbed string, or separate into `text = text.scrub; return '' if text.blank?`",
+      "severity_rationale": "Upgrading from LOW to MED. The bug is real and reproducible: any malformed UTF-8 in subject or body text will cause an unhandled ArgumentError. In practice, the controller layer sanitizes inputs via Sanitize.fragment (Nokogiri), which may normalize encoding for browser-submitted data. However, the automation path (HiringStageMessageAutomationJob) reads subject/body from stored ChannelMessageTemplate records, and the bulk message path processes text through Sidekiq job deserialization. Both paths could pass malformed UTF-8 if the database contains it. The exception is caught by the outer rescue StandardError in both files, so it doesn't crash the server, but it silently prevents message delivery with a generic error ('Message not sent. An unexpected error occurred') instead of sending the cleaned message. This is a silent functional failure, not just a theoretical concern.",
+      "pre_existing": true,
+      "pre_existing_note": "The .blank?-before-.scrub pattern exists in the original body-only code. The email-subjects feature copied this pattern for the subject field, propagating the bug. The bug affects both body and subject processing in both files."
+    },
+    {
+      "id": "L2-INFO-001",
+      "original_severity": "LOW",
+      "revised_severity": "INFO",
+      "status": "VALIDATED-DOWNGRADED",
+      "title": "QA harness starts server from main checkout, not worktree",
+      "description": "The qa-config.yml declares source_repo as /Users/jessica/wrk/wrk-corp/inflow-ats (the main checkout). The ServerManager uses this as the cwd for subprocess.Popen (server.py line 239). When testing a worktree branch like inflow-ats.messaging-improvements, the server runs from the main checkout code, not the worktree code. This means the QA harness tests the main branch code, not the feature branch code.",
+      "evidence": {
+        "config_file": "~/claude-hub/inflow-ats/qa-config.yml line 2: source_repo: /Users/jessica/wrk/wrk-corp/inflow-ats",
+        "server_code": "qa-harness/src/qa_harness/server.py line 239: cwd=self.source_repo",
+        "worktree_path": "/Users/jessica/wrk/wrk-corp/inflow-ats.messaging-improvements"
+      },
+      "severity_rationale": "Downgrading from LOW to INFO. This is a QA harness configuration issue, not a bug in the email-subjects feature code. The qa-config.yml is a shared config file that could be pointed at a worktree by passing a different config or overriding source_repo. It is a known limitation of the current qa-harness setup, not a finding against the feature under test. For this specific QA run, the script_runner layer uses test_frr directly from the worktree (cd to worktree + test_frr), so script_runner tests DO run against the feature branch code. Only the server-based layers (cypress, playwright_mcp) would be affected.",
+      "pre_existing": true,
+      "pre_existing_note": "This is a qa-harness infrastructure concern, not related to the email-subjects feature."
+    }
+  ],
+  "summary": {
+    "validated_count": 2,
+    "invalidated_count": 0,
+    "severity_changes": {
+      "L2-001": "LOW -> MED (validated as real bug, silent functional failure on malformed UTF-8)",
+      "L2-INFO-001": "LOW -> INFO (validated but downgraded; qa-harness config concern, not feature bug)"
+    },
+    "new_findings_count": 0,
+    "recommendation": "L2-001 should be addressed: swap .scrub and .blank? ordering in both parse_text methods. The fix is a one-line change in each file. L2-INFO-001 is informational only and does not require action for this feature."
+  }
+}

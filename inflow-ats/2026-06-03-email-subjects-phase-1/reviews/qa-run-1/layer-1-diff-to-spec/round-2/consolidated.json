@@ -1,0 +1,43 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agents_dispatched": 10,
+  "findings": [
+    {
+      "id": "C-006",
+      "severity": "MED",
+      "title": "BulkChannelMessageSendJob rescue block does not check :subject validation errors",
+      "spec_requirement": "Subject validated by CustomChannelMessageValidator on ChannelMessage model",
+      "evidence": "BulkChannelMessageSendJob RecordInvalid rescue checks e.record.errors.messages[:message] and [:body] but never [:subject]. If subject contains unsubstituted {{...}} placeholders, create! raises RecordInvalid with an error on :subject. Neither branch matches, so broadcast_error_message is never called. The error is logged but the user gets no growl notification — the message silently fails for that candidate.",
+      "recommendation": "Add a check for :subject errors in the RecordInvalid rescue block, or generalize the error extraction to handle any attribute.",
+      "reported_by": [6]
+    },
+    {
+      "id": "C-007",
+      "severity": "LOW",
+      "title": "duplicate_message_exists? only checks body, not subject",
+      "spec_requirement": "Not directly spec'd — existing behavior",
+      "evidence": "BulkChannelMessageSendJob line 15: ChannelMessage.duplicate_message_exists?(channel.id, channel_message_params[:body]). Two sends with identical bodies but different subjects would be treated as duplicates. Defensible as anti-spam guard, spec doesn't mention it.",
+      "recommendation": "No action needed. Existing behavior, out of spec scope.",
+      "reported_by": [6]
+    }
+  ],
+  "prior_findings_validation": {
+    "C-001": "VALIDATED by Agent 10 — CSS font-size bug is real, MED severity confirmed",
+    "C-002": "VALIDATED by Agent 10 — automation modal preview gap is real, MED confirmed",
+    "C-003": "VALIDATED by Agent 10 — template modal repopulation gap is real, MED confirmed",
+    "C-004": "VALIDATED by Agent 8 — invalid_tags dedup is LOW, consistent with existing behavior",
+    "C-005": "Not re-evaluated in round 2, stands as LOW"
+  },
+  "spec_coverage": {
+    "total_requirements_verified": 87,
+    "implemented": 87,
+    "missing": 0
+  },
+  "convergence": {
+    "high_plus_findings": 0,
+    "round_status": "CLEAN",
+    "consecutive_clean_rounds": 2,
+    "layer_converged": true
+  }
+}

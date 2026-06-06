@@ -1,0 +1,165 @@
+[      62ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[      67ms] [INFO] %cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:34
+[      67ms] [ERROR] Warning: Please use `require("history").createBrowserHistory` instead of `require("history/createBrowserHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[      68ms] [ERROR] Warning: Please use `require("history").createHashHistory` instead of `require("history/createHashHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[      76ms] [ERROR] Warning: Please use `require("history").createMemoryHistory` instead of `require("history/createMemoryHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[      76ms] [ERROR] Warning: Please use `require("history").PathUtils` instead of `require("history/PathUtils")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[      82ms] [ERROR] You are currently using minified code outside of NODE_ENV === "production". This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or setting mode to production in webpack (https://webpack.js.org/concepts/mode/) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[      88ms] [ERROR] You are currently using minified code outside of NODE_ENV === 'production'. This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[      88ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[      88ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[      88ms] [LOG] [store/index.js] store.getState() {} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:264
+[      89ms] [LOG] %c
+
+
+[App] render background-color: #b0d219 {props: Object, queryClient: e} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[      91ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[      97ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[      98ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     105ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/flipper/features} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     106ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     114ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0
+[     121ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     122ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     123ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: 17083} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     124ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     158ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/organizations/17083} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     159ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     174ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 17083, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     188ms] [WARNING] @reach/tooltip styles not found. If you are using a bundler like webpack or parcel include this in the entry file of your app before any of your own styles:
+
+    import "@reach/tooltip/styles.css";
+
+  Otherwise you'll need to include them some other way:
+
+    <link rel="stylesheet" type="text/css" href="node_modules/@reach/tooltip/styles.css" />
+
+  For more information visit https://ui.reach.tech/styling.
+   @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     188ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: 17083} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     192ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     199ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 17083, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     207ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     214ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 17083, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     261ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/ai_credits} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     271ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me/job_application_notifications/has_unread} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     276ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: null, requestPath: /api/v1/ai_credit_purchases} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     293ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     294ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     299ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 17083, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     308ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/ai_credits} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     502ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/organizations/17083} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     503ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     508ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 17083, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     554ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/ai_credit_purchases/prices} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[  557903ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[  557908ms] [INFO] %cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:34
+[  557908ms] [ERROR] Warning: Please use `require("history").createBrowserHistory` instead of `require("history/createBrowserHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[  557908ms] [ERROR] Warning: Please use `require("history").createHashHistory` instead of `require("history/createHashHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[  557917ms] [ERROR] Warning: Please use `require("history").createMemoryHistory` instead of `require("history/createMemoryHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[  557918ms] [ERROR] Warning: Please use `require("history").PathUtils` instead of `require("history/PathUtils")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[  557923ms] [ERROR] You are currently using minified code outside of NODE_ENV === "production". This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or setting mode to production in webpack (https://webpack.js.org/concepts/mode/) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[  557928ms] [ERROR] You are currently using minified code outside of NODE_ENV === 'production'. This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  557928ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  557928ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  557928ms] [LOG] [store/index.js] store.getState() {} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:264
+[  557931ms] [LOG] %c
+
+
+[App] render background-color: #b0d219 {props: Object, queryClient: e} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  557932ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  557945ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[  557947ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  557954ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/flipper/features} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[  557954ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  557961ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://app.lvh.me:5007/api/v1/me:0
+[  557961ms] [ERROR] Error: Request failed with status code 401
+    at e.exports (http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:6:25816)
+    at e.exports (http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:68:54057)
+    at d.onreadystatechange (http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:6:24675) @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[  557962ms] [LOG] %c[useGetMe] ERROR - Redirecting to /logout color: #FF0000 {pathname: /hire/settings/plato-ai/billing} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[  557962ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/billing, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  558006ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0
+[  558020ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[  558024ms] [INFO] %cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:34
+[  558025ms] [ERROR] Warning: Please use `require("history").createBrowserHistory` instead of `require("history/createBrowserHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[  558025ms] [ERROR] Warning: Please use `require("history").createHashHistory` instead of `require("history/createHashHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[  558031ms] [ERROR] Warning: Please use `require("history").createMemoryHistory` instead of `require("history/createMemoryHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[  558031ms] [ERROR] Warning: Please use `require("history").PathUtils` instead of `require("history/PathUtils")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[  558036ms] [ERROR] You are currently using minified code outside of NODE_ENV === "production". This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or setting mode to production in webpack (https://webpack.js.org/concepts/mode/) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[  558041ms] [ERROR] You are currently using minified code outside of NODE_ENV === 'production'. This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  558041ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  558041ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  558041ms] [LOG] [store/index.js] store.getState() {} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:264
+[  558043ms] [LOG] %c
+
+
+[App] render background-color: #b0d219 {props: Object, queryClient: e} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  558044ms] [LOG] %c[Logout] render color: #1976D2 {match: Object, location: Object, history: Object, staticContext: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:256
+[  558046ms] [LOG] %c[Logout] useEffect color: #1976D2 @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:256
+[  558047ms] [LOG] %c[Logout] render color: #1976D2 {match: Object, location: Object, history: Object, staticContext: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:256
+[  558047ms] [LOG] %c[queryHooks] apiDelete color: #126d59 {path: /logout, variables: null} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[  558055ms] [LOG] %c[queryHooks] apiMutate color: #1976D2 {data: , variables: null, requestPath: /api/v1/logout} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[  558055ms] [LOG] %c[useSession] useLogout onSuccess color: #1976D2 {data: } @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  558056ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  558064ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[  558065ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  558072ms] [ERROR] Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s darkModeAllowed darkmodeallowed 
+    in button (created by EmotionCssPropInternal)
+    in EmotionCssPropInternal (created by W)
+    in W (created by GoogleSSOButton_Styled-GoogleButton)
+    in GoogleSSOButton_Styled-GoogleButton (created by i)
+    in form (created by i)
+    in i (created by R)
+    in div (created by Styled_Styled-GoogleSSOWrapper)
+    in Styled_Styled-GoogleSSOWrapper (created by R)
+    in div (created by Styled_Styled-AuthForm)
+    in Styled_Styled-AuthForm (created by R)
+    in R
+    in div
+    in div (created by Styled_Styled-Form)
+    in Styled_Styled-Form
+    in div (created by Styled_Styled-FormContent)
+    in Styled_Styled-FormContent
+    in div (created by Styled_Styled-UI)
+    in Styled_Styled-UI (created by l)
+    in div (created by Styled_Styled-Container)
+    in Styled_Styled-Container (created by l)
+    in l
+    in Unknown (created by t)
+    in t (created by withRouter())
+    in withRouter() (created by t)
+    in t (created by f)
+    in t (created by f)
+    in Unknown (created by f)
+    in Unknown (created by f)
+    in Unknown (created by f)
+    in g (created by f)
+    in Unknown (created by f)
+    in Unknown (created by f)
+    in div (created by AppAuthRouter_Styled-AppWrapper)
+    in AppAuthRouter_Styled-AppWrapper (created by f)
+    in b (created by f)
+    in f
+    in Unknown (created by t)
+    in t (created by withRouter())
+    in withRouter() (created by i)
+    in Unknown (created by t)
+    in t (created by withRouter())
+    in withRouter()
+    in X
+    in Unknown (created by i)
+    in t (created by t)
+    in t (created by i)
+    in Unknown (created by i)
+    in s (created by i)
+    in i @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:21
+[  558078ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[  558078ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[  558078ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[  558078ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[  558078ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[  558078ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[  558088ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/flipper/features} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[  558089ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[  558093ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0

@@ -1,34 +1,15 @@
-# Lifecycle Integration — Round 1 Findings
+# lifecycle-integration — Round 1 Findings
 
-## Angle: lifecycle-integration
+## Verified correct:
 
-### Finding 1: LIFECYCLE.md Phase 8 section is complete and well-integrated (PASS NOTE)
+1. **LIFECYCLE.md Phase 8 section** (lines 115-128): Correctly describes Phase 8 as coming after Phase 7 (hardening). Gate file is `QA-COMPLETE.md` or `QA-ESCALATION.md`. Mentions qa-config.yml requirement, server lifecycle ownership by orchestrator, sequential agent execution, and the Phase 5 failure loop.
 
-The Phase 8 section in LIFECYCLE.md:
-- Correctly references `qa-prompt.md` as the prompt file
-- Documents the config requirement (`qa-config.yml`)
-- Documents the gate file (`QA-COMPLETE.md`) and escalation file (`QA-ESCALATION.md`)
-- Documents the failure loop back to Phase 5 with Phase 6 skip
-- Documents sequential agent execution
-- Documents server lifecycle ownership (orchestrator, not agents)
-- Documents the 5-round cap
+2. **qa-prompt.md**: All 9 steps present and consistent with the spec. Step 7 correctly loops back to Phase 5, skipping Phase 6. Step 8 writes `QA-COMPLETE.md`. Step 9 writes `QA-ESCALATION.md`.
 
-The artifact trail in LIFECYCLE.md includes `seed-plans/`, `qa-round-N/`, and `QA-COMPLETE.md`, matching the spec.
+3. **Artifact trail** in LIFECYCLE.md (lines 133-152) includes `seed-plans/`, `qa-round-N/`, and `QA-COMPLETE.md` -- matches the spec.
 
-### Finding 2: Phase ordering is correct (Phase 8 after Phase 7) (PASS NOTE)
+4. **Phase naming consistency**: `QA-COMPLETE.md` follows the `*-COMPLETE.md` pattern established by `SPEC-REVIEW-COMPLETE.md` and `IMPL-REVIEW-COMPLETE.md`.
 
-The spec says "hardening (Phase 7) does not incorporate QA findings because it runs first." LIFECYCLE.md places Phase 8 after Phase 7, matching this design decision. The REVIEW-ANGLES.md raised the question of whether QA should happen before hardening. The spec explicitly addresses this: QA failure reports loop back to Phase 5 directly, not through hardening.
+5. **Prompt file location**: `qa-prompt.md` exists at `~/claude-hub/features/qa-prompt.md`, which is the standard location per LIFECYCLE.md's prompt file resolution mechanism (lines 17-20).
 
-### Finding 3: Gate file naming is consistent (PASS NOTE)
-
-- Phase 2: `SPEC-REVIEW-COMPLETE.md`
-- Phase 6: `IMPL-REVIEW-COMPLETE.md`
-- Phase 8: `QA-COMPLETE.md` (converged) or `QA-ESCALATION.md` (round cap)
-
-The naming convention is consistent. `QA-COMPLETE.md` drops the `-REVIEW` suffix because QA verification is not a review -- it's a verification. This is a reasonable distinction.
-
-### Finding 4: qa-prompt.md location matches lifecycle conventions (PASS NOTE)
-
-The plan specified `prompts/qa-prompt.md` inside the qa-harness package directory. The actual implementation placed it at `~/claude-hub/features/qa-prompt.md`, which is where all other phase prompt files live. The `prompts/` directory in the qa-harness package exists but is empty.
-
-This is the correct location per LIFECYCLE.md: "For each phase, look for the prompt file in this order: 1. `~/claude-hub/<pipeline>/features/<prompt-file>` 2. `~/claude-hub/features/<prompt-file>`". The plan was wrong about the location; the implementation is right.
+## No BLOCKER, HIGH, or MED findings.

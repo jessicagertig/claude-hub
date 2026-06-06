@@ -1,0 +1,51 @@
+{
+  "agent_index": 8,
+  "focus_area": "Mail-merge render_template_message and anonymization",
+  "findings": [
+    {
+      "id": "R8-F1",
+      "severity": "LOW",
+      "file": "app/models/job_application.rb",
+      "location": "render_template_message, all_invalid_tags computation (~line 819)",
+      "category": "behavioral-correctness",
+      "summary": "Duplicate invalid tags possible when same invalid tag appears in both body and subject",
+      "detail": "The code does `all_invalid_tags = body_invalid_tags + subject_invalid_tags`. If the same invalid tag (e.g., `{{Typo}}`) appears in both body and subject, it will appear twice in the `all_invalid_tags` array. The original code did not deduplicate either (Mustache::Template.tags can return the same tag name once per occurrence, and a single template could theoretically have duplicates), so this is consistent with existing behavior. The `has_invalid_tags` boolean is unaffected. Impact is cosmetic at most -- if the frontend ever displays the invalid tags list, duplicates would show.",
+      "spec_requirement": "Widen invalid_tags computation to include subject template tags",
+      "assessment": "Consistent with existing behavior. No functional impact. Not a bug -- just noting the behavior."
+    },
+    {
+      "id": "R8-F2",
+      "severity": "MED",
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx",
+      "location": "Styled.SubjectPreview, line 207 in the worktree",
+      "category": "behavioral-correctness",
+      "summary": "Invalid CSS: font-size property doubled via t.text.sm theme utility",
+      "detail": "Line `font-size: ${t.text.sm};` produces invalid CSS because `t.text.sm` is already a complete CSS declaration that includes `font-size:`. The output becomes `font-size: font-size: 0.875rem;`. This is the exact pattern documented in the pipeline CLAUDE.md Known Failure Pattern #1 (which was motivated by this very feature's prior review round). The correct usage is `${t.text.sm};` as a standalone statement. NOTE: This file is outside my assigned focus area (my assigned files are job_application.rb and candidates_controller.rb), but it directly consumes render_template_message output, so I am flagging it. It may be flagged by the reviewer assigned to frontend files.",
+      "spec_requirement": "Three Mustache outputs: subject_raw, subject_html, template_subject_html (display layer)",
+      "assessment": "The SubjectPreview component's font-size will not render correctly. The subject text will still display but with the browser's default font size instead of the intended small font."
+    }
+  ],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "Subject pipeline: Mustache substitution + Mustache spanification (NO Redcarpet)",
+      "Subject source from channel_message_template.subject with fallback to empty string",
+      "Same placeholder wrapping (triple-brace conversion) applied to subject",
+      "Same Unicode cleanup (zero-width chars, non-breaking spaces) applied to subject",
+      "Three Mustache outputs: subject_raw, subject_html, template_subject_html (parallel to body)",
+      "Widen invalid_tags computation to include subject template tags",
+      "Response hash includes subject_raw, subject_html, template_subject_html, combined invalid_tags",
+      "Anonymization endpoint: add text_replacer calls for subject (both first_name and last_name)"
+    ],
+    "implemented": [
+      "Subject pipeline: Mustache substitution + Mustache spanification (NO Redcarpet) -- VERIFIED: subject_prepared goes through Mustache.render with all three option sets (plain, spanified, spanified-unfilled) but NOT through Redcarpet. Correct.",
+      "Subject source from channel_message_template.subject with fallback to empty string -- VERIFIED: `subject_source = channel_message_template.subject || ''` on line 784. Correct.",
+      "Same placeholder wrapping (triple-brace conversion) applied to subject -- VERIFIED: subject_prepared goes through the same gsub('{{{','{{').gsub('}}}','}}') normalization then per-tag triple-brace wrapping via placeholder_options(sender).keys loop. Identical logic to body. Correct.",
+      "Same Unicode cleanup (zero-width chars, non-breaking spaces) applied to subject -- VERIFIED: `subject_prepared.gsub(/[\\u200B-\\u200D\\uFEFF]/, '').gsub(/\\u00A0/, ' ')` on line 789. Correct.",
+      "Three Mustache outputs: subject_raw, subject_html, template_subject_html -- VERIFIED: Lines 806-808 produce all three via Mustache.render with placeholder_options, placeholder_options_with_spans, and placeholder_options_with_spans_unfilled respectively. Correct.",
+      "Widen invalid_tags computation to include subject template tags -- VERIFIED: Lines 813-820 create separate body_template and subject_template, compute body_invalid_tags and subject_invalid_tags, concatenate to all_invalid_tags, and compute has_invalid_tags from the combined result. Correct.",
+      "Response hash includes subject_raw, subject_html, template_subject_html, combined invalid_tags -- VERIFIED: Lines 822-831 build the response hash with all six original keys plus three new subject keys, and the widened has_invalid_tags/invalid_tags. Correct.",
+      "Anonymization endpoint: add text_replacer calls for subject (both first_name and last_name) -- VERIFIED: Lines 146-147 in candidates_controller.rb add `channel_message.subject = text_replacer(channel_message.subject, real_first_name, name_replacement)` and the same for real_last_name, placed before the existing `channel_message.save!`. text_replacer handles nil/blank gracefully (returns text if text.blank?), so historical NULL subjects are safe. Correct."
+    ],
+    "missing": []
+  }
+}

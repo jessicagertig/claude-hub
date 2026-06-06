@@ -2,28 +2,29 @@
 
 ## Summary
 
-| Severity | Count | Details |
-|---|---|---|
-| BLOCKER | 0 | |
-| HIGH | 0 | Round 1 HIGH fixed (`_execute_step` status code) |
-| MED | 3 | Carried from Round 1, all acceptable for v1 |
-| LOW | 2 | Carried from Round 1, by design |
+| Angle | BLOCKER | HIGH | MED |
+|-------|---------|------|-----|
+| server-lifecycle | 0 | 0 | 2 (carried) |
+| seed-data-design | 0 | 0 | 2 (carried) |
+| convergence-protocol | 0 | 0 | 0 |
+| playwright-mcp-integration | 0 | 0 | 0 |
+| pipeline-scalability | 0 | 0 | 2 (carried) |
+| lifecycle-integration | 0 | 0 | 0 |
+| claude-md-compliance | 0 | 0 | 0 |
+| **Total** | **0** | **0** | **6** |
 
-## Round 1 HIGH fix verification
+## Round 1 HIGH fixes verified:
+1. HIGH-1 (RAILS_ENV=test) -- Fixed and tested. `env["RAILS_ENV"] = "test"` in `server.py` line 56.
+2. HIGH-2 (config_path in state file) -- Fixed. State file stores config_path. `cmd_stop` and `cmd_status` read it as fallback.
 
-The `_execute_step` hardcoded status_code 200 issue is fixed. `_request` now returns `tuple[int, Any]` with `(status_code, parsed_body)`. All callers (`_execute_step`, `cleanup`) correctly unpack the tuple. All 71 tests pass. The fix is clean and minimal.
+## MED findings (non-blocking, carried from Round 1):
+- server-lifecycle MED-1: No supporting process premature exit check during health polling
+- server-lifecycle MED-2: _extract_process_keyword hardcoded keyword list
+- seed-data-design MED-1: validate_plan does not check required params presence
+- seed-data-design MED-2: cleanup() does not call check_server_alive internally
+- pipeline-scalability MED-1: No non-web pipeline config example
+- pipeline-scalability MED-2: seed-endpoints uses dummy base_url when no server
 
-## Remaining MED findings (non-blocking)
+## Verdict: PASS (0 BLOCKER + 0 HIGH)
 
-1. **`validate_plan` does not check params** -- acceptable for v1 per plan risk notes
-2. **`stop_from_state_file` sends SIGTERM without waiting** -- mitigated by `start`'s kill-existing
-3. **`cmd_seed`/`cmd_cleanup` require server config** -- no non-web pipelines exist yet
-
-## Remaining LOW findings (by design)
-
-1. **No MED threshold** -- design decision from spec
-2. **`domcontentloaded` not in agent instructions** -- MCP default is correct
-
-## Pass criteria
-
-0 BLOCKER + 0 HIGH = PASS. This is consecutive pass 1 of 2.
+This is Pass 1 of 2 required consecutive passes.

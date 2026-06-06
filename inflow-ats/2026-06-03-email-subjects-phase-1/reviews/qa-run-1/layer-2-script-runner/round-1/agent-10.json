@@ -1,0 +1,95 @@
+{
+  "agent": 10,
+  "round": 1,
+  "layer": "script_runner",
+  "focus": "Default channel_message_templates and add_default_apply_response_template — verify subject is included in defaults",
+  "seed_plan": "paid-user-with-job-only.json",
+  "timestamp": "2026-06-05T00:25:00Z",
+  "environment": {
+    "worktree": "/Users/jessica/wrk/wrk-corp/inflow-ats.messaging-improvements",
+    "runner": "RAILS_ENV=test foreman run rails runner",
+    "server_source": "/Users/jessica/wrk/wrk-corp/inflow-ats (main checkout, NOT worktree)"
+  },
+  "scripts_run": [
+    "/tmp/qa-l2-agent10-test1-default-templates.rb",
+    "/tmp/qa-l2-agent10-test2-new-org-templates.rb",
+    "/tmp/qa-l2-agent10-test2b-new-org-direct.rb",
+    "/tmp/qa-l2-agent10-test3-apply-response-subject.rb",
+    "/tmp/qa-l2-agent10-cleanup.rb"
+  ],
+  "tests": [
+    {
+      "id": "T1",
+      "name": "Organization.default_channel_message_templates includes subject",
+      "script": "/tmp/qa-l2-agent10-test1-default-templates.rb",
+      "status": "PASS",
+      "detail": "All 3 default templates (Thank you for applying, Scheduling, Rejection) include subject: '{{JobTitle}} at {{OrganizationName}}'. Count is exactly 3. Names match expected values.",
+      "sub_results": [
+        {"test": "default_template_count", "status": "PASS", "detail": "3 templates"},
+        {"test": "template_0_subject", "template_name": "Thank you for applying", "status": "PASS"},
+        {"test": "template_1_subject", "template_name": "Scheduling", "status": "PASS"},
+        {"test": "template_2_subject", "template_name": "Rejection", "status": "PASS"}
+      ]
+    },
+    {
+      "id": "T2",
+      "name": "Cypress-seeded org channel_message_templates subject check",
+      "script": "/tmp/qa-l2-agent10-test2-new-org-templates.rb",
+      "status": "EXPECTED_FAIL",
+      "detail": "The seeded Acme Inc. org has 3 channel_message_templates but all have subject=nil. This is EXPECTED because the Cypress server runs from the main checkout (/Users/jessica/wrk/wrk-corp/inflow-ats) which does NOT have the subject feature code — Organization.default_channel_message_templates on the main checkout does not include the subject key. This is a QA infrastructure limitation, not a bug in the feature.",
+      "root_cause": "qa_infrastructure",
+      "sub_results": [
+        {"test": "seeded_org_template_count", "status": "PASS", "detail": "3 templates"},
+        {"test": "seeded_org_template_subject_thank_you", "status": "FAIL", "detail": "subject is nil (expected: created by main checkout code without subject)"},
+        {"test": "seeded_org_template_subject_scheduling", "status": "FAIL", "detail": "subject is nil (expected: created by main checkout code without subject)"},
+        {"test": "seeded_org_template_subject_rejection", "status": "FAIL", "detail": "subject is nil (expected: created by main checkout code without subject)"}
+      ]
+    },
+    {
+      "id": "T2b",
+      "name": "New Organization created via worktree code gets templates with subject",
+      "script": "/tmp/qa-l2-agent10-test2b-new-org-direct.rb",
+      "status": "PASS",
+      "detail": "Created a new Organization directly via rails runner in the worktree. The after_create callback fired add_default_channel_message_templates, which correctly populated all 3 templates with subject: '{{JobTitle}} at {{OrganizationName}}'. This confirms the feature code is correct.",
+      "sub_results": [
+        {"test": "new_org_template_count", "status": "PASS", "detail": "3 templates"},
+        {"test": "new_org_template_subject_thank_you", "status": "PASS", "detail": "subject = {{JobTitle}} at {{OrganizationName}}"},
+        {"test": "new_org_template_subject_scheduling", "status": "PASS", "detail": "subject = {{JobTitle}} at {{OrganizationName}}"},
+        {"test": "new_org_template_subject_rejection", "status": "PASS", "detail": "subject = {{JobTitle}} at {{OrganizationName}}"}
+      ]
+    },
+    {
+      "id": "T3",
+      "name": "Job.add_default_apply_response_template sets apply_response_template_subject",
+      "script": "/tmp/qa-l2-agent10-test3-apply-response-subject.rb",
+      "status": "PASS",
+      "detail": "Both the existing seeded job and a newly-created job have apply_response_template_subject set to '{{JobTitle}} at {{OrganizationName}}'. The add_default_apply_response_template callback uses update_columns to set both apply_response_template (body) and apply_response_template_subject. Confirmed working on both seeded and freshly-created jobs.",
+      "sub_results": [
+        {"test": "seeded_job_apply_response_subject", "status": "PASS", "detail": "subject = {{JobTitle}} at {{OrganizationName}}"},
+        {"test": "seeded_job_apply_response_body", "status": "PASS", "detail": "body present"},
+        {"test": "new_job_apply_response_subject", "status": "PASS", "detail": "subject = {{JobTitle}} at {{OrganizationName}}"},
+        {"test": "new_job_apply_response_body", "status": "PASS", "detail": "body present"}
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "INFO",
+      "category": "qa_infrastructure",
+      "title": "Cypress seed server runs from main checkout, not worktree — seeded data lacks feature-branch fields",
+      "detail": "The qa-config.yml points source_repo at /Users/jessica/wrk/wrk-corp/inflow-ats (the main checkout). The qa-harness starts the Cypress server from this path. The main checkout's Organization.default_channel_message_templates does NOT include subject keys. So Cypress-seeded organizations get channel_message_templates with subject=nil. The worktree code at /Users/jessica/wrk/wrk-corp/inflow-ats.messaging-improvements correctly includes subject in all 3 defaults. To test seeded data with feature-branch code, the qa-harness server should run from the worktree, or the test should create data directly via rails runner in the worktree.",
+      "recommendation": "For QA runs testing feature-branch code, start the Cypress server from the worktree, or accept that seeded data reflects the base branch and test creation behavior via rails runner instead."
+    },
+    {
+      "id": "F2",
+      "severity": "INFO",
+      "category": "observation",
+      "title": "add_default_apply_response_template uses update_columns (skips callbacks/validations)",
+      "detail": "Job#add_default_apply_response_template uses update_columns to set apply_response_template and apply_response_template_subject. This is appropriate for an after_create callback since the record is already saved and we just want to set defaults without triggering additional callbacks. No issue found.",
+      "recommendation": "No action needed."
+    }
+  ],
+  "overall_verdict": "PASS",
+  "summary": "All feature code for default channel_message_templates and add_default_apply_response_template is correctly implemented. Organization.default_channel_message_templates includes subject: '{{JobTitle}} at {{OrganizationName}}' in all 3 templates. The after_create callback add_default_channel_message_templates correctly persists these templates with subject populated. Job#add_default_apply_response_template correctly sets apply_response_template_subject to '{{JobTitle}} at {{OrganizationName}}' via update_columns. One infrastructure note: Cypress-seeded data has nil subjects because the Cypress server runs from the main checkout which lacks the feature code — this is expected and not a bug."
+}

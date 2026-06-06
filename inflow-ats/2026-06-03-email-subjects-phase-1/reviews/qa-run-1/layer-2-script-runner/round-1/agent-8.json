@@ -1,0 +1,83 @@
+{
+  "agent": 8,
+  "round": 1,
+  "focus": "Inbound subject capture — Channel#send_message_to_company and Channel#send_message_to_candidate",
+  "status": "PASS",
+  "summary": "All 7 tests passed. Both Channel#send_message_to_company and Channel#send_message_to_candidate correctly capture email.subject into the created channel_message.subject field. Nil subjects, empty string subjects, long subjects (254 chars), and subjects with special characters are all handled correctly.",
+  "methodology": {
+    "approach": "Rails runner script in RAILS_ENV=test against the messaging-improvements worktree",
+    "seed_pattern": "Cypress-style seeding (User.first_or_create, Organization.first_or_create, job.candidates.build) with paid subscription enabled",
+    "email_mock": "Ruby Struct responding to .subject, .body, .raw_html (matching the interface expected by Channel model methods)",
+    "script_path": "/tmp/qa-l2-agent8-final.rb"
+  },
+  "code_under_test": {
+    "file": "app/models/channel.rb",
+    "methods": ["send_message_to_company (line 33)", "send_message_to_candidate (line 16)"],
+    "mechanism": "Both methods call channel_messages.build({...subject: email.subject...}) then save, passing the email's subject directly to the channel_message"
+  },
+  "tests": [
+    {
+      "test": 1,
+      "name": "send_message_to_company with subject",
+      "status": "PASS",
+      "input_subject": "Re: Your application",
+      "stored_subject": "Re: Your application",
+      "sent_by": "sent_by_candidate"
+    },
+    {
+      "test": 2,
+      "name": "send_message_to_candidate with subject",
+      "status": "PASS",
+      "input_subject": "Follow-up: Interview scheduling",
+      "stored_subject": "Follow-up: Interview scheduling",
+      "sent_by": "sent_by_user"
+    },
+    {
+      "test": 3,
+      "name": "send_message_to_company with nil subject",
+      "status": "PASS",
+      "input_subject": null,
+      "stored_subject": null,
+      "sent_by": "sent_by_candidate"
+    },
+    {
+      "test": 4,
+      "name": "send_message_to_candidate with nil subject",
+      "status": "PASS",
+      "input_subject": null,
+      "stored_subject": null,
+      "sent_by": "sent_by_user"
+    },
+    {
+      "test": 5,
+      "name": "send_message_to_company with empty string subject",
+      "status": "PASS",
+      "input_subject": "",
+      "stored_subject": "",
+      "sent_by": "sent_by_candidate"
+    },
+    {
+      "test": 6,
+      "name": "send_message_to_company with long subject (254 chars)",
+      "status": "PASS",
+      "input_subject": "Re: + 250 'A' chars (254 total)",
+      "stored_subject": "254 chars stored correctly",
+      "sent_by": "sent_by_candidate"
+    },
+    {
+      "test": 7,
+      "name": "send_message_to_company with special chars in subject",
+      "status": "PASS",
+      "input_subject": "Re: Fwd: Application for Senior Dev - resume and cover letter",
+      "stored_subject": "Re: Fwd: Application for Senior Dev - resume and cover letter",
+      "sent_by": "sent_by_candidate"
+    }
+  ],
+  "findings": [],
+  "notes": [
+    "send_message_to_candidate expects a User object as sender (not OrganizationUser), because it accesses sender.id and sender.organization_user_id — the latter is a method defined on User (line 252) that delegates to current_organization_user.id",
+    "send_message_to_company expects a Candidate object as sender, using sender.id as candidate_id",
+    "The CustomChannelMessageValidator on :subject only checks for {{placeholder}} patterns and does not block nil or empty subjects",
+    "The subject column is a VARCHAR (t.string) with no NOT NULL constraint, so nil is stored as NULL in the database"
+  ]
+}

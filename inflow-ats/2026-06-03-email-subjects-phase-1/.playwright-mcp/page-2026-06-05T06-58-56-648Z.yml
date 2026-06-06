@@ -1,0 +1,196 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e7]:
+          - img [ref=e8]
+          - heading "Polymer" [level=1] [ref=e11]
+        - list [ref=e12]:
+          - generic [ref=e13]:
+            - generic [ref=e15]:
+              - generic [ref=e16]: RM
+              - generic [ref=e17]: Rezu May
+            - generic:
+              - generic:
+                - link "Account settings":
+                  - /url: /account
+                - button "Contact us"
+                - button "Help docs":
+                  - text: Help docs
+                  - img
+                - button "Changelog":
+                  - text: Changelog
+                  - img
+                - link "Log out":
+                  - /url: /logout
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - generic [ref=e21]:
+            - generic [ref=e23] [cursor=pointer]:
+              - generic [ref=e25]: A
+              - img [ref=e27]
+            - generic [ref=e32]: Acme Inc.
+          - generic [ref=e34]:
+            - img [ref=e37] [cursor=pointer]
+            - generic:
+              - generic:
+                - link "Your organizations":
+                  - /url: /organization/manage
+        - generic [ref=e42]:
+          - img [ref=e43]
+          - textbox "Search candidates" [ref=e46]
+        - generic [ref=e48]:
+          - link [ref=e50] [cursor=pointer]:
+            - /url: /notifications
+            - img [ref=e51]
+          - link [ref=e55] [cursor=pointer]:
+            - /url: /hire/settings/organization
+            - img [ref=e56]
+      - generic [ref=e59]:
+        - generic [ref=e61]:
+          - img [ref=e64] [cursor=pointer]
+          - heading "App settings" [level=2] [ref=e67]
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - link "User preferences" [ref=e71] [cursor=pointer]:
+              - /url: /hire/settings/preferences
+              - generic [ref=e73]: User preferences
+              - img [ref=e74]
+            - separator
+            - generic [ref=e76]: Admin
+            - generic [ref=e77]:
+              - link "Organization" [ref=e78] [cursor=pointer]:
+                - /url: /hire/settings/organization
+                - generic [ref=e80]: Organization
+                - img [ref=e81]
+              - link "Team" [ref=e83] [cursor=pointer]:
+                - /url: /hire/settings/team
+                - generic [ref=e85]: Team
+                - img [ref=e86]
+              - link "Message templates" [ref=e88] [cursor=pointer]:
+                - /url: /hire/settings/message_templates
+                - generic [ref=e90]: Message templates
+                - img [ref=e91]
+              - link "Review templates" [ref=e93] [cursor=pointer]:
+                - /url: /hire/settings/review_templates
+                - generic [ref=e95]: Review templates
+                - img [ref=e96]
+              - link "Job board" [ref=e98] [cursor=pointer]:
+                - /url: /hire/settings/jobboard
+                - generic [ref=e100]: Job board
+                - img [ref=e101]
+              - link "Job categories" [ref=e103] [cursor=pointer]:
+                - /url: /hire/settings/categories
+                - generic [ref=e105]: Job categories
+                - img [ref=e106]
+              - link "Integrations" [ref=e108] [cursor=pointer]:
+                - /url: /hire/settings/integrations
+                - generic [ref=e110]: Integrations
+                - img [ref=e111]
+              - link "Plan & billing" [ref=e113] [cursor=pointer]:
+                - /url: /hire/settings/billing
+                - generic [ref=e115]: Plan & billing
+                - img [ref=e116]
+          - generic [ref=e121]:
+            - heading "Message templates" [level=2] [ref=e124]
+            - paragraph [ref=e125]: These templates allow hiring team members to easily send pre-authored messages to candidates. Changes to the ordering of the templates displayed here will affect how they are listed when selecting one for use.
+            - generic [ref=e126]:
+              - generic [ref=e127]:
+                - generic [ref=e128]:
+                  - generic [ref=e129]:
+                    - generic [ref=e130]: Thank you for applying
+                    - generic [ref=e131]: Created by Polymer
+                  - generic [ref=e132]:
+                    - img [ref=e135] [cursor=pointer]
+                    - generic:
+                      - generic:
+                        - link "Edit template":
+                          - /url: ""
+                        - link "Delete template":
+                          - /url: ""
+                - generic [ref=e139]:
+                  - generic [ref=e140]:
+                    - generic [ref=e141]: Scheduling
+                    - generic [ref=e142]: Created by Polymer
+                  - generic [ref=e143]:
+                    - img [ref=e146] [cursor=pointer]
+                    - generic:
+                      - generic:
+                        - link "Edit template":
+                          - /url: ""
+                        - link "Delete template":
+                          - /url: ""
+                - generic [ref=e150]:
+                  - generic [ref=e151]:
+                    - generic [ref=e152]: Rejection
+                    - generic [ref=e153]: Created by Polymer
+                  - generic [ref=e154]:
+                    - img [ref=e157] [cursor=pointer]
+                    - generic:
+                      - generic:
+                        - link "Edit template":
+                          - /url: ""
+                        - link "Delete template":
+                          - /url: ""
+                - generic [ref=e161]:
+                  - generic [ref=e162]:
+                    - generic [ref=e163]: QA Test Template
+                    - generic [ref=e164]: Created by Rezu May
+                  - generic [ref=e165]:
+                    - img [ref=e168] [cursor=pointer]
+                    - generic:
+                      - generic:
+                        - link "Edit template":
+                          - /url: ""
+                        - link "Delete template":
+                          - /url: ""
+              - button "Add a template" [ref=e172] [cursor=pointer]:
+                - generic [ref=e173]: Add a template
+    - generic [ref=e176]:
+      - generic [ref=e177]: Create new template
+      - paragraph [ref=e178]: Enter the name and content for a new message template.
+      - generic [ref=e179]:
+        - generic [ref=e180]:
+          - generic [ref=e182]: Template name
+          - textbox "Template name" [ref=e184]:
+            - /placeholder: ""
+        - generic [ref=e185]:
+          - generic [ref=e187]: Subject
+          - textbox "Subject" [active] [ref=e189]:
+            - /placeholder: ""
+            - text: "{{JobTitle}} at {{OrganizationName}}"
+        - generic [ref=e190]:
+          - generic [ref=e192]: Template body
+          - generic [ref=e193]:
+            - paragraph [ref=e196]
+            - generic [ref=e198]:
+              - button [ref=e200] [cursor=pointer]:
+                - img [ref=e201]
+              - button [ref=e205] [cursor=pointer]:
+                - img [ref=e206]
+              - button [ref=e209] [cursor=pointer]:
+                - img [ref=e210]
+              - button [ref=e213] [cursor=pointer]:
+                - img [ref=e214]
+            - generic [ref=e217]:
+              - button "Candidate first name" [ref=e218] [cursor=pointer]:
+                - generic [ref=e219]: Candidate first name
+              - button "Candidate last name" [ref=e220] [cursor=pointer]:
+                - generic [ref=e221]: Candidate last name
+              - button "Candidate full name" [ref=e222] [cursor=pointer]:
+                - generic [ref=e223]: Candidate full name
+              - button "Job title" [ref=e224] [cursor=pointer]:
+                - generic [ref=e225]: Job title
+              - button "Sender first name" [ref=e226] [cursor=pointer]:
+                - generic [ref=e227]: Sender first name
+              - button "Sender full name" [ref=e228] [cursor=pointer]:
+                - generic [ref=e229]: Sender full name
+              - button "Organization name" [ref=e230] [cursor=pointer]:
+                - generic [ref=e231]: Organization name
+        - list [ref=e232]:
+          - generic [ref=e233]:
+            - button "Create template" [ref=e234] [cursor=pointer]:
+              - generic [ref=e235]: Create template
+            - button "Cancel" [ref=e236] [cursor=pointer]:
+              - generic [ref=e237]: Cancel
+  - log [ref=e238]

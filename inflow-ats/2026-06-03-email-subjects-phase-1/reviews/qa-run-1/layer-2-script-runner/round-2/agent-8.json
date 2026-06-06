@@ -1,0 +1,87 @@
+{
+  "agent": "agent-8",
+  "round": 2,
+  "focus": "Inbound email with unusual subjects — very long, empty, contains newlines",
+  "timestamp": "2026-06-05T00:42:16-05:00",
+  "scripts": [
+    "/tmp/qa-l2r2-agent8-inbound-subjects.rb",
+    "/tmp/qa-l2r2-agent8-candidate-placeholder.rb"
+  ],
+  "summary": "Found 1 HIGH and 1 MED issue. The HIGH is that the custom_channel_message validator on :subject (added by this feature) blocks candidate-sent inbound emails if the subject contains {{placeholder}} text — the email is silently dropped. The MED is that inbound email subjects containing newlines are stored as-is without sanitization, which is a defense-in-depth concern for email header injection when the subject is later used in outbound Mailgun calls.",
+  "findings": [
+    {
+      "id": "F1",
+      "test": "candidate_subject_with_placeholder_silent_drop",
+      "status": "FAIL",
+      "severity": "HIGH",
+      "category": "data-loss",
+      "file": "app/models/channel_message.rb",
+      "line": 25,
+      "detail": "The line `validates :subject, custom_channel_message: true` (added by this feature, commit e7f272279) applies the CustomChannelMessageValidator to the subject field. This validator rejects any value matching /{\\{\\s*[\\w.]+\\s*\\}}/i. When a candidate replies via email and their subject contains text like '{{JobTitle}}' or '{{anything}}', the ChannelMessage fails validation. Channel#send_message_to_company calls `save` (line 45 of channel.rb) which returns false, but EmailProcessor (line 78) does not check the return value. The candidate's reply is silently dropped — no error logged, no notification sent, no retry. The candidate believes their reply was delivered; the hiring team never sees it.",
+      "reproducer": "Build a ChannelMessage with sent_by: 'sent_by_candidate', subject: 'Re: {{JobTitle}} Application', body: 'Normal text'. Call save. Returns false with error: 'Subject Message not sent. An invalid placeholder formatted like {{Something}} was found.'",
+      "suggested_fix": "Add `unless: :sent_by_candidate?` to the subject validation (and ideally the body validation too, since the same pre-existing bug exists there): `validates :subject, custom_channel_message: true, unless: :sent_by_candidate?`",
+      "preexisting": false,
+      "notes": "The body validation had the same pre-existing bug (blocking candidate messages with {{}} in body), but the subject validation was added by this feature commit. Both should be fixed."
+    },
+    {
+      "id": "F2",
+      "test": "candidate_body_with_placeholder_silent_drop",
+      "status": "FAIL",
+      "severity": "HIGH",
+      "category": "data-loss",
+      "file": "app/models/channel_message.rb",
+      "line": 24,
+      "detail": "Pre-existing bug widened by this feature: `validates :body, custom_channel_message: true` blocks candidate-sent inbound emails if the body contains {{placeholder}} text. Before this feature, the validator was named custom_channel_message_body but had the same logic and the same bug. This feature renamed it to custom_channel_message (same code) and applied it to both :body and :subject. The body bug is pre-existing but was never scoped to non-candidate messages. Since the feature touched this exact line (renamed the validator), it's in-scope for this review.",
+      "reproducer": "Build a ChannelMessage with sent_by: 'sent_by_candidate', body: 'Hi, I noticed {{CandidateName}} in your template', subject: 'Re: Job'. Call save. Returns false.",
+      "suggested_fix": "Add `unless: :sent_by_candidate?` to the body validation: `validates :body, custom_channel_message: true, unless: :sent_by_candidate?`",
+      "preexisting": true,
+      "notes": "This exact bug existed before the feature but the feature commit touched the line (renamed validator). The fix is trivial and should be applied alongside F1."
+    },
+    {
+      "id": "F3",
+      "test": "subject_with_newlines",
+      "status": "FAIL",
+      "severity": "MED",
+      "category": "defense-in-depth",
+      "file": "app/models/channel_message.rb",
+      "line": 57,
+      "detail": "The clean_incoming_message callback (before_create) cleans the body but does NOT clean/sanitize the subject. A subject containing newline characters (\\n, \\r\\n, \\r) is stored as-is in the database. When the subject is later used in ChannelMessageMailer#notify_candidate (line 116), it is passed directly to Mailgun as the Subject header value. Newlines in email headers can cause header injection attacks (injecting additional headers like Bcc:). While Mailgun likely sanitizes on their end, defense-in-depth says the app should strip newlines from subjects before storage. Verified: stored bytes [72, 101, 108, 108, 111, 10, 87, 111, 114, 108, 100, 13, 10, 84, 101, 115, 116, 13, 83, 117, 98, 106, 101, 99, 116] — all newline variants preserved.",
+      "reproducer": "Build a ChannelMessage with subject: \"Hello\\nWorld\\r\\nTest\\rSubject\". Save succeeds. Reload and check subject.bytes — newlines are preserved.",
+      "suggested_fix": "In clean_incoming_message, add: `self.subject = subject&.gsub(/[\\r\\n]+/, ' ')&.strip` to sanitize newlines from subjects.",
+      "preexisting": false,
+      "notes": "This is a new attack surface introduced by the subject field. The API controller path (channel_messages_controller.rb line 37) sanitizes subject via Rails sanitize(), but the inbound email path does not sanitize subjects at all."
+    },
+    {
+      "id": "F4",
+      "test": "subject_over_255_chars",
+      "status": "PASS",
+      "severity": "NONE",
+      "detail": "PostgreSQL 'character varying' (no limit) stores the full 300-char subject without truncation or error. Input length 300, stored length 300. No data loss risk from long subjects."
+    },
+    {
+      "id": "F5",
+      "test": "empty_string_subject",
+      "status": "PASS",
+      "severity": "NONE",
+      "detail": "Empty string subject saved OK. Mailer fallback in notify_candidate (line 116) uses subject.presence which returns nil for empty string, so the fallback 'Software Engineer at Acme Inc.' is used. SendTemplateEmail#add_subject would not raise because the fallback is non-blank."
+    },
+    {
+      "id": "F6",
+      "test": "nil_subject",
+      "status": "PASS",
+      "severity": "NONE",
+      "detail": "nil subject saved OK (column is null: true). Mailer fallback works correctly."
+    },
+    {
+      "id": "F7",
+      "test": "deeply_nested_re_subject",
+      "status": "PASS",
+      "severity": "NONE",
+      "detail": "Deeply nested 'Re: Re: Re: ...' subject (216 chars, 50 levels deep) saved and retrieved correctly. No truncation or error. Email clients handle nested Re: natively."
+    }
+  ],
+  "high_count": 2,
+  "med_count": 1,
+  "low_count": 0,
+  "pass_count": 4
+}

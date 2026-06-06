@@ -46,18 +46,16 @@ The orchestration logic (convergence loop, agent dispatch, findings consolidatio
 │       ├── server.py
 │       ├── seed.py
 │       └── errors.py
-├── tests/
-│   ├── __init__.py
-│   ├── conftest.py
-│   ├── test_cli.py
-│   ├── test_config.py
-│   ├── test_server.py
-│   └── test_seed.py
-└── prompts/
-    └── qa-prompt.md
+└── tests/
+    ├── __init__.py
+    ├── conftest.py
+    ├── test_cli.py
+    ├── test_config.py
+    ├── test_server.py
+    └── test_seed.py
 ```
 
-The `prompts/` directory holds the Phase 8 orchestrator prompt. This is not Python code -- it is a markdown file read by the feature lifecycle orchestrator.
+The Phase 8 orchestrator prompt already exists at `~/claude-hub/features/qa-prompt.md` (the standard location per the lifecycle's prompt file resolution mechanism). It is not part of the qa-harness Python package.
 
 ## 4. Files to Create
 
@@ -84,12 +82,13 @@ The `prompts/` directory holds the Phase 8 orchestrator prompt. This is not Pyth
 | `test_server.py` | Server start/stop/health-check lifecycle (mocked subprocesses) |
 | `test_seed.py` | Seed plan loading, validation, HTTP execution, cleanup |
 
-### Config and prompts
+### Config
 
 | File | Purpose |
 |---|---|
 | `pyproject.toml` | Package metadata, dependencies, entry point, test config |
-| `prompts/qa-prompt.md` | Phase 8 orchestrator prompt -- instructs the orchestrating agent on the full QA flow |
+
+**Note:** The Phase 8 orchestrator prompt already exists at `~/claude-hub/features/qa-prompt.md`. It does not need to be created.
 
 ### Pipeline config (NOT in the qa-harness package -- lives in the pipeline scratchpad)
 
@@ -97,11 +96,11 @@ The `prompts/` directory holds the Phase 8 orchestrator prompt. This is not Pyth
 |---|---|
 | `~/claude-hub/inflow-ats/qa-config.yml` | Inflow-ats pipeline QA configuration (first pipeline to support) |
 
-### Feature lifecycle integration (edits to existing files, NOT in qa-harness)
+### Feature lifecycle integration (verification of existing files, NOT in qa-harness)
 
 | File | Change |
 |---|---|
-| `~/claude-hub/features/LIFECYCLE.md` | Add Phase 8 section after Phase 7 |
+| `~/claude-hub/features/LIFECYCLE.md` | Verify existing Phase 8 section is consistent with the spec (Phase 8 already exists in LIFECYCLE.md) |
 
 ## 5. Module-by-Module Design
 
@@ -528,9 +527,9 @@ The full config shown in the spec goes to `~/claude-hub/inflow-ats/qa-config.yml
 
 **Implementation note:** The spec's `server.sidekiq_command` should be accepted as an alias during config loading. If `sidekiq_command` is present and `supporting_commands` is not, treat `sidekiq_command` as `supporting_commands: [<value>]`. This maintains backward compatibility with the spec's example config.
 
-## 8. Phase 8 Orchestrator Prompt (`prompts/qa-prompt.md`)
+## 8. Phase 8 Orchestrator Prompt (already exists at `~/claude-hub/features/qa-prompt.md`)
 
-The orchestrator prompt is a markdown file read by the feature lifecycle orchestrator agent. It is NOT Python code. It instructs the orchestrator on how to run Phase 8.
+The orchestrator prompt already exists at `~/claude-hub/features/qa-prompt.md` (260 lines). It is NOT Python code. It is a markdown file read by the feature lifecycle orchestrator agent. The implementation agent should verify the existing prompt is consistent with the spec and the plan below. If discrepancies exist, edit the existing file -- do not create a new one.
 
 ### What the prompt must cover
 
@@ -603,9 +602,9 @@ The orchestrator prompt is a markdown file read by the feature lifecycle orchest
 - Call `qa-harness stop`.
 - Stop and present to the user.
 
-### Prompt length estimate
+### Prompt verification note
 
-The qa-prompt.md will be approximately 200-300 lines, comparable to the spec-review-prompt.md (180 lines) and impl-review-prompt.md (150 lines).
+The existing `~/claude-hub/features/qa-prompt.md` is 260 lines. The implementation agent should verify it covers all the steps described above. If any step is missing or inconsistent, edit the existing file.
 
 ## 9. Test Plan
 
@@ -709,10 +708,10 @@ The qa-prompt.md will be approximately 200-300 lines, comparable to the spec-rev
 12. **`test_cli.py`** -- CLI tests
 13. **`conftest.py`** -- shared test fixtures
 
-### Phase 6: Orchestrator prompt and lifecycle integration
+### Phase 6: Lifecycle integration verification
 
-14. **`prompts/qa-prompt.md`** -- Phase 8 orchestrator prompt
-15. **Edit `~/claude-hub/features/LIFECYCLE.md`** -- add Phase 8 section
+14. **Verify `~/claude-hub/features/qa-prompt.md`** -- Phase 8 orchestrator prompt already exists; verify it is consistent with the spec and plan
+15. **Verify `~/claude-hub/features/LIFECYCLE.md`** -- Phase 8 section already exists; verify it is consistent with the spec
 
 ### Dependency graph
 
@@ -757,10 +756,9 @@ errors.py
 | Python modules | 7 (`__init__`, `__main__`, `cli`, `config`, `server`, `seed`, `errors`) |
 | Test files | 5 (`conftest`, `test_cli`, `test_config`, `test_server`, `test_seed`) |
 | Config/packaging | 1 (`pyproject.toml`) |
-| Prompt files | 1 (`qa-prompt.md`) |
 | Pipeline configs | 1 (`inflow-ats/qa-config.yml`) |
-| Lifecycle edits | 1 (`LIFECYCLE.md` addition) |
-| **Total** | **16 files** |
+| Lifecycle verification | 2 (`qa-prompt.md` and `LIFECYCLE.md` -- verify existing, not create) |
+| **Total** | **14 new files + 2 verifications** |
 
 ### Lines of code (rough estimates)
 
@@ -778,7 +776,5 @@ errors.py
 | `test_seed.py` | 200 |
 | `test_cli.py` | 120 |
 | `conftest.py` | 40 |
-| `qa-prompt.md` | 250 |
 | `qa-config.yml` | 60 |
-| `LIFECYCLE.md` addition | 30 |
-| **Total** | **~1,760 LOC** |
+| **Total** | **~1,480 LOC** (excludes existing qa-prompt.md and LIFECYCLE.md) |

@@ -1,0 +1,18 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agents_dispatched": 5,
+  "findings": [],
+  "adversarial_checks": [
+    "Verified no destroy callbacks on AiJobApplicationSummary that could interfere with summary.destroy in exhaustion cleanup",
+    "Verified has_many :ai_api_requests lacks dependent: :destroy - pre-existing design choice, textract_processing summaries likely have 0 ai_api_requests anyway (MED at most, out of scope)",
+    "Verified thread safety of cleanup_orphaned_summary - concurrent destroy race is extremely unlikely per spec risk acknowledgement",
+    "Verified after_commit :destroy_previous_textract_results only fires on :update, not :destroy - no callback conflict when destroying summary in exhaustion block"
+  ],
+  "convergence": {
+    "findings_count": 0,
+    "clean_round": true,
+    "consecutive_clean_rounds": 2,
+    "gate_passed": true
+  }
+}

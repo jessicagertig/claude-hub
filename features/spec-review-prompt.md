@@ -1,6 +1,6 @@
 # Iterative Adversarial Spec Review
 
-You are running iterative adversarial review on a feature spec. Goal: drive the spec to TWO CONSECUTIVE FULL PASSES — two rounds in a row that produce ZERO new BLOCKER or HIGH findings AND require ZERO spec amendments. Stop when that criterion is met, or after 5 rounds (whichever comes first).
+You are running iterative adversarial review on a feature spec. Goal: drive the spec to TWO CONSECUTIVE FULL PASSES — two rounds in a row that produce ZERO new BLOCKER or HIGH findings AND require ZERO spec amendments. Stop when that criterion is met, or after 50 rounds (whichever comes first).
 
 ## Ground rules
 
@@ -103,7 +103,7 @@ Write `reviews/spec-round-N/verdict.md`:
 - If this round produced 0 BLOCKER and 0 HIGH and required 0 amendments, mark it PASS.
 - If the previous round ALSO passed, STOP. Declare TWO CONSECUTIVE FULL PASSES.
 - Otherwise, start the next round.
-- If round count reaches 5 without two consecutive passes, stop and escalate with the remaining gaps.
+- If round count reaches 50 without two consecutive passes, stop and escalate with the remaining gaps.
 
 ## Termination output
 
@@ -126,7 +126,7 @@ The spec survives two consecutive reviews across all angles with no required ame
 
 ## What failure looks like
 
-After 5 rounds, still finding BLOCKER/HIGH issues. Write a clear escalation note: list the unresolved issues, what you tried, what you recommend doing next.
+After 50 rounds, still finding BLOCKER/HIGH issues. Write a clear escalation note: list the unresolved issues, what you tried, what you recommend doing next.
 
 ## Begin
 

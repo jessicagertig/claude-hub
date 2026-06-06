@@ -1,27 +1,27 @@
-# Seed Data Design — Round 1 Findings
+# seed-data-design — Round 1 Findings
 
-## Angle: seed-data-design
+## MED-1: validate_plan does not check required params presence
 
-### Finding 1: `_execute_step` hardcodes status_code 200 (HIGH)
+**Severity:** MED
 
-(Cross-referenced from server-lifecycle finding 1 — same root cause, different impact surface.)
+**File:** `src/qa_harness/seed.py`, lines 102-150
 
-Seed plan execution results always report status code 200. This means agents cannot distinguish between a seed endpoint that returned 200 (success with body) and one that returned 201 (created) or 204 (no content). The `_request` method swallows the response object and returns only the parsed body.
+**Finding:** The plan (section 5, seed.py, `validate_plan`) says it "Checks: method+path exists in catalog, required params present, ordering respects 'requires' dependencies." The implementation checks method+path existence and dependency ordering, but does NOT check required params presence. The `params` field in `SeedEndpoint` is `dict[str, str]` mapping param names to type hints, but `validate_plan` never compares plan step `body` keys against the endpoint's `params`.
 
-This matters because QA agents rely on seed step output to verify data setup before testing. Misleading status codes undermine the seed execution evidence chain.
+This is MED rather than HIGH because params validation is a convenience check (the actual endpoint will reject bad params with an HTTP error), and the plan itself notes this as a v1 scope limitation. The analog `seed_parser.py` also doesn't validate params at parse time.
 
-### Finding 2: `validate_plan` does not check for required params (MED)
+---
 
-The plan from the spec (Section 5, `seed.py`) lists `validate_plan` as checking: "method+path exists in catalog, required params present, ordering respects 'requires' dependencies."
+## MED-2: cleanup() does not call check_server_alive
 
-The implementation checks method+path existence and dependency ordering, but does NOT check whether required params are present. The `SeedEndpoint.params` field describes what params an endpoint accepts, but `validate_plan` never inspects `step.get("body")` to verify the expected params are included.
+**Severity:** MED
 
-This is MED because the Cypress endpoints generally work with defaults if params are missing (they have server-side defaults), so missing params rarely cause failures. But it deviates from the plan.
+**File:** `src/qa_harness/seed.py`, lines 49-57
 
-### Finding 3: Seed plan validation is solid for dependency ordering (PASS NOTE)
+**Finding:** The spec says "Before making any HTTP calls, `seed` and `cleanup` commands verify the server is alive" (spec section "Data seeding / Seed execution"). `execute_plan` calls `check_server_alive`, and `cmd_cleanup` in cli.py calls `check_server_alive` before calling `cleanup()`. But the `cleanup()` method itself does not call `check_server_alive`. This means if someone calls `executor.cleanup()` directly (not through the CLI), the health check is skipped.
 
-The `validate_plan` method correctly tracks `called_paths` and checks `requires` dependencies against previously-called paths. The placeholder matching logic (`_find_placeholder_match`) handles parameterized paths like `/cypress/invites/{email_base64}`. Tests cover the key scenarios including violation and satisfaction of dependencies. This matches the spec requirements well.
+The CLI path is correct, so agents using the CLI will get the check. But `execute_plan` also calls `cleanup()` internally (line 85), and by that point `check_server_alive` was already called at the top of `execute_plan` (line 63). So functionally this is fine for all current call paths.
 
-### Finding 4: Cleanup-before-seed is correctly automatic (PASS NOTE)
+---
 
-`execute_plan` calls `self.cleanup()` before executing any seed steps, matching the spec requirement that cleanup always precedes seeding. The test `test_calls_cleanup_before_seeding` verifies this ordering.
+## No HIGH or BLOCKER findings.

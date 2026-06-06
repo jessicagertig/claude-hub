@@ -1,0 +1,103 @@
+- generic [ref=e8]:
+  - generic [ref=e9]:
+    - generic [ref=e11]:
+      - img [ref=e12]
+      - heading "Polymer" [level=1] [ref=e15]
+    - list [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: RM
+          - generic [ref=e21]: Rezu May
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e27] [cursor=pointer]:
+          - generic [ref=e29]: A
+          - img [ref=e31]
+        - generic [ref=e36]: Acme Inc.
+      - generic [ref=e38]:
+        - img [ref=e41] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - generic [ref=e46]:
+      - img [ref=e47]
+      - textbox "Search candidates" [ref=e50]
+    - generic [ref=e52]:
+      - link [ref=e54] [cursor=pointer]:
+        - /url: /notifications
+        - img [ref=e55]
+      - link [ref=e59] [cursor=pointer]:
+        - /url: /hire/settings/organization
+        - img [ref=e60]
+  - generic [ref=e63]:
+    - generic [ref=e233]:
+      - img [ref=e236] [cursor=pointer]
+      - heading "App settings" [level=2] [ref=e239]
+    - generic [ref=e240]:
+      - generic [ref=e241]:
+        - link "User preferences" [ref=e243] [cursor=pointer]:
+          - /url: /hire/settings/preferences
+          - generic [ref=e245]: User preferences
+          - img [ref=e246]
+        - separator
+        - generic [ref=e248]: Admin
+        - generic [ref=e249]:
+          - link "Organization" [ref=e250] [cursor=pointer]:
+            - /url: /hire/settings/organization
+            - generic [ref=e252]: Organization
+            - img [ref=e253]
+          - link "Team" [ref=e255] [cursor=pointer]:
+            - /url: /hire/settings/team
+            - generic [ref=e257]: Team
+            - img [ref=e258]
+          - link "Message templates" [ref=e260] [cursor=pointer]:
+            - /url: /hire/settings/message_templates
+            - generic [ref=e262]: Message templates
+            - img [ref=e263]
+          - link "Review templates" [ref=e265] [cursor=pointer]:
+            - /url: /hire/settings/review_templates
+            - generic [ref=e267]: Review templates
+            - img [ref=e268]
+          - link "Job board" [ref=e270] [cursor=pointer]:
+            - /url: /hire/settings/jobboard
+            - generic [ref=e272]: Job board
+            - img [ref=e273]
+          - link "Job categories" [ref=e275] [cursor=pointer]:
+            - /url: /hire/settings/categories
+            - generic [ref=e277]: Job categories
+            - img [ref=e278]
+          - link "Integrations" [ref=e280] [cursor=pointer]:
+            - /url: /hire/settings/integrations
+            - generic [ref=e282]: Integrations
+            - img [ref=e283]
+          - link "Plan & billing" [active] [ref=e285] [cursor=pointer]:
+            - /url: /hire/settings/billing
+            - generic [ref=e287]: Plan & billing
+            - img [ref=e288]
+          - link "Plato AI" [ref=e290] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai
+            - generic [ref=e292]: Plato AI
+            - img [ref=e293]
+      - generic [ref=e358]:
+        - heading "Plan & billing" [level=2] [ref=e361]
+        - paragraph [ref=e362]: Unlock the full potential of hiring with Polymer using one of our paid plans. You can choose to pay monthly or annually.
+        - generic [ref=e364]: Loading...
+        - paragraph [ref=e367]:
+          - text: AI credits are managed separately —
+          - link "go to AI billing →" [ref=e368] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/billing

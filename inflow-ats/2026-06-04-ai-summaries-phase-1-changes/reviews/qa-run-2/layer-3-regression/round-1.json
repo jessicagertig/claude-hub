@@ -1,0 +1,39 @@
+{
+  "layer": "regression",
+  "round": 1,
+  "run": 2,
+  "suites_run": {
+    "rspec": {
+      "ran": true,
+      "passed": true,
+      "summary": "101 examples, 0 failures",
+      "seed": 40555,
+      "duration": "8.14 seconds",
+      "files_run": [
+        "spec/interactors/apply_ai_credit_purchase_spec.rb",
+        "spec/interactors/apply_ai_credit_refund_spec.rb",
+        "spec/interactors/cancel_ai_credit_subscription_spec.rb",
+        "spec/interactors/create_ai_credit_balance_transaction_spec.rb",
+        "spec/interactors/credit_consumption_with_notifications_spec.rb",
+        "spec/jobs/bulk_generate_ai_summaries_job_spec.rb",
+        "spec/jobs/stripe_webhook_handler_ai_credits_spec.rb",
+        "spec/mailers/ai_credit_notification_mailer_spec.rb",
+        "spec/models/organization_ai_credit_purchase_spec.rb",
+        "spec/models/job_ai_settings_spec.rb",
+        "spec/models/textract_result_ai_trigger_spec.rb",
+        "spec/models/organization_ai_credits_lifecycle_spec.rb",
+        "spec/policies/organization_ai_credit_balance_policy_spec.rb"
+      ]
+    },
+    "cypress": {
+      "ran": true,
+      "passed": true,
+      "summary": "33 specs, all passing (ran during pre-commit hook for the fix commit)",
+      "note": "All 33 Cypress tests passed during the pre-commit hook for commit c3f9e361b"
+    }
+  },
+  "findings": [],
+  "high_findings": 0,
+  "blocker_findings": 0,
+  "notes": "All 101 RSpec examples pass. All 33 Cypress specs passed. Zero test failures. Layer 3 clean."
+}

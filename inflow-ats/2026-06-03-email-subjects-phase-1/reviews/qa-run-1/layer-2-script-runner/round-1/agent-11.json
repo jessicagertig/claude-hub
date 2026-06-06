@@ -1,0 +1,121 @@
+{
+  "agent": "agent-11",
+  "focus": "API serializer output - verify subject in JSON responses",
+  "timestamp": "2026-06-05T05:30:40Z",
+  "environment": "test",
+  "worktree": "inflow-ats.messaging-improvements",
+  "script_files": [
+    "/tmp/qa-l2-agent11-serializer-v3.rb"
+  ],
+  "summary": {
+    "total": 13,
+    "pass": 13,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "verdict": "PASS"
+  },
+  "serializers_tested": [
+    {
+      "serializer": "Api::V1::JobSerializer",
+      "file": "app/serializers/api/v1/job_serializer.rb",
+      "field": "apply_response_template_subject",
+      "tests": [
+        {
+          "test": "attribute_declaration",
+          "status": "PASS",
+          "detail": ":apply_response_template_subject is declared in _attributes list at line 53"
+        },
+        {
+          "test": "serialization_with_value",
+          "status": "PASS",
+          "detail": "Serializes correctly. Input: '{{JobTitle}} at {{OrganizationName}}', Output: same value in JSON"
+        },
+        {
+          "test": "serialization_nil_as_null",
+          "status": "PASS",
+          "detail": "When DB value is nil, key is present in output with null value (not omitted)"
+        },
+        {
+          "test": "json_roundtrip",
+          "status": "PASS",
+          "detail": "Key survives JSON.parse(serializer.to_json) roundtrip"
+        }
+      ]
+    },
+    {
+      "serializer": "Api::V1::ChannelMessageTemplateSerializer",
+      "file": "app/serializers/api/v1/channel_message_template_serializer.rb",
+      "field": "subject",
+      "tests": [
+        {
+          "test": "attribute_declaration",
+          "status": "PASS",
+          "detail": ":subject is declared in _attributes list at line 7"
+        },
+        {
+          "test": "serialization_with_value",
+          "status": "PASS",
+          "detail": "Input: 'Test Subject Line', Output: same value in JSON"
+        },
+        {
+          "test": "serialization_nil_as_null",
+          "status": "PASS",
+          "detail": "When DB value is nil, key is present with null value"
+        }
+      ]
+    },
+    {
+      "serializer": "Api::V1::ChannelMessageSerializer",
+      "file": "app/serializers/api/v1/channel_message_serializer.rb",
+      "field": "subject",
+      "tests": [
+        {
+          "test": "attribute_declaration",
+          "status": "PASS",
+          "detail": ":subject is declared in _attributes list at line 8"
+        },
+        {
+          "test": "serialization_with_value",
+          "status": "PASS",
+          "detail": "Input: 'QA Test Subject', Output: same value in JSON"
+        },
+        {
+          "test": "serialization_nil_as_null",
+          "status": "PASS",
+          "detail": "When DB value is nil (legacy row), key is present with null value"
+        }
+      ]
+    },
+    {
+      "serializer": "ApiPublic::V1::Hire::ChannelMessageSerializer",
+      "file": "app/serializers/api_public/v1/hire/channel_message_serializer.rb",
+      "field": "subject",
+      "tests": [
+        {
+          "test": "attribute_declaration",
+          "status": "PASS",
+          "detail": ":subject is declared in _attributes list at line 7"
+        },
+        {
+          "test": "serialization_with_value",
+          "status": "PASS",
+          "detail": "Input: 'QA Public Subject', Output: same value in JSON"
+        },
+        {
+          "test": "serialization_nil_as_null",
+          "status": "PASS",
+          "detail": "When DB value is nil (legacy row), key is present with null value"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "notes": [
+    "All 4 serializers correctly declare and output the subject field",
+    "Legacy rows with nil subject serialize as JSON null (key present, value null) - not as missing key. This is the correct behavior for backward compatibility",
+    "The Job serializer exposes subject as 'apply_response_template_subject' (matching the DB column name), while ChannelMessage and ChannelMessageTemplate serializers expose it as 'subject'",
+    "The public API serializer (ApiPublic::V1::Hire::ChannelMessageSerializer) also includes subject, ensuring the hire/public API returns subject data",
+    "JSON roundtrip test confirms the key survives serialization to JSON string and parsing back"
+  ]
+}

@@ -102,3 +102,39 @@ _Motivated by: QA harness spec review Rounds 1-2. Round 1: parallel agents shari
 When building infrastructure intended to work across pipelines, **use pipeline-agnostic names for concepts, commands, and config keys.** If a concept originates from one pipeline's terminology, rename it before putting it in the generic layer.
 
 _Motivated by: QA harness spec review Round 1. `test_frr` (a Rails-specific Foreman concept) was used as the name for a generic "run a test script" capability, with an incorrect definition. Renamed to `script_runner`._
+
+### Hard rules cannot be rationalized away by plans
+
+When a spec or global CLAUDE.md states a hard rule (e.g., "RAILS_ENV=test always"), **the implementation must enforce it defensively even if another mechanism also provides it.** A plan that says "the config command includes it inline, so we don't need to enforce it in code" does not override a hard rule. Defense in depth is the point -- the harness enforces the invariant regardless of what the config author does.
+
+_Motivated by: QA harness impl review (redo) Round 1, HIGH-1. The plan explicitly rationalized omitting `env["RAILS_ENV"] = "test"` because the config's server command includes it inline. The spec's hard rule says "RAILS_ENV=test always." The analog enforces it defensively. A config author could omit it from the command string and the harness would silently start a dev server._
+
+### Verify the execution lifecycle matches before copying an analog pattern
+
+When adapting code from an analog, **check whether the new code has the same process lifecycle** (long-lived vs. fire-and-forget, parent-stays-alive vs. parent-exits). Patterns that are correct for a long-lived context manager (atexit handlers, subprocess.PIPE for output capture) can be fatal for a CLI that spawns children and exits. Specifically: atexit handlers fire on parent exit and kill children; PIPE stdout causes SIGPIPE death in children when the parent's read-end closes.
+
+_Motivated by: QA harness impl review (redo) Rounds 3-4. HIGH-4: atexit handler copied from the analog (a long-lived context manager) killed server subprocesses immediately when the CLI process exited after printing "READY." HIGH-5: subprocess.PIPE from the same analog caused child processes to die via SIGPIPE when the parent exited. Both were correct in the analog's lifecycle but fatal in the CLI's fire-and-forget lifecycle._
+
+### Check whether target artifacts already exist before proposing creation
+
+Before a plan says "create file X" or "add section Y to document Z," **verify that X does not already exist and that Z does not already contain Y.** If the artifact exists, the plan should say "verify" or "update if needed," not "create" or "add." An implementation agent following "create" instructions will produce duplicates or overwrite existing content.
+
+_Motivated by: QA harness plan review Pass 1. HIGH-1: plan said "Add Phase 8 section to LIFECYCLE.md" but LIFECYCLE.md already had Phase 8 (lines 115-128). HIGH-2: plan put `prompts/qa-prompt.md` inside the qa-harness package, but the prompt already existed at `~/claude-hub/features/qa-prompt.md` and was outside the lifecycle's search path. Both required amendments._
+
+### Fix agent code is unreviewed scope
+
+When a fix agent adds substantial new code to resolve a review finding (new methods, new code paths, modified validations), **that code has been through zero adversarial review.** The diff-to-spec review must trace every line of fix agent code back to the spec. Code that doesn't trace back is HIGH — "it works correctly" is not a downgrade reason. Report the FULL extent of the change, not just one surface symptom.
+
+_Motivated by: inflow-ats AI credits feature, Phase 8 Layer 1. A fix agent added 46 lines of new payment interactor code (apply_one_off_from_invoice) and relaxed model validations in the Stripe payment area — all without spec coverage. The diff-to-spec review had 20+ agents reading the full diff. Every one of them should have flagged a brand new unspecced method in the payment interactor. None did. The finding was classified MED and only mentioned the validation line, not the 46 lines of new logic behind it._
+
+### Spec-implementation mismatch is never MED
+
+If the spec says X and the implementation does Y, **that is HIGH or BLOCKER — even if Y is "functionally equivalent."** The user decides whether the deviation is acceptable, not the reviewer. "Close enough" is not spec-compliant. Reviewers must not rationalize deviations by arguing functional equivalence.
+
+_Motivated by: inflow-ats AI credits feature. M6: spec said "use invoice metadata" for top-up granting, implementation made two extra Stripe API calls via checkout session lookup instead. Classified MED as "functionally equivalent." M8: spec explicitly reviewed handle_charge_refunded and said "no change," fix agent deleted it entirely. Classified MED as "cleanup." Both were spec-implementation mismatches that should have been HIGH/BLOCKER and surfaced to the user._
+
+### Fix agents must not delete pre-existing code the spec reviewed
+
+When the spec explicitly reviews a piece of existing code and decides "no change," **that decision is part of the spec.** A fix agent that deletes that code has destroyed approved work. Before classifying a deletion as cleanup or "removing out-of-spec code," check whether the code existed on the branch before the fix agent's changes and whether the spec reviewed it.
+
+_Motivated by: inflow-ats AI credits feature. The spec (Note #33) explicitly reviewed handle_charge_refunded and decided "no change." The fix agent, told to strip out-of-spec code, deleted it. The reviewer classified this as MED ("refund handling outside Phase 1 scope") despite the spec explicitly including it in scope._

@@ -1,0 +1,50 @@
+{
+  "agent": 2,
+  "focus": "Full diff scan verifying all spec requirements remain implemented after the ChannelMessageListItem.tsx fix",
+  "files_reviewed": [
+    "SPEC.md (full)",
+    "diff.txt (all 29 files)",
+    "qa-run-1/layer-1-diff-to-spec/round-1/summary.md"
+  ],
+  "methodology": "Systematic check of every spec requirement against the diff, with extra attention to the ChannelMessageListItem.tsx fix and any code paths it touches",
+  "findings": [],
+  "qa_run_1_findings_still_valid": {
+    "C-001_css_font_size_bug": "Still present. font-size: ${t.text.sm} on line 308 of ChannelMessageTemplateSelectionModal.tsx. Not affected by the fix.",
+    "C-002_automation_modal_existing_template_preview": "Still present. HiringStageAutomationModal.tsx does not show subject when previewing an existing template. Not affected by the fix.",
+    "C-003_template_modal_missing_repopulation": "Still present. ChannelMessageTemplateModal.tsx does not repopulate subject with default on validation error. Not affected by the fix.",
+    "C-004_invalid_tags_dedup": "Still present. Not affected by the fix.",
+    "C-005_misleading_handler_name": "Still present. Not affected by the fix."
+  },
+  "fix_analysis": {
+    "file": "app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageListItem.tsx",
+    "change": "Added subject: \"\" to the channelMessageTemplate prop passed to ChannelMessageTemplateModal when opening the 'Save as Template' modal from a sent message",
+    "necessity": "ChannelMessageTemplateModal's type was updated to require { id; name; body; subject }. Without subject in the prop, TypeScript would flag a type error and the modal would receive undefined for subject.",
+    "correctness": "Correct. The empty string is the right value here -- this is a 'save as template' flow from an existing message, not a template with a stored subject. The modal's own useState initializer applies the fallback: props.channelMessageTemplate.subject || defaultSubject, so '' triggers the default '{{JobTitle}} at {{OrganizationName}}' to pre-populate.",
+    "spec_compliance": "No spec requirement was missed by qa-run-1 here. The fix addresses a TypeScript/runtime correctness issue for a code path where a ChannelMessageTemplateModal is opened from the transcript's 'Save as Template' action. The spec says 'template create/edit modal' should have a subject input with the default -- the fix ensures that holds for this specific entry point.",
+    "side_effects": "None. The fix is a one-property addition to a single object literal. It does not change any data flow, validation, or rendering logic."
+  },
+  "spec_coverage_verification": {
+    "schema_columns": "PASS - subject on channel_messages, channel_message_templates; mailgun_message_id on channel_messages; apply_response_template_subject on jobs",
+    "validator_rename": "PASS - CustomChannelMessageBodyValidator renamed to CustomChannelMessageValidator, applied to both body and subject",
+    "parse_body_rename": "PASS - renamed to parse_text in both CreateStageAutomationMessage and BulkChannelMessageSendJob, handles subject",
+    "hiring_stage_automation_job": "PASS - passes template subject into message_params",
+    "apply_response_pipeline": "PASS - both callers include subject, parse_apply_response_text method added, Job default set",
+    "inbound_capture": "PASS - both send_message_to_company and send_message_to_candidate capture email.subject",
+    "mailer_fallback": "PASS - notify_candidate reads subject with .presence fallback to hardcoded default",
+    "controller_permits": "PASS - all 4 controllers permit subject; sanitize calls present",
+    "bulk_controller_hand_built_hash": "PASS - subject explicitly included in the literal hash",
+    "serializers": "PASS - all 4 serializers expose subject/apply_response_template_subject",
+    "render_template_message": "PASS - subject Mustache passes (no Redcarpet), invalid_tags widened",
+    "anonymization": "PASS - text_replacer calls for subject (first and last name)",
+    "default_templates": "PASS - all 3 org defaults include subject",
+    "frontend_inputs": "PASS - all 4 surfaces have subject input",
+    "template_selection_preview": "PASS - shows subjectRaw",
+    "yup_validation": "PASS - all 3 schemas require subject",
+    "repopulate_on_error": "PASS - BulkMessageModal and ChannelMessageNew repopulate",
+    "default_prepopulation_per_surface": "PASS - single-send uses rendered values, others use literal variables",
+    "no_transcript_ui_change": "PASS - no changes to transcript display",
+    "no_notify_team_change": "PASS - no changes to notify_team (phase 1b)"
+  },
+  "verdict": "CLEAN",
+  "summary": "All spec requirements remain fully implemented after the fix. The fix correctly adds the missing subject property to the ChannelMessageListItem 'Save as Template' flow. No new spec compliance issues introduced. The 3 MED and 2 LOW findings from qa-run-1 are all unaffected by the fix and remain as-is."
+}

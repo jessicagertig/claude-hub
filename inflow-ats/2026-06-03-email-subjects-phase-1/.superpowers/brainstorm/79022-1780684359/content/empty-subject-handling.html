@@ -1,0 +1,104 @@
+<h2>Empty Subject — What happens on blur?</h2>
+<p class="subtitle">User clears the subject and clicks away. Two approaches.</p>
+
+<div class="cards">
+
+  <!-- Option A: Leave blank, error on send -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <!-- Step 1: blank subject after blur -->
+        <div style="padding: 8px 20px; background: #fffbeb; border-bottom: 1px solid #e5e7eb;">
+          <span style="font-size: 11px; color: #92400e;">1. User clears subject and clicks away →</span>
+        </div>
+        <div style="padding: 12px 20px 0 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer;">
+            <span style="font-size: 13px; font-weight: 500; color: #9ca3af; flex-shrink: 0;">Subject:</span>
+            <span style="font-size: 13px; color: #d1d5db; font-style: italic; flex: 1;">No subject</span>
+            <div style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: #4b5563;">
+              <svg style="width: 1.25em; height: 1.25em; stroke: currentColor; fill: none; stroke-width: 1.75px;" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div style="padding: 12px 20px 0; color: #374151; font-size: 14px; min-height: 32px;">Hey, just following up on your application...</div>
+
+        <!-- Step 2: error on send -->
+        <div style="padding: 8px 20px; background: #fef2f2; border-top: 1px solid #fecaca; margin-top: 8px;">
+          <span style="font-size: 11px; color: #dc2626;">2. User clicks Send →</span>
+        </div>
+        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 8px 12px; margin: 8px 20px; font-size: 13px; color: #dc2626;">
+          Subject is a required field
+        </div>
+        <div style="padding: 0 20px 16px;">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+            <span style="font-size: 13px; font-weight: 500; color: #ef4444; flex-shrink: 0;">Subject:</span>
+            <span style="font-size: 13px; color: #ef4444; font-style: italic; flex: 1;">No subject</span>
+            <div style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: #4b5563;">
+              <svg style="width: 1.25em; height: 1.25em; stroke: currentColor; fill: none; stroke-width: 1.75px;" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. Leave blank — error on Send</h3>
+      <p>Blur with empty → shows "No subject" in gray italic. User hits Send → form error + red subject label. They understand the problem. Click pencil to fix. Original spec behavior.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Repopulate + toast -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; position: relative;">
+        <div style="padding: 12px 20px 0 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer;">
+            <span style="font-size: 13px; font-weight: 500; color: #9ca3af; flex-shrink: 0;">Subject:</span>
+            <span style="font-size: 13px; color: #6b7280; flex: 1;">Software Engineer at Acme Inc.</span>
+            <div style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: #4b5563;">
+              <svg style="width: 1.25em; height: 1.25em; stroke: currentColor; fill: none; stroke-width: 1.75px;" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div style="padding: 12px 20px 0; color: #374151; font-size: 14px; min-height: 32px;">Hey, just following up on your application...</div>
+        <div style="display: flex; gap: 12px; padding: 12px 20px 16px;">
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px;">Send message</div>
+          <div style="background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 13px; border: 1px solid #e5e7eb;">Use template</div>
+        </div>
+
+        <!-- Toast -->
+        <div style="position: absolute; top: -52px; right: 20px; background: #1f2937; color: #f9fafb; padding: 10px 16px; border-radius: 8px; font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 8px; max-width: 320px;">
+          <svg style="width: 16px; height: 16px; stroke: #fbbf24; fill: none; stroke-width: 2; flex-shrink: 0;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Subject can't be empty — restored to default
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. Repopulate + toast on blur</h3>
+      <p>Blur with empty → default snaps back immediately + toast explains what happened. User always has a valid subject. Send never fails on subject. Proactive instead of reactive.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <h3>Trade-offs</h3>
+  <div class="pros-cons">
+    <div class="pros">
+      <h4>A — Leave blank</h4>
+      <ul>
+        <li>User sees the consequence of their action</li>
+        <li>Standard form validation pattern</li>
+        <li>Matches original spec behavior</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>B — Toast</h4>
+      <ul>
+        <li>Prevents invalid state entirely</li>
+        <li>Explains the auto-fix so user isn't confused</li>
+        <li>Send never blocked by subject</li>
+        <li>But: toast might feel heavy for this small interaction</li>
+      </ul>
+    </div>
+  </div>
+</div>

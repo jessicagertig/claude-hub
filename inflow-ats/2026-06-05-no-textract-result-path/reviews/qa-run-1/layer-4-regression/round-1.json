@@ -1,0 +1,28 @@
+{
+  "layer": "regression",
+  "round": 1,
+  "suites_run": {
+    "rspec": {
+      "ran": true,
+      "passed": true,
+      "summary": "31 examples, 0 failures",
+      "files_run": [
+        "spec/services/submit_resume_to_textract_spec.rb",
+        "spec/jobs/get_resume_text_from_textract_job_spec.rb",
+        "spec/models/ai_job_application_summary_spec.rb",
+        "spec/models/textract_result_ai_trigger_spec.rb",
+        "spec/jobs/generate_ai_job_application_summary_job_spec.rb"
+      ],
+      "failures": []
+    },
+    "cypress": {
+      "ran": false,
+      "reason": "No Cypress specs directly related to backend-only changes (no frontend modifications in scope)"
+    }
+  },
+  "findings": [],
+  "convergence": {
+    "gate_passed": true,
+    "notes": "0 test failures, gate passed immediately"
+  }
+}

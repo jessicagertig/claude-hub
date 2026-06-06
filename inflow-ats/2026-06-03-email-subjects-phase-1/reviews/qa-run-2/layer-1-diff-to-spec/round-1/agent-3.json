@@ -1,0 +1,80 @@
+{
+  "agent": 3,
+  "round": 1,
+  "focus": "Backend spot-check: 5 critical backend requirements + confirm backend unchanged from qa-run-1",
+  "methodology": "Ran `diff` between qa-run-1/diff.txt and qa-run-2/diff.txt. Confirmed all backend Ruby files are byte-identical. The only additions in qa-run-2 are: (1) ChannelMessageListItem.tsx frontend fix (adding subject: '' to channelMessageTemplate prop), (2) db/schema.rb (auto-generated schema dump after migration ran, was absent from qa-run-1 diff). Then spot-checked the 5 critical backend requirements against the diff.",
+  "backend_identity_confirmed": true,
+  "backend_identity_details": "All backend .rb files in qa-run-2 diff are identical to qa-run-1 diff. The `diff` command shows only two additions: ChannelMessageListItem.tsx (frontend fix) and db/schema.rb (schema dump). No backend file was modified, added, or removed between runs.",
+  "spot_checks": [
+    {
+      "requirement": "1. Mailer fallback (channel_message_mailer.rb)",
+      "spec_reference": "Spec: 'update ChannelMessageMailer#notify_candidate to read channel_message.subject and fall back to the current hardcoded literal when the stored subject is blank'",
+      "diff_line": 713,
+      "diff_content": "subject: @channel_message.subject.presence || \"#{@job.title} at #{@organization.name}\",",
+      "verdict": "PASS",
+      "reasoning": "The mailer reads @channel_message.subject, uses .presence (returns nil for blank/nil strings), and falls back to the exact hardcoded literal that was previously the only subject. This matches the spec requirement precisely."
+    },
+    {
+      "requirement": "2. Validator rename (custom_channel_message_validator.rb)",
+      "spec_reference": "Spec: 'Rename the existing CustomChannelMessageBodyValidator to CustomChannelMessageValidator and apply it to subject the same way it is currently applied to body.'",
+      "diff_lines": [926, 937, 746, 747],
+      "diff_content_file_rename": "rename from app/validators/custom_channel_message_body_validator.rb to app/validators/custom_channel_message_validator.rb",
+      "diff_content_class_rename": "class CustomChannelMessageValidator < ActiveModel::EachValidator",
+      "diff_content_model_usage": "validates :body, custom_channel_message: true / validates :subject, custom_channel_message: true",
+      "verdict": "PASS",
+      "reasoning": "File renamed from custom_channel_message_body_validator.rb to custom_channel_message_validator.rb. Class renamed from CustomChannelMessageBodyValidator to CustomChannelMessageValidator. Model (channel_message.rb) updated: old `validates :body, custom_channel_message_body: true` replaced with `validates :body, custom_channel_message: true` and new `validates :subject, custom_channel_message: true` added. Matches spec exactly."
+    },
+    {
+      "requirement": "3. BulkChannelMessagesController hand-built hash includes subject",
+      "spec_reference": "Spec (architecture): subject threads through all 7 channel_message creation paths including bulk",
+      "diff_lines": [9, 18, 20],
+      "diff_content": "Hand-built hash at line 9 adds `subject: bulk_channel_message_params[:subject]`. Strong params at line 18 adds :subject to permit list. Sanitization at line 20 adds `next_params[:subject] = sanitize(next_params[:subject]) if next_params.key?(:subject)`.",
+      "verdict": "PASS",
+      "reasoning": "All three touchpoints in BulkChannelMessagesController are present: (1) hand-built hash includes subject from params, (2) strong params permits :subject, (3) sanitize call parallels the existing body sanitization pattern. Complete threading."
+    },
+    {
+      "requirement": "4. parse_text rename in both CreateStageAutomationMessage and BulkChannelMessageSendJob",
+      "spec_reference": "Spec: 'Rename the existing private parse_body methods in CreateStageAutomationMessage (interactor) and BulkChannelMessageSendJob (job) in place to parse_text.'",
+      "diff_details": {
+        "CreateStageAutomationMessage": {
+          "diff_lines": [98, 111],
+          "old": "channel_message_params = @message_params.merge(body: parse_body)",
+          "new": "channel_message_params = @message_params.merge(body: parse_text(@message_params[:body]), subject: parse_text(@message_params[:subject]))",
+          "method_rename": "def parse_body -> def parse_text(text)",
+          "blank_guard": "return '' if text.blank?"
+        },
+        "BulkChannelMessageSendJob": {
+          "diff_lines": [653, 665],
+          "old": "channel_message_params = params.merge(body: parse_body(user, job_application, params))",
+          "new": "channel_message_params = params.merge(body: parse_text(user, job_application, params[:body]), subject: parse_text(user, job_application, params[:subject]))",
+          "method_rename": "def parse_body(user, job_application, params) -> def parse_text(user, job_application, text)",
+          "blank_guard": "return '' if text.blank?"
+        }
+      },
+      "verdict": "PASS",
+      "reasoning": "Both files rename parse_body to parse_text. Both generalize the method to accept a text parameter instead of reading from params[:body] internally. Both add a blank guard (return '' if text.blank?). Both call sites now pass subject through the same method as body. The different signatures are preserved (interactor: parse_text(text); job: parse_text(user, job_application, text)). Matches spec exactly, including the note that 'No further refactor' and 'they have different signatures'."
+    },
+    {
+      "requirement": "5. Anonymization text_replacer on subject",
+      "spec_reference": "Spec: 'Add the same two text_replacer calls over subject so candidate names don't persist in stored subjects after an anonymization run.'",
+      "diff_lines": [32, 33],
+      "diff_content": "channel_message.subject = text_replacer(channel_message.subject, real_first_name, name_replacement) / channel_message.subject = text_replacer(channel_message.subject, real_last_name, name_replacement)",
+      "verdict": "PASS",
+      "reasoning": "Two text_replacer calls on subject (one for first name, one for last name) added immediately after the existing body field replacements and before channel_message.save!. Parallels the exact pattern used for body, body_legacy_markdown, body_raw_html, body_plain_text, and body_sanitized_html. Matches spec exactly."
+    }
+  ],
+  "additional_observations": [
+    {
+      "observation": "db/schema.rb in qa-run-2 includes unrelated AI feature tables",
+      "severity": "INFO",
+      "details": "The schema.rb diff includes new tables (ai_api_requests, ai_credit_balance_transactions, ai_job_application_summaries, bulk_ai_summary_job_applications, organization_ai_credit_balances, organization_ai_credit_purchases) and a new column (auto_generate_ai_summaries_setting on jobs). These are from a separate feature branch that was merged into the base. The email-subjects-specific schema changes (subject on channel_messages, subject on channel_message_templates, mailgun_message_id on channel_messages, apply_response_template_subject on jobs) are all present and correct."
+    },
+    {
+      "observation": "font-size: ${t.text.sm} in ChannelMessageTemplateSelectionModal.tsx (known failure pattern #1)",
+      "severity": "NOTE",
+      "details": "Line 307 of the diff has `font-size: ${t.text.sm};` which per pipeline known failure pattern #1 produces invalid CSS (double font-size declaration). This existed identically in qa-run-1 and is unchanged. Not a backend concern but noting for completeness since it appeared during review. This is a frontend issue for another reviewer to track."
+    }
+  ],
+  "findings": [],
+  "summary": "All 5 critical backend requirements are correctly implemented. The backend diff is byte-identical to qa-run-1. The only changes in qa-run-2 vs qa-run-1 are: (1) the ChannelMessageListItem.tsx frontend fix, and (2) db/schema.rb inclusion. No backend regressions, no spec deviations."
+}

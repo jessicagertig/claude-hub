@@ -1,0 +1,126 @@
+- generic [ref=e8]:
+  - generic [ref=e9]:
+    - generic [ref=e11]:
+      - img [ref=e12]
+      - heading "Polymer" [level=1] [ref=e15]
+    - list [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: RM
+          - generic [ref=e21]: Rezu May
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e27] [cursor=pointer]:
+          - generic [ref=e29]: A
+          - img [ref=e31]
+        - generic [ref=e36]: Acme Inc.
+      - generic [ref=e38]:
+        - img [ref=e41] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - link [ref=e47] [cursor=pointer]:
+      - /url: /hire/settings/organization
+      - img [ref=e48]
+  - generic [ref=e51]:
+    - generic [ref=e53]:
+      - img [ref=e56] [cursor=pointer]
+      - heading "App settings" [level=2] [ref=e59]
+    - generic [ref=e60]:
+      - generic [ref=e61]:
+        - link "User preferences" [ref=e63] [cursor=pointer]:
+          - /url: /hire/settings/preferences
+          - generic [ref=e65]: User preferences
+          - img [ref=e66]
+        - separator
+        - generic [ref=e68]: Admin
+        - generic [ref=e69]:
+          - link "Organization" [ref=e70] [cursor=pointer]:
+            - /url: /hire/settings/organization
+            - generic [ref=e72]: Organization
+            - img [ref=e73]
+          - link "Team" [ref=e75] [cursor=pointer]:
+            - /url: /hire/settings/team
+            - generic [ref=e77]: Team
+            - img [ref=e78]
+          - link "Message templates" [ref=e80] [cursor=pointer]:
+            - /url: /hire/settings/message_templates
+            - generic [ref=e82]: Message templates
+            - img [ref=e83]
+          - link "Review templates" [ref=e85] [cursor=pointer]:
+            - /url: /hire/settings/review_templates
+            - generic [ref=e87]: Review templates
+            - img [ref=e88]
+          - link "Job board" [ref=e90] [cursor=pointer]:
+            - /url: /hire/settings/jobboard
+            - generic [ref=e92]: Job board
+            - img [ref=e93]
+          - link "Job categories" [ref=e95] [cursor=pointer]:
+            - /url: /hire/settings/categories
+            - generic [ref=e97]: Job categories
+            - img [ref=e98]
+          - link "Integrations" [ref=e100] [cursor=pointer]:
+            - /url: /hire/settings/integrations
+            - generic [ref=e102]: Integrations
+            - img [ref=e103]
+          - link "Plan & billing" [ref=e105] [cursor=pointer]:
+            - /url: /hire/settings/billing
+            - generic [ref=e107]: Plan & billing
+            - img [ref=e108]
+      - generic [ref=e111]:
+        - generic [ref=e112]:
+          - link "Settings" [active] [ref=e113] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/settings
+            - generic [ref=e115]: Settings
+            - img [ref=e116]
+          - link "Billing" [ref=e118] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/billing
+            - generic [ref=e120]: Billing
+            - img [ref=e121]
+          - link "Usage" [ref=e123] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/usage
+            - generic [ref=e125]: Usage
+            - img [ref=e126]
+        - generic [ref=e130]:
+          - generic [ref=e131]:
+            - heading "AI settings" [level=2] [ref=e134]
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - generic [ref=e137]:
+                  - heading "Auto-generate summaries" [level=4] [ref=e139]
+                  - paragraph [ref=e140]: When enabled, every new job applicant automatically gets an AI summary. Individual jobs can override this setting.
+                - generic [ref=e141]:
+                  - checkbox "Auto-generate AI summaries for new applicants (default)" [ref=e142]
+                  - generic [ref=e143] [cursor=pointer]: Auto-generate AI summaries for new applicants (default)
+              - generic [ref=e144]:
+                - generic [ref=e145]:
+                  - heading "Hiring team credit control" [level=4] [ref=e147]
+                  - paragraph [ref=e148]: When enabled, hiring team members (non-admins) can toggle auto-generate per job, run bulk actions, and manually trigger summary generations. When disabled, only admins can spend credits.
+                - generic [ref=e149]:
+                  - checkbox "Allow hiring team members to control AI credits" [checked] [ref=e150]
+                  - generic [ref=e151] [cursor=pointer]: Allow hiring team members to control AI credits
+              - generic [ref=e152]:
+                - heading "Notifications" [level=4] [ref=e155]
+                - generic [ref=e156]:
+                  - checkbox "Notify when credits are running low" [ref=e157]
+                  - generic [ref=e158] [cursor=pointer]: Notify when credits are running low
+                - generic [ref=e159]:
+                  - checkbox "Notify when credits hit zero" [checked] [ref=e160]
+                  - generic [ref=e161] [cursor=pointer]: Notify when credits hit zero
+          - button "Save changes" [ref=e163] [cursor=pointer]:
+            - generic [ref=e164]: Save changes

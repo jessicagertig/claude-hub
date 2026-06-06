@@ -1,0 +1,60 @@
+{
+  "layer": "regression",
+  "round": 1,
+  "suites_run": {
+    "rspec": {
+      "ran": true,
+      "passed": true,
+      "summary": "All 202 examples passed across 4 batches, 0 failures, 1 pending (clone_job_spec.rb placeholder). Migration 20260603212057 is up in test env.",
+      "batches": [
+        {
+          "files": [
+            "spec/interactors/clone_job_spec.rb",
+            "spec/services/plan_feature_gate_spec.rb"
+          ],
+          "result": "12 examples, 0 failures, 1 pending"
+        },
+        {
+          "files": [
+            "spec/requests/api_public/v1/hire/candidates_spec.rb",
+            "spec/requests/api_public/v1/hire/customer_jobs_spec.rb",
+            "spec/requests/api_public/v1/hire/organization_spec.rb",
+            "spec/requests/api_public/v1/hire/organization_users_spec.rb"
+          ],
+          "result": "33 examples, 0 failures"
+        },
+        {
+          "files": [
+            "spec/requests/api_public/v1/hire/job_applications_spec.rb",
+            "spec/requests/api_public/v1/hire/job_application_actions_spec.rb",
+            "spec/requests/api_public/v1/hire/job_applications_apply_spec.rb"
+          ],
+          "result": "43 examples, 0 failures"
+        },
+        {
+          "files": [
+            "spec/requests/api_public/v1/hire/html_sanitization_spec.rb",
+            "spec/requests/api_public/v1/hire/comments_and_reviews_spec.rb",
+            "spec/requests/api_public/v1/hire/job_applications_apply_files_spec.rb",
+            "spec/requests/api_public/v1/hire/job_applications_import_spec.rb",
+            "spec/requests/api_public/v1/hire/job_resume_exports_spec.rb",
+            "spec/requests/api_public/v1/hire/shared_list_behaviors_spec.rb"
+          ],
+          "result": "114 examples, 0 failures"
+        }
+      ],
+      "failures": []
+    },
+    "cypress": {
+      "ran": false,
+      "reason": "Already passed in CI on commit e7f272279"
+    }
+  },
+  "findings": [],
+  "notes": [
+    "The repo has 15 spec files (plus 3 support/helper files, 20 total). All 15 spec files were run covering: interactors (clone_job), services (plan_feature_gate), and request specs for candidates, customer_jobs, organization, organization_users, job_applications, job_application_actions, job_applications_apply, job_applications_apply_files, job_applications_import, html_sanitization, comments_and_reviews, job_resume_exports, shared_list_behaviors.",
+    "No dedicated spec files exist for channel_message models, channel_message_templates controller, channel_message_mailer, bulk_channel_messages_controller, bulk_channel_message_send_job, or hiring_stage_message_automation_job. These areas rely on Cypress integration tests for coverage.",
+    "The clone_job_spec.rb is a pending placeholder with no implemented examples.",
+    "Migration 20260603212057 (Add subject and mailgun_message_id to channel_messages) is applied in the test database."
+  ]
+}

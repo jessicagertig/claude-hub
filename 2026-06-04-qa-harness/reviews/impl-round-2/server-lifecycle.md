@@ -1,23 +1,29 @@
-# Server Lifecycle — Round 2 Findings
+# server-lifecycle — Round 2 Findings
 
-## Angle: server-lifecycle
+## Prior findings reviewed:
 
-### Prior findings review
+### HIGH-1 (RAILS_ENV=test enforcement) -- RESOLVED
+- `server.py` line 52-56 now sets `env["RAILS_ENV"] = "test"` defensively after `os.environ.copy()`
+- Comment explains the rationale and references the analog
+- New test `test_start_sets_rails_env_test` verifies all Popen calls receive `RAILS_ENV=test` in env
+- Matches the analog's pattern (`inflow_bootstrap.py` line 72)
 
-**Round 1 Finding 2 (MED): No health check for supporting process death.** Still present, still MED. Matches analog behavior. No change.
+### HIGH-2 (State file missing config_path) -- RESOLVED
+- `ServerManager.__init__` now accepts `config_path: Optional[str] = None` (line 35)
+- `_write_state_file` includes `"config_path": self.config_path` in the state JSON (line 282)
+- `cmd_start` passes `config_path=config_path` to `ServerManager` (cli.py line 48)
+- `cmd_stop` reads `config_path` from state file before falling back to `resolve_config_path` (cli.py lines 65-73)
+- `cmd_status` has the same fallback (cli.py lines 199-207)
 
-**Round 1 Finding 3 (MED): `stop_from_state_file` no wait.** Still present, still MED. Mitigated by `_kill_existing_processes` in `start`.
+### MED-1 (No supporting process premature exit check) -- STILL PRESENT (MED, non-blocking)
+### MED-2 (_extract_process_keyword hardcoded list) -- STILL PRESENT (MED, non-blocking)
 
-### New findings
+## New findings this round:
 
-None. Reviewed:
-- `_kill_existing_processes`: correctly handles both port-based and keyword-based process termination
-- `_wait_for_health`: correct polling loop with premature exit detection, timeout handling
-- `_register_cleanup`: atexit + signal handlers, idempotent via `_cleanup_registered` flag
-- `stop`: SIGTERM/wait/SIGKILL pattern matches analog
-- `_start_subprocess`: `bash -c` wrapper, correct `cwd`, `env` copy
-- `_write_state_file`/`_read_state_file`/`_remove_state_file`: correct JSON serialization, defensive error handling
-- `status`: verifies PID liveness via `os.kill(pid, 0)`, computes uptime from state file
-- `stop_from_state_file`: fallback to `lsof` when state file missing
-- `_extract_process_keyword`: handles nvm preamble, known keywords, fallback to exec-next-word
-- State file at fixed path `/tmp/qa-harness-state.json` is acceptable for single-pipeline operation per spec
+None.
+
+## Verification of fixes:
+- Tests pass: 72/72
+- State file includes config_path (verified by reading `_write_state_file`)
+- RAILS_ENV=test is set (verified by new test and reading `start()`)
+- Cleanup of redundant `import json as _json` confirmed -- now uses module-level `json`

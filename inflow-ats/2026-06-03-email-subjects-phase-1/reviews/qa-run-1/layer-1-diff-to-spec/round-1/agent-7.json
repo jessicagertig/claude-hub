@@ -1,0 +1,36 @@
+{
+  "agent_index": 7,
+  "focus_area": "Apply-response pipeline and default templates",
+  "findings": [
+    {
+      "id": "A7-F1",
+      "severity": "MED",
+      "file": "app/models/job_application.rb",
+      "location": "parse_apply_response_text method (new, around line 545)",
+      "description": "parse_apply_response_text is defined as a public instance method. html_safe_apply_email (which it parallels) is also public and is called externally from CustomerApi::CompleteJobApplication. The new method is also called externally from the same interactor. Public visibility is correct and consistent here. However, parse_apply_response_text does NOT call .html_safe at the end of its chain (the existing html_safe_apply_email does). This is the correct behavior per the spec ('subject goes into Mailgun Subject: header as plain text and needs no ERB safety marker'), but the method name does not convey this distinction. A caller might assume parse_apply_response_text and html_safe_apply_email have identical output semantics. This is a minor readability/maintenance concern, not a correctness issue.",
+      "spec_ref": "Spec: 'Extract the gsub chain into a shared method (e.g., parse_apply_response_text) usable for both body and subject, or inline the same chain on subject -- implementer's call on shape'",
+      "recommendation": "No code change needed. The implementation followed the spec's suggestion for a shared method name. The distinction (no .html_safe on parse_apply_response_text vs .html_safe on html_safe_apply_email) is correct. A future refactor could use parse_apply_response_text for body too and move .html_safe to the caller, but that is out of scope for phase 1a."
+    }
+  ],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "1. Job#add_default_apply_response_template: set apply_response_template_subject to '{{JobTitle}} at {{OrganizationName}}'",
+      "2. JobApplication#send_candidate_confirmation_email: include subject in params to CreateOrganizationChannelMessage",
+      "3. Subject comes from job.apply_response_template_subject run through parse_apply_response_text",
+      "4. New parse_apply_response_text method: scrub + gsub substitutions for JobTitle, CandidateFullName, CandidateFirstName, CandidateLastName, OrganizationName",
+      "5. parse_apply_response_text returns empty string if text is blank",
+      "6. CustomerApi::CompleteJobApplication#send_confirmation_email: include subject in params",
+      "7. Organization.default_channel_message_templates: add subject to all 3 template hashes with value '{{JobTitle}} at {{OrganizationName}}'"
+    ],
+    "implemented": [
+      "1. Job#add_default_apply_response_template: IMPLEMENTED. Diff shows update_columns now includes apply_response_template_subject: '{{JobTitle}} at {{OrganizationName}}' alongside the existing body default. Correct.",
+      "2. JobApplication#send_candidate_confirmation_email: IMPLEMENTED. Diff adds subject: parse_apply_response_text(job.apply_response_template_subject) to the params hash passed to CreateOrganizationChannelMessage. Correct.",
+      "3. Subject source: IMPLEMENTED. The subject value comes from job.apply_response_template_subject, passed through parse_apply_response_text which applies the same gsub substitution chain as html_safe_apply_email. Correct.",
+      "4. parse_apply_response_text method: IMPLEMENTED. The method applies .scrub then gsub for JobTitle, CandidateFullName, CandidateFirstName, CandidateLastName, OrganizationName, and non-breaking space replacement. This matches the exact same substitutions as html_safe_apply_email minus .html_safe. Correct.",
+      "5. parse_apply_response_text blank guard: IMPLEMENTED. 'return '' if text.blank?' handles nil (legacy jobs with no apply_response_template_subject) and empty strings. This correctly triggers the mailer fallback downstream (empty string -> .presence returns nil -> fallback fires). Correct.",
+      "6. CustomerApi::CompleteJobApplication#send_confirmation_email: IMPLEMENTED. Diff adds subject: job_application.parse_apply_response_text(job_application.job.apply_response_template_subject) to the params hash. Correct.",
+      "7. Organization.default_channel_message_templates: IMPLEMENTED. All 3 template hashes ('Thank you for applying', 'Scheduling', 'Rejection') now include subject: '{{JobTitle}} at {{OrganizationName}}'. Correct."
+    ],
+    "missing": []
+  }
+}

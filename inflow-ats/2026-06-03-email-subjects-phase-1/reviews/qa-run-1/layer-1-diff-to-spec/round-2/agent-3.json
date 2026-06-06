@@ -1,0 +1,40 @@
+{
+  "agent_index": 3,
+  "focus_area": "Serializers",
+  "round": 2,
+  "findings": [],
+  "deeper_analysis": {
+    "other_serializers_checked": [
+      "Api::V1::ChannelSerializer -- embeds channel_messages via has_many with ChannelMessageSerializer. Subject flows through automatically once ChannelMessageSerializer exposes it. No change needed. Spec explicitly acknowledges this (phase 1b frontend will consume it).",
+      "Api::V1::ShallowChannelSerializer -- does not embed channel_messages. No change needed.",
+      "Api::V1::HiringStageAutomationSerializer -- exposes only channel_message_template_name (a String). Does not serialize the full template object. No change needed.",
+      "ApiPublic::V1::Hire::HiringStageMessageAutomationSerializer -- exposes channel_message_template as { id, name } via custom method. Does not serialize the full template. No change needed.",
+      "Api::V1::PublicActivitySerializer -- ChannelMessage serialization lines are commented out. No change needed.",
+      "ApiPublic::V1::Hire::JobSerializer -- public careers page serializer. Does not expose apply_response_template fields (correct -- internal template data should not be public). No change needed.",
+      "Api::V1::PublicJobSerializer -- public-facing job data. Does not expose apply_response_template fields. No change needed.",
+      "Api::V1::RegisteredWebhooks::JobApplicationSerializer -- webhook payload. Does not embed channel messages. No change needed.",
+      "Api::V1::ZapierIntegrations::* -- no channel message references. No change needed.",
+      "Api::V1::ConnectMembers::* -- no channel message references. No change needed.",
+      "Api::V1::JobApplicationNotificationSerializer -- exposes notification metadata only, no message content. No change needed.",
+      "Api::V1::NotificationSerializer -- wraps PublicActivitySerializer, no message content. No change needed."
+    ],
+    "mail_merge_controller_analysis": "Api::V1::ChannelMessageTemplatesMailMergeController#show calls @job_application.render_template_message and does `render json: message, status: :ok`, directly serializing the hash. The diff adds subject_raw, subject_html, and template_subject_html to that hash. The apiGet layer in the frontend applies allKeysToCamel, converting subject_raw to subjectRaw. The frontend correctly references mailMerge.subjectRaw in both ChannelMessageTemplateSelectionModal (preview display) and ChannelMessageNew (template insertion). Data flow is correct end-to-end.",
+    "caching_analysis": "No fragment caching, HTTP caching (stale?/fresh_when), or serializer-level caching found in any of the four serializer files, the ChannelSerializer that embeds ChannelMessageSerializer, or any of the controllers that render these serializers (ChannelMessagesController, ChannelMessageTemplatesController, ChannelMessageTemplatesMailMergeController, BulkChannelMessagesController, JobsController). Adding subject to serialized responses has no cache invalidation implications."
+  },
+  "spec_coverage": {
+    "assigned_requirements": [
+      "ChannelMessageSerializer: expose :subject",
+      "ChannelMessageTemplateSerializer: expose :subject",
+      "JobSerializer: expose :apply_response_template_subject",
+      "Hire::ChannelMessageSerializer (public API): expose :subject"
+    ],
+    "implemented": [
+      "ChannelMessageSerializer: expose :subject -- confirmed at diff line 885. Added after :body. Correct attribute name, maps to nullable column. NULL for legacy rows serializes as null in JSON.",
+      "ChannelMessageTemplateSerializer: expose :subject -- confirmed at diff line 897. Added after :body. Correct.",
+      "JobSerializer: expose :apply_response_template_subject -- confirmed at diff line 909. Added after :apply_response_template. Correct column name.",
+      "Hire::ChannelMessageSerializer (public API): expose :subject -- confirmed at diff line 922. Inserted between :body and :body_plain_text. Correct."
+    ],
+    "missing": []
+  },
+  "round_2_verdict": "No new findings. All four serializer requirements are correctly implemented. Exhaustive search of 20+ serializer files confirms no missed serializers. Mail-merge controller subject data flows correctly through the snake-to-camel API layer. No caching concerns exist in this area."
+}

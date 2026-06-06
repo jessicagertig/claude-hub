@@ -1,0 +1,72 @@
+{
+  "agent": "agent-5",
+  "task": "Automation modal template preview with subject",
+  "status": "partial",
+  "screenshots": {
+    "01-automation-modal-template-selected.png": {
+      "description": "Candidate messages view showing Subject field with 'Software Engineer at Acme Inc.' in compose area, plus a sent message from template application. The Subject label and edit pencil icon are visible at bottom of compose area.",
+      "matches_spec": false,
+      "notes": "Could not access the hiring stage automation modal due to persistent redirect loop. The automations page (/jobs/16205/setup/automations) was reachable but only contained a single 'Custom confirmation message' Enabled/Disabled dropdown for application confirmation -- no template selector with preview was visible. The redirect loop prevented interacting with the dropdown to enable it and see template selection."
+    },
+    "01-template-list-with-subjects.png": {
+      "description": "Settings > Message templates list showing 3 default templates (Thank you for applying, Scheduling, Rejection) plus 1 accidentally created template (QA Test Template). Template list shows name and creator only -- no subject line is displayed in the list view.",
+      "matches_spec": true,
+      "notes": "Fallback screenshot as specified in task. The template list does NOT display subjects inline -- only template name and creator are shown."
+    },
+    "02-automation-modal-inline-create.png": {
+      "description": "Create new template modal/form showing three fields: Template name ('QA Test Template'), Subject ('Follow-up: Interview Scheduling at {{OrganizationName}}'), and Template body (empty). Merge tag buttons visible below body editor (Candidate first name, Candidate last name, Candidate full name, Job title, Sender first name, Sender full name, Organization name).",
+      "matches_spec": true,
+      "notes": "This confirms the Subject field is present in the template creation form. The default subject placeholder appears to be '{{JobTitle}} at {{OrganizationName}}' per the accessibility snapshot, though the screenshot shows a custom value that was carried over from a redirect."
+    }
+  },
+  "findings": [
+    {
+      "id": "AUTO-1",
+      "severity": "INFO",
+      "category": "navigation",
+      "summary": "Automations page has persistent redirect loop",
+      "detail": "The /jobs/16205/setup/automations page loads correctly and shows the 'Application confirmation' section with a 'Custom confirmation message' Enabled/Disabled dropdown. However, any interaction with the dropdown or delay causes the app to redirect to /jobs/16205/stages/113408/applicants/12444/messages (the last-viewed candidate messages page). This prevented testing the automation modal template selector with subject preview.",
+      "steps_to_reproduce": "1. Navigate to /jobs/16205/setup/automations. 2. Wait for page to load (Automations heading visible). 3. Click the 'Disabled' dropdown. 4. Observe redirect to candidate messages page.",
+      "observed": "Page redirects to candidate messages within seconds of loading or immediately after any interaction",
+      "expected": "Automations page should remain stable for user interaction"
+    },
+    {
+      "id": "AUTO-2",
+      "severity": "INFO",
+      "category": "feature-verification",
+      "summary": "Subject field present in template creation form",
+      "detail": "The 'Create new template' form at Settings > Message templates > Add a template includes a Subject field between Template name and Template body. The default placeholder value is '{{JobTitle}} at {{OrganizationName}}'. This confirms the email subjects feature is integrated into template creation.",
+      "observed": "Subject field present with merge tag default value",
+      "expected": "Subject field present (PASS)"
+    },
+    {
+      "id": "AUTO-3",
+      "severity": "INFO",
+      "category": "feature-verification",
+      "summary": "Subject field visible in candidate message compose area",
+      "detail": "The candidate messages compose area shows 'Subject: Software Engineer at Acme Inc.' with an edit pencil icon. When a template is applied, the subject updates to the template's subject (e.g., 'Follow-up: Interview Scheduling'). This confirms subject threading through the messaging UI.",
+      "observed": "Subject field with editable content visible in compose area",
+      "expected": "Subject field present (PASS)"
+    },
+    {
+      "id": "AUTO-4",
+      "severity": "LOW",
+      "category": "ui-observation",
+      "summary": "Template list does not display subject in list view",
+      "detail": "The Message templates list at Settings > Message templates shows only template name and creator for each template. The subject line is not visible in the list view. Users must click 'Edit template' to see the subject of an existing template.",
+      "observed": "List shows: template name + 'Created by [author]'",
+      "expected": "Consider showing subject in list view for quick scanning"
+    },
+    {
+      "id": "AUTO-5",
+      "severity": "MED",
+      "category": "test-artifact",
+      "summary": "Accidental template creation during redirect chaos",
+      "detail": "A template named 'QA Test Template' with subject 'Follow-up: Interview Scheduling at {{OrganizationName}}' was accidentally created during the redirect loop when the template creation form was auto-submitted. Additionally, a message was sent to candidate Sid Skiles with body 'Hi Sid, I wanted to follow up regarding the interview scheduling.' This is test data contamination from the redirect issue.",
+      "observed": "QA Test Template appears in template list; message sent to Sid Skiles",
+      "expected": "No test artifacts should be created during screenshot capture"
+    }
+  ],
+  "automation_modal_accessible": false,
+  "automation_modal_notes": "The automations page only shows a single 'Application confirmation' section with an Enabled/Disabled dropdown. There is no visible template selector dropdown or template preview area on this page. The automation modal with template preview may require: (1) enabling the custom confirmation message first, which would reveal a template selector, or (2) accessing a different type of stage automation (e.g., stage-move automations). The persistent redirect loop prevented testing either path."
+}

@@ -1,0 +1,137 @@
+- generic [ref=e8]:
+  - generic [ref=e9]:
+    - generic [ref=e11]:
+      - img [ref=e12]
+      - heading "Polymer" [level=1] [ref=e15]
+    - list [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: RM
+          - generic [ref=e21]: Rezu May
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e27] [cursor=pointer]:
+          - generic [ref=e29]: A
+          - img [ref=e31]
+        - generic [ref=e36]: Acme Inc.
+      - generic [ref=e38]:
+        - img [ref=e41] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - generic [ref=e46]:
+      - img [ref=e47]
+      - textbox "Search candidates" [ref=e50]
+    - generic [ref=e52]:
+      - link [ref=e54] [cursor=pointer]:
+        - /url: /notifications
+        - img [ref=e55]
+      - link [ref=e59] [cursor=pointer]:
+        - /url: /hire/settings/organization
+        - img [ref=e60]
+  - generic [ref=e63]:
+    - generic [ref=e233]:
+      - img [ref=e236] [cursor=pointer]
+      - heading "App settings" [level=2] [ref=e239]
+    - generic [ref=e240]:
+      - generic [ref=e241]:
+        - link "User preferences" [ref=e243] [cursor=pointer]:
+          - /url: /hire/settings/preferences
+          - generic [ref=e245]: User preferences
+          - img [ref=e246]
+        - separator
+        - generic [ref=e248]: Admin
+        - generic [ref=e249]:
+          - link "Organization" [ref=e250] [cursor=pointer]:
+            - /url: /hire/settings/organization
+            - generic [ref=e252]: Organization
+            - img [ref=e253]
+          - link "Team" [ref=e255] [cursor=pointer]:
+            - /url: /hire/settings/team
+            - generic [ref=e257]: Team
+            - img [ref=e258]
+          - link "Message templates" [ref=e260] [cursor=pointer]:
+            - /url: /hire/settings/message_templates
+            - generic [ref=e262]: Message templates
+            - img [ref=e263]
+          - link "Review templates" [ref=e265] [cursor=pointer]:
+            - /url: /hire/settings/review_templates
+            - generic [ref=e267]: Review templates
+            - img [ref=e268]
+          - link "Job board" [ref=e270] [cursor=pointer]:
+            - /url: /hire/settings/jobboard
+            - generic [ref=e272]: Job board
+            - img [ref=e273]
+          - link "Job categories" [ref=e275] [cursor=pointer]:
+            - /url: /hire/settings/categories
+            - generic [ref=e277]: Job categories
+            - img [ref=e278]
+          - link "Integrations" [ref=e280] [cursor=pointer]:
+            - /url: /hire/settings/integrations
+            - generic [ref=e282]: Integrations
+            - img [ref=e283]
+          - link "Plan & billing" [ref=e285] [cursor=pointer]:
+            - /url: /hire/settings/billing
+            - generic [ref=e287]: Plan & billing
+            - img [ref=e288]
+          - link "Plato AI" [ref=e290] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai
+            - generic [ref=e292]: Plato AI
+            - img [ref=e293]
+      - generic [ref=e369]:
+        - generic [ref=e370]:
+          - link "Settings" [ref=e371] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/settings
+            - generic [ref=e373]: Settings
+            - img [ref=e374]
+          - link "Billing" [ref=e376] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/billing
+            - generic [ref=e378]: Billing
+            - img [ref=e379]
+          - link "Usage" [ref=e381] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/usage
+            - generic [ref=e383]: Usage
+            - img [ref=e384]
+        - generic [ref=e455]:
+          - generic [ref=e456]:
+            - heading "AI settings" [level=2] [ref=e459]
+            - generic [ref=e460]:
+              - generic [ref=e461]:
+                - generic [ref=e462]:
+                  - heading "Auto-generate summaries" [level=4] [ref=e464]
+                  - paragraph [ref=e465]: When enabled, every new job applicant automatically gets an AI summary. Individual jobs can override this setting.
+                - generic [ref=e466]:
+                  - checkbox "Auto-generate AI summaries for new applicants (default)" [checked] [active] [ref=e467]
+                  - generic [ref=e468] [cursor=pointer]: Auto-generate AI summaries for new applicants (default)
+              - generic [ref=e469]:
+                - generic [ref=e470]:
+                  - heading "Hiring team credit control" [level=4] [ref=e472]
+                  - paragraph [ref=e473]: When enabled, hiring team members (non-admins) can toggle auto-generate per job, run bulk actions, and manually trigger summary generations. When disabled, only admins can spend credits.
+                - generic [ref=e474]:
+                  - checkbox "Allow hiring team members to control AI credits" [checked] [ref=e475]
+                  - generic [ref=e476] [cursor=pointer]: Allow hiring team members to control AI credits
+              - generic [ref=e477]:
+                - heading "Notifications" [level=4] [ref=e480]
+                - generic [ref=e481]:
+                  - checkbox "Notify when credits are running low" [ref=e482]
+                  - generic [ref=e483] [cursor=pointer]: Notify when credits are running low
+                - generic [ref=e484]:
+                  - checkbox "Notify when credits hit zero" [checked] [ref=e485]
+                  - generic [ref=e486] [cursor=pointer]: Notify when credits hit zero
+          - button "Save changes" [ref=e488] [cursor=pointer]:
+            - generic [ref=e489]: Save changes

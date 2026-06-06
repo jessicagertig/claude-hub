@@ -1,0 +1,67 @@
+{
+  "agent": 4,
+  "round": 2,
+  "focus_area": "Mailer fallback and inbound subject capture",
+  "files_reviewed": [
+    "app/mailers/channel_message_mailer.rb",
+    "app/models/channel.rb"
+  ],
+  "additional_files_traced": [
+    "app/services/emails/send_template_email.rb",
+    "app/models/channel_message.rb (clean_incoming_message callback)",
+    "app/services/email_processor.rb",
+    "app/utils/sanitizer.rb",
+    "mailgun-ruby-1.2.5/lib/mailgun/messages/message_builder.rb (gem source)"
+  ],
+  "spec_compliance": {
+    "notify_candidate_reads_subject_with_fallback": {
+      "status": "PASS",
+      "detail": "Line 116 changed to `@channel_message.subject.presence || \"#{@job.title} at #{@organization.name}\"`. Correctly reads the stored subject and falls back to the existing hardcoded literal when blank."
+    },
+    "fallback_uses_presence": {
+      "status": "PASS",
+      "detail": ".presence is used, which returns nil for nil, empty string, and whitespace-only strings. Correct per spec."
+    },
+    "inbound_send_message_to_company_captures_subject": {
+      "status": "PASS",
+      "detail": "subject: email.subject added to the channel_messages.build hash in send_message_to_company."
+    },
+    "inbound_send_message_to_candidate_captures_subject": {
+      "status": "PASS",
+      "detail": "subject: email.subject added to the channel_messages.build hash in send_message_to_candidate."
+    },
+    "no_changes_to_notify_team": {
+      "status": "PASS",
+      "detail": "notify_team method (lines 10-88) has zero changes in the diff. Correct per spec (phase 1b)."
+    },
+    "no_changes_to_transcript_ui": {
+      "status": "PASS",
+      "detail": "No transcript UI changes in my file area. Correct per spec (phase 1b)."
+    }
+  },
+  "round_2_deep_investigations": {
+    "xss_in_subject_via_mailgun_api": {
+      "verdict": "NOT_A_CONCERN",
+      "detail": "Traced the full path: subject string -> Emails::SendTemplateEmail#add_subject -> MessageBuilder#subject -> set_multi_simple(:subject, value) -> Mailgun REST API 'subject' parameter. The Subject: email header is rendered as plain text by all email clients, not as HTML. HTML tags in a subject line are displayed literally. Furthermore, outbound user-composed subjects are sanitized at the controller layer (Sanitizer#sanitize in ChannelMessagesController and BulkChannelMessagesController). Inbound subjects from Postmark are raw email Subject headers which are inherently plain text per email protocol (RFC 5322 does not allow HTML in Subject)."
+    },
+    "other_mailer_methods_needing_subject": {
+      "verdict": "NONE_APPLICABLE",
+      "detail": "Only two active methods in ChannelMessageMailer: notify_team (phase 1b, correctly unchanged) and notify_candidate (correctly updated). The commented-out candidate_confirmation method is dead code."
+    },
+    "clean_incoming_message_touches_subject": {
+      "verdict": "CORRECTLY_DOES_NOT",
+      "detail": "clean_incoming_message (before_create callback) only processes body and body_sanitized_html. No changes to this method in the diff. Subject is a plain string that does not need the body-cleaning pipeline (which handles HTML email body parsing). Correct per spec."
+    },
+    "anonymization_nil_safety": {
+      "verdict": "SAFE",
+      "detail": "Traced text_replacer in CandidatesController: it guards with `return text if text.blank?`, so nil subject on legacy channel_messages passes through safely as nil."
+    }
+  },
+  "new_findings": [],
+  "prior_findings_reassessment": {
+    "C-001": "Still valid MED. CSS font-size bug in SubjectPreview (not in my file area).",
+    "C-002": "Still valid MED. Automation modal existing-template preview doesn't show subject (not in my file area).",
+    "C-003": "Still valid MED. Template modal missing subject repopulation on validation error (not in my file area)."
+  },
+  "summary": "All 6 spec requirements for mailer fallback and inbound subject capture are correctly implemented. Round 2 deep-dive found no new issues: XSS in the Subject header is not a concern because email Subject is inherently plain text and the Mailgun API handles it as such; no other mailer methods need subject changes in phase 1a; clean_incoming_message correctly does not touch subject. No new findings."
+}

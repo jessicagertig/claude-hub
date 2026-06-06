@@ -1,0 +1,46 @@
+{
+  "agent": 10,
+  "focus_area": "Frontend: template modals, automation modal, and job setup",
+  "files_reviewed": [
+    "ChannelMessageTemplateModal.tsx",
+    "ChannelMessageTemplateSelectionModal.tsx",
+    "HiringStageAutomationModal.tsx",
+    "JobSetupAutomations.tsx"
+  ],
+  "prior_findings_validation": [
+    {
+      "id": "C-001",
+      "prior_severity": "MED",
+      "verdict": "VALID",
+      "rationale": "Confirmed real bug. `font-size: ${t.text.sm};` on diff line 308 produces invalid CSS because `t.text.sm` is a complete CSS declaration (already includes `font-size:` property). This is explicitly documented in the pipeline CLAUDE.md Known Failure Pattern #1. The fix is `${t.text.sm};` standalone. Agree with MED severity: subject preview still renders and text is readable, just at the wrong (default) font size rather than the intended small font size."
+    },
+    {
+      "id": "C-002",
+      "prior_severity": "MED",
+      "verdict": "VALID",
+      "rationale": "Confirmed real gap. The spec states: 'Automation modal's existing-template preview: show the saved template's subject as-is.' The diff for HiringStageAutomationModal.tsx only adds subject support for the inline-create-template flow (newTemplateSubject state, input, validation, mutation). The existing-template preview section is not modified and continues to show only the selected template's body, not its subject. The template selection dropdown correctly associates the template (including subject) with the automation at the backend level, so sending works -- but the user cannot preview what subject an existing template will send. Agree with MED: functional (subject sends correctly via backend), but the preview is incomplete."
+    },
+    {
+      "id": "C-003",
+      "prior_severity": "MED",
+      "verdict": "VALID",
+      "rationale": "Confirmed real gap. The spec says: 'On submit with a cleared field, fire the standard form-error AND repopulate the field with the rendered default.' Both BulkMessageModal and ChannelMessageNew implement the repopulation pattern (`if (!subject || subject.trim() === '') { setSubject(defaultSubject); }` in the validation-failure branch). ChannelMessageTemplateModal's handleSubmit else branch only calls `setErrors(validationErrors)` with no subject repopulation. The diff does not modify the else branch. Agree with MED: validation error still fires and displays correctly; the user just sees an empty field instead of it being repopulated with the default."
+    }
+  ],
+  "additional_investigation": [
+    {
+      "question": "Does the template update mutation send subject correctly?",
+      "finding": "No issue. Both `handleCreate` and `handleUpdate` in ChannelMessageTemplateModal.tsx spread `...channelMessageTemplate` into the mutation variables. The state object includes `subject` (initialized at lines 234-238 of the diff). The mutation hooks (`createChannelMessageTemplate`, `updateChannelMessageTemplate`) pass variables directly to the API. The backend controller permits `:subject`. Subject flows correctly through create and update."
+    },
+    {
+      "question": "Is the automation modal's template picker updating subject?",
+      "finding": "No issue with the data flow. The automation modal's template picker sets `channelMessageTemplateId` on the automation, and the backend (`HiringStageMessageAutomationJob`) reads `automation.channel_message_template.subject` when building `message_params`. The subject is correctly threaded through the backend pipeline. The only gap is the already-reported C-002 (preview display)."
+    },
+    {
+      "question": "Does JobSetupAutomations validate subject before saving?",
+      "finding": "No issue. JobSetupAutomations does not use yup validation for any of its fields (neither the existing body nor the new subject). The form goes straight to `updateJob`. This is consistent with the existing pattern for this form. The spec says 'mark subject as required in yup schemas where the form requires it' -- this form doesn't use yup schemas, and the backend treats `apply_response_template_subject` as nullable with a mailer fallback. The `onFormInputChange` handler correctly uses `[name]: value` dynamic keying, and `applyResponseTemplateSubject` flows through `useUpdateJob` to the API correctly."
+    }
+  ],
+  "new_findings": [],
+  "summary": "All three prior findings (C-001, C-002, C-003) are VALID at their stated MED severity. No new findings. Template create/update mutations correctly include subject. Automation template picker correctly threads subject through the backend. JobSetupAutomations correctly passes subject without validation, consistent with the existing pattern for that form."
+}

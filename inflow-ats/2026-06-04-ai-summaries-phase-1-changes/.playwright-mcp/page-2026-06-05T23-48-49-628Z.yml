@@ -1,0 +1,82 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e7]:
+      - img [ref=e8]
+      - heading "Polymer" [level=1] [ref=e11]
+    - list [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e15]:
+          - generic [ref=e16]: TB
+          - generic [ref=e17]: Taylor Brooks
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - generic [ref=e23] [cursor=pointer]:
+          - generic [ref=e25]: A
+          - img [ref=e27]
+        - generic [ref=e32]: Acme Inc.
+      - generic [ref=e34]:
+        - img [ref=e37] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - link [ref=e43] [cursor=pointer]:
+      - /url: /hire/settings/preferences
+      - img [ref=e44]
+  - generic [ref=e47]:
+    - generic [ref=e49]:
+      - heading "Active jobs" [level=2] [ref=e50]
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]: "0"
+          - text: Job Board Subscribers
+        - generic [ref=e54]:
+          - generic [ref=e55]: "1"
+          - text: Published Job
+    - generic [ref=e58] [cursor=pointer]:
+      - generic [ref=e59]:
+        - heading "AI Test Job" [level=2] [ref=e61]
+        - generic [ref=e62]:
+          - generic [ref=e63]: Sales & Marketing
+          - generic [ref=e64]: Full-time
+          - generic [ref=e65]: Location not specified
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - link [ref=e69]:
+            - /url: /jobs/17078/setup/details
+            - img [ref=e70]
+          - generic [ref=e73]:
+            - img [ref=e76]
+            - generic:
+              - generic:
+                - link "View job post":
+                  - /url: http://jobs.lvh.me:5007/acme-inc/17078
+                  - text: View job post
+                  - img
+                - button "Hide job post":
+                  - generic: Hide job post
+        - list [ref=e81]:
+          - listitem [ref=e82]:
+            - generic [ref=e83]:
+              - img [ref=e84]
+              - generic [ref=e87]: Inbox
+            - generic [ref=e88]: "0"
+          - listitem [ref=e89]:
+            - generic [ref=e90]:
+              - img [ref=e91]
+              - generic [ref=e94]: Total candidates
+            - generic [ref=e95]: "0"

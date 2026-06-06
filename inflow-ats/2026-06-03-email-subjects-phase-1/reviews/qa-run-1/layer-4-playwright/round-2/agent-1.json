@@ -1,0 +1,67 @@
+{
+  "agent": "playwright-qa-agent-1",
+  "round": 2,
+  "focus": "Job Setup > Automations - Apply response template subject",
+  "status": "PASS",
+  "scenarios_tested": [
+    {
+      "id": "S1",
+      "description": "Navigate to job setup Automations section",
+      "status": "PASS",
+      "details": "Successfully navigated to /jobs/15824/setup/automations. The Automations page loads with heading 'Automations', description text, and 'Application confirmation' section containing a 'Custom confirmation message' dropdown defaulting to 'Disabled'."
+    },
+    {
+      "id": "S2",
+      "description": "Enable the 'Application confirmation' / 'Custom confirmation message' toggle",
+      "status": "PASS",
+      "details": "Clicked the react-select dropdown (class: form-select-ui__control) and selected the 'Enabled' option. The toggle changed from 'Disabled' to 'Enabled' and new form fields appeared: a Subject input and a Message template rich text editor."
+    },
+    {
+      "id": "S3",
+      "description": "Verify a Subject input field appears alongside the body editor",
+      "status": "PASS",
+      "details": "After enabling the toggle, a 'Subject' label and an input field (name='applyResponseTemplateSubject') appeared above the 'Message template' body editor. A hidden input (name='useApplyResponseTemplate', value='true') was also set. Template variable buttons are displayed below the editor: Candidate first name, Candidate last name, Candidate full name, Job title, Organization name."
+    },
+    {
+      "id": "S4",
+      "description": "Verify the default subject is '{{JobTitle}} at {{OrganizationName}}'",
+      "status": "PASS",
+      "details": "The Subject input field was pre-populated with '{{JobTitle}} at {{OrganizationName}}' as the default value. This matches the expected default exactly."
+    },
+    {
+      "id": "S5",
+      "description": "Change the subject, save, reload - verify it persists",
+      "status": "PASS",
+      "details": "Changed subject to 'Custom Test Subject for QA', clicked 'Save changes', saw 'Job updated' success toast. After full page reload (page.goto with networkidle), the toggle remained 'Enabled' and the subject field retained the value 'Custom Test Subject for QA'. Persistence confirmed."
+    }
+  ],
+  "findings": [],
+  "notes": [
+    "The Automations page has a known issue where background JavaScript (likely websocket/polling events) causes unintended page navigation. This required using Playwright's run_code_unsafe with atomic scripts to avoid race conditions between tool calls.",
+    "The default message template body when enabled reads: 'Hello {{CandidateFirstName}}, This is a confirmation that your application for the {{JobTitle}} position with {{OrganizationName}} was submitted successfully.'",
+    "The react-select dropdown for the toggle uses classes: form-select-ui__control, form-select-ui__single-value, form-select-ui__option, form-select-ui__menu.",
+    "Round 1 Agent 5 was blocked because the toggle was disabled. The toggle defaults to 'Disabled' and must be explicitly changed to 'Enabled' via the dropdown before Subject and Message template fields appear."
+  ],
+  "screenshots": [
+    {
+      "filename": "03-automations-initial-disabled.png",
+      "description": "Automations page with toggle set to Disabled (initial state)"
+    },
+    {
+      "filename": "04-automations-enabled-before-save.png",
+      "description": "Automations page after enabling toggle, showing Subject field with default '{{JobTitle}} at {{OrganizationName}}' and Message template"
+    },
+    {
+      "filename": "05-automations-custom-subject-before-save.png",
+      "description": "Subject field changed to 'Custom Test Subject for QA' before saving"
+    },
+    {
+      "filename": "06-automations-after-save.png",
+      "description": "After clicking Save changes - 'Job updated' toast visible in bottom right"
+    },
+    {
+      "filename": "07-automations-after-reload.png",
+      "description": "After full page reload - toggle still Enabled, subject still 'Custom Test Subject for QA' confirming persistence"
+    }
+  ]
+}

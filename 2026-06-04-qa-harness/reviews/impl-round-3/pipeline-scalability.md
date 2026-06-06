@@ -1,11 +1,7 @@
-# Pipeline Scalability — Round 3 Findings
+# pipeline-scalability — Round 3 Findings
 
-## Angle: pipeline-scalability
+No change from prior rounds.
 
-### Prior findings review
+### MED-1, MED-2 -- STILL PRESENT (non-blocking)
 
-**Round 1 MED (carried): `cmd_seed`/`cmd_cleanup` require server config.** Unchanged. No non-web pipelines yet.
-
-### New findings
-
-None.
+No BLOCKER or HIGH findings.

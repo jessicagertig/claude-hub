@@ -1,0 +1,88 @@
+{
+  "agent": "playwright-qa-agent-1",
+  "round": 1,
+  "scope": "single-send composer - subject field",
+  "url_tested": "http://app.lvh.me:5007/jobs/15813/stages/110664/applicants/12121/messages",
+  "timestamp": "2026-06-05T06:33:00Z",
+  "auth": {
+    "method": "magic_link",
+    "user": "rezu.may@wrkhq.com",
+    "status": "PASS"
+  },
+  "seed_data": {
+    "plan": "paid-user-with-job-and-candidates.json",
+    "status": "PASS",
+    "details": "Cleanup + seed completed: 1 user, 1 job (Software Engineer), 3 candidates (Karri Bednar, Shelton Effertz, Callie Parisian)"
+  },
+  "test_scenarios": [
+    {
+      "id": "T1",
+      "description": "Navigate to candidate messages tab",
+      "status": "PASS",
+      "details": "Jobs > Software Engineer > Karri Bednar > Messages tab. URL: /jobs/15813/stages/110664/applicants/12121/messages"
+    },
+    {
+      "id": "T2",
+      "description": "Subject input field exists above body editor",
+      "status": "PASS",
+      "details": "A labeled 'Subject' textbox appears above the ProseMirror body editor. The label text is 'Subject'."
+    },
+    {
+      "id": "T3",
+      "description": "Subject pre-populated with default value",
+      "status": "PASS",
+      "details": "Subject field contains 'Software Engineer at Acme Inc.' which matches the pattern '<job_title> at <company_name>'."
+    },
+    {
+      "id": "T4",
+      "description": "Screenshot showing subject field",
+      "status": "PASS",
+      "screenshot": "screenshots/round-1/agent-1/01-subject-field-with-default.png",
+      "details": "Screenshot captured showing the Messages tab with Subject field pre-populated with 'Software Engineer at Acme Inc.' above the body editor and Send message / Use template buttons."
+    },
+    {
+      "id": "T5",
+      "description": "Send message with custom subject and body",
+      "status": "PASS",
+      "details": "Typed custom subject 'QA Test Subject - Custom Email' and body 'Hello, this is a QA test message to verify the email subject field works correctly.' Clicked Send message. Message appeared in thread from 'Rezu May' with 'Sent via email' label. Subject field reset to default 'Software Engineer at Acme Inc.' and body cleared to placeholder. Note: The sent message in the thread does NOT display the subject line used -- only the body text is shown.",
+      "screenshots": [
+        "screenshots/round-1/agent-1/02-custom-subject-and-body-before-send.png",
+        "screenshots/round-1/agent-1/03-message-sent-successfully.png"
+      ]
+    },
+    {
+      "id": "T6",
+      "description": "Validation error when subject is empty",
+      "status": "PASS",
+      "details": "Cleared subject field (Select All + Backspace), typed body text 'Test message with empty subject', clicked Send message. Two validation indicators appeared: (1) inline error 'is a required field' in red next to the Subject label, (2) form-level error box 'Form Errors: Subject is a required field' at the bottom. The message was NOT sent -- body text remained in editor.",
+      "screenshot": "screenshots/round-1/agent-1/05-validation-error-subject-required.png"
+    },
+    {
+      "id": "T7",
+      "description": "Subject repopulates with default after validation error",
+      "status": "PASS",
+      "details": "After the validation error fired, the subject field was automatically repopulated with the default 'Software Engineer at Acme Inc.' The body text was preserved (not cleared)."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "INFO",
+      "category": "ui-observation",
+      "title": "Sent message thread does not display subject line",
+      "description": "When a message is sent with a custom subject, the message thread UI shows only the body text and metadata (sender, timestamp, 'Sent via email'). The subject line used for the email is not displayed in the message thread. This may be by design (the subject is an email-only concept), but users cannot confirm which subject was used after sending.",
+      "location": "Message thread view after sending",
+      "expected": "Possibly show the subject in the message thread for user reference",
+      "actual": "Only body text displayed; subject not shown in thread"
+    }
+  ],
+  "summary": {
+    "total_scenarios": 7,
+    "passed": 7,
+    "failed": 0,
+    "blocked": 0,
+    "findings_count": 1,
+    "overall_verdict": "PASS",
+    "notes": "All single-send composer subject field scenarios pass. The subject field is present, correctly labeled, pre-populated with '<job_title> at <company_name>', accepts custom input, sends successfully, validates as required when empty, and repopulates with the default after validation error. One INFO-level observation: the subject is not shown in the message thread after sending."
+  }
+}

@@ -1,0 +1,7 @@
+[
+  {"method": "POST", "path": "/cypress/users", "body": {"setActivePaidSubscription": true}},
+  {"method": "POST", "path": "/cypress/jobs", "body": {"published": true, "title": "Software Engineer"}},
+  {"method": "POST", "path": "/cypress/candidates", "body": {"amount": 3}},
+  {"method": "POST", "path": "/cypress/users/add_users"},
+  {"method": "POST", "path": "/cypress/users/create_member_and_assign_to_job"}
+]

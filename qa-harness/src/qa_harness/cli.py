@@ -44,9 +44,10 @@ def cmd_start(args) -> int:
         print("No server configuration in config file", file=sys.stderr)
         return 1
 
+    repo_path = args.repo_path or config.source_repo
     try:
-        manager = ServerManager(config.server, config.source_repo)
-        manager.start()
+        manager = ServerManager(config.server, repo_path, config_path=config_path)
+        manager.start(detach=True)
         print("READY")
         return 0
     except ServerError as e:
@@ -58,10 +59,21 @@ def cmd_stop(args) -> int:
     """Stop the test server."""
     from qa_harness.config import load_config, resolve_config_path
     from qa_harness.errors import ConfigError
-    from qa_harness.server import stop_from_state_file
+    from qa_harness.server import stop_from_state_file, STATE_FILE
+
+    # Try to resolve config path. If not provided, check state file first
+    # so stop works even when run from a different directory than start.
+    config_path = args.config
+    if not config_path:
+        try:
+            with open(STATE_FILE, "r") as f:
+                state = json.load(f)
+                config_path = state.get("config_path")
+        except (OSError, ValueError):
+            pass
 
     try:
-        config_path = resolve_config_path(args.config)
+        config_path = resolve_config_path(config_path)
         config = load_config(config_path)
     except ConfigError as e:
         print(f"Config error: {e}", file=sys.stderr)
@@ -181,10 +193,20 @@ def cmd_status(args) -> int:
     """Report server status."""
     from qa_harness.config import load_config, resolve_config_path
     from qa_harness.errors import ConfigError
-    from qa_harness.server import ServerManager
+    from qa_harness.server import ServerManager, STATE_FILE
+
+    # Try to resolve config path from state file if not provided
+    config_path = args.config
+    if not config_path:
+        try:
+            with open(STATE_FILE, "r") as f:
+                state = json.load(f)
+                config_path = state.get("config_path")
+        except (OSError, ValueError):
+            pass
 
     try:
-        config_path = resolve_config_path(args.config)
+        config_path = resolve_config_path(config_path)
         config = load_config(config_path)
     except ConfigError as e:
         print(f"Config error: {e}", file=sys.stderr)
@@ -194,7 +216,8 @@ def cmd_status(args) -> int:
         print("No server configuration in config file", file=sys.stderr)
         return 1
 
-    manager = ServerManager(config.server, config.source_repo)
+    repo_path = args.repo_path or config.source_repo
+    manager = ServerManager(config.server, repo_path)
     status = manager.status()
     print(json.dumps(status, indent=2))
     return 0
@@ -212,6 +235,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     # start
     p_start = sub.add_parser("start", help="Start test server")
     p_start.add_argument("--config", default=None, help="Path to qa-config.yml")
+    p_start.add_argument("--repo-path", default=None, help="Override source_repo from config (e.g., for worktrees)")
 
     # stop
     p_stop = sub.add_parser("stop", help="Stop test server")
@@ -243,6 +267,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     p_status.add_argument(
         "--config", default=None, help="Path to qa-config.yml"
     )
+    p_status.add_argument("--repo-path", default=None, help="Override source_repo from config (e.g., for worktrees)")
 
     args = parser.parse_args(argv)
     _setup_logging(args.verbose)

@@ -1,0 +1,48 @@
+{
+  "agent_index": 9,
+  "focus_area": "Frontend: validation schemas, single-send composer, and bulk modal",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "1. channelMessageTemplateSchema: add subject as required string",
+      "2. bulkMessageSchema: add subject as required string",
+      "3. New singleMessageSchema with subject (required) and body (required)",
+      "4. New validateSingleMessage export function",
+      "5. ChannelMessageNew: subject state initialized with rendered default (job.title at org.name, not template variables)",
+      "6. ChannelMessageNew: subject input above body editor",
+      "7. ChannelMessageNew: validation calls validateSingleMessage with subject",
+      "8. ChannelMessageNew: on validation error with empty subject, repopulate with default",
+      "9. ChannelMessageNew: subject sent in createChannelMessage params",
+      "10. ChannelMessageNew: on success, reset subject to default",
+      "11. ChannelMessageNew: template insertion updates subject from mailMerge.subjectRaw",
+      "12. BulkMessageModal: subject state initialized with '{{JobTitle}} at {{OrganizationName}}' (template variables, because no single candidate context)",
+      "13. BulkMessageModal: subject input in the form",
+      "14. BulkMessageModal: subject passed to validateBulkMessage",
+      "15. BulkMessageModal: on validation error with empty subject, repopulate with default",
+      "16. BulkMessageModal: subject sent in bulk message params",
+      "17. BulkMessageModal: template selection updates subject from template.subject or default",
+      "18. useBulkMessage: subject parameter added to createBulkMessage function"
+    ],
+    "implemented": [
+      "1. channelMessageTemplateSchema: add subject as required string",
+      "2. bulkMessageSchema: add subject as required string",
+      "3. New singleMessageSchema with subject (required) and body (required)",
+      "4. New validateSingleMessage export function",
+      "5. ChannelMessageNew: subject state initialized with rendered default (job.title at org.name, not template variables)",
+      "6. ChannelMessageNew: subject input above body editor",
+      "7. ChannelMessageNew: validation calls validateSingleMessage with subject",
+      "8. ChannelMessageNew: on validation error with empty subject, repopulate with default",
+      "9. ChannelMessageNew: subject sent in createChannelMessage params",
+      "10. ChannelMessageNew: on success, reset subject to default",
+      "11. ChannelMessageNew: template insertion updates subject from mailMerge.subjectRaw",
+      "12. BulkMessageModal: subject state initialized with '{{JobTitle}} at {{OrganizationName}}' (template variables, because no single candidate context)",
+      "13. BulkMessageModal: subject input in the form",
+      "14. BulkMessageModal: subject passed to validateBulkMessage",
+      "15. BulkMessageModal: on validation error with empty subject, repopulate with default",
+      "16. BulkMessageModal: subject sent in bulk message params",
+      "17. BulkMessageModal: template selection updates subject from template.subject or default",
+      "18. useBulkMessage: subject parameter added to createBulkMessage function"
+    ],
+    "missing": []
+  }
+}

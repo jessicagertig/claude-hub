@@ -91,6 +91,19 @@ class TestServerManager:
 
     @patch("qa_harness.server.subprocess.Popen")
     @patch("qa_harness.server.requests.get")
+    def test_start_sets_rails_env_test(self, mock_get, mock_popen, server_config):
+        mock_popen.return_value = MagicMock(pid=1234, poll=MagicMock(return_value=None))
+        mock_get.return_value = MagicMock(status_code=200)
+
+        manager = ServerManager(server_config, "/tmp/repo")
+        manager.start()
+
+        for popen_call in mock_popen.call_args_list:
+            env = popen_call.kwargs["env"]
+            assert env["RAILS_ENV"] == "test"
+
+    @patch("qa_harness.server.subprocess.Popen")
+    @patch("qa_harness.server.requests.get")
     @patch("qa_harness.server.time.sleep")
     def test_start_raises_on_health_check_timeout(
         self, mock_sleep, mock_get, mock_popen, server_config
@@ -199,6 +212,76 @@ class TestServerManager:
 
         manager.stop()
         assert not os.path.isfile(STATE_FILE)
+
+    @patch("qa_harness.server.subprocess.Popen")
+    @patch("qa_harness.server.requests.get")
+    def test_start_detach_skips_cleanup_registration(
+        self, mock_get, mock_popen, server_config
+    ):
+        mock_proc = MagicMock(pid=1234, poll=MagicMock(return_value=None))
+        mock_popen.return_value = mock_proc
+        mock_get.return_value = MagicMock(status_code=200)
+
+        manager = ServerManager(server_config, "/tmp/repo")
+        manager.start(detach=True)
+
+        assert not manager._cleanup_registered
+        manager.stop()
+
+    @patch("qa_harness.server.subprocess.Popen")
+    @patch("qa_harness.server.requests.get")
+    def test_start_no_detach_registers_cleanup(
+        self, mock_get, mock_popen, server_config
+    ):
+        mock_proc = MagicMock(pid=1234, poll=MagicMock(return_value=None))
+        mock_popen.return_value = mock_proc
+        mock_get.return_value = MagicMock(status_code=200)
+
+        manager = ServerManager(server_config, "/tmp/repo")
+        manager.start(detach=False)
+
+        assert manager._cleanup_registered
+        manager.stop()
+
+    @patch("qa_harness.server.subprocess.Popen")
+    @patch("qa_harness.server.requests.get")
+    def test_start_detach_uses_devnull(
+        self, mock_get, mock_popen, server_config
+    ):
+        import subprocess as sp
+
+        mock_proc = MagicMock(pid=1234, poll=MagicMock(return_value=None))
+        mock_popen.return_value = mock_proc
+        mock_get.return_value = MagicMock(status_code=200)
+
+        manager = ServerManager(server_config, "/tmp/repo")
+        manager.start(detach=True)
+
+        for popen_call in mock_popen.call_args_list:
+            assert popen_call.kwargs["stdout"] == sp.DEVNULL
+            assert popen_call.kwargs["stderr"] == sp.DEVNULL
+
+        manager.stop()
+
+    @patch("qa_harness.server.subprocess.Popen")
+    @patch("qa_harness.server.requests.get")
+    def test_start_attached_uses_pipe(
+        self, mock_get, mock_popen, server_config
+    ):
+        import subprocess as sp
+
+        mock_proc = MagicMock(pid=1234, poll=MagicMock(return_value=None))
+        mock_popen.return_value = mock_proc
+        mock_get.return_value = MagicMock(status_code=200)
+
+        manager = ServerManager(server_config, "/tmp/repo")
+        manager.start(detach=False)
+
+        for popen_call in mock_popen.call_args_list:
+            assert popen_call.kwargs["stdout"] == sp.PIPE
+            assert popen_call.kwargs["stderr"] == sp.STDOUT
+
+        manager.stop()
 
 
 class TestExtractProcessKeyword:

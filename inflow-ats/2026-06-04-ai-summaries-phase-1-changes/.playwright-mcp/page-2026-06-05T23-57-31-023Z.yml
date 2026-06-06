@@ -1,0 +1,133 @@
+- generic [ref=e8]:
+  - generic [ref=e9]:
+    - generic [ref=e11]:
+      - img [ref=e12]
+      - heading "Polymer" [level=1] [ref=e15]
+    - list [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: RM
+          - generic [ref=e21]: Rezu May
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e27] [cursor=pointer]:
+          - generic [ref=e29]: A
+          - img [ref=e31]
+        - generic [ref=e36]: Acme Inc.
+      - generic [ref=e38]:
+        - img [ref=e41] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - generic [ref=e46]:
+      - img [ref=e47]
+      - textbox "Search candidates" [ref=e50]
+    - generic [ref=e52]:
+      - link [ref=e54] [cursor=pointer]:
+        - /url: /notifications
+        - img [ref=e55]
+      - link [ref=e59] [cursor=pointer]:
+        - /url: /hire/settings/organization
+        - img [ref=e60]
+  - generic [ref=e63]:
+    - generic [ref=e65]:
+      - img [ref=e68] [cursor=pointer]
+      - heading "App settings" [level=2] [ref=e71]
+    - generic [ref=e72]:
+      - generic [ref=e73]:
+        - link "User preferences" [ref=e75] [cursor=pointer]:
+          - /url: /hire/settings/preferences
+          - generic [ref=e77]: User preferences
+          - img [ref=e78]
+        - separator
+        - generic [ref=e80]: Admin
+        - generic [ref=e81]:
+          - link "Organization" [ref=e82] [cursor=pointer]:
+            - /url: /hire/settings/organization
+            - generic [ref=e84]: Organization
+            - img [ref=e85]
+          - link "Team" [ref=e87] [cursor=pointer]:
+            - /url: /hire/settings/team
+            - generic [ref=e89]: Team
+            - img [ref=e90]
+          - link "Message templates" [ref=e92] [cursor=pointer]:
+            - /url: /hire/settings/message_templates
+            - generic [ref=e94]: Message templates
+            - img [ref=e95]
+          - link "Review templates" [ref=e97] [cursor=pointer]:
+            - /url: /hire/settings/review_templates
+            - generic [ref=e99]: Review templates
+            - img [ref=e100]
+          - link "Job board" [ref=e102] [cursor=pointer]:
+            - /url: /hire/settings/jobboard
+            - generic [ref=e104]: Job board
+            - img [ref=e105]
+          - link "Job categories" [ref=e107] [cursor=pointer]:
+            - /url: /hire/settings/categories
+            - generic [ref=e109]: Job categories
+            - img [ref=e110]
+          - link "Integrations" [ref=e112] [cursor=pointer]:
+            - /url: /hire/settings/integrations
+            - generic [ref=e114]: Integrations
+            - img [ref=e115]
+          - link "Plan & billing" [ref=e117] [cursor=pointer]:
+            - /url: /hire/settings/billing
+            - generic [ref=e119]: Plan & billing
+            - img [ref=e120]
+      - generic [ref=e136]:
+        - generic [ref=e137]:
+          - link "Settings" [ref=e138] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/settings
+            - generic [ref=e140]: Settings
+            - img [ref=e141]
+          - link "Billing" [ref=e143] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/billing
+            - generic [ref=e145]: Billing
+            - img [ref=e146]
+          - link "Usage" [ref=e148] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/usage
+            - generic [ref=e150]: Usage
+            - img [ref=e151]
+        - generic [ref=e156]:
+          - heading "AI billing" [level=2] [ref=e159]
+          - paragraph [ref=e160]: Manage your organization's AI credit subscriptions and one-time top-ups.
+          - generic [ref=e161]:
+            - heading "AI credits" [level=4] [ref=e164]
+            - generic [ref=e165]:
+              - heading "AI Credits" [level=2] [ref=e166]
+              - generic [ref=e167]:
+                - generic [ref=e168]:
+                  - generic [ref=e169]: Monthly
+                  - generic [ref=e170]: "25"
+                  - generic [ref=e171]: resets on renewal
+                - generic [ref=e172]:
+                  - generic [ref=e173]: Purchased
+                  - generic [ref=e174]: "0"
+                  - generic [ref=e175]: never expire
+                - generic [ref=e176]:
+                  - generic [ref=e177]: Total
+                  - generic [ref=e178]: "25"
+                  - generic [ref=e179]: credits remaining
+              - generic [ref=e180]:
+                - paragraph [ref=e181]: Subscribe to a credit pack to get recurring credits that roll over and never expire.
+                - button "Subscribe to a credit pack" [ref=e183] [cursor=pointer]:
+                  - generic [ref=e184]: Subscribe to a credit pack
+              - generic [ref=e185]:
+                - paragraph [ref=e186]: Add extra credits to your balance. These credits never expire.
+                - button "Buy a one-time top-up" [ref=e188] [cursor=pointer]:
+                  - generic [ref=e189]: Buy a one-time top-up

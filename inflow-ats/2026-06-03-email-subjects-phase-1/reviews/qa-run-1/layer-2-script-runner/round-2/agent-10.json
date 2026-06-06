@@ -1,0 +1,109 @@
+{
+  "agent": "agent-10",
+  "round": 2,
+  "focus": "Validator edge cases — encoded/obfuscated placeholder bypass",
+  "script": "/tmp/qa-l2r2-agent10-validator-edge-cases.rb",
+  "total_tests": 12,
+  "pass": 12,
+  "fail": 0,
+  "high_count": 0,
+  "findings": [],
+  "notes": [
+    "CustomChannelMessageValidator regex /{{\\ s*[\\w.]+\\s*}}/i is applied to both body and subject fields independently on ChannelMessage.",
+    "URL-encoded braces (%7B%7BName%7D%7D) pass validation as expected — they are not decoded before validation, and email subject headers are plain text so they render literally, not as curly braces.",
+    "HTML-encoded braces (&#123;&#123;Name&#125;&#125;) pass validation as expected — email subject headers do not process HTML entities.",
+    "Triple braces ({{{Name}}}) are correctly caught — the regex matches the inner {{Name}} substring.",
+    "Unicode look-alike brackets (U+FE5B/U+FE5C small curly brackets) pass validation — these are different characters from ASCII { }. This is acceptable because no placeholder substitution engine in the codebase uses these characters.",
+    "Body and subject validations are independent — a {{placeholder}} in body causes failure even with a clean subject, and vice versa.",
+    "Nil subject passes validation — correct since subject is optional (mailer falls back to job title at org name).",
+    "Dotted placeholders like {{candidate.name}} are correctly caught thanks to the [\\w.] character class.",
+    "The validator uses the deprecated << syntax for adding errors (should use ActiveModel::Errors#add instead) — this is a pre-existing deprecation warning, not introduced by the email subjects feature.",
+    "No bypass vectors found. The validator correctly handles all tested edge cases for the subject field, matching the pre-existing behavior for the body field."
+  ],
+  "results": [
+    {
+      "test": "URL-encoded braces in subject (%7B%7BName%7D%7D)",
+      "status": "PASS",
+      "expected_valid": true,
+      "actual_valid": true,
+      "details": "URL-encoded braces stay literal in email subjects — not a bypass risk"
+    },
+    {
+      "test": "HTML-encoded braces in subject (&#123;&#123;Name&#125;&#125;)",
+      "status": "PASS",
+      "expected_valid": true,
+      "actual_valid": true,
+      "details": "HTML entities are not decoded in email Subject headers (plain text) — not a bypass risk"
+    },
+    {
+      "test": "Nested/triple braces in subject ({{{Name}}})",
+      "status": "PASS",
+      "expected_valid": false,
+      "actual_valid": false,
+      "details": "Regex matches inner {{Name}} within {{{Name}}}"
+    },
+    {
+      "test": "Full-width semicolons/angle brackets in subject",
+      "status": "PASS",
+      "expected_valid": true,
+      "actual_valid": true,
+      "details": "Not curly braces — no bypass risk"
+    },
+    {
+      "test": "Unicode small curly brackets in subject",
+      "status": "PASS",
+      "expected_valid": true,
+      "actual_valid": true,
+      "details": "Unicode U+FE5B/U+FE5C are not ASCII { } — not used by any substitution engine"
+    },
+    {
+      "test": "Valid subject + invalid body ({{CandidateName}} in body)",
+      "status": "PASS",
+      "expected_valid": false,
+      "actual_valid": false,
+      "details": "Body validation independently catches {{CandidateName}}"
+    },
+    {
+      "test": "Invalid subject ({{JobTitle}}) + valid body",
+      "status": "PASS",
+      "expected_valid": false,
+      "actual_valid": false,
+      "details": "Subject validation independently catches {{JobTitle}}"
+    },
+    {
+      "test": "Baseline: plain {{Name}} in subject",
+      "status": "PASS",
+      "expected_valid": false,
+      "actual_valid": false,
+      "details": "Sanity check — plain {{Name}} correctly caught"
+    },
+    {
+      "test": "Spaced braces in subject ({{ Name }})",
+      "status": "PASS",
+      "expected_valid": false,
+      "actual_valid": false,
+      "details": "Regex \\s* correctly handles spaces inside braces"
+    },
+    {
+      "test": "Single braces in subject ({Name})",
+      "status": "PASS",
+      "expected_valid": true,
+      "actual_valid": true,
+      "details": "Single braces correctly allowed — not the placeholder pattern"
+    },
+    {
+      "test": "Nil subject",
+      "status": "PASS",
+      "expected_valid": true,
+      "actual_valid": true,
+      "details": "Subject is optional — nil correctly passes validation"
+    },
+    {
+      "test": "Dotted placeholder in subject ({{candidate.name}})",
+      "status": "PASS",
+      "expected_valid": false,
+      "actual_valid": false,
+      "details": "Regex [\\w.] character class correctly matches dotted placeholders"
+    }
+  ]
+}

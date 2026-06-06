@@ -1,0 +1,96 @@
+<h2>Subject Validation Error — How should it look?</h2>
+<p class="subtitle">If a validation error fires on subject, how does the inline display show it? The old FormInput had built-in error styling. The new compact row needs its own approach.</p>
+
+<div class="section">
+  <h3>Context</h3>
+  <p>This is nearly unreachable in practice — blur auto-repopulates the default, so subject can't be empty at send time. But defense-in-depth matters, and the form-level error banner alone ("Form Errors: Subject is a required field") without any visual cue on the subject row is confusing.</p>
+</div>
+
+<div class="cards">
+
+  <!-- Option A: Red tint on subject row -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <!-- Form error banner -->
+        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 8px 12px; margin: 12px 20px 0; font-size: 13px; color: #dc2626;">
+          Form Errors: Subject is a required field
+        </div>
+        <div style="padding: 12px 20px 0 20px;">
+          <!-- Subject row with error state -->
+          <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer;">
+            <span style="font-size: 13px; font-weight: 500; color: #ef4444; flex-shrink: 0;">Subject:</span>
+            <span style="font-size: 13px; color: #ef4444; font-style: italic; flex: 1;">Required</span>
+            <div style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: #4b5563;">
+              <svg style="width: 1.25em; height: 1.25em; stroke: currentColor; fill: none; stroke-width: 1.75px;" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div style="padding: 12px 20px 0; color: #9ca3af; font-size: 14px; min-height: 40px;">Type a message to the candidate here...</div>
+        <div style="display: flex; gap: 12px; padding: 12px 20px 16px;">
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px;">Send message</div>
+          <div style="background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 13px; border: 1px solid #e5e7eb;">Use template</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. Red label + "Required" text</h3>
+      <p>"Subject:" turns red, value text replaced with italic "Required". Form banner also shows. Clicking the row opens the input to fix it.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Auto-open edit mode on error -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <!-- Form error banner -->
+        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 8px 12px; margin: 12px 20px 0; font-size: 13px; color: #dc2626;">
+          Form Errors: Subject is a required field
+        </div>
+        <div style="padding: 12px 20px 0 20px;">
+          <!-- Subject auto-opened into edit mode with error border -->
+          <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+            <input type="text" placeholder="Software Engineer at Acme Inc." value="" style="font-size: 13px; padding: 4px 8px; border: 1px solid #ef4444; border-radius: 4px; flex: 1; outline: none; box-shadow: 0 0 0 1px #ef4444; color: #374151; font-family: inherit; background: #fef2f2;" />
+          </div>
+          <div style="font-size: 12px; color: #ef4444; margin-top: 2px;">Subject is a required field</div>
+        </div>
+        <div style="padding: 12px 20px 0; color: #9ca3af; font-size: 14px; min-height: 40px;">Type a message to the candidate here...</div>
+        <div style="display: flex; gap: 12px; padding: 12px 20px 16px;">
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px;">Send message</div>
+          <div style="background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 13px; border: 1px solid #e5e7eb;">Use template</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. Auto-open edit mode with red border</h3>
+      <p>On validation error, the subject row auto-opens into edit mode with a red border, red shadow, pink background, and inline error text below. The input is focused so the user can fix it immediately.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Don't worry about it -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <div style="padding: 12px 20px 0 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer;">
+            <span style="font-size: 13px; font-weight: 500; color: #9ca3af; flex-shrink: 0;">Subject:</span>
+            <span style="font-size: 13px; color: #6b7280; flex: 1;">Software Engineer at Acme Inc.</span>
+            <div style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: #4b5563;">
+              <svg style="width: 1.25em; height: 1.25em; stroke: currentColor; fill: none; stroke-width: 1.75px;" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div style="padding: 12px 20px 0; color: #9ca3af; font-size: 14px; min-height: 40px;">Type a message to the candidate here...</div>
+        <div style="display: flex; gap: 12px; padding: 12px 20px 16px;">
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px;">Send message</div>
+          <div style="background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 13px; border: 1px solid #e5e7eb;">Use template</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. Skip it — unreachable in practice</h3>
+      <p>Blur always repopulates the default before send can fire. The form-level banner is enough for the theoretical edge case. Don't add error styling to the inline display.</p>
+    </div>
+  </div>
+
+</div>

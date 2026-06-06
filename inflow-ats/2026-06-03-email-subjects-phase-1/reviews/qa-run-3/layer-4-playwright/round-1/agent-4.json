@@ -1,0 +1,66 @@
+{
+  "agent": "agent-4",
+  "area": "job-setup-automations",
+  "timestamp": "2026-06-05T16:50:00Z",
+  "screenshots": [
+    {
+      "file": "screenshots/07-job-setup-automations/01-automations-disabled.png",
+      "description": "Automations page with 'Custom confirmation message' dropdown set to Disabled. Shows the Application confirmation section with descriptive text and the dropdown control.",
+      "status": "PASS"
+    },
+    {
+      "file": "screenshots/07-job-setup-automations/02-automations-enabled-with-subject.png",
+      "description": "After enabling custom confirmation, shows the Subject field pre-populated with '{{JobTitle}} at {{OrganizationName}}' and the Message template body with default confirmation text. Template variable buttons visible at bottom (Candidate first name, Candidate last name, Candidate full name, Job title, Organization name).",
+      "status": "PASS"
+    },
+    {
+      "file": "screenshots/07-job-setup-automations/03-custom-subject-entered.png",
+      "description": "Custom subject 'Your application for {{JobTitle}}' typed into the Subject field. Message template body remains unchanged.",
+      "status": "PASS"
+    },
+    {
+      "file": "screenshots/07-job-setup-automations/04-subject-persisted-after-reload.png",
+      "description": "After clicking Save changes (HTTP 200), reloading the page, the custom subject 'Your application for {{JobTitle}}' persisted. Dropdown still shows Enabled.",
+      "status": "PASS"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "INFO",
+      "category": "page-stability",
+      "summary": "Automations page has aggressive redirect behavior",
+      "detail": "The /jobs/16205/setup/automations page consistently redirects to /jobs/16205/stages/113408/applicants/12444/messages (candidate messages view) after a few seconds. This appears to be a client-side React Router redirect, possibly triggered by WebSocket/polling events or a routing conflict. Standard Playwright MCP tools (browser_click, browser_snapshot) could not reliably interact with the page because the redirect fires between tool calls. All interactions required using browser_run_code_unsafe to execute atomic Playwright scripts that complete before the redirect fires. The redirect does not affect functionality - save operations complete successfully (HTTP 200) and data persists correctly."
+    },
+    {
+      "id": "F2",
+      "severity": "PASS",
+      "category": "subject-field",
+      "summary": "Subject field renders correctly when automation is enabled",
+      "detail": "When the 'Custom confirmation message' dropdown is changed from 'Disabled' to 'Enabled', a Subject field appears with the input name 'applyResponseTemplateSubject' and default value '{{JobTitle}} at {{OrganizationName}}'. The default value matches the expected template variable pattern. The Message template body also renders with default confirmation text."
+    },
+    {
+      "id": "F3",
+      "severity": "PASS",
+      "category": "subject-persistence",
+      "summary": "Custom subject persists after save and page reload",
+      "detail": "After typing a custom subject 'Your application for {{JobTitle}}', clicking 'Save changes' returns HTTP 200. On page reload, the subject field retains the custom value 'Your application for {{JobTitle}}' and the dropdown remains set to 'Enabled'. Full round-trip persistence is confirmed."
+    },
+    {
+      "id": "F4",
+      "severity": "PASS",
+      "category": "template-variables",
+      "summary": "Template variable buttons are present",
+      "detail": "Five template variable buttons are displayed below the message template: 'Candidate first name', 'Candidate last name', 'Candidate full name', 'Job title', 'Organization name'. These are available for both the subject field and the message body."
+    },
+    {
+      "id": "F5",
+      "severity": "PASS",
+      "category": "dropdown-toggle",
+      "summary": "Enable/Disable toggle works correctly",
+      "detail": "The React Select dropdown toggles between 'Disabled' and 'Enabled' states. When Disabled, only the dropdown is shown. When Enabled, Subject field and Message template body appear. Toggling back to Disabled hides them. The toggle state persists after save."
+    }
+  ],
+  "summary": "All 4 screenshots captured successfully for the Job Setup Automations page. The email subject field feature works correctly: it appears when automation is enabled, accepts custom subjects with template variables, and persists after save/reload. One informational finding about page redirect instability that required using atomic Playwright scripts rather than sequential MCP tool calls.",
+  "verdict": "PASS"
+}

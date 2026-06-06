@@ -1,0 +1,141 @@
+{
+  "agent": 3,
+  "round": 1,
+  "focus": "Automation pipeline — HiringStageMessageAutomationJob subject handling and parse_text variable substitution",
+  "scripts_run": [
+    "/tmp/qa-l2-agent3-test1-automation-subject-substitution.rb"
+  ],
+  "seed_method": "Inline via rails runner (ActiveJob::Base.queue_adapter = :test to prevent stale job deserialization errors)",
+  "overall_pass": true,
+  "tests": [
+    {
+      "test": "automation-subject-variable-substitution",
+      "checks": [
+        {
+          "name": "seeded_data_found",
+          "pass": true,
+          "detail": "User: Rezu May, Org: Acme Inc., Job: Software Engineer, Candidate: Alice Johnson"
+        },
+        {
+          "name": "template_created_with_subject",
+          "pass": true,
+          "detail": "Template id=13952, subject=Re: {{CandidateFirstName}} - Your {{JobTitle}} Application at {{OrganizationName}}"
+        },
+        {
+          "name": "channel_message_created_by_automation",
+          "pass": true,
+          "detail": "Before: 0, After: 1"
+        },
+        {
+          "name": "subject_variables_substituted",
+          "pass": true,
+          "detail": "Expected: \"Re: Alice - Your Software Engineer Application at Acme Inc.\", Got: \"Re: Alice - Your Software Engineer Application at Acme Inc.\""
+        },
+        {
+          "name": "no_raw_variables_in_subject",
+          "pass": true,
+          "detail": "Subject: \"Re: Alice - Your Software Engineer Application at Acme Inc.\""
+        },
+        {
+          "name": "body_variables_substituted",
+          "pass": true,
+          "detail": "Contains candidate name: true, job title: true, org name: true"
+        },
+        {
+          "name": "no_raw_variables_in_body",
+          "pass": true,
+          "detail": "Body: \"<p>Hello Alice, we are excited about your application for Software Engineer at Acme Inc..</p>\""
+        },
+        {
+          "name": "sent_by_and_source_correct",
+          "pass": true,
+          "detail": "sent_by=sent_by_organization, source=source_in_app"
+        },
+        {
+          "name": "all_7_variables_substitute_in_subject",
+          "pass": true,
+          "detail": "Expected: \"Rezu May|Rezu|Software Engineer|Alice Johnson|Alice|Johnson|Acme Inc.\", Got: \"Rezu May|Rezu|Software Engineer|Alice Johnson|Alice|Johnson|Acme Inc.\""
+        },
+        {
+          "name": "nil_template_subject_produces_blank_on_message",
+          "pass": true,
+          "detail": "channel_message.subject=\"\" (blank?=true)"
+        },
+        {
+          "name": "mailer_fallback_would_fire_for_nil_subject",
+          "pass": true,
+          "detail": "subject.presence=nil, fallback would be: Software Engineer at Acme Inc."
+        },
+        {
+          "name": "body_substituted_even_with_nil_subject",
+          "pass": true,
+          "detail": "Body contains candidate name: true"
+        },
+        {
+          "name": "empty_template_subject_produces_blank_on_message",
+          "pass": true,
+          "detail": "channel_message.subject=\"\""
+        },
+        {
+          "name": "mailer_fallback_fires_for_empty_subject",
+          "pass": true,
+          "detail": "subject.presence=nil"
+        },
+        {
+          "name": "mixed_variables_subject_substituted",
+          "pass": true,
+          "detail": "Expected: \"For Alice re: Software Engineer\", Got: \"For Alice re: Software Engineer\""
+        },
+        {
+          "name": "mixed_variables_body_substituted",
+          "pass": true,
+          "detail": "Body has expected substitutions: true"
+        }
+      ],
+      "pass": true
+    }
+  ],
+  "findings": [
+    {
+      "severity": "PASS",
+      "area": "HiringStageMessageAutomationJob",
+      "detail": "Job correctly reads channel_message_template.subject and passes it in message_params to CreateStageAutomationMessage"
+    },
+    {
+      "severity": "PASS",
+      "area": "CreateStageAutomationMessage.parse_text",
+      "detail": "parse_text correctly substitutes all 7 template variables (SenderFullName, SenderFirstName, JobTitle, CandidateFullName, CandidateFirstName, CandidateLastName, OrganizationName) in the subject field"
+    },
+    {
+      "severity": "PASS",
+      "area": "parse_text nil/empty handling",
+      "detail": "parse_text returns '' for nil input (line 34: return '' if text.blank?). This produces a blank subject on the saved channel_message, which correctly triggers the mailer fallback (subject.presence || fallback) in ChannelMessageMailer.notify_candidate"
+    },
+    {
+      "severity": "PASS",
+      "area": "CustomChannelMessageValidator",
+      "detail": "Validator on subject field (validates :subject, custom_channel_message: true) correctly rejects messages with unsubstituted {{}} variables. All test messages passed validation because parse_text substituted all variables before save"
+    },
+    {
+      "severity": "PASS",
+      "area": "Subject/body independence",
+      "detail": "Subject and body can contain different subsets of template variables and each gets independently substituted by parse_text"
+    },
+    {
+      "severity": "INFO",
+      "area": "Mailer fallback",
+      "detail": "ChannelMessageMailer.notify_candidate (line 116) uses: @channel_message.subject.presence || \"#{@job.title} at #{@organization.name}\". When template subject is nil/empty, parse_text returns '', .presence returns nil, so the fallback fires correctly"
+    }
+  ],
+  "code_trace": {
+    "job_file": "/Users/jessica/wrk/wrk-corp/inflow-ats.messaging-improvements/app/jobs/hiring_stage_message_automation_job.rb",
+    "interactor_file": "/Users/jessica/wrk/wrk-corp/inflow-ats.messaging-improvements/app/interactors/channel_messages/create_stage_automation_message.rb",
+    "mailer_file": "/Users/jessica/wrk/wrk-corp/inflow-ats.messaging-improvements/app/mailers/channel_message_mailer.rb",
+    "key_lines": {
+      "job_passes_subject": "hiring_stage_message_automation_job.rb:18 — subject: automation.channel_message_template.subject",
+      "interactor_calls_parse_text_on_subject": "create_stage_automation_message.rb:18 — subject: parse_text(@message_params[:subject])",
+      "parse_text_blank_guard": "create_stage_automation_message.rb:34 — return '' if text.blank?",
+      "mailer_fallback": "channel_message_mailer.rb:116 — subject: @channel_message.subject.presence || \"#{@job.title} at #{@organization.name}\""
+    }
+  }
+}

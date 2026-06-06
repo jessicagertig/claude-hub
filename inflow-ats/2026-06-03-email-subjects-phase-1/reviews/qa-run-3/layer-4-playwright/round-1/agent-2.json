@@ -1,0 +1,65 @@
+{
+  "agent": "agent-2",
+  "scope": "Template selection modal - subject preview and insertion",
+  "timestamp": "2026-06-05T16:51:00Z",
+  "screenshots": [
+    {
+      "file": "screenshots/03-template-selection-modal/01-template-list.png",
+      "description": "Choose template modal with Template dropdown showing 'Select...' placeholder. Available templates: Thank you for applying, Scheduling, Rejection, QA Test Template. Modal appears over the candidate messages view for Sid Skiles."
+    },
+    {
+      "file": "screenshots/03-template-selection-modal/02-template-selected-with-subject-preview.png",
+      "description": "Template 'Thank you for applying' selected. Preview area shows 'Subject: Software Engineer at Acme Inc.' as the first line, followed by the body with mail-merge variables (some rendered, some showing as {{CandidateFirstName}}, {{OrganizationName}}, {{JobTitle}}, {{SenderFullName}} placeholders). The subject line IS visible in the preview, rendered with resolved variables."
+    },
+    {
+      "file": "screenshots/03-template-selection-modal/03-template-inserted-into-composer.png",
+      "description": "After clicking Select, the template body is inserted into the composer. The body shows fully resolved mail-merge variables: 'Hello Sid,' with 'Acme Inc.' and 'Software Engineer' properly substituted. Subject line in the composer reads 'Software Engineer at Acme Inc.' which is the DEFAULT subject, not changed by the template insertion."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "OBSERVATION",
+      "area": "template-selection-modal",
+      "title": "Subject preview is visible in template selection modal",
+      "description": "When a template is selected in the 'Choose template' modal, the preview area shows 'Subject: Software Engineer at Acme Inc.' as the first line above the body. This subject line comes from the mail_merge API response (templateHtml field) and is rendered with variables resolved. The subject is displayed as part of the HTML preview content, not as a separate UI element.",
+      "screenshot": "02-template-selected-with-subject-preview.png"
+    },
+    {
+      "id": "F2",
+      "severity": "OBSERVATION",
+      "area": "template-body-preview",
+      "title": "Mail-merge variables partially resolved in preview",
+      "description": "In the template preview (screenshot 02), the subject line shows fully resolved variables ('Software Engineer at Acme Inc.'), but the body shows a mix: {{CandidateFirstName}}, {{OrganizationName}}, {{JobTitle}}, and {{SenderFullName}} appear as raw placeholders with gray styling. This is the expected behavior -- the preview uses templateHtml which shows placeholders, while the inserted content uses messageHtml which resolves them.",
+      "screenshot": "02-template-selected-with-subject-preview.png"
+    },
+    {
+      "id": "F3",
+      "severity": "OBSERVATION",
+      "area": "template-insertion",
+      "title": "Template body fully resolved after insertion into composer",
+      "description": "After clicking Select, the composer body shows fully resolved mail-merge content: 'Hello Sid,' (resolved from {{CandidateFirstName}}), 'Acme Inc.' (resolved from {{OrganizationName}}), 'Software Engineer' (resolved from {{JobTitle}}), and 'Rezu May' (resolved from {{SenderFullName}}). The template insertion correctly resolves all variables.",
+      "screenshot": "03-template-inserted-into-composer.png"
+    },
+    {
+      "id": "F4",
+      "severity": "MED",
+      "area": "template-subject-insertion",
+      "title": "Template insertion does not update the composer subject line",
+      "description": "After inserting the 'Thank you for applying' template, the composer subject remains 'Software Engineer at Acme Inc.' -- the default subject. The handleInsertTemplate function in ChannelMessageNew.tsx only calls editorRef.current.replaceEditorContent(mailMerge?.messageHtml) to replace the body content. It does not update the subject field with the template's subject (mailMerge?.subjectHtml or similar). If the template has a different subject than the default, it will be silently ignored during insertion. This may or may not be intentional -- the template's subject in this case happens to match the default, so the behavior appears correct but could mask a missing feature.",
+      "file": "app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageNew.tsx",
+      "lines": "40-43",
+      "screenshot": "03-template-inserted-into-composer.png"
+    },
+    {
+      "id": "F5",
+      "severity": "LOW",
+      "area": "template-modal-ux",
+      "title": "Use template button type='submit' causes form submission race condition",
+      "description": "The 'Use template' button in ChannelMessageNew.tsx has type='submit' and form='channel-message-form', which causes the form's onSubmit (handleSendMessage) to fire alongside the button's onClick (onClickInsertTemplate). While onClickInsertTemplate calls event.preventDefault(), this only prevents the click event's default behavior, not the form submission. The form submission fires handleSendMessage which attempts to send a message (usually empty, so it no-ops). This creates a race condition where the createChannelMessage mutation fires alongside the modal opening. In testing, this caused erratic SPA navigation behavior.",
+      "file": "app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageNew.tsx",
+      "lines": "154-164"
+    }
+  ],
+  "summary": "The template selection modal works correctly: it opens from the candidate messages view, shows a dropdown with available templates (Thank you for applying, Scheduling, Rejection, QA Test Template), and displays a preview including the rendered subject line when a template is selected. The subject preview line ('Subject: Software Engineer at Acme Inc.') appears at the top of the preview area. After clicking Select, the template body is inserted into the composer with all mail-merge variables resolved. The subject line in the composer is not updated by template insertion -- it stays as the default. The 'Use template' button has a type='submit' issue that causes a form submission race condition."
+}

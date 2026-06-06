@@ -1,0 +1,124 @@
+{
+  "agent": 6,
+  "round": 2,
+  "focus": "Automation with nil/empty subject template — full chain handling",
+  "scripts": [
+    "/tmp/qa-l2r2-agent6-nil-subject-automation.rb",
+    "/tmp/qa-l2r2-agent6-empty-subject-automation.rb"
+  ],
+  "seed_plan": "paid-user-with-job-and-candidates.json",
+  "findings": [],
+  "tests": [
+    {
+      "id": "T1",
+      "name": "create_template_with_nil_subject",
+      "description": "Create a ChannelMessageTemplate with subject explicitly set to nil",
+      "status": "PASS",
+      "detail": "Template created successfully. The channel_message_templates.subject column is nullable (no NOT NULL constraint), so nil is accepted."
+    },
+    {
+      "id": "T2",
+      "name": "parse_text_nil_returns_empty_string",
+      "description": "Verify CreateStageAutomationMessage#parse_text(nil) returns '' without error",
+      "status": "PASS",
+      "detail": "parse_text(nil) returns '' via the early-return guard `return '' if text.blank?`"
+    },
+    {
+      "id": "T3",
+      "name": "automation_nil_subject_creates_channel_message",
+      "description": "Run CreateStageAutomationMessage interactor with nil subject from template, verify channel_message is created with blank subject",
+      "status": "PASS",
+      "detail": "channel_message created successfully with subject=\"\" (empty string after parse_text converts nil to '')"
+    },
+    {
+      "id": "T4a",
+      "name": "mailer_fallback_fires_for_blank_subject",
+      "description": "Verify the mailer's fallback subject fires when channel_message.subject is blank",
+      "status": "PASS",
+      "detail": "The mailer line `@channel_message.subject.presence || \"#{@job.title} at #{@organization.name}\"` correctly produces 'Software Engineer at Acme Inc.' when subject is blank"
+    },
+    {
+      "id": "T4b",
+      "name": "send_template_email_subject_not_blank",
+      "description": "Verify the fallback subject is non-blank so SendTemplateEmail#add_subject does not raise",
+      "status": "PASS",
+      "detail": "Fallback subject 'Software Engineer at Acme Inc.' is present, so the `raise 'No subject provided' if subject.blank?` guard in SendTemplateEmail does not fire"
+    },
+    {
+      "id": "T5a",
+      "name": "create_template_with_empty_subject",
+      "description": "Create a ChannelMessageTemplate with subject set to empty string ''",
+      "status": "PASS",
+      "detail": "Template created with subject=''"
+    },
+    {
+      "id": "T5b",
+      "name": "parse_text_empty_string_returns_empty_string",
+      "description": "Verify CreateStageAutomationMessage#parse_text('') returns ''",
+      "status": "PASS",
+      "detail": "parse_text('') returns '' via the blank? guard"
+    },
+    {
+      "id": "T5c",
+      "name": "bulk_parse_text_empty_string",
+      "description": "Verify BulkChannelMessageSendJob#parse_text with empty string returns ''",
+      "status": "PASS",
+      "detail": "BulkChannelMessageSendJob has its own parse_text method (different signature: user, job_application, text) but the same blank? guard"
+    },
+    {
+      "id": "T5d",
+      "name": "bulk_parse_text_nil",
+      "description": "Verify BulkChannelMessageSendJob#parse_text with nil returns ''",
+      "status": "PASS",
+      "detail": "BulkChannelMessageSendJob.parse_text(nil) returns '' via blank? guard"
+    },
+    {
+      "id": "T5e",
+      "name": "automation_empty_subject_creates_channel_message",
+      "description": "Run interactor with empty string subject, verify channel_message is created",
+      "status": "PASS",
+      "detail": "channel_message created with subject=''"
+    },
+    {
+      "id": "T5f",
+      "name": "mailer_fallback_fires_for_empty_string_subject",
+      "description": "Verify mailer fallback fires for empty string subject (same as nil case)",
+      "status": "PASS",
+      "detail": "''.presence returns nil, so fallback fires correctly"
+    },
+    {
+      "id": "T5g",
+      "name": "channel_message_blank_subject_is_valid",
+      "description": "Verify a channel_message with blank subject passes all validations",
+      "status": "PASS",
+      "detail": "valid? returns true — the custom_channel_message validator does not require subject presence"
+    },
+    {
+      "id": "T5h_nil",
+      "name": "validator_allows_nil_subject",
+      "description": "Verify CustomChannelMessageValidator does not reject nil subject",
+      "status": "PASS",
+      "detail": "nil =~ /pattern/ returns nil (falsy), so no validation error is added"
+    },
+    {
+      "id": "T5h_empty",
+      "name": "validator_allows_empty_subject",
+      "description": "Verify CustomChannelMessageValidator does not reject empty string subject",
+      "status": "PASS",
+      "detail": "'' =~ /pattern/ returns nil (falsy), so no validation error is added"
+    },
+    {
+      "id": "T5i",
+      "name": "validator_rejects_unresolved_placeholder_in_subject",
+      "description": "Verify CustomChannelMessageValidator correctly rejects unresolved placeholders in subject",
+      "status": "PASS",
+      "detail": "Subject '{{UnknownVar}}' triggers the validator, proving subject validation is active and working"
+    }
+  ],
+  "summary": "All 15 tests pass. The automation pipeline handles nil and empty-string subjects correctly through the full chain: ChannelMessageTemplate (nullable subject column) -> HiringStageMessageAutomationJob (reads template.subject, passes nil/empty to interactor) -> CreateStageAutomationMessage#parse_text (blank? guard returns '') -> ChannelMessage (created with subject='', passes validation) -> ChannelMessageMailer#notify_candidate (subject.presence falls back to 'Job Title at Org Name') -> SendTemplateEmail (receives non-blank fallback subject, no raise). The BulkChannelMessageSendJob parse_text also handles nil/empty correctly with the same pattern. The CustomChannelMessageValidator correctly allows nil/empty subjects while still catching unresolved placeholders like {{Something}}. No bugs found.",
+  "verdict": "PASS",
+  "bugs_found": 0,
+  "high_findings": 0,
+  "med_findings": 0,
+  "low_findings": 0
+}

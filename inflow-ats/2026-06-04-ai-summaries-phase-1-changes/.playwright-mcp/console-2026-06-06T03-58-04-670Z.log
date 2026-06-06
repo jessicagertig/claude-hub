@@ -1,0 +1,313 @@
+[     175ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[     374ms] [INFO] %cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:38733
+[     375ms] [ERROR] Warning: Please use `require("history").createBrowserHistory` instead of `require("history/createBrowserHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:8419
+[     376ms] [ERROR] Warning: Please use `require("history").createHashHistory` instead of `require("history/createHashHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:8419
+[     386ms] [ERROR] Warning: Please use `require("history").createMemoryHistory` instead of `require("history/createMemoryHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:8419
+[     386ms] [ERROR] Warning: Please use `require("history").PathUtils` instead of `require("history/PathUtils")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:8419
+[     404ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/vendors~ats_application-3107942bc81312205206.chunk.js:145570
+[     405ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/vendors~ats_application-3107942bc81312205206.chunk.js:145570
+[     405ms] [LOG] [store/index.js] store.getState() {} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:10849
+[     408ms] [LOG] %c
+
+
+[App] render background-color: #b0d219 {props: Object, queryClient: QueryClient} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:44838
+[     410ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     429ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: undefined} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application-314d8b8b5855e33341ee.chunk.js:3392
+[     431ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     439ms] [ERROR] Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s darkModeAllowed darkmodeallowed 
+    in button (created by EmotionCssPropInternal)
+    in EmotionCssPropInternal (created by LargeButton)
+    in LargeButton (created by GoogleSSOButton_Styled-GoogleButton)
+    in GoogleSSOButton_Styled-GoogleButton (created by GoogleSSOButton)
+    in form (created by GoogleSSOButton)
+    in GoogleSSOButton (created by AuthForm)
+    in div (created by Styled_Styled-GoogleSSOWrapper)
+    in Styled_Styled-GoogleSSOWrapper (created by AuthForm)
+    in div (created by Styled_Styled-AuthForm)
+    in Styled_Styled-AuthForm (created by AuthForm)
+    in AuthForm (created by Auth)
+    in div (created by Auth)
+    in div (created by Styled_Styled-Form)
+    in Styled_Styled-Form (created by Auth)
+    in div (created by Styled_Styled-FormContent)
+    in Styled_Styled-FormContent (created by Auth)
+    in div (created by Styled_Styled-UI)
+    in Styled_Styled-UI (created by SessionsLayout)
+    in div (created by Styled_Styled-Container)
+    in Styled_Styled-Container (created by SessionsLayout)
+    in SessionsLayout (created by Auth)
+    in Auth (created by Route)
+    in Route (created by withRouter(Auth))
+    in withRouter(Auth) (created by Route)
+    in Route (created by AppAuthed)
+    in Switch (created by AppAuthed)
+    in ModalProvider (created by AppAuthed)
+    in ToastProvider (created by AppAuthed)
+    in GlobalChannelContextProvider (created by AppAuthed)
+    in ErrorBoundary (created by AppAuthed)
+    in CurrentSessionProvider (created by AppAuthed)
+    in WindowSizeProvider (created by AppAuthed)
+    in div (created by AppAuthRouter_Styled-AppWrapper)
+    in AppAuthRouter_Styled-AppWrapper (created by AppAuthed)
+    in ThemeProvider (created by AppAuthed)
+    in AppAuthed (created by AuthedLogoutDecision)
+    in AuthedLogoutDecision (created by Route)
+    in Route (created by withRouter(AuthedLogoutDecision))
+    in withRouter(AuthedLogoutDecision) (created by App)
+    in PageviewTrackerInner (created by Route)
+    in Route (created by withRouter(PageviewTrackerInner))
+    in withRouter(PageviewTrackerInner) (created by PostHogProvider)
+    in PostHogProvider (created by PostHogProvider)
+    in PostHogProvider (created by App)
+    in Router (created by BrowserRouter)
+    in BrowserRouter (created by App)
+    in ColorSchemeProvider (created by App)
+    in QueryClientProvider (created by App)
+    in App @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:17480
+[     444ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:279
+[     444ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:279
+[     444ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:279
+[     444ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:279
+[     445ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:279
+[     445ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:279
+[     457ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/flipper/features} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[     458ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     463ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0
+[    9307ms] [LOG] %c[useSession] magicLink color: #1976D2 {email: rezu.may@wrkhq.com, redirectTo: /, organizationSlug: null, loginIntent: hire, recaptchaToken: null} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:60894
+[    9307ms] [LOG] %c[queryHooks] apiPost color: #109902 {path: /magic_login, variables: Object} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2895
+[    9366ms] [LOG] %c[queryHooks] apiMutate color: #1976D2 {data: Object, variables: Object, requestPath: /api/v1/magic_login} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2966
+[    9367ms] [LOG] %c[useSession] useMagicLink onSuccess color: #1976D2 {message: Check your email to login, needsEmailConfirmation: false, acceptedAnInvite: false, magicUrl: http://app.lvh.me:5007/magic_links/validate?token=qTzm3yKsPQz4E6ysHii4} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:60991
+[    9367ms] [LOG] [AuthForm] data {message: Check your email to login, needsEmailConfirmation: false, acceptedAnInvite: false, magicUrl: http://app.lvh.me:5007/magic_links/validate?token=qTzm3yKsPQz4E6ysHii4} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:49307
+[    9367ms] [LOG] %c[Auth] onComplete Auth - Regular Magic Link color: #1976D2 {acceptedAnInvite: false, email: rezu.may@wrkhq.com, needsEmailConfirmation: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:47858
+[    9368ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /verify-email, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[    9369ms] [LOG] %c[VerifyEmail] RENDER color: #1976D2 {magicLinkStatusData: undefined, email: rezu.may@wrkhq.com} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:49133
+[    9369ms] [LOG] %c[VerifyEmail] RENDER color: #1976D2 {magicLinkStatusData: undefined, email: rezu.may@wrkhq.com} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:49137
+[    9382ms] [LOG] %c[useSession] emailHash color: #1976D2 {emailHash: cmV6dS5tYXlAd3JraHEuY29t} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:60921
+[    9393ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/magic_link_status/cmV6dS5tYXlAd3JraHEuY29t} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[    9393ms] [LOG] %c[VerifyEmail] RENDER color: #1976D2 {magicLinkStatusData: Object, email: rezu.may@wrkhq.com} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:49133
+[    9393ms] [LOG] %c[VerifyEmail] RENDER color: #1976D2 {magicLinkStatusData: Object, email: rezu.may@wrkhq.com} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:49137
+[   17229ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0
+[   17242ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[   17248ms] [INFO] %cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:38733
+[   17248ms] [ERROR] Warning: Please use `require("history").createBrowserHistory` instead of `require("history/createBrowserHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:8419
+[   17249ms] [ERROR] Warning: Please use `require("history").createHashHistory` instead of `require("history/createHashHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:8419
+[   17258ms] [ERROR] Warning: Please use `require("history").createMemoryHistory` instead of `require("history/createMemoryHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:8419
+[   17258ms] [ERROR] Warning: Please use `require("history").PathUtils` instead of `require("history/PathUtils")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:8419
+[   17269ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/vendors~ats_application-3107942bc81312205206.chunk.js:145570
+[   17269ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/vendors~ats_application-3107942bc81312205206.chunk.js:145570
+[   17269ms] [LOG] [store/index.js] store.getState() {} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:10849
+[   17270ms] [LOG] %c
+
+
+[App] render background-color: #b0d219 {props: Object, queryClient: QueryClient} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:44838
+[   17272ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   17277ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: undefined} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application-314d8b8b5855e33341ee.chunk.js:3392
+[   17278ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   17294ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/flipper/features} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   17295ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   17402ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   17403ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   17409ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: 18668} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application-314d8b8b5855e33341ee.chunk.js:3392
+[   17410ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   17511ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/organizations/18668} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   17511ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   17513ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   17527ms] [LOG] %c[JobList] RENDER  color: #1976D2 {currentUser: Object, currentOrganization: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:43335
+[   17527ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   17528ms] [LOG] %c[useJob] useAllJobs color: #1976D2 {status: undefined, enabled: false, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:694
+[   17528ms] [LOG] %c[JobList] showHud background-color: #47967b {showHud: true, hudDisplayVisibility: all_members, isAdmin: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:43364
+[   17537ms] [WARNING] @reach/tooltip styles not found. If you are using a bundler like webpack or parcel include this in the entry file of your app before any of your own styles:
+
+    import "@reach/tooltip/styles.css";
+
+  Otherwise you'll need to include them some other way:
+
+    <link rel="stylesheet" type="text/css" href="node_modules/@reach/tooltip/styles.css" />
+
+  For more information visit https://ui.reach.tech/styling.
+   @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application-6aeca7e7c066c5220658.chunk.js:3483
+[   17538ms] [LOG] %c[useJob] getJobs
+
+ background-color: #FF76D2 {status: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:316
+[   17538ms] [LOG] %c[JobList] Refetch Regular Jobs background-color: #038b85 @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:43394
+[   17541ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   17547ms] [LOG] %c[JobList] RENDER  color: #1976D2 {currentUser: Object, currentOrganization: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:43335
+[   17547ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   17547ms] [LOG] %c[useJob] useAllJobs color: #1976D2 {status: undefined, enabled: false, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:694
+[   17547ms] [LOG] %c[JobList] showHud background-color: #47967b {showHud: true, hudDisplayVisibility: all_members, isAdmin: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:43364
+[   17597ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   17597ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   17603ms] [LOG] %c[JobList] RENDER  color: #1976D2 {currentUser: Object, currentOrganization: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:43335
+[   17603ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   17603ms] [LOG] %c[useJob] useAllJobs color: #1976D2 {status: undefined, enabled: false, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:694
+[   17603ms] [LOG] %c[JobList] showHud background-color: #47967b {showHud: true, hudDisplayVisibility: all_members, isAdmin: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:43364
+[   17606ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me/job_application_notifications/has_unread} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   17622ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   17623ms] [LOG] %c[JobList] RENDER  color: #1976D2 {currentUser: Object, currentOrganization: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:43335
+[   17623ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   17623ms] [LOG] %c[useJob] useAllJobs color: #1976D2 {status: undefined, enabled: false, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:694
+[   17623ms] [LOG] %c[JobList] showHud background-color: #47967b {showHud: true, hudDisplayVisibility: all_members, isAdmin: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:43364
+[   17648ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/billing/plan_features} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28272ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/17237/stages, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   28278ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28279ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28284ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28284ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28288ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28302ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/billing/plan_features} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28302ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28303ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28337ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/17237} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28338ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28338ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28338ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28341ms] [LOG] %c[useJobApplication] getInfiniteJobApplications
+
+
+
+ background-color: #FF76D2 {jobId: 17237, hiringStageId: 120632, params: ?hiring_stage=120632&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:59397
+[   28341ms] [LOG] %c[useJobApplication] getInfiniteJobApplications
+
+
+
+ background-color: #FF76D2 {jobId: 17237, hiringStageId: 120633, params: ?hiring_stage=120633&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:59397
+[   28341ms] [LOG] %c[useJobApplication] getInfiniteJobApplications
+
+
+
+ background-color: #FF76D2 {jobId: 17237, hiringStageId: 120634, params: ?hiring_stage=120634&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:59397
+[   28341ms] [LOG] %c[useJobApplication] getInfiniteJobApplications
+
+
+
+ background-color: #FF76D2 {jobId: 17237, hiringStageId: 120635, params: ?hiring_stage=120635&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:59397
+[   28341ms] [LOG] %c[useJobApplication] getInfiniteJobApplications
+
+
+
+ background-color: #FF76D2 {jobId: 17237, hiringStageId: 120636, params: ?hiring_stage=120636&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:59397
+[   28342ms] [LOG] %c[useJobApplication] getInfiniteJobApplications
+
+
+
+ background-color: #FF76D2 {jobId: 17237, hiringStageId: 120637, params: ?hiring_stage=120637&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:59397
+[   28348ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/17237/stages/120632/applicants, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   28353ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28353ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28358ms] [LOG] %c[JobApplicationListContainer] Infinite  background: #EFDDEF; color: #1976D2 {props: Object, job: Object, stageId: 120632, jobApplications: Array(0), jobApplicationsForStageData: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28892
+[   28368ms] [LOG] %c[JobApplicationListContainer] Infinite  background: #EFDDEF; color: #1976D2 {props: Object, job: Object, stageId: 120632, jobApplications: Array(0), jobApplicationsForStageData: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28892
+[   28391ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/17237/job_applications?hiring_stage=120636&page=1} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28398ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/17237/job_applications?hiring_stage=120634&page=1} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28398ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/17237/job_applications?hiring_stage=120633&page=1} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28403ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/17237/job_applications?hiring_stage=120632&page=1} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28403ms] [LOG] %c[useJobApplication] useInfiniteJobApplicationsForStage color: #1976D2 {pages: Array(1), pageParams: Array(1)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:59513
+[   28403ms] [LOG] %c[JobApplicationListContainer] Infinite  background: #EFDDEF; color: #1976D2 {props: Object, job: Object, stageId: 120632, jobApplications: Array(2), jobApplicationsForStageData: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28892
+[   28406ms] [LOG] %c[FeatureFlipper] RENDER  background-color: #FF76D2 {feature: AI_APPLICANT_SUMMARY, features: Array(1), featureObj: Object, gateBoolean: true, gateActors: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:8658
+[   28409ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/17237/stages/120632/applicants/13321, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   28414ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28414ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28419ms] [LOG] %c[JobApplicationListContainer] Infinite  background: #EFDDEF; color: #1976D2 {props: Object, job: Object, stageId: 120632, jobApplications: Array(2), jobApplicationsForStageData: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28892
+[   28420ms] [LOG] %c[FeatureFlipper] RENDER  background-color: #FF76D2 {feature: AI_APPLICANT_SUMMARY, features: Array(1), featureObj: Object, gateBoolean: true, gateActors: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:8658
+[   28422ms] [LOG] %c[JobApplicationListContainer] RENDER JOBAPPLICATION CONTAINER background-color: #d25419 {props: Object, renderProps: Object, match: Object, shallowJobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:29039
+[   28422ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   28423ms] [LOG] %c[JobApplicationSidebar]  background: #EFDDEF; color: #1976D2 {history: Object, match: Object, candidate: Object, jobApplication: Object, jobApplicationsForStage: Array(2)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30039
+[   28430ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   28430ms] [LOG] %c[JASA] moveFocuseToNextLogicalJobApplication background-color: #eb89d6 {nextLogicalJobApplication: Object, nextLogicalHiringStage: Object, nextLogicalJobApplicationUrl: /jobs/17237/stages/120632/applicants/13320, jobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30479
+[   28437ms] [LOG] %c[useJob] getJobs
+
+ background-color: #FF76D2 {status: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:316
+[   28437ms] [LOG] %c[JobApplicationContainer] useEffect background-color: #bd19d2 {allChannel: null} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28162
+[   28438ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/17237/stages/120632/applicants/13321/overview, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   28445ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28445ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28449ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   28449ms] [LOG] %c[JobApplicationListContainer] Infinite  background: #EFDDEF; color: #1976D2 {props: Object, job: Object, stageId: 120632, jobApplications: Array(2), jobApplicationsForStageData: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28892
+[   28451ms] [LOG] %c[FeatureFlipper] RENDER  background-color: #FF76D2 {feature: AI_APPLICANT_SUMMARY, features: Array(1), featureObj: Object, gateBoolean: true, gateActors: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:8658
+[   28452ms] [LOG] %c[JobApplicationListContainer] RENDER JOBAPPLICATION CONTAINER background-color: #d25419 {props: Object, renderProps: Object, match: Object, shallowJobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:29039
+[   28452ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   28452ms] [LOG] %c[JobApplicationSidebar]  background: #EFDDEF; color: #1976D2 {history: Object, match: Object, candidate: Object, jobApplication: Object, jobApplicationsForStage: Array(2)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30039
+[   28455ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   28455ms] [LOG] %c[JASA] moveFocuseToNextLogicalJobApplication background-color: #eb89d6 {nextLogicalJobApplication: Object, nextLogicalHiringStage: Object, nextLogicalJobApplicationUrl: /jobs/17237/stages/120632/applicants/13320, jobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30479
+[   28458ms] [LOG] %c[JobApplicationActivity]  background: #EFDDEF; color: #1976D2 {response: undefined, sortedQuestionResponses: Array(0), jobApplicationActivities: Array(0), questionResponses: undefined, allTheThings: Array(0)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:27282
+[   28460ms] [LOG] %c[JobApplicationActivity] scrollToBottom color: #34970c {feedRef: null} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:27258
+[   28461ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   28461ms] [LOG] %c[JobApplicationSidebar]  background: #EFDDEF; color: #1976D2 {history: Object, match: Object, candidate: Object, jobApplication: Object, jobApplicationsForStage: Array(2)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30039
+[   28465ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   28465ms] [LOG] %c[JASA] moveFocuseToNextLogicalJobApplication background-color: #eb89d6 {nextLogicalJobApplication: Object, nextLogicalHiringStage: Object, nextLogicalJobApplicationUrl: /jobs/17237/stages/120632/applicants/13320, jobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30479
+[   28467ms] [LOG] %c[JobApplicationActivity]  background: #EFDDEF; color: #1976D2 {response: undefined, sortedQuestionResponses: Array(0), jobApplicationActivities: Array(0), questionResponses: undefined, allTheThings: Array(0)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:27282
+[   28468ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28468ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28473ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   28473ms] [LOG] %c[JobApplicationListContainer] Infinite  background: #EFDDEF; color: #1976D2 {props: Object, job: Object, stageId: 120632, jobApplications: Array(2), jobApplicationsForStageData: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28892
+[   28474ms] [LOG] %c[FeatureFlipper] RENDER  background-color: #FF76D2 {feature: AI_APPLICANT_SUMMARY, features: Array(1), featureObj: Object, gateBoolean: true, gateActors: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:8658
+[   28476ms] [LOG] %c[JobApplicationListContainer] RENDER JOBAPPLICATION CONTAINER background-color: #d25419 {props: Object, renderProps: Object, match: Object, shallowJobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:29039
+[   28476ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   28476ms] [LOG] %c[JobApplicationSidebar]  background: #EFDDEF; color: #1976D2 {history: Object, match: Object, candidate: Object, jobApplication: Object, jobApplicationsForStage: Array(2)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30039
+[   28479ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   28479ms] [LOG] %c[JASA] moveFocuseToNextLogicalJobApplication background-color: #eb89d6 {nextLogicalJobApplication: Object, nextLogicalHiringStage: Object, nextLogicalJobApplicationUrl: /jobs/17237/stages/120632/applicants/13320, jobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30479
+[   28481ms] [LOG] %c[JobApplicationActivity]  background: #EFDDEF; color: #1976D2 {response: undefined, sortedQuestionResponses: Array(0), jobApplicationActivities: Array(0), questionResponses: undefined, allTheThings: Array(0)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:27282
+[   28486ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/17237/job_applications?hiring_stage=120635&page=1} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28503ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/billing/plan_features} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28504ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28504ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   28508ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   28508ms] [LOG] %c[JobApplicationListContainer] Infinite  background: #EFDDEF; color: #1976D2 {props: Object, job: Object, stageId: 120632, jobApplications: Array(2), jobApplicationsForStageData: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28892
+[   28510ms] [LOG] %c[FeatureFlipper] RENDER  background-color: #FF76D2 {feature: AI_APPLICANT_SUMMARY, features: Array(1), featureObj: Object, gateBoolean: true, gateActors: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:8658
+[   28511ms] [LOG] %c[JobApplicationListContainer] RENDER JOBAPPLICATION CONTAINER background-color: #d25419 {props: Object, renderProps: Object, match: Object, shallowJobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:29039
+[   28511ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   28511ms] [LOG] %c[JobApplicationSidebar]  background: #EFDDEF; color: #1976D2 {history: Object, match: Object, candidate: Object, jobApplication: Object, jobApplicationsForStage: Array(2)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30039
+[   28514ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   28515ms] [LOG] %c[JASA] moveFocuseToNextLogicalJobApplication background-color: #eb89d6 {nextLogicalJobApplication: Object, nextLogicalHiringStage: Object, nextLogicalJobApplicationUrl: /jobs/17237/stages/120632/applicants/13320, jobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30479
+[   28517ms] [LOG] %c[JobApplicationActivity]  background: #EFDDEF; color: #1976D2 {response: undefined, sortedQuestionResponses: Array(0), jobApplicationActivities: Array(0), questionResponses: undefined, allTheThings: Array(0)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:27282
+[   28531ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/job_applications/13321/activities} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28532ms] [LOG] %c[JobApplicationActivity]  background: #EFDDEF; color: #1976D2 {response: undefined, sortedQuestionResponses: Array(0), jobApplicationActivities: Array(1), questionResponses: undefined, allTheThings: Array(1)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:27282
+[   28534ms] [LOG] %c[JobApplicationActivity] scrollToBottom color: #34970c {feedRef: null} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:27258
+[   28534ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/job_applications/13321/comments} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28535ms] [LOG] %c[JobApplicationActivity]  background: #EFDDEF; color: #1976D2 {response: undefined, sortedQuestionResponses: Array(0), jobApplicationActivities: Array(1), questionResponses: undefined, allTheThings: Array(1)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:27282
+[   28538ms] [LOG] %c[FeatureFlipper] RENDER  background-color: #FF76D2 {feature: AI_APPLICANT_SUMMARY, features: Array(1), featureObj: Object, gateBoolean: true, gateActors: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:8658
+[   28545ms] [LOG] %c[JobApplicationActivity] scrollToBottom color: #34970c {feedRef: div.css-12egeru-JobApplicationActivity_Styled-Feed-JobApplicationActivity_Feed-theme_p-JobApplicati…} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:27258
+[   28549ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28550ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   28550ms] [LOG] %c[JASA] moveFocuseToNextLogicalJobApplication background-color: #eb89d6 {nextLogicalJobApplication: Object, nextLogicalHiringStage: Object, nextLogicalJobApplicationUrl: /jobs/17237/stages/120632/applicants/13320, jobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30479
+[   28571ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/ai_credits} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28576ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/job_applications/13321} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28577ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   28577ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   28577ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   28577ms] [LOG] %c[JobApplicationSidebar]  background: #EFDDEF; color: #1976D2 {history: Object, match: Object, candidate: Object, jobApplication: Object, jobApplicationsForStage: Array(2)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30039
+[   28580ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   28580ms] [LOG] %c[JASA] moveFocuseToNextLogicalJobApplication background-color: #eb89d6 {nextLogicalJobApplication: Object, nextLogicalHiringStage: Object, nextLogicalJobApplicationUrl: /jobs/17237/stages/120632/applicants/13320, jobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30479
+[   28582ms] [LOG] %c[JobApplicationActivity]  background: #EFDDEF; color: #1976D2 {response: Array(0), sortedQuestionResponses: Array(0), jobApplicationActivities: Array(1), questionResponses: Array(0), allTheThings: Array(1)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:27282
+[   28584ms] [LOG] %c[FeatureFlipper] RENDER  background-color: #FF76D2 {feature: AI_APPLICANT_SUMMARY, features: Array(1), featureObj: Object, gateBoolean: true, gateActors: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:8658
+[   28589ms] [LOG] %c[JobApplicationActivity] scrollToBottom color: #34970c {feedRef: div.css-12egeru-JobApplicationActivity_Styled-Feed-JobApplicationActivity_Feed-theme_p-JobApplicati…} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:27258
+[   28589ms] [LOG] %c[JobApplicationContainer] useEffect background-color: #bd19d2 {allChannel: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28162
+[   28589ms] [LOG] %c[JobApplicationContainer][useChannel] prefetchChannel color: #1976D2 {channel: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28155
+[   28589ms] [LOG] %c[useChannel] getChannel background: #19d219 {channelId: 1682} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:57849
+[   28617ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/channels/1682} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   28719ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/17237/job_applications?hiring_stage=120637&page=1} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[   61381ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/17237/stages/120632/applicants/13321/resume, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[   61389ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   61389ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 17237, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:661
+[   61396ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   61397ms] [LOG] %c[JobApplicationListContainer] Infinite  background: #EFDDEF; color: #1976D2 {props: Object, job: Object, stageId: 120632, jobApplications: Array(2), jobApplicationsForStageData: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28892
+[   61399ms] [LOG] %c[FeatureFlipper] RENDER  background-color: #FF76D2 {feature: AI_APPLICANT_SUMMARY, features: Array(1), featureObj: Object, gateBoolean: true, gateActors: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:8658
+[   61400ms] [LOG] %c[JobApplicationListContainer] RENDER JOBAPPLICATION CONTAINER background-color: #d25419 {props: Object, renderProps: Object, match: Object, shallowJobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:29039
+[   61400ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   61400ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   61401ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   61401ms] [LOG] %c[JobApplicationSidebar]  background: #EFDDEF; color: #1976D2 {history: Object, match: Object, candidate: Object, jobApplication: Object, jobApplicationsForStage: Array(2)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30039
+[   61405ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   61405ms] [LOG] %c[JASA] moveFocuseToNextLogicalJobApplication background-color: #eb89d6 {nextLogicalJobApplication: Object, nextLogicalHiringStage: Object, nextLogicalJobApplicationUrl: /jobs/17237/stages/120632/applicants/13320, jobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30479
+[   61409ms] [LOG] %c[JobApplicationResume] render background-color: #19F0F2 {isLoadingUpdate: false, uploading: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:29713
+[   61420ms] [LOG] %c[JobApplicationContainer] jaFromStore background: #d66bd6; color: #0006D2 {jaFromStore: Object, shallowJobApplication: Object, jobApplicationsById: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:28096
+[   61421ms] [LOG] %c[JobApplicationSidebar]  background: #EFDDEF; color: #1976D2 {history: Object, match: Object, candidate: Object, jobApplication: Object, jobApplicationsForStage: Array(2)} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30039
+[   61424ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application~connect_application-28cd312700754edd0991.chunk.js:676
+[   61424ms] [LOG] %c[JASA] moveFocuseToNextLogicalJobApplication background-color: #eb89d6 {nextLogicalJobApplication: Object, nextLogicalHiringStage: Object, nextLogicalJobApplicationUrl: /jobs/17237/stages/120632/applicants/13320, jobApplication: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:30479
+[   61427ms] [LOG] %c[JobApplicationResume] render background-color: #19F0F2 {isLoadingUpdate: false, uploading: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:29713
+[ 5581474ms] [ERROR] WebSocket connection to 'ws://app.lvh.me:5007/cable' failed:  @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application-6aeca7e7c066c5220658.chunk.js:402
+[ 5581474ms] [ERROR] WebSocket connection to 'ws://app.lvh.me:5007/cable' failed:  @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application-6aeca7e7c066c5220658.chunk.js:402
+[ 5581474ms] [ERROR] WebSocket connection to 'ws://app.lvh.me:5007/cable' failed:  @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application-6aeca7e7c066c5220658.chunk.js:402
+[ 5581474ms] [ERROR] WebSocket connection to 'ws://app.lvh.me:5007/cable' failed:  @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application-6aeca7e7c066c5220658.chunk.js:402
+[ 5581474ms] [ERROR] WebSocket connection to 'ws://app.lvh.me:5007/cable' failed:  @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application-6aeca7e7c066c5220658.chunk.js:402
+[ 5581474ms] [ERROR] WebSocket connection to 'ws://app.lvh.me:5007/cable' failed:  @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application-6aeca7e7c066c5220658.chunk.js:402
+[ 5587645ms] [ERROR] WebSocket connection to 'ws://app.lvh.me:5007/cable' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application-6aeca7e7c066c5220658.chunk.js:402

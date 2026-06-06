@@ -1,0 +1,66 @@
+{
+  "agent": 13,
+  "round": 2,
+  "focus": "ChannelMessages::CreateOrganizationChannelMessage — verify it passes subject through correctly",
+  "source_file": "/Users/jessica/wrk/wrk-corp/inflow-ats.messaging-improvements/app/interactors/channel_messages/create_organization_channel_message.rb",
+  "scripts": [
+    "/tmp/qa-l2r2-agent13-test1-subject-with.rb",
+    "/tmp/qa-l2r2-agent13-test2-subject-without.rb",
+    "/tmp/qa-l2r2-agent13-test3-params-passthrough.rb",
+    "/tmp/qa-l2r2-agent13-test4-duplicate-check.rb",
+    "/tmp/qa-l2r2-agent13-test5-subject-validation.rb"
+  ],
+  "findings": [],
+  "tests_run": [
+    {
+      "name": "CreateOrganizationChannelMessage with subject in params",
+      "script": "/tmp/qa-l2r2-agent13-test1-subject-with.rb",
+      "result": "PASS",
+      "detail": "Subject 'QA Test Subject Line - Agent 13' was passed through context.params to channel.channel_messages.build(), persisted to DB, and verified on reload."
+    },
+    {
+      "name": "CreateOrganizationChannelMessage without subject in params",
+      "script": "/tmp/qa-l2r2-agent13-test2-subject-without.rb",
+      "result": "PASS",
+      "detail": "When subject is omitted from params, channel_message.subject is nil as expected."
+    },
+    {
+      "name": "Subject passthrough with various values",
+      "script": "/tmp/qa-l2r2-agent13-test3-params-passthrough.rb",
+      "result": "PASS",
+      "detail": "Tested 5 subtypes: normal subject, empty string, 255-char subject, special chars (& < >), and unicode. All persisted correctly without modification."
+    },
+    {
+      "name": "No duplicate body check in CreateOrganizationChannelMessage",
+      "script": "/tmp/qa-l2r2-agent13-test4-duplicate-check.rb",
+      "result": "PASS",
+      "detail": "Unlike CreateChannelMessage (which has a duplicate body check), CreateOrganizationChannelMessage has no duplicate check. Two messages with the same body but different subjects were both created successfully."
+    },
+    {
+      "name": "CustomChannelMessageValidator validates subject for unresolved placeholders",
+      "script": "/tmp/qa-l2r2-agent13-test5-subject-validation.rb",
+      "result": "PASS",
+      "detail": "Subject with {{CandidateFirstName}} was correctly rejected by the validator. Body with unresolved placeholder was also rejected. Clean subject+body passed validation."
+    }
+  ],
+  "code_analysis": {
+    "interactor_mechanism": "CreateOrganizationChannelMessage passes context.params directly to channel.channel_messages.build(context.params). The interactor itself does not filter, transform, or drop any fields from params. Subject passthrough is purely a function of ActiveRecord mass assignment.",
+    "callers_verified": [
+      {
+        "file": "app/models/job_application.rb:525",
+        "method": "send_candidate_confirmation_email",
+        "passes_subject": true,
+        "subject_source": "parse_apply_response_text(job.apply_response_template_subject)"
+      },
+      {
+        "file": "app/interactors/customer_api/complete_job_application.rb:52",
+        "method": "send_apply_response_email",
+        "passes_subject": true,
+        "subject_source": "job_application.parse_apply_response_text(job_application.job.apply_response_template_subject)"
+      }
+    ],
+    "validation": "validates :subject, custom_channel_message: true — checks for unresolved {{...}} placeholders. Subject is NOT required (nil is valid).",
+    "deprecation_warning": "CustomChannelMessageValidator uses record.errors[attribute] << msg (deprecated in Rails 6.1+). Should use record.errors.add(attribute, msg). Not a bug for subject passthrough but worth noting."
+  },
+  "summary": "No bugs found. CreateOrganizationChannelMessage correctly passes subject through params to ActiveRecord build. The subject column exists on channel_messages, is validated for unresolved placeholders, and is nullable. All callers that pass subject do so correctly. The interactor is a thin pass-through — it does not modify, filter, or drop any fields from context.params."
+}

@@ -1,0 +1,37 @@
+{
+  "agent_index": 7,
+  "focus_area": "Apply-response pipeline and default templates",
+  "round": 2,
+  "findings": [],
+  "round_2_investigation": {
+    "question_1_gsub_parity": {
+      "question": "Does parse_apply_response_text have the same gsub substitutions as html_safe_apply_email? Any missing ones?",
+      "answer": "Yes, exact same set. Both methods apply: .scrub, then gsub for {{JobTitle}}, {{CandidateFullName}}, {{CandidateFirstName}}, {{CandidateLastName}}, {{OrganizationName}}, and \\u00A0 replacement. The only difference is html_safe_apply_email appends .html_safe (correct for body HTML rendering) while parse_apply_response_text does not (correct for subject, which is plain text per spec). No missing substitutions."
+    },
+    "question_2_update_columns": {
+      "question": "Does update_columns bypass validations (intentionally)?",
+      "answer": "Yes, intentionally. update_columns is the pre-existing pattern for add_default_apply_response_template (the body-only version already used it). The method is called from the after_create callback complete_setup, where running full model validations and callbacks again could cause issues with counter caches and other after_create hooks. update_columns writes directly to the DB, which is the correct approach here. The diff simply adds apply_response_template_subject to the same update_columns call. No behavioral change."
+    },
+    "question_3_other_callers": {
+      "question": "Are there other callers of add_default_apply_response_template?",
+      "answer": "Three call sites found: (1) Job#complete_setup (after_create callback, line 327) -- the primary production path for new jobs. (2) The method definition itself (line 353). (3) db/data/20220526004820_add_default_response_template_to_jobs.rb -- a historical data migration that ran in 2022 to backfill existing jobs. This migration already ran long before the subject column exists, so it's harmless: when it ran, the column didn't exist; it won't run again. If it did run again post-migration, it would now correctly set both body and subject since the method now includes both. No risk from any caller."
+    },
+    "question_4_sender_tokens": {
+      "question": "What about SenderFullName/SenderFirstName -- are they in apply response templates?",
+      "answer": "No. SenderFullName and SenderFirstName are NOT substituted in the apply-response pipeline, and this is correct. The apply-response pipeline is triggered automatically when a candidate submits a job application (via send_candidate_confirmation_email or CustomerApi::CompleteJobApplication#send_confirmation_email). There is no logged-in user/sender in this context -- it's a system-sent automated message. The default apply response template body (set by add_default_apply_response_template) does not use Sender tokens. The existing html_safe_apply_email method does not substitute Sender tokens. The new parse_apply_response_text matches this exactly. If a user manually edits their apply response template to include {{SenderFullName}}, it would appear literally in the email -- but this is the pre-existing behavior for the body and is not a regression. By contrast, Organization.default_channel_message_templates DO use {{SenderFullName}} and {{SenderFirstName}} in their body text, but those templates flow through render_template_message (which has sender context) not through the apply-response pipeline."
+    }
+  },
+  "spec_coverage": {
+    "assigned_requirements": [
+      "1. Job#add_default_apply_response_template: set apply_response_template_subject",
+      "2. JobApplication#send_candidate_confirmation_email: include subject in params",
+      "3. Subject from job.apply_response_template_subject through parse_apply_response_text",
+      "4. New parse_apply_response_text method with correct substitutions",
+      "5. parse_apply_response_text returns empty string if text is blank",
+      "6. CustomerApi::CompleteJobApplication: include subject in params",
+      "7. Organization.default_channel_message_templates: subject in all 3 template hashes"
+    ],
+    "all_implemented_correctly": true,
+    "notes": "All 7 requirements are correctly implemented. The parse_apply_response_text method has exact gsub parity with html_safe_apply_email (minus .html_safe, which is correct for subject). The blank guard correctly produces an empty string that triggers the mailer fallback via .presence. The update_columns pattern is intentionally validation-bypassing and matches the existing codebase pattern. The lack of Sender tokens is correct for the apply-response pipeline context. The Organization.default_channel_message_templates correctly include subject in all 3 hashes, and the consumer (add_default_channel_message_templates) will correctly build channel_message_template records with the subject attribute set."
+  }
+}

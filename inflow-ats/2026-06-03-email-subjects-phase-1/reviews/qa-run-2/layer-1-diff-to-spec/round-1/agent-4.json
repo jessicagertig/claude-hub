@@ -1,0 +1,112 @@
+{
+  "agent": 4,
+  "focus": "Frontend files — all 9 frontend files in diff vs spec",
+  "round": 1,
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx",
+      "diff_lines": "301-311",
+      "summary": "font-size: ${t.text.sm} produces invalid CSS — exact repeat of known failure pattern #1",
+      "detail": "In the Styled.SubjectPreview component, line 308 of the diff reads `font-size: ${t.text.sm};`. Per the pipeline's known failure pattern #1 (motivated by email-subjects-phase-1 impl-round-2), `t.text.sm` is a complete CSS declaration that already includes the `font-size:` property. Using it inside `font-size:` produces `font-size: font-size: 0.875rem;` — invalid CSS that causes the font-size rule to be silently dropped by the browser. The fix is to use `${t.text.sm};` standalone without the `font-size:` prefix.",
+      "spec_ref": "Known Failure Pattern #1 in pipeline CLAUDE.md",
+      "fix": "Change `font-size: ${t.text.sm};` to `${t.text.sm};`"
+    },
+    {
+      "id": "F2",
+      "severity": "MED",
+      "file": "app/javascript/ats/src/components/modals/HiringStageAutomationModal.tsx",
+      "diff_lines": "316-412 (absence)",
+      "summary": "Automation modal's existing-template preview does not display the template's subject",
+      "detail": "The spec states: 'Automation modal's existing-template preview: show the saved template's subject as-is.' The current diff only adds subject handling for the inline-create-template flow (new state, form input, validation, API call). The existing-template preview section (lines 402-405 of the pre-diff source) still renders only `selectedTemplate.body` via dangerouslySetInnerHTML — no subject display. When a user selects an existing template that has a custom subject, the preview shows only the body. The user cannot see what subject will be sent.",
+      "spec_ref": "Data flow section: 'Automation modal's existing-template preview: show the saved template's subject as-is.'",
+      "fix": "Add subject display above the body in the selectedTemplate preview block, e.g. `{selectedTemplate.subject && <div>Subject: {selectedTemplate.subject}</div>}` before the body div."
+    },
+    {
+      "id": "F3",
+      "severity": "LOW",
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateModal.tsx",
+      "diff_lines": "245-268",
+      "summary": "Template modal does not repopulate subject with default on validation error",
+      "detail": "The spec's validation strategy says: 'On submit with a cleared field, fire the standard form-error AND repopulate the field with the rendered default so the user sees the baseline.' BulkMessageModal (diff lines 176-179) and ChannelMessageNew (diff lines 452-455) both repopulate subject with the default when validation fails and subject is empty. ChannelMessageTemplateModal does not — if a user clears the subject and submits, the validation error fires but the field stays blank. The user doesn't see the default they could accept. Similarly, HiringStageAutomationModal's inline template creation lacks this repopulation.",
+      "spec_ref": "Validation strategy section",
+      "fix": "In handleSubmit's else branch, add: if (!subject || subject.trim() === '') { setChannelMessageTemplate(prev => ({...prev, subject: defaultSubject})); }. Same pattern for HiringStageAutomationModal's handleSaveTemplate."
+    },
+    {
+      "id": "F4",
+      "severity": "LOW",
+      "file": "app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageListItem.tsx",
+      "diff_lines": "961-973",
+      "summary": "Create-template-from-message uses empty subject instead of the message's actual subject",
+      "detail": "The fix adds `subject: \"\"` to the channelMessageTemplate prop passed to ChannelMessageTemplateModal. This means when a user creates a template from a sent message, the template's subject is always set to the default ('{{JobTitle}} at {{OrganizationName}}') regardless of the actual subject used in that message. Post-phase-1, messages will have a stored subject — using `message.subject || \"\"` would pre-fill the template with the actual subject the user sent. This is not explicitly required by the spec but is a usability gap. The fix is functionally correct (the modal falls back to the default for falsy values), so this is informational only.",
+      "spec_ref": "N/A — spec does not mention this specific flow",
+      "fix": "Consider changing `subject: \"\"` to `subject: message.subject || \"\"` so templates created from sent messages inherit the actual subject."
+    },
+    {
+      "id": "F5",
+      "severity": "PASS",
+      "file": "app/javascript/shared/lib/validateWithYup.ts",
+      "diff_lines": "580-615",
+      "summary": "Yup schemas correctly add subject as required; new singleMessageSchema and validateSingleMessage export are correct",
+      "detail": "channelMessageTemplateSchema adds `subject: string().required()`. bulkMessageSchema adds `subject: string().required()`. New singleMessageSchema with `subject: string().required()` and `body: string().required()` is correct. New `validateSingleMessage` export is correctly typed and delegates to validateSchema. All match spec requirements."
+    },
+    {
+      "id": "F6",
+      "severity": "PASS",
+      "file": "app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageNew.tsx",
+      "diff_lines": "396-528",
+      "summary": "Single-send composer correctly implements subject with rendered candidate values",
+      "detail": "Default subject uses rendered values: `${jobApplication.job.title} at ${jobApplication.job.organizationName}` — correct per spec ('candidate context is known — render the default with variables substituted to that candidate's values'). Subject state management, handleChangeSubject, validation via validateSingleMessage, repopulation on error, inclusion in createChannelMessage payload, template insertion via mailMerge.subjectRaw, and reset on success are all correct."
+    },
+    {
+      "id": "F7",
+      "severity": "PASS",
+      "file": "app/javascript/ats/src/components/modals/BulkMessageModal.tsx",
+      "diff_lines": "134-210",
+      "summary": "Bulk modal correctly implements subject with literal template variables",
+      "detail": "Default subject is `{{JobTitle}} at {{OrganizationName}}` — correct per spec ('show variables literally because no single candidate context applies'). Subject included in validation, repopulated on error, included in send payload, and set from template on template selection (with fallback to default). FormInput placed correctly above the body editor."
+    },
+    {
+      "id": "F8",
+      "severity": "PASS",
+      "file": "app/javascript/shared/queryHooks/useBulkMessage.ts",
+      "diff_lines": "616-643",
+      "summary": "useBulkMessage correctly threads subject through to the API call",
+      "detail": "Subject added to destructured params, apiPost variables, and outer variables. The API path `/jobs/${jobId}/bulk_channel_messages` matches BulkChannelMessagesController which now permits :subject."
+    },
+    {
+      "id": "F9",
+      "severity": "PASS",
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateModal.tsx",
+      "diff_lines": "214-268",
+      "summary": "Template create/edit modal correctly adds subject field with template-variable default",
+      "detail": "Props type updated to include subject. Initial state sets subject from prop with fallback to defaultSubject. The existing handleChangeChannelMessageName handler works for subject because it uses dynamic `[name]` key. Subject included in validation. handleCreate and handleUpdate spread channelMessageTemplate which includes subject. FormInput placed between name and body fields."
+    },
+    {
+      "id": "F10",
+      "severity": "PASS",
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx",
+      "diff_lines": "273-311",
+      "summary": "Template selection modal correctly shows rendered subject in preview (aside from the CSS bug in F1)",
+      "detail": "PreviewSelection component accesses mailMerge.subjectRaw and displays it in a SubjectPreview styled component above the body. Conditional rendering (only when subjectRaw exists) is correct. The handleInsertTemplate callback in ChannelMessageNew reads mailMerge.subjectRaw to populate the subject field — this data flow is correct."
+    },
+    {
+      "id": "F11",
+      "severity": "PASS",
+      "file": "app/javascript/ats/src/components/modals/HiringStageAutomationModal.tsx",
+      "diff_lines": "316-395 (inline template creation)",
+      "summary": "Automation modal inline-create-template flow correctly includes subject",
+      "detail": "New state newTemplateSubject initialized and reset to '{{JobTitle}} at {{OrganizationName}}'. Handler handleChangeNewTemplateSubject correctly updates state. Subject included in validateChannelMessageTemplate call. Subject included in createChannelMessageTemplate mutation payload. Subject reset on success and discard. FormInput placed between name and body in template creation form."
+    },
+    {
+      "id": "F12",
+      "severity": "PASS",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAutomations.tsx",
+      "diff_lines": "531-578",
+      "summary": "Job setup automations page correctly adds apply-response-template subject field",
+      "detail": "applyResponseTemplateSubject initialized from passedJob with fallback to '{{JobTitle}} at {{OrganizationName}}'. Included in onSubmit updateJob payload. The existing onFormInputChange handler works for subject (uses dynamic `[name]` key). FormInput placed above the ProseMirror body editor inside FormConditionalFields. FormInput import added."
+    }
+  ],
+  "summary": "Reviewed all 9 frontend files. Found 1 HIGH (CSS bug: font-size: ${t.text.sm} in SubjectPreview — exact repeat of known failure pattern #1), 1 MED (automation modal's existing-template preview does not display subject despite spec requirement), and 2 LOW (no subject repopulation on validation error in template modal; create-template-from-message ignores message's actual subject). All other files correctly implement the spec: yup schemas, single-send composer, bulk modal, useBulkMessage hook, template create/edit modal, template selection modal preview, automation modal inline-create, and job setup automations page."
+}

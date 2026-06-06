@@ -1,0 +1,28 @@
+[   10021ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[   10711ms] Error: Module build failed (from ./node_modules/file-loader/dist/cjs.js):
+Error: error:0308010C:digital envelope routines::unsupported
+    at new Hash (node:internal/crypto/hash:79:19)
+    at Object.createHash (node:crypto:139:10)
+    at getHashDigest (/Users/jessica/wrk/wrk-corp/inflow-ats/node_modules/file-loader/node_modules/loader-utils/lib/getHashDigest.js:46:34)
+    at /Users/jessica/wrk/wrk-corp/inflow-ats/node_modules/file-loader/node_modules/loader-utils/lib/interpolateName.js:113:11
+    at String.replace (<anonymous>)
+    at interpolateName (/Users/jessica/wrk/wrk-corp/inflow-ats/node_modules/file-loader/node_modules/loader-utils/lib/interpolateName.js:110:8)
+    at Object.loader (/Users/jessica/wrk/wrk-corp/inflow-ats/node_modules/file-loader/dist/index.js:29:48)
+    at new Hash (node:internal/crypto/hash:79:19)
+    at Object.createHash (node:crypto:139:10)
+    at getHashDigest (/Users/jessica/wrk/wrk-corp/inflow-ats/node_modules/file-loader/node_modules/loader-utils/lib/getHashDigest.js:46:34)
+    at /Users/jessica/wrk/wrk-corp/inflow-ats/node_modules/file-loader/node_modules/loader-utils/lib/interpolateName.js:113:11
+    at String.replace (<anonymous>)
+    at interpolateName (/Users/jessica/wrk/wrk-corp/inflow-ats/node_modules/file-loader/node_modules/loader-utils/lib/interpolateName.js:110:8)
+    at Object.loader (/Users/jessica/wrk/wrk-corp/inflow-ats/node_modules/file-loader/dist/index.js:29:48)
+    at ./public/fonts/SuisseIntl-Regular-WebXL.woff2 (http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application-c659bf363e9187c5eef4.chunk.js:3758:7)
+    at __webpack_require__ (http://app.lvh.me:5007/packs-test/js/runtime~ats_application-53626e5700e441c35af5.js:80:30)
+    at ./node_modules/css-loader/dist/cjs.js?!./node_modules/postcss-loader/dist/cjs.js?!./node_modules/sass-loader/dist/cjs.js?!./app/javascript/ats/styles/index.scss (http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application-c659bf363e9187c5eef4.chunk.js:3682:37)
+    at __webpack_require__ (http://app.lvh.me:5007/packs-test/js/runtime~ats_application-53626e5700e441c35af5.js:80:30)
+    at ./app/javascript/ats/styles/index.scss (http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application-c659bf363e9187c5eef4.chunk.js:1440:27)
+    at __webpack_require__ (http://app.lvh.me:5007/packs-test/js/runtime~ats_application-53626e5700e441c35af5.js:80:30)
+    at ./app/javascript/packs/ats_application.js (http://app.lvh.me:5007/packs-test/js/ats_application-443da40b78d962013a4b.chunk.js:51359:75)
+    at __webpack_require__ (http://app.lvh.me:5007/packs-test/js/runtime~ats_application-53626e5700e441c35af5.js:80:30)
+    at checkDeferredModules (http://app.lvh.me:5007/packs-test/js/runtime~ats_application-53626e5700e441c35af5.js:46:23)
+    at Array.webpackJsonpCallback [as push] (http://app.lvh.me:5007/packs-test/js/runtime~ats_application-53626e5700e441c35af5.js:33:19)
+[   10712ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0

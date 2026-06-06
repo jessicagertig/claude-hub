@@ -1,0 +1,101 @@
+[      95ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[     100ms] [INFO] %cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:34
+[     100ms] [ERROR] Warning: Please use `require("history").createBrowserHistory` instead of `require("history/createBrowserHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[     100ms] [ERROR] Warning: Please use `require("history").createHashHistory` instead of `require("history/createHashHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[     110ms] [ERROR] Warning: Please use `require("history").createMemoryHistory` instead of `require("history/createMemoryHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[     110ms] [ERROR] Warning: Please use `require("history").PathUtils` instead of `require("history/PathUtils")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[     115ms] [ERROR] You are currently using minified code outside of NODE_ENV === "production". This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or setting mode to production in webpack (https://webpack.js.org/concepts/mode/) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     121ms] [ERROR] You are currently using minified code outside of NODE_ENV === 'production'. This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     121ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     121ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     121ms] [LOG] [store/index.js] store.getState() {} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:264
+[     121ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0
+[     123ms] [LOG] %c
+
+
+[App] render background-color: #b0d219 {props: Object, queryClient: e} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     125ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/16734/setup/ai, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     131ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     133ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/16734/setup/ai, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     139ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/flipper/features} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     140ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/16734/setup/ai, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     157ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     158ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/16734/setup/ai, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     164ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: 18070} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     164ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/16734/setup/ai, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     241ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/organizations/18070} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     242ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/16734/setup/ai, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     259ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     260ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     265ms] [WARNING] @reach/tooltip styles not found. If you are using a bundler like webpack or parcel include this in the entry file of your app before any of your own styles:
+
+    import "@reach/tooltip/styles.css";
+
+  Otherwise you'll need to include them some other way:
+
+    <link rel="stylesheet" type="text/css" href="node_modules/@reach/tooltip/styles.css" />
+
+  For more information visit https://ui.reach.tech/styling.
+   @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     267ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     267ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     273ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/16734/setup/ai, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     279ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     279ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     283ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     335ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me/job_application_notifications/has_unread} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     341ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/billing/plan_features} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     341ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     342ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     356ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     356ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs/16734/setup/ai, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     362ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     362ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     371ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/16734} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     372ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     372ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     373ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     375ms] [LOG] %c[useJobApplication] getInfiniteJobApplications
+
+
+
+ background-color: #FF76D2 {jobId: 16734, hiringStageId: 117111, params: ?hiring_stage=117111&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     375ms] [LOG] %c[useJobApplication] getInfiniteJobApplications
+
+
+
+ background-color: #FF76D2 {jobId: 16734, hiringStageId: 117112, params: ?hiring_stage=117112&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     375ms] [LOG] %c[useJobApplication] getInfiniteJobApplications
+
+
+
+ background-color: #FF76D2 {jobId: 16734, hiringStageId: 117113, params: ?hiring_stage=117113&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     375ms] [LOG] %c[useJobApplication] getInfiniteJobApplications
+
+
+
+ background-color: #FF76D2 {jobId: 16734, hiringStageId: 117114, params: ?hiring_stage=117114&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     375ms] [LOG] %c[useJobApplication] getInfiniteJobApplications
+
+
+
+ background-color: #FF76D2 {jobId: 16734, hiringStageId: 117115, params: ?hiring_stage=117115&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     375ms] [LOG] %c[useJobApplication] getInfiniteJobApplications
+
+
+
+ background-color: #FF76D2 {jobId: 16734, hiringStageId: 117116, params: ?hiring_stage=117116&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     380ms] [LOG] %c[JobSetupContainer]  background: #EFDDEF; color: #1976D2 {currentUser: Object, currentOrganization: Object, props: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:79
+[     406ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     407ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     411ms] [LOG] %c[JobSetupContainer]  background: #EFDDEF; color: #1976D2 {currentUser: Object, currentOrganization: Object, props: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:79
+[     436ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/16734/job_applications?hiring_stage=117112&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     439ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/16734/job_applications?hiring_stage=117113&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     440ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/16734/job_applications?hiring_stage=117115&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     441ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/16734/job_applications?hiring_stage=117114&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     442ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/16734/job_applications?hiring_stage=117111&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     448ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/billing/plan_features} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     449ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     449ms] [LOG] %c[useJob] useJob color: #1976D2 {jobId: 16734, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     454ms] [LOG] %c[JobSetupContainer]  background: #EFDDEF; color: #1976D2 {currentUser: Object, currentOrganization: Object, props: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:79
+[     653ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs/16734/job_applications?hiring_stage=117116&page=1} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38

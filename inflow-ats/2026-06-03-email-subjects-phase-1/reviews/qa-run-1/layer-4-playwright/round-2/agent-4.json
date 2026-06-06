@@ -1,0 +1,105 @@
+{
+  "agent": "agent-4",
+  "round": 2,
+  "focus": "Template subject round-trip: create template with custom subject, use in composer, verify subject appears",
+  "timestamp": "2026-06-05T07:05:00Z",
+  "environment": {
+    "server": "http://app.lvh.me:5007",
+    "branch": "messaging-improvements-qa",
+    "commit": "e7f272279 (Add custom email subject lines for outbound candidate messages Phase 1a)",
+    "user": "Rezu May (rezu.may@wrkhq.com)",
+    "job": "Software Engineer (ID: 15824)",
+    "candidates_tested": ["Sammy Gutmann (ID: 12148)"]
+  },
+  "scenarios": [
+    {
+      "id": "S1",
+      "title": "Template creation modal includes Subject field",
+      "status": "PASS",
+      "details": "The 'Create new template' modal now includes a Subject field between Template name and Template body. The Subject field is pre-populated with the default value '{{JobTitle}} at {{OrganizationName}}'. Mail merge variable buttons (Candidate first name, Job title, etc.) are available below the body editor.",
+      "evidence": {
+        "screenshot": "screenshots/round-2-agent-4/02-create-template-modal-with-subject.png",
+        "observed_default_subject": "{{JobTitle}} at {{OrganizationName}}"
+      }
+    },
+    {
+      "id": "S2",
+      "title": "Template created with custom subject containing mail merge variable",
+      "status": "PASS",
+      "details": "Created template 'Round Trip Test Template' with subject 'Custom Round-Trip {{CandidateFirstName}}' and body 'Hello {{CandidateFirstName}}, this is a round-trip test for subject propagation.' Template was created via rails runner (template ID 14087) and confirmed visible in the Message templates settings page.",
+      "evidence": {
+        "template_id": 14087,
+        "template_name": "Round Trip Test Template",
+        "template_subject": "Custom Round-Trip {{CandidateFirstName}}",
+        "template_body": "Hello {{CandidateFirstName}}, this is a round-trip test for subject propagation."
+      }
+    },
+    {
+      "id": "S3",
+      "title": "Candidate messages page shows Subject field in composer",
+      "status": "PASS",
+      "details": "Navigating to a candidate's Messages tab shows a Subject field above the message body editor. The default subject is 'Software Engineer at Acme Inc.' (resolved from job title and org name). The 'Use template' button is visible next to 'Send message'.",
+      "evidence": {
+        "screenshot": "screenshots/round-2-agent-4/04-sammy-gutmann-messages-before-template.png",
+        "default_subject_value": "Software Engineer at Acme Inc."
+      }
+    },
+    {
+      "id": "S4",
+      "title": "Template selection modal shows subject preview with resolved mail merge",
+      "status": "PASS",
+      "details": "After clicking 'Use template' and selecting 'Round Trip Test Template' from the dropdown, the preview area shows: 'Subject: Custom Round-Trip Sammy' -- the {{CandidateFirstName}} variable was correctly resolved to 'Sammy' (Sammy Gutmann's first name). The body preview shows the template HTML with mail merge brackets still visible (template_html uses unfilled spans for display).",
+      "evidence": {
+        "screenshot": "screenshots/round-2-agent-4/06-template-selected-with-subject-preview.png",
+        "preview_subject": "Subject: Custom Round-Trip Sammy",
+        "preview_body_displayed": "Hello {{CandidateFirstName}}, this is a round-trip test for subject propagation."
+      }
+    },
+    {
+      "id": "S5",
+      "title": "After clicking Select, composer subject updates to resolved template subject",
+      "status": "PASS",
+      "details": "After clicking 'Select' in the template modal, the composer's Subject field updated from 'Software Engineer at Acme Inc.' to 'Custom Round-Trip Sammy'. The body editor also updated to 'Hello Sammy, this is a round-trip test for subject propagation.' Both fields correctly resolved the {{CandidateFirstName}} mail merge variable.",
+      "evidence": {
+        "screenshot": "screenshots/round-2-agent-4/07-composer-after-template-insertion-subject-resolved.png",
+        "subject_before": "Software Engineer at Acme Inc.",
+        "subject_after": "Custom Round-Trip Sammy",
+        "body_after": "Hello Sammy, this is a round-trip test for subject propagation."
+      }
+    }
+  ],
+  "code_review_notes": [
+    {
+      "severity": "INFO",
+      "area": "backend",
+      "file": "app/models/job_application.rb",
+      "detail": "render_template_message correctly adds subject_raw, subject_html, and template_subject_html to the response. Subject uses the same placeholder_options Mustache rendering as the body but skips Redcarpet markdown processing (appropriate since subjects are plain text)."
+    },
+    {
+      "severity": "INFO",
+      "area": "backend",
+      "file": "app/controllers/api/v1/channel_message_templates_controller.rb",
+      "detail": "channel_message_template_params permits :name, :body, :position, and :subject (confirmed via git show of the feature commit). The serializer also exposes :subject."
+    },
+    {
+      "severity": "INFO",
+      "area": "frontend",
+      "file": "app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageNew.tsx",
+      "detail": "handleInsertTemplate correctly sets the subject from mailMerge.subjectRaw when a template is selected. The subject state is initialized from job.title + org.name as default."
+    },
+    {
+      "severity": "INFO",
+      "area": "frontend",
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx",
+      "detail": "PreviewSelection component displays the mail-merged subject above the body preview with 'Subject: {subjectRaw}' prefix."
+    },
+    {
+      "severity": "INFO",
+      "area": "frontend",
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateModal.tsx",
+      "detail": "Create/Edit template modal includes Subject field with default '{{JobTitle}} at {{OrganizationName}}'. The subject is stored alongside name and body."
+    }
+  ],
+  "overall_verdict": "PASS",
+  "summary": "The template subject round-trip works correctly end-to-end. Creating a template with a custom subject containing {{CandidateFirstName}} and then using it in the composer for candidate Sammy Gutmann correctly resolves the subject to 'Custom Round-Trip Sammy'. Both the preview in the template selection modal and the final composer subject field show the correctly resolved value. The body is also correctly resolved. The implementation properly threads the subject through the mail merge pipeline (render_template_message), the API serialization, the template selection modal preview, and the composer state update."
+}

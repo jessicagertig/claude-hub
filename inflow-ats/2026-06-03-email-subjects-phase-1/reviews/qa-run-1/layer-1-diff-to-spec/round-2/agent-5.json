@@ -1,0 +1,33 @@
+{
+  "agent_index": 5,
+  "focus_area": "Automation pipeline",
+  "round": 2,
+  "round_2_task": "Look harder at: nil template subject (legacy), blank guard handling, .html_safe on subject downstream, other callers of CreateStageAutomationMessage",
+  "findings": [],
+  "round_2_analysis": {
+    "nil_subject_from_legacy_templates": "When automation.channel_message_template.subject is nil (legacy templates without subject), HiringStageMessageAutomationJob passes subject: nil in message_params. CreateStageAutomationMessage calls parse_text(nil). The blank guard (return '' if text.blank?) fires because nil.blank? is true, returning ''. The channel message saves with subject: ''. In notify_candidate, @channel_message.subject.presence returns nil for '' (String#presence returns nil for empty strings), so the hardcoded fallback fires correctly. The CustomChannelMessageValidator passes because '' does not match the {{...}} regex. Full chain is correct.",
+    "html_safe_on_subject": ".html_safe is retained at the end of the parse_text gsub chain, producing an ActiveSupport::SafeBuffer. The subject flows into the channel_message record and then into the Mailgun API hash as a subject: parameter in Emails::SendTemplateEmail. It is never rendered through an ERB template where html_safe would matter. The SafeBuffer behaves identically to a plain String for all non-ERB operations. The blank-guard path returns plain '' (not ''.html_safe), creating a minor type inconsistency, but this is benign since both are String subclass/instances and neither path triggers ERB rendering. No downstream issues.",
+    "other_callers": "grep -rn confirms HiringStageMessageAutomationJob is the sole caller of ChannelMessages::CreateStageAutomationMessage. No other code paths need to be checked for subject propagation through this interactor."
+  },
+  "spec_coverage": {
+    "assigned_requirements": [
+      "HiringStageMessageAutomationJob: add subject: automation.channel_message_template.subject to message_params",
+      "CreateStageAutomationMessage: rename parse_body to parse_text",
+      "parse_text takes a text argument",
+      "parse_text returns empty string if text is blank",
+      "Call parse_text for both body and subject in the merge",
+      "parse_text keeps .html_safe at the end",
+      "parse_text keeps .scrub and all gsub substitutions"
+    ],
+    "implemented": [
+      "HiringStageMessageAutomationJob: add subject: automation.channel_message_template.subject to message_params",
+      "CreateStageAutomationMessage: rename parse_body to parse_text",
+      "parse_text takes a text argument",
+      "parse_text returns empty string if text is blank",
+      "Call parse_text for both body and subject in the merge",
+      "parse_text keeps .html_safe at the end",
+      "parse_text keeps .scrub and all gsub substitutions"
+    ],
+    "missing": []
+  }
+}

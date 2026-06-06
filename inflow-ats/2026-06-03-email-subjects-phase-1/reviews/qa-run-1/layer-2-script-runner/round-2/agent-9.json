@@ -1,0 +1,74 @@
+{
+  "agent": 9,
+  "round": 2,
+  "focus": "Anonymization on channel_messages with nil subject - does text_replacer crash?",
+  "script": "/tmp/qa-l2r2-agent9-anonymization-nil-subject.rb",
+  "seed_plan": "paid-user-with-job-and-candidates.json",
+  "findings": [],
+  "summary": {
+    "tests_run": 10,
+    "tests_passed": 10,
+    "tests_failed": 0,
+    "verdict": "PASS",
+    "detail": "The text_replacer method in CandidatesController#anonymize correctly handles nil, blank, empty-string, and whitespace-only subjects via the `text.blank?` early-return guard (line 228). Populated subjects containing candidate first/last names are correctly replaced with '*******' using case-insensitive gsub. The anonymization pattern at lines 146-147 (subject = text_replacer(subject, name, replacement)) works safely for all subject states. save!(validate: false) succeeds for all cases. No crashes, no unexpected type coercion, no data corruption."
+  },
+  "test_results": [
+    {
+      "test": "text_replacer with nil",
+      "passed": true,
+      "detail": "text_replacer(nil, ...) returned nil as expected"
+    },
+    {
+      "test": "text_replacer with empty string",
+      "passed": true,
+      "detail": "text_replacer('', ...) returned empty string as expected"
+    },
+    {
+      "test": "text_replacer with populated subject",
+      "passed": true,
+      "detail": "text_replacer replaced candidate first name with '*******' correctly"
+    },
+    {
+      "test": "nil subject anonymization + save!",
+      "passed": true,
+      "detail": "nil subject survived text_replacer and save! without error"
+    },
+    {
+      "test": "blank subject anonymization + save!",
+      "passed": true,
+      "detail": "blank subject survived text_replacer and save! without error"
+    },
+    {
+      "test": "populated subject anonymization + save!",
+      "passed": true,
+      "detail": "populated subject anonymized correctly and persisted after reload"
+    },
+    {
+      "test": "text_replacer case insensitivity",
+      "passed": true,
+      "detail": "case-insensitive replacement works for UPCASE and downcase variants"
+    },
+    {
+      "test": "batch anonymization mixed subjects",
+      "passed": true,
+      "detail": "3 messages with nil/blank/populated subjects all anonymized and saved successfully"
+    },
+    {
+      "test": "text_replacer with whitespace-only subject",
+      "passed": true,
+      "detail": "whitespace-only subject returned unchanged (blank? guard works)"
+    },
+    {
+      "test": "text_replacer with blank old_word",
+      "passed": true,
+      "detail": "text_replacer with nil/empty old_word returns text unchanged"
+    }
+  ],
+  "code_analyzed": {
+    "text_replacer_method": "app/controllers/api/v1/candidates_controller.rb:227-230",
+    "anonymize_action": "app/controllers/api/v1/candidates_controller.rb:102-211",
+    "subject_anonymization_lines": "app/controllers/api/v1/candidates_controller.rb:146-147",
+    "channel_message_model": "app/models/channel_message.rb",
+    "subject_validator": "app/validators/custom_channel_message_validator.rb"
+  }
+}

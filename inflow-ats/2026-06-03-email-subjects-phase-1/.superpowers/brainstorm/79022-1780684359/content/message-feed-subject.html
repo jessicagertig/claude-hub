@@ -1,0 +1,125 @@
+<h2>Subject in the Message Feed — How to reveal it?</h2>
+<p class="subtitle">Messages have a stored subject now. How should users see it in the transcript? Three lightweight approaches.</p>
+
+<div class="cards">
+
+  <!-- Option A: Three-dot menu item -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 16px 20px;">
+        <!-- Message header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <div style="width: 32px; height: 32px; background: #e5e7eb; border-radius: 50%;"></div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <span style="font-size: 14px; font-weight: 600;">Rezu May</span>
+                <span style="color: #9ca3af;">‧</span>
+                <span style="font-size: 13px; color: #9ca3af;">2h ago</span>
+              </div>
+              <p style="font-size: 12px; color: #9ca3af; margin: 2px 0 0;">Sent via email</p>
+            </div>
+          </div>
+          <!-- Three dot menu expanded -->
+          <div style="position: relative;">
+            <div style="color: #9ca3af; cursor: pointer; font-size: 18px; letter-spacing: 1px;">⋮</div>
+            <div style="position: absolute; right: 0; top: 24px; background: white; border: 1px solid #e5e7eb; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); min-width: 160px; z-index: 10;">
+              <button style="display: block; width: 100%; text-align: left; padding: 8px 14px; font-size: 13px; border: none; background: none; cursor: pointer; color: #374151; border-bottom: 1px solid #f3f4f6;">Create template</button>
+              <button style="display: block; width: 100%; text-align: left; padding: 8px 14px; font-size: 13px; border: none; background: none; cursor: pointer; color: #374151;">Show subject</button>
+            </div>
+          </div>
+        </div>
+        <!-- Body -->
+        <div style="margin-top: 12px; font-size: 14px; line-height: 1.6; color: #374151;">
+          <p style="margin: 0;">Hello Sid, Thank you for your application. We appreciate your interest in joining the <strong>Acme Inc.</strong> team.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. Three-dot menu: "Show subject"</h3>
+      <p>Add "Show subject" to the existing dropdown. Clicking it reveals the subject above the body. Menu changes to "Hide subject". Minimal UI footprint — zero visual change until the user asks for it.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Small clickable "Subj" chip -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 16px 20px;">
+        <!-- Message header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <div style="width: 32px; height: 32px; background: #e5e7eb; border-radius: 50%;"></div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <span style="font-size: 14px; font-weight: 600;">Rezu May</span>
+                <span style="color: #9ca3af;">‧</span>
+                <span style="font-size: 13px; color: #9ca3af;">2h ago</span>
+                <span style="color: #9ca3af;">‧</span>
+                <span style="font-size: 11px; color: #9ca3af; border: 1px solid #e5e7eb; padding: 1px 6px; border-radius: 3px; cursor: pointer; letter-spacing: 0.3px;">SUBJ</span>
+              </div>
+              <p style="font-size: 12px; color: #9ca3af; margin: 2px 0 0;">Sent via email</p>
+            </div>
+          </div>
+          <div style="color: #9ca3af; cursor: pointer; font-size: 18px; letter-spacing: 1px;">⋮</div>
+        </div>
+        <!-- Subject revealed -->
+        <div style="margin-top: 10px; padding: 6px 10px; background: #f9fafb; border-radius: 4px; border-left: 2px solid #d1d5db;">
+          <span style="font-size: 12px; color: #6b7280;">Software Engineer at Acme Inc.</span>
+        </div>
+        <!-- Body -->
+        <div style="margin-top: 8px; font-size: 14px; line-height: 1.6; color: #374151;">
+          <p style="margin: 0;">Hello Sid, Thank you for your application. We appreciate your interest in joining the <strong>Acme Inc.</strong> team.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. Tiny "SUBJ" chip in the header</h3>
+      <p>A small bordered chip after the timestamp. Click to toggle subject visibility. When shown, subject appears in a subtle tinted bar above the body. Very compact affordance — discoverable but not pushy.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Always-visible subtle line -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 16px 20px;">
+        <!-- Message header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <div style="width: 32px; height: 32px; background: #e5e7eb; border-radius: 50%;"></div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <span style="font-size: 14px; font-weight: 600;">Rezu May</span>
+                <span style="color: #9ca3af;">‧</span>
+                <span style="font-size: 13px; color: #9ca3af;">2h ago</span>
+              </div>
+              <p style="font-size: 12px; color: #9ca3af; margin: 2px 0 0;">Sent via email</p>
+            </div>
+          </div>
+          <div style="color: #9ca3af; cursor: pointer; font-size: 18px; letter-spacing: 1px;">⋮</div>
+        </div>
+        <!-- Subject always visible but very muted -->
+        <div style="margin-top: 8px; font-size: 12px; color: #b0b5be;">
+          <span style="font-weight: 500; color: #c4c8cf;">Subj:</span> Software Engineer at Acme Inc.
+        </div>
+        <!-- Body -->
+        <div style="margin-top: 6px; font-size: 14px; line-height: 1.6; color: #374151;">
+          <p style="margin: 0;">Hello Sid, Thank you for your application. We appreciate your interest in joining the <strong>Acme Inc.</strong> team.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. Always visible — ultra-muted line</h3>
+      <p>Subject shown on every message in very light gray between header and body. No interaction needed. Near-invisible unless you look for it. But adds a line to every message, which gets noisy with many messages using the default subject.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top: 16px;">
+  <h3>Notes</h3>
+  <ul>
+    <li>Messages with nil subject (historical, pre-feature) would show nothing / hide the affordance entirely</li>
+    <li>"View original" already exists for candidate messages — same expand/collapse pattern could apply here</li>
+    <li>State is not persisted — refreshing the page resets to hidden</li>
+  </ul>
+</div>

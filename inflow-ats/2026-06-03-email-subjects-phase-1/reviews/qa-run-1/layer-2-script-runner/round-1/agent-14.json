@@ -1,0 +1,115 @@
+{
+  "agent_id": 14,
+  "layer": "script-runner",
+  "round": 1,
+  "focus": "Database schema — verify the migration ran correctly and columns exist with the right types",
+  "overall_status": "PASS",
+  "summary": "All 20 schema checks passed. Migration 20260603212057 has been applied. All four new columns (ChannelMessage.subject, ChannelMessage.mailgun_message_id, ChannelMessageTemplate.subject, Job.apply_response_template_subject) exist with type :string, are nullable, and have no defaults. The old validator file (custom_channel_message_body_validator.rb) has been removed and the renamed file (custom_channel_message_validator.rb) exists and defines the correct class.",
+  "total_checks": 20,
+  "passed": 20,
+  "failed": 0,
+  "findings": [],
+  "checks": [
+    {
+      "test_id": "CM-COL-SUBJECT",
+      "description": "ChannelMessage has 'subject' column",
+      "status": "PASS"
+    },
+    {
+      "test_id": "CM-TYPE-SUBJECT",
+      "description": "ChannelMessage.subject is type :string",
+      "status": "PASS"
+    },
+    {
+      "test_id": "CM-NULL-SUBJECT",
+      "description": "ChannelMessage.subject is nullable (null: true)",
+      "status": "PASS"
+    },
+    {
+      "test_id": "CM-COL-MAILGUN",
+      "description": "ChannelMessage has 'mailgun_message_id' column",
+      "status": "PASS"
+    },
+    {
+      "test_id": "CM-TYPE-MAILGUN",
+      "description": "ChannelMessage.mailgun_message_id is type :string",
+      "status": "PASS"
+    },
+    {
+      "test_id": "CM-NULL-MAILGUN",
+      "description": "ChannelMessage.mailgun_message_id is nullable (null: true)",
+      "status": "PASS"
+    },
+    {
+      "test_id": "CMT-COL-SUBJECT",
+      "description": "ChannelMessageTemplate has 'subject' column",
+      "status": "PASS"
+    },
+    {
+      "test_id": "CMT-TYPE-SUBJECT",
+      "description": "ChannelMessageTemplate.subject is type :string",
+      "status": "PASS"
+    },
+    {
+      "test_id": "CMT-NULL-SUBJECT",
+      "description": "ChannelMessageTemplate.subject is nullable (null: true)",
+      "status": "PASS"
+    },
+    {
+      "test_id": "JOB-COL-SUBJECT",
+      "description": "Job has 'apply_response_template_subject' column",
+      "status": "PASS"
+    },
+    {
+      "test_id": "JOB-TYPE-SUBJECT",
+      "description": "Job.apply_response_template_subject is type :string",
+      "status": "PASS"
+    },
+    {
+      "test_id": "JOB-NULL-SUBJECT",
+      "description": "Job.apply_response_template_subject is nullable (null: true)",
+      "status": "PASS"
+    },
+    {
+      "test_id": "VAL-OLD-GONE",
+      "description": "Old validator custom_channel_message_body_validator.rb does NOT exist",
+      "status": "PASS"
+    },
+    {
+      "test_id": "VAL-NEW-EXISTS",
+      "description": "New validator custom_channel_message_validator.rb exists",
+      "status": "PASS"
+    },
+    {
+      "test_id": "VAL-NEW-CLASS",
+      "description": "New validator defines CustomChannelMessageValidator class",
+      "status": "PASS"
+    },
+    {
+      "test_id": "MIG-STATUS",
+      "description": "Migration 20260603212057 has been applied (status: up)",
+      "status": "PASS"
+    },
+    {
+      "test_id": "CM-DEFAULT-SUBJECT",
+      "description": "ChannelMessage.subject has no default (nil)",
+      "status": "PASS"
+    },
+    {
+      "test_id": "CM-DEFAULT-MAILGUN",
+      "description": "ChannelMessage.mailgun_message_id has no default (nil)",
+      "status": "PASS"
+    },
+    {
+      "test_id": "CMT-DEFAULT-SUBJECT",
+      "description": "ChannelMessageTemplate.subject has no default (nil)",
+      "status": "PASS"
+    },
+    {
+      "test_id": "JOB-DEFAULT-SUBJECT",
+      "description": "Job.apply_response_template_subject has no default (nil)",
+      "status": "PASS"
+    }
+  ],
+  "script_path": "/tmp/qa-l2-agent14-schema-check.rb"
+}

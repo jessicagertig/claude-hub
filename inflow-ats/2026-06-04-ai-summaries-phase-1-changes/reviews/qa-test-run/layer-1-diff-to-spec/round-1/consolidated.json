@@ -1,0 +1,225 @@
+{
+  "meta": {
+    "review_type": "diff-to-spec",
+    "round": 1,
+    "agents_reporting": 15,
+    "total_findings": 13,
+    "findings_by_severity": {
+      "critical": 2,
+      "high": 5,
+      "medium": 4,
+      "low": 2
+    }
+  },
+  "findings": [
+    {
+      "id": "F-001",
+      "severity": "CRITICAL",
+      "title": "invoice.paid top-up branch uses checkout session lookup instead of invoice metadata",
+      "source_agents": ["stripe-webhook-1 (a1-001)", "stripe-webhook-2 (a2-001)", "stripe-webhook-3 (a3-001)"],
+      "spec_requirement": "Note #4: 'Add a branch to the invoice.paid handler keyed on object.metadata[\"ai_credit_pack_top_up\"] == \"true\" that grants one-off credits using the organization_id and stripe_price_lookup_key from the invoice metadata.'",
+      "actual_code": "The branch (lines 182-191 of stripe_webhook_handler_job.rb) checks the correct metadata key but then calls Stripe::Checkout::Session.list(payment_intent: object.payment_intent, limit: 1) to look up the checkout session and passes it to ApplyAiCreditPurchase.call(session: checkout_session, kind: :one_off). It does NOT use organization_id or stripe_price_lookup_key from the invoice metadata.",
+      "evidence": "app/jobs/stripe_webhook_handler_job.rb:183-190 -- sessions = Stripe::Checkout::Session.list(payment_intent: object.payment_intent, limit: 1); checkout_session = sessions.data.first; if checkout_session then ApplyAiCreditPurchase.call(session: checkout_session, kind: :one_off)",
+      "impact": "The spec explicitly states the invoice metadata carries organization_id and stripe_price_lookup_key so credits can be granted directly without additional Stripe API calls. The implementation adds a Stripe API dependency (Session.list), and if the lookup fails, credits are silently not granted (only a log error). The invoice_creation metadata set in Note #4's controller change is never read by this handler.",
+      "files": ["app/jobs/stripe_webhook_handler_job.rb"]
+    },
+    {
+      "id": "F-002",
+      "severity": "CRITICAL",
+      "title": "charge.refunded handler and handle_charge_refunded method deleted -- Note #33 says 'no change'",
+      "source_agents": ["stripe-webhook-1 (a1-002)", "stripe-webhook-3 (a3-002)"],
+      "spec_requirement": "Note #33 approved decision: 'No change. handle_charge_refunded handles ALL charge.refunded events, not just credit-pack refunds. The return unless purchase correctly filters non-credit-pack refunds.'",
+      "actual_code": "The current file has no charge.refunded case in handle_stripe_event and no handle_charge_refunded private method. Both were removed in commit fa9ccdb38 as 'out-of-spec code' but the pre-existing handler was explicitly preserved by Note #33.",
+      "evidence": "app/jobs/stripe_webhook_handler_job.rb -- no occurrence of 'charge.refunded' or 'handle_charge_refunded' anywhere in the file. Pre-feature baseline (commit 303852779) had the full implementation.",
+      "impact": "charge.refunded events are now silently ignored. Credit-pack refunds will no longer trigger ApplyAiCreditRefund. This is a behavioral regression in production-critical payment handling.",
+      "files": ["app/jobs/stripe_webhook_handler_job.rb"]
+    },
+    {
+      "id": "F-003",
+      "severity": "HIGH",
+      "title": "CREDIT_PACKS_BY_LOOKUP_KEY missing name: key from all four pack entries",
+      "source_agents": ["model-purchase (a5-001)"],
+      "spec_requirement": "Note #9B-1 gives an exact hash literal for CREDIT_PACKS_BY_LOOKUP_KEY. Each of the four packs includes a name: key (e.g., name: 'Credit Pack Top-Up -- Small').",
+      "actual_code": "All four pack hashes contain only kind: and credits: (or credits_per_period:). The name: key is absent from every entry.",
+      "evidence": "app/models/organization_ai_credit_purchase.rb:4-21 -- CREDIT_PACKS_BY_LOOKUP_KEY has { kind: :one_off, credits: 100 } etc. with no name: field",
+      "impact": "Any caller reading pack[:name] (e.g., for mailers, error messages, admin tooling) gets nil instead of the human-readable pack name.",
+      "files": ["app/models/organization_ai_credit_purchase.rb"]
+    },
+    {
+      "id": "F-004",
+      "severity": "HIGH",
+      "title": "checkout action sets amount_cents_paid: 0 -- spec says leave it nil",
+      "source_agents": ["controllers (a6-001)"],
+      "spec_requirement": "Note #9B-5: create the purchase row with kind: :subscription, stripe_checkout_session_id, stripe_price_lookup_key, and subscription_credits_per_period. The Constraints section states: 'At checkout time no payment has been collected, so these fields are unknown. The relaxation defers their requirement until after the subscription is linked via checkout.session.completed. They will be populated when invoice.paid arrives.'",
+      "actual_code": "The checkout action creates the purchase with amount_cents_paid: 0 explicitly set.",
+      "evidence": "app/controllers/api/v1/organization_ai_credit_purchases_controller.rb:52 -- amount_cents_paid: 0",
+      "impact": "amount_cents_paid is pre-filled with 0 instead of nil. The model validation relaxation was designed specifically so this field does NOT need a value at checkout time. Setting 0 misrepresents the payment state at record creation. The invoice.paid handler will overwrite it, so functional impact is limited, but it contradicts the spec's data-modeling intent.",
+      "files": ["app/controllers/api/v1/organization_ai_credit_purchases_controller.rb"]
+    },
+    {
+      "id": "F-005",
+      "severity": "HIGH",
+      "title": "AI_TASKS_README.md missing two on-demand benchmark tasks",
+      "source_agents": ["migrations-config (a14-001)"],
+      "spec_requirement": "Note #19 says the 'On-demand / manual tasks' section must document five tasks: ai_credits:grant, ai_credits:show, ai:bulk_extract, ai:relevance_benchmark, and ai:comparison_benchmark.",
+      "actual_code": "The README lists only three on-demand tasks: ai_credits:grant, ai_credits:show, and ai:bulk_extract.",
+      "evidence": "lib/tasks/AI_TASKS_README.md lines 12-14 -- section ends after ai:bulk_extract with no further entries",
+      "impact": "Two manual benchmark tasks are undocumented. Operators will not know these tasks exist.",
+      "files": ["lib/tasks/AI_TASKS_README.md"]
+    },
+    {
+      "id": "F-006",
+      "severity": "MEDIUM",
+      "title": "AI_TASKS_README.md documents ai_credits:reconcile as weekly, not daily",
+      "source_agents": ["migrations-config (a14-002)"],
+      "spec_requirement": "Note #19 lists ai_credits:reconcile under 'Recurring tasks (Heroku Scheduler)' with description 'daily. Rebuilds cached credit counters from the ledger.'",
+      "actual_code": "The README entry reads: 'Runs weekly or on-demand after suspected drift.'",
+      "evidence": "lib/tasks/AI_TASKS_README.md line 7",
+      "impact": "A Heroku Scheduler operator following this README would configure the task as weekly rather than daily.",
+      "files": ["lib/tasks/AI_TASKS_README.md"]
+    },
+    {
+      "id": "F-007",
+      "severity": "MEDIUM",
+      "title": "AccountContainer Plato AI route missing exact={false}",
+      "source_agents": ["plato-ai (a13-001)"],
+      "spec_requirement": "Note #16: 'Add one route for /hire/settings/plato-ai with exact={false}, rendering AccountPlatoAiContainer.'",
+      "actual_code": "The route has no exact={false} prop.",
+      "evidence": "app/javascript/ats/src/views/accountAdmin/AccountContainer.tsx:206-211 -- <Route path=\"/hire/settings/plato-ai\" render={...} /> with no exact prop",
+      "impact": "React Router v5 <Route> without exact prop does prefix-match by default, so the route likely still works. However, the spec explicitly requires exact={false} and the code omits it. Functionally low risk; spec-compliance mismatch.",
+      "files": ["app/javascript/ats/src/views/accountAdmin/AccountContainer.tsx"]
+    },
+    {
+      "id": "F-008",
+      "severity": "HIGH",
+      "title": "Bulk job spec uses structural handler-order test instead of behavioral retry/discard test",
+      "source_agents": ["tests (a15-003)"],
+      "spec_requirement": "Note #25 TDD requirement: 'The spec stubs the pipeline to raise CustomErrorAiSummary during iteration and asserts the job is re-enqueued (retried), not discarded. Separately asserts that a non-CustomErrorAiSummary StandardError escaping outside each_iteration results in discard (not retry). Write and run the spec BEFORE the declaration order change. It must FAIL against the current code.'",
+      "actual_code": "The spec inspects described_class.rescue_handlers indices to check registration order, never actually stubbing the pipeline to raise errors or verifying ActiveJob retry/discard behavior.",
+      "evidence": "spec/jobs/bulk_generate_ai_summaries_job_spec.rb:72-88 -- handlers = described_class.rescue_handlers; retry_index = handlers.index { |h| h[0] == 'CustomErrorAiSummary' }; expect(retry_index).to be > discard_index",
+      "impact": "The TDD requirement is not met. The spec does not test actual runtime behavior. The second required assertion (non-CustomErrorAiSummary StandardError -> discarded) is entirely absent.",
+      "files": ["spec/jobs/bulk_generate_ai_summaries_job_spec.rb"]
+    },
+    {
+      "id": "F-009",
+      "severity": "HIGH",
+      "title": "Bulk job spec does not test discard_on and retry_on exhaustion blocks calling notify_failure",
+      "source_agents": ["tests (a15-004)"],
+      "spec_requirement": "Note #13: 'notify_failure -- called from three places: 1. discard_on block. 2. retry_on exhaustion block. 3. on_complete when the failure condition IS met.'",
+      "actual_code": "The spec covers on_complete success and failure paths but has no test for the discard_on block or retry_on exhaustion block calling notify_failure.",
+      "evidence": "spec/jobs/bulk_generate_ai_summaries_job_spec.rb -- no describe/it block tests the discard_on callback or retry_on exhaustion callback",
+      "impact": "The most important failure notification paths (job discarded or retries exhausted) have no test coverage. A missing notify_failure call in either block would go undetected.",
+      "files": ["spec/jobs/bulk_generate_ai_summaries_job_spec.rb"]
+    },
+    {
+      "id": "F-010",
+      "severity": "MEDIUM",
+      "title": "Mailer spec missing god_admin coverage in admin_recipients test",
+      "source_agents": ["tests (a15-001)"],
+      "spec_requirement": "Note #1 Test Requirements: 'admin_recipients returns User records for org_admin, org_owner, and god_admin org users and excludes org_user and org_interviewer.'",
+      "actual_code": "The spec creates owner, admin, member, and interviewer org users. No god_admin org user is created.",
+      "evidence": "spec/mailers/ai_credit_notification_mailer_spec.rb:7-32 -- no god_admin let block",
+      "impact": "The is_admin fix (selecting org_admin + org_owner + god_admin) is not verified for god_admin. A regression dropping god_admin from recipients would go undetected.",
+      "files": ["spec/mailers/ai_credit_notification_mailer_spec.rb"]
+    },
+    {
+      "id": "F-011",
+      "severity": "LOW",
+      "title": "Mailer spec does not assert to, subject, template_version, or tags fields",
+      "source_agents": ["tests (a15-002)"],
+      "spec_requirement": "Note #1 Test Requirements: 'per-recipient message_params outputs for both low_credits and zero_credits (to, subject, template, template_version, tags, and variables).'",
+      "actual_code": "Tests only check params[:template] and selected variables. No assertions on to, subject, template_version, or tags.",
+      "evidence": "spec/mailers/ai_credit_notification_mailer_spec.rb:47-51 and :74-76",
+      "impact": "Wrong recipients, subjects, or template metadata would go undetected by specs.",
+      "files": ["spec/mailers/ai_credit_notification_mailer_spec.rb"]
+    },
+    {
+      "id": "F-012",
+      "severity": "LOW",
+      "title": "BulkJobApplicationAiSummaryResultMailer uses local variables instead of instance variables",
+      "source_agents": ["bulk-notifications (a9-001)"],
+      "spec_requirement": "Note #13: 'Pattern: app/mailers/job_resume_export_mailer.rb'. The pattern file uses @instance_variables for fetched records.",
+      "actual_code": "The new mailer uses local variables (user = User.find(user_id)) rather than instance variables (@user = User.find(user_id)).",
+      "evidence": "app/mailers/bulk_job_application_ai_summary_result_mailer.rb:5-6 -- 'user = User.find(user_id)' and 'job = Job.find(job_id)'",
+      "impact": "Functionally nil since these mailers use a template service rather than ERB views. Deviates from the named pattern but does not affect behavior.",
+      "files": ["app/mailers/bulk_job_application_ai_summary_result_mailer.rb"]
+    },
+    {
+      "id": "F-013",
+      "severity": "MEDIUM",
+      "title": "Webhook spec invoice.paid top-up test verifies the checkout-session-lookup approach, not the invoice-metadata approach",
+      "source_agents": ["tests (a15-005)"],
+      "spec_requirement": "Note #4: credits should be granted using organization_id and stripe_price_lookup_key from the invoice metadata.",
+      "actual_code": "The test mocks Stripe::Checkout::Session.list and list_line_items to resolve via payment_intent. The invoice metadata double sets ai_credit_pack_top_up but does NOT stub return values for metadata['organization_id'] or metadata['stripe_price_lookup_key'].",
+      "evidence": "spec/jobs/stripe_webhook_handler_ai_credits_spec.rb:47-82 -- allow(Stripe::Checkout::Session).to receive(:list).with(payment_intent: 'pi_test_topup', limit: 1) but no metadata stubs for organization_id or stripe_price_lookup_key",
+      "impact": "The test validates the divergent implementation (F-001), not the spec-prescribed approach. If F-001 is fixed to use invoice metadata, this test will need rewriting.",
+      "files": ["spec/jobs/stripe_webhook_handler_ai_credits_spec.rb"]
+    }
+  ],
+  "spec_coverage": {
+    "fully_implemented": [
+      "Note #3 -- .order(:created_at).last in apply_ai_credit_refund.rb",
+      "Note #5 -- Enum rename cascade across all 12+ files (backend and frontend)",
+      "Note #6A -- AiCreditPacks references replaced with OrganizationAiCreditPurchase (except name: key omission in #9B-1)",
+      "Note #6B -- role_category_groups.rb deleted",
+      "Note #8 -- Flipper guard in reset_daily_ai_credits.rb",
+      "Note #9A -- Controllers/policies renamed, old ones deleted, routes updated, frontend hooks consolidated",
+      "Note #9B-2 -- prices action, AI_CREDIT_PACK_CREDITS_BY_LOOKUP_KEY, aiCreditPrices function",
+      "Note #9B-5 -- checkout.session.completed AI subscription branch, handle_credit_pack_invoice_paid updates, validation relaxations (except amount_cents_paid: 0 deviation)",
+      "Note #13 -- notify_complete and notify_failure methods, new mailer (except pattern deviation and missing test coverage)",
+      "Note #16 -- AccountPlatoAiContainer created, AccountContainer restructured (except missing exact={false})",
+      "Note #19 -- AI_TASKS_README.md created (except missing 2 tasks and wrong schedule)",
+      "Note #20 -- Template rename ai-credits-low -> user-ai-credit-balance-low",
+      "Note #25 -- retry_on/discard_on declaration order swapped (but test uses structural not behavioral approach)",
+      "Note #26 -- prompt_text removed from summary.update calls",
+      "Note #27 -- process_overdue_ai_credit_resets -> process_ai_credit_resets, overdue logic removed",
+      "Note #30 -- Sentry.capture_exception in create_ai_credit_state_if_needed",
+      "Note #31 -- Variables::AI_DAILY_CREDIT_ALLOCATION and PlanFeatureGate fallback",
+      "Note #32 -- Both .reload calls removed",
+      "Note #34 -- broadcast_ai_summary_failed rename, AI_SUMMARY_FAILED action, errorMessage payload, frontend handler",
+      "Note #35 -- saved_change_to_id? removed from textract_result.rb",
+      "Note #37 -- Misleading comment removed from plan_feature_gate.rb",
+      "Note #38 -- Template rename ai-credits-zero -> user-ai-credit-balance-zero",
+      "Note #1 -- is_admin? -> is_admin fix"
+    ],
+    "implemented_with_deviations": [
+      {
+        "requirement": "Note #4 -- invoice.paid top-up branch",
+        "deviation": "Uses checkout session lookup instead of invoice metadata (F-001). Test also validates the divergent approach (F-013)."
+      },
+      {
+        "requirement": "Note #33 -- No change to handle_charge_refunded",
+        "deviation": "Handler was deleted entirely (F-002)."
+      },
+      {
+        "requirement": "Note #9B-1 -- CREDIT_PACKS_BY_LOOKUP_KEY four real packs",
+        "deviation": "Pack entries missing name: key (F-003)."
+      },
+      {
+        "requirement": "Note #9B-5 -- checkout creates purchase row",
+        "deviation": "Sets amount_cents_paid: 0 instead of leaving nil (F-004)."
+      },
+      {
+        "requirement": "Note #16 -- AccountContainer route",
+        "deviation": "Missing exact={false} prop (F-007)."
+      },
+      {
+        "requirement": "Note #19 -- AI_TASKS_README.md",
+        "deviation": "Missing 2 benchmark tasks (F-005) and wrong schedule for reconcile (F-006)."
+      },
+      {
+        "requirement": "Note #25 -- TDD for retry/discard ordering",
+        "deviation": "Test uses structural handler-order check, not behavioral test (F-008)."
+      },
+      {
+        "requirement": "Note #13 -- notify_failure coverage",
+        "deviation": "No tests for discard_on or retry_on exhaustion calling notify_failure (F-009)."
+      },
+      {
+        "requirement": "Note #1 -- mailer spec coverage",
+        "deviation": "Missing god_admin (F-010) and incomplete message_params assertions (F-011)."
+      }
+    ],
+    "not_covered": []
+  }
+}

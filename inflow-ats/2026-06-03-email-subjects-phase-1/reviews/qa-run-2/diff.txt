@@ -1,0 +1,1162 @@
+diff --git a/app/controllers/api/v1/bulk_channel_messages_controller.rb b/app/controllers/api/v1/bulk_channel_messages_controller.rb
+index cc9f40799..df676b77d 100644
+--- a/app/controllers/api/v1/bulk_channel_messages_controller.rb
++++ b/app/controllers/api/v1/bulk_channel_messages_controller.rb
+@@ -18,6 +18,7 @@ class Api::V1::BulkChannelMessagesController < Api::V1::BaseController
+       if current_organization.can_send_bulk_messages
+         channel_message_params = {
+           body: bulk_channel_message_params[:body],
++          subject: bulk_channel_message_params[:subject],
+           created_by_organization_user_id: current_organization_user.id,
+           sent_by: 'sent_by_user',
+           source: 'source_in_app'
+@@ -77,8 +78,9 @@ class Api::V1::BulkChannelMessagesController < Api::V1::BaseController
+   def bulk_channel_message_params
+     # ap 'ChannelMessage Params'
+     # puts params[:bulk_channel_message] # have to do puts not ap here because of unfiltered hash
+-    next_params = params.require(:bulk_channel_message).permit(:body, :hiring_stage_id, included_job_application_ids: [], excluded_job_application_ids: [])
++    next_params = params.require(:bulk_channel_message).permit(:body, :subject, :hiring_stage_id, included_job_application_ids: [], excluded_job_application_ids: [])
+     next_params[:body] = sanitize(next_params[:body]) if next_params.key?(:body)
++    next_params[:subject] = sanitize(next_params[:subject]) if next_params.key?(:subject)
+     next_params
+   end
+ end
+diff --git a/app/controllers/api/v1/candidates_controller.rb b/app/controllers/api/v1/candidates_controller.rb
+index ea4bf4b10..c618ad082 100644
+--- a/app/controllers/api/v1/candidates_controller.rb
++++ b/app/controllers/api/v1/candidates_controller.rb
+@@ -143,6 +143,8 @@ class Api::V1::CandidatesController < Api::V1::BaseController
+           channel_message.body_plain_text = text_replacer(channel_message.body_plain_text, real_last_name, name_replacement)
+           channel_message.body_sanitized_html = text_replacer(channel_message.body_sanitized_html, real_first_name, name_replacement)
+           channel_message.body_sanitized_html = text_replacer(channel_message.body_sanitized_html, real_last_name, name_replacement)
++          channel_message.subject = text_replacer(channel_message.subject, real_first_name, name_replacement)
++          channel_message.subject = text_replacer(channel_message.subject, real_last_name, name_replacement)
+           channel_message.save!
+ 
+           channel_message.files.purge_later if channel_message.files.attached?
+diff --git a/app/controllers/api/v1/channel_message_templates_controller.rb b/app/controllers/api/v1/channel_message_templates_controller.rb
+index c02279b56..7cdfd6d95 100644
+--- a/app/controllers/api/v1/channel_message_templates_controller.rb
++++ b/app/controllers/api/v1/channel_message_templates_controller.rb
+@@ -58,6 +58,6 @@ class Api::V1::ChannelMessageTemplatesController < Api::V1::BaseController
+ 
+   # Only allow a trusted parameter "white list" through.
+   def channel_message_template_params
+-    params.require(:channel_message_template).permit(:name, :body, :position)
++    params.require(:channel_message_template).permit(:name, :body, :subject, :position)
+   end
+ end
+diff --git a/app/controllers/api/v1/channel_messages_controller.rb b/app/controllers/api/v1/channel_messages_controller.rb
+index 1cabab054..30a7c7053 100644
+--- a/app/controllers/api/v1/channel_messages_controller.rb
++++ b/app/controllers/api/v1/channel_messages_controller.rb
+@@ -28,12 +28,13 @@ class Api::V1::ChannelMessagesController < Api::V1::BaseController
+     ap 'ChannelMessage Params'
+     puts params[:channel_message] # have to do puts not ap here because of unfiltered hash
+ 
+-    next_params = params.require(:channel_message).permit(:body)
++    next_params = params.require(:channel_message).permit(:body, :subject)
+ 
+     # ap 'PARAMS'
+     # ap next_params
+ 
+     next_params[:body] = sanitize(next_params[:body]) if next_params.key?(:body)
++    next_params[:subject] = sanitize(next_params[:subject]) if next_params.key?(:subject)
+ 
+     # ap 'CLEANED'
+     # ap next_params
+diff --git a/app/controllers/api/v1/jobs_controller.rb b/app/controllers/api/v1/jobs_controller.rb
+index 67f225864..9c377c997 100644
+--- a/app/controllers/api/v1/jobs_controller.rb
++++ b/app/controllers/api/v1/jobs_controller.rb
+@@ -233,6 +233,7 @@ class Api::V1::JobsController < Api::V1::BaseController
+                      :salary_currency,
+                      :use_apply_response_template,
+                      :apply_response_template,
++                     :apply_response_template_subject,
+                      :external_listings_enabled,
+                      { external_listings_settings: %i[linkedin_enabled x_hiring_enabled] },
+                      { settings: %i[
+@@ -268,6 +269,9 @@ class Api::V1::JobsController < Api::V1::BaseController
+       ap 'Sanitized Apply Response Template'
+       ap sanitized_params[:apply_response_template]
+     end
++    if sanitized_params.key?(:apply_response_template_subject)
++      sanitized_params[:apply_response_template_subject] = sanitize(sanitized_params[:apply_response_template_subject])
++    end
+     sanitized_params
+ 
+     # params.require(:job).permit(policy(Job).permitted_attributes)
+diff --git a/app/interactors/channel_messages/create_stage_automation_message.rb b/app/interactors/channel_messages/create_stage_automation_message.rb
+index e867aeb8d..5a7f8790a 100644
+--- a/app/interactors/channel_messages/create_stage_automation_message.rb
++++ b/app/interactors/channel_messages/create_stage_automation_message.rb
+@@ -13,7 +13,10 @@ class ChannelMessages::CreateStageAutomationMessage
+     @candidate = context.job_application.candidate
+     @message_params = context.message_params
+ 
+-    channel_message_params = @message_params.merge(body: parse_body)
++    channel_message_params = @message_params.merge(
++      body: parse_text(@message_params[:body]),
++      subject: parse_text(@message_params[:subject])
++    )
+     channel = context.job_application.channels.kind_all.first
+     channel_message = channel.channel_messages.build(channel_message_params)
+ 
+@@ -27,11 +30,12 @@ class ChannelMessages::CreateStageAutomationMessage
+ 
+   private
+ 
+-  def parse_body
++  def parse_text(text)
++    return '' if text.blank?
++
+     user = context.organization_user.user
+-    body = @message_params[:body]
+ 
+-    body.scrub # removes malformed UTF-8
++    text.scrub # removes malformed UTF-8
+         .gsub('{{SenderFullName}}', user.full_name)
+         .gsub('{{SenderFirstName}}', user.first_name)
+         .gsub('{{JobTitle}}', @job.title)
+diff --git a/app/interactors/customer_api/complete_job_application.rb b/app/interactors/customer_api/complete_job_application.rb
+index 030e8dac1..cba4eafa5 100644
+--- a/app/interactors/customer_api/complete_job_application.rb
++++ b/app/interactors/customer_api/complete_job_application.rb
+@@ -54,6 +54,7 @@ class CustomerApi::CompleteJobApplication
+         channel_id: job_application.channels.first.id,
+         params: {
+           body: job_application.html_safe_apply_email,
++          subject: job_application.parse_apply_response_text(job_application.job.apply_response_template_subject),
+           sent_by: 'sent_by_organization',
+           source: 'source_in_app'
+         }
+diff --git a/app/javascript/ats/src/components/modals/BulkMessageModal.tsx b/app/javascript/ats/src/components/modals/BulkMessageModal.tsx
+index f19ccf043..983c241cc 100644
+--- a/app/javascript/ats/src/components/modals/BulkMessageModal.tsx
++++ b/app/javascript/ats/src/components/modals/BulkMessageModal.tsx
+@@ -8,6 +8,7 @@ import CenterModal from "@ats/src/components/modals/CenterModal";
+ import Button from "@ats/src/components/shared/Button";
+ import FormContainer from "@ats/src/components/forms/FormContainer";
+ // import FormTextarea from "@ats/src/components/forms/FormTextarea";
++import FormInput from "@ats/src/components/forms/FormInput";
+ import FormSelect from "@ats/src/components/forms/FormSelect";
+ 
+ import ProseMirrorEditor from "@shared/ProseMirror/Editor";
+@@ -49,6 +50,8 @@ function BulkMessageModal(props: Props) {
+   const { getFeatureInfo } = useFeatureGate();
+   const bulkMessageFeature = getFeatureInfo(PlanFeatures.BULK_MESSAGE);
+   const editorRef = React.useRef(undefined);
++  const defaultSubject = "{{JobTitle}} at {{OrganizationName}}";
++  const [subject, setSubject] = useState(defaultSubject);
+   const [errors, setErrors] = useState([]);
+   const [isDirty, setIsDirty] = useState(false);
+ 
+@@ -79,9 +82,16 @@ function BulkMessageModal(props: Props) {
+     setIsDirty(true);
+   };
+ 
++  const handleChangeSubject = (name, value) => {
++    setErrors([]);
++    setSubject(value);
++    setIsDirty(true);
++  };
++
+   const handleSubmit = async (e) => {
+     e.preventDefault();
+     const [isValid, validationErrors] = await validateBulkMessage({
++      subject,
+       body: editorRef.current.serializedState(),
+       jobApplications,
+     });
+@@ -90,6 +100,9 @@ function BulkMessageModal(props: Props) {
+       handleSendBulkMessage();
+     } else {
+       setErrors(validationErrors);
++      if (!subject || subject.trim() === "") {
++        setSubject(defaultSubject);
++      }
+     }
+   };
+ 
+@@ -100,6 +113,7 @@ function BulkMessageModal(props: Props) {
+           jobId,
+           hiringStageId,
+           body: editorRef.current.serializedState(),
++          subject,
+           excludedJobApplicationIds: idsArrayType === "excluded" ? idsArray : [],
+           includedJobApplicationIds: idsArrayType === "included" ? idsArray : [],
+         },
+@@ -160,6 +174,7 @@ function BulkMessageModal(props: Props) {
+     // setChannelMessageTemplate(template);
+     if (template) {
+       editorRef.current.insertTextAtCurrentSelection(template.body);
++      setSubject(template.subject || defaultSubject);
+     }
+ 
+     setIsDirty(true);
+@@ -246,6 +261,15 @@ function BulkMessageModal(props: Props) {
+           isDisabled={bulkMessageFeature.isLocked || candidatesCount === 0}
+         />
+ 
++        <FormInput
++          onChange={handleChangeSubject}
++          name="subject"
++          placeholder=""
++          label="Subject"
++          value={subject}
++          errors={errors}
++        />
++
+         <Styled.TemplateInput isLocked={bulkMessageFeature.isLocked}>
+           {/* <FormTextarea
+             onChange={handleChangeBulkMessageBody}
+diff --git a/app/javascript/ats/src/components/modals/ChannelMessageTemplateModal.tsx b/app/javascript/ats/src/components/modals/ChannelMessageTemplateModal.tsx
+index be766456b..9230dcf48 100644
+--- a/app/javascript/ats/src/components/modals/ChannelMessageTemplateModal.tsx
++++ b/app/javascript/ats/src/components/modals/ChannelMessageTemplateModal.tsx
+@@ -24,7 +24,7 @@ import { trackEvent } from "@shared/lib/posthog";
+ type Props = {
+   onCancel: () => void;
+   isEditing: boolean;
+-  channelMessageTemplate: { id; name; body };
++  channelMessageTemplate: { id; name; body; subject };
+ };
+ 
+ function ChannelMessageTemplateModal(props: Props) {
+@@ -45,11 +45,13 @@ function ChannelMessageTemplateModal(props: Props) {
+     isLoading: isLoadingUpdate,
+   } = useUpdateChannelMessageTemplate();
+ 
+-  const [channelMessageTemplate, setChannelMessageTemplate] = useState(
+-    props.channelMessageTemplate,
+-  );
++  const defaultSubject = "{{JobTitle}} at {{OrganizationName}}";
++  const [channelMessageTemplate, setChannelMessageTemplate] = useState({
++    ...props.channelMessageTemplate,
++    subject: props.channelMessageTemplate.subject || defaultSubject,
++  });
+ 
+-  const { name, body } = channelMessageTemplate;
++  const { name, body, subject } = channelMessageTemplate;
+ 
+   const editorRef = React.useRef(undefined);
+ 
+@@ -78,9 +80,10 @@ function ChannelMessageTemplateModal(props: Props) {
+ 
+   const handleSubmit = async (e) => {
+     e.preventDefault();
+-    const { name } = channelMessageTemplate;
++    const { name, subject } = channelMessageTemplate;
+     const [isValid, validationErrors] = await validateChannelMessageTemplate({
+       name,
++      subject,
+       body: editorRef.current.serializedState(),
+     });
+ 
+@@ -180,6 +183,15 @@ function ChannelMessageTemplateModal(props: Props) {
+           autoFocus
+         />
+ 
++        <FormInput
++          onChange={handleChangeChannelMessageName}
++          name="subject"
++          placeholder=""
++          label="Subject"
++          value={subject || ""}
++          errors={errors}
++        />
++
+         <Styled.TemplateInput>
+           <ProseMirrorEditor
+             ref={editorRef}
+diff --git a/app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx b/app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx
+index 3e882fb30..799fcde60 100644
+--- a/app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx
++++ b/app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx
+@@ -39,9 +39,16 @@ function PreviewSelection(props) {
+         Loading...
+       </Styled.LoadingMessage>
+     ) : (
+-      <div 
+-        dangerouslySetInnerHTML={{ __html: mailMergeHtml || '' }} 
+-      />
++      <>
++        {mailMerge?.subjectRaw && (
++          <Styled.SubjectPreview>
++            Subject: {mailMerge.subjectRaw}
++          </Styled.SubjectPreview>
++        )}
++        <div
++          dangerouslySetInnerHTML={{ __html: mailMergeHtml || '' }}
++        />
++      </>
+     )}
+     </Styled.PreviewContainer>
+   );
+@@ -191,6 +198,18 @@ Styled.ButtonContainer = styled.div((props) => {
+   `;
+ });
+ 
++Styled.SubjectPreview = styled.div((props) => {
++  const t: any = props.theme;
++  return css`
++    label: ChannelMessageTemplateSelectionModal_SubjectPreview;
++    ${[t.mb(3), t.pb(3)]}
++    font-weight: 600;
++    font-size: ${t.text.sm};
++    border-bottom: 1px solid ${t.dark ? t.color.gray[600] : t.color.gray[300]};
++    color: ${t.dark ? t.color.gray[200] : t.color.gray[800]};
++  `;
++});
++
+ Styled.PreviewContainer = styled.div((props) => {
+   const t: any = props.theme;
+   return css`
+diff --git a/app/javascript/ats/src/components/modals/HiringStageAutomationModal.tsx b/app/javascript/ats/src/components/modals/HiringStageAutomationModal.tsx
+index 6dda9899d..3b289302f 100644
+--- a/app/javascript/ats/src/components/modals/HiringStageAutomationModal.tsx
++++ b/app/javascript/ats/src/components/modals/HiringStageAutomationModal.tsx
+@@ -55,6 +55,7 @@ function HiringStageAutomationModal(props: Props) {
+   --------------------------------------------------------------------- */
+   const [isCreatingTemplate, setIsCreatingTemplate] = useState(false);
+   const [newTemplateName, setNewTemplateName] = useState("");
++  const [newTemplateSubject, setNewTemplateSubject] = useState("{{JobTitle}} at {{OrganizationName}}");
+   const [templateErrors, setTemplateErrors] = useState([]);
+   const editorRef = useRef(undefined);
+ 
+@@ -179,12 +180,14 @@ function HiringStageAutomationModal(props: Props) {
+   const handleStartCreateTemplate = () => {
+     setIsCreatingTemplate(true);
+     setNewTemplateName("");
++    setNewTemplateSubject("{{JobTitle}} at {{OrganizationName}}");
+     setTemplateErrors([]);
+   };
+ 
+   const handleDiscardTemplate = () => {
+     setIsCreatingTemplate(false);
+     setNewTemplateName("");
++    setNewTemplateSubject("{{JobTitle}} at {{OrganizationName}}");
+     setTemplateErrors([]);
+   };
+ 
+@@ -194,6 +197,12 @@ function HiringStageAutomationModal(props: Props) {
+     setIsDirty(true);
+   };
+ 
++  const handleChangeNewTemplateSubject = (_name, value) => {
++    setNewTemplateSubject(value);
++    setTemplateErrors([]);
++    setIsDirty(true);
++  };
++
+   const handleChangeEditorState = () => {
+     setTemplateErrors([]);
+     setIsDirty(true);
+@@ -205,6 +214,7 @@ function HiringStageAutomationModal(props: Props) {
+     const body = editorRef.current?.serializedState();
+     const [isValid, validationErrors] = await validateChannelMessageTemplate({
+       name: newTemplateName,
++      subject: newTemplateSubject,
+       body,
+     });
+ 
+@@ -214,7 +224,7 @@ function HiringStageAutomationModal(props: Props) {
+     }
+ 
+     createChannelMessageTemplate(
+-      { name: newTemplateName, body },
++      { name: newTemplateName, subject: newTemplateSubject, body },
+       {
+         onSuccess: (data) => {
+           window.logger(
+@@ -228,6 +238,7 @@ function HiringStageAutomationModal(props: Props) {
+           }));
+           setIsCreatingTemplate(false);
+           setNewTemplateName("");
++          setNewTemplateSubject("{{JobTitle}} at {{OrganizationName}}");
+           setTemplateErrors([]);
+           setIsDirty(true);
+         },
+@@ -331,6 +342,14 @@ function HiringStageAutomationModal(props: Props) {
+               errors={templateErrors}
+               autoFocus
+             />
++            <FormInput
++              onChange={handleChangeNewTemplateSubject}
++              name="subject"
++              placeholder=""
++              label="Subject"
++              value={newTemplateSubject}
++              errors={templateErrors}
++            />
+             <Styled.TemplateInput>
+               <ProseMirrorEditor
+                 ref={editorRef}
+diff --git a/app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageNew.tsx b/app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageNew.tsx
+index 4082e1aa5..70e6a379f 100644
+--- a/app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageNew.tsx
++++ b/app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageNew.tsx
+@@ -3,8 +3,10 @@ import styled from "@emotion/styled";
+ import { css } from "@emotion/react";
+ 
+ import { useCreateChannelMessage } from "@shared/queryHooks/useChannelMessage";
++import { validateSingleMessage } from "@shared/lib/validateWithYup";
+ 
+ import FormContainer from "@ats/src/components/forms/FormContainer";
++import FormInput from "@ats/src/components/forms/FormInput";
+ import ChannelMessageTemplateSelectionModal from "@ats/src/components/modals/ChannelMessageTemplateSelectionModal";
+ import ProseMirrorEditor from "@shared/ProseMirror/Editor";
+ 
+@@ -24,11 +26,19 @@ function ChannelMessageNew({ jobApplication, setIsDirty, allChannel, isLocked })
+ 
+   const { mutate: createChannelMessage, isLoading: isLoadingCreate } = useCreateChannelMessage();
+ 
++  const defaultSubject = `${jobApplication.job.title} at ${jobApplication.job.organizationName}`;
++  const [subject, setSubject] = React.useState(defaultSubject);
+   const [errors, setErrors] = React.useState(null);
+ 
+   const handleChange = () => {
+     setErrors(null);
+-    setIsDirty(editorRef.current.serializedState() !== "<p></p>");
++    setIsDirty(editorRef.current.serializedState() !== "<p></p>" || subject !== defaultSubject);
++  };
++
++  const handleChangeSubject = (name, value) => {
++    setErrors(null);
++    setSubject(value);
++    setIsDirty(true);
+   };
+ 
+   const onClickInsertTemplate = (event) => {
+@@ -40,6 +50,9 @@ function ChannelMessageNew({ jobApplication, setIsDirty, allChannel, isLocked })
+   const handleInsertTemplate = (mailMerge) => {
+     window.logger("%c[ChannelMessageNew] handleInsertTemplate", "color: #1976D2", { mailMerge });
+     editorRef.current.replaceEditorContent(mailMerge?.messageHtml);
++    if (mailMerge?.subjectRaw) {
++      setSubject(mailMerge.subjectRaw);
++    }
+   };
+ 
+   const clearEditor = () => {
+@@ -73,6 +86,19 @@ function ChannelMessageNew({ jobApplication, setIsDirty, allChannel, isLocked })
+       return;
+     }
+ 
++    const [isValid, validationErrors] = await validateSingleMessage({
++      subject,
++      body: serializedState,
++    });
++
++    if (!isValid) {
++      setErrors(validationErrors);
++      if (!subject || subject.trim() === "") {
++        setSubject(defaultSubject);
++      }
++      return;
++    }
++
+     // window.logger("%c[ChannelMessageNew] handleSendMessage", "color: #1976D2", {
+     //   editorState: editorRef.current.state(),
+     //   doc: serialize(editorRef.current.state().doc),
+@@ -83,12 +109,14 @@ function ChannelMessageNew({ jobApplication, setIsDirty, allChannel, isLocked })
+         channelId: allChannel?.id,
+         // body: serialize(editorRef.current.state().doc),
+         body: serializedState,
++        subject,
+       },
+       {
+         onSuccess: (data) => {
+           window.logger("%c[ChannelMessageNew onSuccess", "color: #1976D2", { data });
+           trackEvent("message_sent", { job_application_id: jobApplication.id });
+           clearEditor();
++          setSubject(defaultSubject);
+           setIsDirty(false);
+         },
+         onError: (response: { data: { errors } }) => {
+@@ -121,16 +149,28 @@ function ChannelMessageNew({ jobApplication, setIsDirty, allChannel, isLocked })
+     >
+       <Styled.NewMessageArea>
+         {jobApplication.candidate.hasValidEmail === true ? (
+-          <Styled.NewMessageField
+-            ref={editorRef}
+-            placeholder="Type a message to the candidate here..."
+-            onChange={handleChange}
+-            enableStaticMenuBar={false}
+-            enableSelectionToolbar={true}
+-            enableMessageKeys={true}
+-            defaultValue=""
+-            disabled={isLocked}
+-          />
++          <>
++            <Styled.SubjectField>
++              <FormInput
++                onChange={handleChangeSubject}
++                name="subject"
++                placeholder=""
++                label="Subject"
++                value={subject}
++                errors={errors}
++              />
++            </Styled.SubjectField>
++            <Styled.NewMessageField
++              ref={editorRef}
++              placeholder="Type a message to the candidate here..."
++              onChange={handleChange}
++              enableStaticMenuBar={false}
++              enableSelectionToolbar={true}
++              enableMessageKeys={true}
++              defaultValue=""
++              disabled={isLocked}
++            />
++          </>
+         ) : (
+           <Styled.Invalid>
+             <Icon name="alert-triangle" />
+@@ -183,6 +223,14 @@ Styled.NewMessageArea = styled.div((props) => {
+   `;
+ });
+ 
++Styled.SubjectField = styled.div((props) => {
++  const t: any = props.theme;
++  return css`
++    label: JobApplicationMessages_SubjectField;
++    ${[t.px(4), t.pt(4)]}
++  `;
++});
++
+ // Styled.NewMessageField = styled(TextareaAutosize)((props) => {
+ Styled.NewMessageField = styled(ProseMirrorEditor)((props) => {
+   const t: any = props.theme;
+diff --git a/app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAutomations.tsx b/app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAutomations.tsx
+index 3a98930a3..f01b1fcc0 100644
+--- a/app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAutomations.tsx
++++ b/app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAutomations.tsx
+@@ -4,6 +4,7 @@ import { css } from "@emotion/react";
+ 
+ import SettingsContainer from "@ats/src/components/shared/SettingsContainer";
+ import FormSection from "@ats/src/components/forms/FormSection";
++import FormInput from "@ats/src/components/forms/FormInput";
+ import FormSelect from "@ats/src/components/forms/FormSelect";
+ import ProseMirrorEditor from "@shared/ProseMirror/Editor";
+ import Button from "@ats/src/components/shared/Button";
+@@ -21,10 +22,11 @@ function JobSetupAutomations(props) {
+   const [job, setJob] = useState({
+     useApplyResponseTemplate: passedJob.useApplyResponseTemplate,
+     applyResponseTemplate: passedJob.applyResponseTemplate,
++    applyResponseTemplateSubject: passedJob.applyResponseTemplateSubject || '{{JobTitle}} at {{OrganizationName}}',
+   });
+   const [errors, setErrors] = useState(null);
+   const editorRef = React.useRef(undefined);
+-  const { useApplyResponseTemplate, applyResponseTemplate } = job;
++  const { useApplyResponseTemplate, applyResponseTemplate, applyResponseTemplateSubject } = job;
+   const addToast = useToastContext();
+   const { mutate: updateJob, isLoading: isLoadingUpdateJob } = useUpdateJob();
+   const { getFeatureInfo } = useFeatureGate();
+@@ -62,6 +64,7 @@ function JobSetupAutomations(props) {
+         applyResponseTemplate: editorRef.current
+           ? editorRef.current.serializedState()
+           : applyResponseTemplate,
++        applyResponseTemplateSubject,
+       },
+       {
+         onSuccess: () => {
+@@ -134,6 +137,14 @@ function JobSetupAutomations(props) {
+ 
+           <Styled.Template isDisabled={!useApplyResponseTemplate}>
+             <FormConditionalFields>
++              <FormInput
++                onChange={onFormInputChange}
++                name="applyResponseTemplateSubject"
++                placeholder=""
++                label="Subject"
++                value={applyResponseTemplateSubject || ''}
++                errors={errors}
++              />
+               <Styled.TemplateInput>
+                 <ProseMirrorEditor
+                   ref={editorRef}
+diff --git a/app/javascript/shared/lib/validateWithYup.ts b/app/javascript/shared/lib/validateWithYup.ts
+index 6e81fd484..5242d2122 100644
+--- a/app/javascript/shared/lib/validateWithYup.ts
++++ b/app/javascript/shared/lib/validateWithYup.ts
+@@ -44,14 +44,21 @@ const userSchema = object({
+ 
+ const channelMessageTemplateSchema = object({
+   name: string().required(),
++  subject: string().required(),
+   body: string().required(),
+ });
+ 
+ const bulkMessageSchema = object({
++  subject: string().required(),
+   body: string().required(),
+   jobApplications: array().min(1),
+ });
+ 
++const singleMessageSchema = object({
++  subject: string().required(),
++  body: string().required(),
++});
++
+ const hiringStageSchema = object({
+   hiringStageName: string().required(NOT_EMPTY),
+ });
+@@ -153,6 +160,10 @@ export async function validateBulkMessage(fields: {}) {
+   return await validateSchema(fields, bulkMessageSchema);
+ }
+ 
++export async function validateSingleMessage(fields: { subject: string; body: string }) {
++  return await validateSchema(fields, singleMessageSchema);
++}
++
+ export async function validateHiringStage(fields: {}) {
+   return await validateSchema(fields, hiringStageSchema);
+ }
+diff --git a/app/javascript/shared/queryHooks/useBulkMessage.ts b/app/javascript/shared/queryHooks/useBulkMessage.ts
+index 572aabf0d..f8257dd01 100644
+--- a/app/javascript/shared/queryHooks/useBulkMessage.ts
++++ b/app/javascript/shared/queryHooks/useBulkMessage.ts
+@@ -5,6 +5,7 @@ const createBulkMessage = async ({
+   jobId,
+   hiringStageId,
+   body,
++  subject,
+   excludedJobApplicationIds = null,
+   includedJobApplicationIds = null,
+ }) => {
+@@ -14,6 +15,7 @@ const createBulkMessage = async ({
+       {
+         hiringStageId,
+         body,
++        subject,
+         includedJobApplicationIds,
+         excludedJobApplicationIds,
+       },
+@@ -23,6 +25,7 @@ const createBulkMessage = async ({
+     variables: {
+       hiringStageId,
+       body,
++      subject,
+       includedJobApplicationIds,
+       excludedJobApplicationIds,
+     },
+diff --git a/app/jobs/channel_messages/bulk_channel_message_send_job.rb b/app/jobs/channel_messages/bulk_channel_message_send_job.rb
+index 07c4df425..8f2910877 100644
+--- a/app/jobs/channel_messages/bulk_channel_message_send_job.rb
++++ b/app/jobs/channel_messages/bulk_channel_message_send_job.rb
+@@ -9,7 +9,10 @@ class ChannelMessages::BulkChannelMessageSendJob < ApplicationJob
+     job_applications = job.job_applications.where(id: job_application_ids)
+     job_applications.includes(:candidate).find_each do |job_application|
+       if job_application.candidate.emailable?
+-        channel_message_params = params.merge(body: parse_body(user, job_application, params))
++        channel_message_params = params.merge(
++          body: parse_text(user, job_application, params[:body]),
++          subject: parse_text(user, job_application, params[:subject])
++        )
+         channel = job_application.channels.kind_all.first
+ 
+         duplicate_exists = ChannelMessage.duplicate_message_exists?(channel.id, channel_message_params[:body])
+@@ -45,20 +48,21 @@ class ChannelMessages::BulkChannelMessageSendJob < ApplicationJob
+ 
+   private
+ 
+-  def parse_body(user, job_application, params)
++  def parse_text(user, job_application, text)
++    return '' if text.blank?
++
+     candidate = job_application.candidate
+     job = job_application.job
+     organization = job.organization
+ 
+-    params[:body]
+-           .scrub # removes malformed UTF-8
+-           .gsub('{{SenderFullName}}', user.full_name)
+-           .gsub('{{SenderFirstName}}', user.first_name)
+-           .gsub('{{JobTitle}}', job.title)
+-           .gsub('{{CandidateFullName}}', candidate.full_name)
+-           .gsub('{{CandidateFirstName}}', candidate.first_name)
+-           .gsub('{{CandidateLastName}}', candidate.last_name)
+-           .gsub('{{OrganizationName}}', organization.name)
++    text.scrub # removes malformed UTF-8
++        .gsub('{{SenderFullName}}', user.full_name)
++        .gsub('{{SenderFirstName}}', user.first_name)
++        .gsub('{{JobTitle}}', job.title)
++        .gsub('{{CandidateFullName}}', candidate.full_name)
++        .gsub('{{CandidateFirstName}}', candidate.first_name)
++        .gsub('{{CandidateLastName}}', candidate.last_name)
++        .gsub('{{OrganizationName}}', organization.name)
+   end
+ 
+   def broadcast_error_message(user, error_message)
+diff --git a/app/jobs/hiring_stage_message_automation_job.rb b/app/jobs/hiring_stage_message_automation_job.rb
+index b0fd6e5d7..d97ea4ae1 100644
+--- a/app/jobs/hiring_stage_message_automation_job.rb
++++ b/app/jobs/hiring_stage_message_automation_job.rb
+@@ -15,6 +15,7 @@ class HiringStageMessageAutomationJob < ApplicationJob
+ 
+     message_params = {
+       body: automation.channel_message_template.body,
++      subject: automation.channel_message_template.subject,
+       sent_by: 'sent_by_organization',
+       source: 'source_in_app'
+     }
+diff --git a/app/mailers/channel_message_mailer.rb b/app/mailers/channel_message_mailer.rb
+index 3fac61a7c..df044f329 100644
+--- a/app/mailers/channel_message_mailer.rb
++++ b/app/mailers/channel_message_mailer.rb
+@@ -113,7 +113,7 @@ class ChannelMessageMailer < ApplicationMailer
+       reply_to: { name: @job.organization.name, email: @channel_message.reply_as_candidate_email },
+       to: [{ name: @candidate.full_name, email: @candidate.email }],
+       list_unsubscribe: "mailto:#{Variables::REPLY_TO_EMAIL_ADDRESS}",
+-      subject: "#{@job.title} at #{@organization.name}",
++      subject: @channel_message.subject.presence || "#{@job.title} at #{@organization.name}",
+       template: "candidate-new-message-notification",
+       template_version: 'initial',
+       tags: ['hire', 'candidate-facing'],
+diff --git a/app/models/channel.rb b/app/models/channel.rb
+index 7269425ad..71e546052 100644
+--- a/app/models/channel.rb
++++ b/app/models/channel.rb
+@@ -22,6 +22,7 @@ class Channel < ApplicationRecord
+                              candidate_id: job_application.candidate.id,
+                              sent_by: 'sent_by_user',
+                              body: email.body, # will be overwritten in an AR callback
++                             subject: email.subject,
+                              body_raw_html: email.raw_html,
+                              body_plain_text: email.body,
+                              files: attachments
+@@ -36,6 +37,7 @@ class Channel < ApplicationRecord
+                              candidate_id: sender.id,
+                              sent_by: 'sent_by_candidate',
+                              body: email.body, # will be overwritten in an AR callback
++                             subject: email.subject,
+                              body_raw_html: email.raw_html,
+                              body_plain_text: email.body,
+                              files: attachments
+diff --git a/app/models/channel_message.rb b/app/models/channel_message.rb
+index 87210b88a..eb6b92bdb 100644
+--- a/app/models/channel_message.rb
++++ b/app/models/channel_message.rb
+@@ -21,7 +21,8 @@ class ChannelMessage < ApplicationRecord
+   before_create :detect_spam
+   after_commit :handle_after_commit_create, on: [:create]
+ 
+-  validates :body, custom_channel_message_body: true
++  validates :body, custom_channel_message: true
++  validates :subject, custom_channel_message: true
+   validate :organization_can_send_messages, unless: :sent_by_candidate?
+ 
+   enum sent_by: {
+diff --git a/app/models/job.rb b/app/models/job.rb
+index 4d10ba732..0364ec59e 100644
+--- a/app/models/job.rb
++++ b/app/models/job.rb
+@@ -344,7 +344,10 @@ location == 'Remote' ? where.not(remoteness: 'remoteness_none') : where(display_
+   end
+ 
+   def add_default_apply_response_template
+-    update_columns(apply_response_template: "<p>Hello {{CandidateFirstName}},</p><p>This is a confirmation that your application for the {{JobTitle}} position with {{OrganizationName}} was submitted successfully.</p>")
++    update_columns(
++      apply_response_template: "<p>Hello {{CandidateFirstName}},</p><p>This is a confirmation that your application for the {{JobTitle}} position with {{OrganizationName}} was submitted successfully.</p>",
++      apply_response_template_subject: '{{JobTitle}} at {{OrganizationName}}'
++    )
+   end
+ 
+   ########
+diff --git a/app/models/job_application.rb b/app/models/job_application.rb
+index 093f84e25..8fff75368 100644
+--- a/app/models/job_application.rb
++++ b/app/models/job_application.rb
+@@ -526,6 +526,7 @@ class JobApplication < ApplicationRecord
+                                                              channel_id: channels.first.id,
+                                                              params: {
+                                                                body: html_safe_apply_email,
++                                                               subject: parse_apply_response_text(job.apply_response_template_subject),
+                                                                sent_by: 'sent_by_organization',
+                                                                source: 'source_in_app'
+                                                              })
+@@ -544,6 +545,18 @@ class JobApplication < ApplicationRecord
+        .gsub(/\u00A0/, ' ')&.html_safe
+   end
+ 
++  def parse_apply_response_text(text)
++    return '' if text.blank?
++
++    text.scrub
++        .gsub('{{JobTitle}}', job.title)
++        .gsub('{{CandidateFullName}}', candidate.full_name)
++        .gsub('{{CandidateFirstName}}', candidate.first_name)
++        .gsub('{{CandidateLastName}}', candidate.last_name)
++        .gsub('{{OrganizationName}}', job.organization.name)
++        .gsub(/\u00A0/, ' ')
++  end
++
+   ###############
+   # QUESTIONS
+   ###############
+@@ -767,6 +780,14 @@ class JobApplication < ApplicationRecord
+     body = body&.gsub(/[\u200B-\u200D\uFEFF]/, '') # Replace empty spaces with a real empty space
+     body = body&.gsub(/\u00A0/, ' ') # Replace non-breaking space with one space
+ 
++    # Prepare subject (same placeholder wrapping, no Redcarpet)
++    subject_source = channel_message_template.subject || ''
++    subject_prepared = subject_source.gsub('{{{', '{{').gsub('}}}', '}}')
++    placeholder_options(sender).keys.each do |tag|
++      subject_prepared = subject_prepared.gsub("{{#{tag}}}", "{{{#{tag}}}}")
++    end
++    subject_prepared = subject_prepared.gsub(/[\u200B-\u200D\uFEFF]/, '').gsub(/\u00A0/, ' ')
++
+     # ap 'Original Body'
+     # ap channel_message_template.body
+ 
+@@ -781,17 +802,33 @@ class JobApplication < ApplicationRecord
+     message_html = Mustache.render(html, placeholder_options_with_spans(sender))
+     template_html = Mustache.render(html, placeholder_options_with_spans_unfilled)
+ 
++    # Subject Mustache passes (no Redcarpet)
++    subject_raw = Mustache.render(subject_prepared, placeholder_options(sender))
++    subject_html = Mustache.render(subject_prepared, placeholder_options_with_spans(sender))
++    template_subject_html = Mustache.render(subject_prepared, placeholder_options_with_spans_unfilled)
++
+     # ap 'Mustache Parsed Message'
+     # ap message_raw
+ 
+-    template = Mustache::Template.new(channel_message_template.body)
++    body_template = Mustache::Template.new(channel_message_template.body)
++    subject_template = Mustache::Template.new(channel_message_template.subject || '')
+ 
+     known_tags = placeholder_options(sender).keys.map(&:to_s)
+-    used_tags = template.tags
+-    invalid_tags = used_tags - known_tags
+-    has_invalid_tags = !invalid_tags.empty?
+-
+-    response = { message_raw: message_raw, message_html: message_html, template_html: template_html, has_invalid_tags: has_invalid_tags, invalid_tags: invalid_tags }
++    body_invalid_tags = body_template.tags - known_tags
++    subject_invalid_tags = subject_template.tags - known_tags
++    all_invalid_tags = body_invalid_tags + subject_invalid_tags
++    has_invalid_tags = !all_invalid_tags.empty?
++
++    response = {
++      message_raw: message_raw,
++      message_html: message_html,
++      template_html: template_html,
++      subject_raw: subject_raw,
++      subject_html: subject_html,
++      template_subject_html: template_subject_html,
++      has_invalid_tags: has_invalid_tags,
++      invalid_tags: all_invalid_tags
++    }
+ 
+     ap 'render_template_message, returns:'
+     ap response
+diff --git a/app/models/organization.rb b/app/models/organization.rb
+index 1b8830784..bdceb9fd2 100644
+--- a/app/models/organization.rb
++++ b/app/models/organization.rb
+@@ -365,16 +365,19 @@ class Organization < ApplicationRecord
+     [
+       {
+         name: 'Thank you for applying',
++        subject: '{{JobTitle}} at {{OrganizationName}}',
+         body: '<p>Hello {{CandidateFirstName}},<br><br>Thank you for your application. We appreciate your interest in joining the <strong>{{OrganizationName}}</strong> team. We will review your application for {{JobTitle}} shortly, and get back to you as soon as possible.</p><p>Best regards,<br>{{SenderFullName}}</p>',
+         created_by_organization_user_id: nil
+       },
+       {
+         name: 'Scheduling',
++        subject: '{{JobTitle}} at {{OrganizationName}}',
+         body: '<p>Hi {{CandidateFirstName}},</p><p>Thanks for your application. Good news! We’d like to interview you&nbsp;about the&nbsp;{{JobTitle}} position.</p><p>Please email me a date and time — or several options — this week or next that would be convenient for you. I’ll then check my calendar and get back to you to confirm.</p><p>Cheers,<br>{{SenderFullName}}</p>',
+         created_by_organization_user_id: nil
+       },
+       {
+         name: 'Rejection',
++        subject: '{{JobTitle}} at {{OrganizationName}}',
+         body: '<p>Hello {{CandidateFirstName}},</p><p>Thanks very much for your interest in <strong>{{OrganizationName}}</strong> and for applying to the {{JobTitle}} position. We appreciate the chance to learn more about you and your professional experience.</p><p>We reviewed your application carefully. Unfortunately, we won’t be moving it forward at this time. We’ll keep your information on file, however, and look forward to reaching out to you when the right opportunity arises.</p><p>In the meantime, I wish you success with your job search and in your career. Thanks again for your interest in <strong>{{OrganizationName}}</strong>.</p><p>Best,<br>{{SenderFirstName}}</p>',
+         created_by_organization_user_id: nil
+       }
+diff --git a/app/serializers/api/v1/channel_message_serializer.rb b/app/serializers/api/v1/channel_message_serializer.rb
+index eea914783..5d0978257 100644
+--- a/app/serializers/api/v1/channel_message_serializer.rb
++++ b/app/serializers/api/v1/channel_message_serializer.rb
+@@ -5,6 +5,7 @@ class Api::V1::ChannelMessageSerializer < ActiveModel::Serializer
+               :sent_by,
+               :source,
+               :body,
++              :subject,
+               :cleaned_body,
+               :html_safe_body,
+               :body_sanitized_html,
+diff --git a/app/serializers/api/v1/channel_message_template_serializer.rb b/app/serializers/api/v1/channel_message_template_serializer.rb
+index a8728a210..6f0fc5e5c 100644
+--- a/app/serializers/api/v1/channel_message_template_serializer.rb
++++ b/app/serializers/api/v1/channel_message_template_serializer.rb
+@@ -4,6 +4,7 @@ class Api::V1::ChannelMessageTemplateSerializer < ActiveModel::Serializer
+   attributes :id,
+              :name,
+              :body,
++             :subject,
+              :position,
+              :created_by_user_full_name
+ end
+diff --git a/app/serializers/api/v1/job_serializer.rb b/app/serializers/api/v1/job_serializer.rb
+index 3a4b88eda..5ccbf43c5 100644
+--- a/app/serializers/api/v1/job_serializer.rb
++++ b/app/serializers/api/v1/job_serializer.rb
+@@ -50,6 +50,7 @@ class Api::V1::JobSerializer < ActiveModel::Serializer
+              :salary_currency,
+              :use_apply_response_template,
+              :apply_response_template,
++             :apply_response_template_subject,
+              :external_listings_enabled,
+              :external_listings_settings,
+              :originally_archived_at
+diff --git a/app/serializers/api_public/v1/hire/channel_message_serializer.rb b/app/serializers/api_public/v1/hire/channel_message_serializer.rb
+index 95cdd74ea..436939f2d 100644
+--- a/app/serializers/api_public/v1/hire/channel_message_serializer.rb
++++ b/app/serializers/api_public/v1/hire/channel_message_serializer.rb
+@@ -4,7 +4,7 @@ class ApiPublic::V1::Hire::ChannelMessageSerializer < ActiveModel::Serializer
+   attributes :id, :job_application_id, :created_at,
+              :sent_by, :source,
+              :created_by_organization_user_id,
+-             :body, :body_plain_text
++             :body, :subject, :body_plain_text
+ 
+   def job_application_id
+     object.channel&.job_application_id
+diff --git a/app/validators/custom_channel_message_body_validator.rb b/app/validators/custom_channel_message_validator.rb
+similarity index 76%
+rename from app/validators/custom_channel_message_body_validator.rb
+rename to app/validators/custom_channel_message_validator.rb
+index eb9dd25d4..4c2d15595 100644
+--- a/app/validators/custom_channel_message_body_validator.rb
++++ b/app/validators/custom_channel_message_validator.rb
+@@ -1,11 +1,11 @@
+ # frozen_string_literal: true
+ 
+-class CustomChannelMessageBodyValidator < ActiveModel::EachValidator
++class CustomChannelMessageValidator < ActiveModel::EachValidator
+   # http://guides.rubyonrails.org/active_record_validations.html#custom-validators
+ 
+   #############
+   # Example Usage:
+-  # validates :body, presence: true, custom_channel_message_body: true, if: Proc.new { |et| et.kind == "Autoresponse"  }
++  # validates :body, presence: true, custom_channel_message: true, if: Proc.new { |et| et.kind == "Autoresponse"  }
+   ##############
+   # Using the Proc allows you to check the rest of the object to see what the values of the other properties are. So in this example only validate the from_address if the kind attribute is set to "Autoresponse"
+ 
+diff --git a/db/migrate/20260603212057_add_subject_and_mailgun_message_id_to_channel_messages.rb b/db/migrate/20260603212057_add_subject_and_mailgun_message_id_to_channel_messages.rb
+new file mode 100644
+index 000000000..cf7247185
+--- /dev/null
++++ b/db/migrate/20260603212057_add_subject_and_mailgun_message_id_to_channel_messages.rb
+@@ -0,0 +1,8 @@
++class AddSubjectAndMailgunMessageIdToChannelMessages < ActiveRecord::Migration[6.1]
++  def change
++    add_column :channel_messages, :subject, :string, null: true
++    add_column :channel_messages, :mailgun_message_id, :string, null: true
++    add_column :channel_message_templates, :subject, :string, null: true
++    add_column :jobs, :apply_response_template_subject, :string, null: true
++  end
++end
+diff --git a/app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageListItem.tsx b/app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageListItem.tsx
+index 376ddf754..d5edabb01 100644
+--- a/app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageListItem.tsx
++++ b/app/javascript/ats/src/views/jobApplications/channelMessages/ChannelMessageListItem.tsx
+@@ -37,7 +37,7 @@ function ChannelMessageListItem(props: { message: any }) {
+       <ChannelMessageTemplateModal
+         onCancel={removeModal}
+         isEditing={false}
+-        channelMessageTemplate={{ id: null, name: "", body: message.body }}
++        channelMessageTemplate={{ id: null, name: "", body: message.body, subject: "" }}
+       />
+     );
+ 
+diff --git a/db/schema.rb b/db/schema.rb
+index 5a5e62d88..bc3b6542b 100644
+--- a/db/schema.rb
++++ b/db/schema.rb
+@@ -10,7 +10,7 @@
+ #
+ # It's strongly recommended that you check this file into your version control system.
+ 
+-ActiveRecord::Schema.define(version: 2026_02_27_005102) do
++ActiveRecord::Schema.define(version: 2026_06_03_212057) do
+ 
+   # These are extensions that must be enabled in order to support this database
+   enable_extension "fuzzystrmatch"
+@@ -111,6 +111,58 @@ ActiveRecord::Schema.define(version: 2026_02_27_005102) do
+     t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true
+   end
+ 
++  create_table "ai_api_requests", force: :cascade do |t|
++    t.bigint "organization_id", null: false
++    t.string "requestable_type", null: false
++    t.bigint "requestable_id", null: false
++    t.string "call_type", null: false
++    t.string "provider", null: false
++    t.string "model", null: false
++    t.integer "input_tokens", default: 0
++    t.integer "output_tokens", default: 0
++    t.decimal "cost", precision: 10, scale: 6, default: "0.0"
++    t.text "prompt_text"
++    t.text "response_body"
++    t.datetime "created_at", precision: 6, null: false
++    t.datetime "updated_at", precision: 6, null: false
++    t.index ["organization_id"], name: "index_ai_api_requests_on_organization_id"
++    t.index ["requestable_type", "requestable_id"], name: "index_ai_api_requests_on_requestable_type_and_requestable_id"
++  end
++
++  create_table "ai_credit_balance_transactions", force: :cascade do |t|
++    t.bigint "organization_ai_credit_balance_id", null: false
++    t.bigint "organization_ai_credit_purchase_id"
++    t.integer "entry_type", null: false
++    t.integer "bucket", null: false
++    t.integer "amount", null: false
++    t.string "description"
++    t.jsonb "metadata"
++    t.datetime "created_at", precision: 6, null: false
++    t.datetime "updated_at", precision: 6, null: false
++    t.index ["entry_type", "created_at"], name: "idx_ai_credit_bal_txns_entry_type_created"
++    t.index ["organization_ai_credit_balance_id", "created_at"], name: "idx_ai_credit_bal_txns_bal_created_desc", order: { created_at: :desc }
++    t.index ["organization_ai_credit_purchase_id"], name: "idx_ai_credit_bal_txns_purchase_id", where: "(organization_ai_credit_purchase_id IS NOT NULL)"
++  end
++
++  create_table "ai_job_application_summaries", force: :cascade do |t|
++    t.bigint "job_application_id", null: false
++    t.bigint "textract_result_id", null: false
++    t.jsonb "structured_data"
++    t.string "headline"
++    t.text "summary_text"
++    t.text "prompt_text"
++    t.integer "status", default: 0, null: false
++    t.text "error_message"
++    t.boolean "stale", default: false, null: false
++    t.bigint "requested_by_organization_user_id"
++    t.datetime "created_at", precision: 6, null: false
++    t.datetime "updated_at", precision: 6, null: false
++    t.index ["job_application_id", "created_at"], name: "idx_ai_job_app_summaries_on_job_app_id_and_created_at"
++    t.index ["job_application_id"], name: "index_ai_job_application_summaries_on_job_application_id"
++    t.index ["status"], name: "index_ai_job_application_summaries_on_status"
++    t.index ["textract_result_id"], name: "index_ai_job_application_summaries_on_textract_result_id"
++  end
++
+   create_table "api_key_events", force: :cascade do |t|
+     t.bigint "organization_user_id", null: false
+     t.bigint "organization_id", null: false
+@@ -200,6 +252,16 @@ ActiveRecord::Schema.define(version: 2026_02_27_005102) do
+     t.index ["last_updated_by_organization_user_id"], name: "index_wwr_listing_on_organization_user_id"
+   end
+ 
++  create_table "bulk_ai_summary_job_applications", force: :cascade do |t|
++    t.uuid "bulk_job_id", null: false
++    t.bigint "job_application_id", null: false
++    t.integer "status", default: 0, null: false
++    t.datetime "created_at", precision: 6, null: false
++    t.datetime "updated_at", precision: 6, null: false
++    t.index ["bulk_job_id"], name: "index_bulk_ai_summary_job_applications_on_bulk_job_id"
++    t.index ["job_application_id"], name: "index_bulk_ai_sjas_on_job_app_processing", unique: true, where: "(status = 0)"
++  end
++
+   create_table "caffeinate_campaign_subscriptions", force: :cascade do |t|
+     t.bigint "caffeinate_campaign_id", null: false
+     t.string "subscriber_type", null: false
+@@ -337,6 +399,7 @@ ActiveRecord::Schema.define(version: 2026_02_27_005102) do
+     t.datetime "updated_at", null: false
+     t.text "body_legacy_markdown"
+     t.bigint "created_by_organization_user_id"
++    t.string "subject"
+     t.index ["created_by_organization_user_id"], name: "index_channel_message_templates_on_organization_user"
+     t.index ["organization_id"], name: "index_channel_message_templates_on_organization_id"
+   end
+@@ -359,6 +422,8 @@ ActiveRecord::Schema.define(version: 2026_02_27_005102) do
+     t.bigint "clone_of_channel_message_id"
+     t.text "body_sanitized_html"
+     t.integer "spam_score", default: 0
++    t.string "subject"
++    t.string "mailgun_message_id"
+     t.index ["candidate_id"], name: "index_channel_messages_on_candidate_id"
+     t.index ["channel_id"], name: "index_channel_messages_on_channel_id"
+     t.index ["created_by_organization_user_id"], name: "index_channel_messages_on_created_by_organization_user_id"
+@@ -815,6 +880,8 @@ ActiveRecord::Schema.define(version: 2026_02_27_005102) do
+     t.integer "internal_admin_status", default: 0, null: false
+     t.integer "visibility_status", default: 0, null: false
+     t.datetime "originally_archived_at"
++    t.integer "auto_generate_ai_summaries_setting", default: 0, null: false
++    t.string "apply_response_template_subject"
+     t.index ["created_by_organization_user_id"], name: "index_jobs_on_created_by_organization_user_id"
+     t.index ["discarded_at"], name: "index_jobs_on_discarded_at"
+     t.index ["job_category_id"], name: "index_jobs_on_job_category_id"
+@@ -852,6 +919,52 @@ ActiveRecord::Schema.define(version: 2026_02_27_005102) do
+     t.index ["organization_id"], name: "index_oauth_authentications_on_organization_id"
+   end
+ 
++  create_table "organization_ai_credit_balances", force: :cascade do |t|
++    t.bigint "organization_id", null: false
++    t.integer "daily_credits_remaining", default: 0, null: false
++    t.integer "monthly_credits_remaining", default: 0, null: false
++    t.integer "addon_subscription_credits_remaining", default: 0, null: false
++    t.integer "addon_credits_remaining", default: 0, null: false
++    t.integer "monthly_ai_credits_override"
++    t.datetime "last_reset_at"
++    t.datetime "low_credit_notification_sent_at"
++    t.datetime "zero_credit_notification_sent_at"
++    t.boolean "sent_low_notification_since_increase", default: false, null: false
++    t.boolean "sent_zero_notification_since_increase", default: false, null: false
++    t.datetime "created_at", precision: 6, null: false
++    t.datetime "updated_at", precision: 6, null: false
++    t.index ["organization_id"], name: "index_organization_ai_credit_balances_on_organization_id", unique: true
++    t.check_constraint "addon_credits_remaining >= 0", name: "org_ai_credit_balances_addon_non_negative"
++    t.check_constraint "addon_subscription_credits_remaining >= 0", name: "org_ai_credit_balances_addon_subscription_non_negative"
++    t.check_constraint "daily_credits_remaining >= 0", name: "org_ai_credit_balances_daily_non_negative"
++    t.check_constraint "monthly_credits_remaining >= 0", name: "org_ai_credit_balances_monthly_non_negative"
++  end
++
++  create_table "organization_ai_credit_purchases", force: :cascade do |t|
++    t.bigint "organization_id", null: false
++    t.integer "kind", null: false
++    t.string "stripe_subscription_id"
++    t.string "stripe_checkout_session_id"
++    t.string "stripe_invoice_id"
++    t.string "stripe_price_lookup_key", null: false
++    t.integer "amount_cents_paid", null: false
++    t.string "currency", default: "usd", null: false
++    t.integer "subscription_credits_per_period"
++    t.integer "one_off_credits_granted"
++    t.datetime "subscription_current_period_start"
++    t.datetime "subscription_current_period_end"
++    t.integer "subscription_status"
++    t.datetime "subscription_canceled_at"
++    t.datetime "refunded_at"
++    t.datetime "created_at", precision: 6, null: false
++    t.datetime "updated_at", precision: 6, null: false
++    t.index ["kind", "organization_id"], name: "idx_org_ai_purchases_kind_org"
++    t.index ["organization_id"], name: "index_organization_ai_credit_purchases_on_organization_id"
++    t.index ["stripe_checkout_session_id"], name: "idx_org_ai_purchases_stripe_session_id", unique: true, where: "(stripe_checkout_session_id IS NOT NULL)"
++    t.index ["stripe_subscription_id"], name: "idx_org_ai_purchases_stripe_sub_id", unique: true, where: "(stripe_subscription_id IS NOT NULL)"
++    t.index ["subscription_status", "organization_id"], name: "idx_org_ai_purchases_sub_status_org"
++  end
++
+   create_table "organization_data_exports", force: :cascade do |t|
+     t.bigint "organization_id", null: false
+     t.integer "kind", default: 0, null: false
+@@ -1158,6 +1271,11 @@ ActiveRecord::Schema.define(version: 2026_02_27_005102) do
+ 
+   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
++  add_foreign_key "ai_api_requests", "organizations"
++  add_foreign_key "ai_credit_balance_transactions", "organization_ai_credit_balances"
++  add_foreign_key "ai_credit_balance_transactions", "organization_ai_credit_purchases"
++  add_foreign_key "ai_job_application_summaries", "job_applications"
++  add_foreign_key "ai_job_application_summaries", "textract_results"
+   add_foreign_key "api_key_events", "organization_users"
+   add_foreign_key "api_key_events", "organizations"
+   add_foreign_key "api_keys", "organization_users"
+@@ -1224,6 +1342,8 @@ ActiveRecord::Schema.define(version: 2026_02_27_005102) do
+   add_foreign_key "jobs", "process_templates"
+   add_foreign_key "jobs", "users"
+   add_foreign_key "magic_links", "users"
++  add_foreign_key "organization_ai_credit_balances", "organizations"
++  add_foreign_key "organization_ai_credit_purchases", "organizations"
+   add_foreign_key "organization_data_exports", "organizations"
+   add_foreign_key "organization_departments", "organizations"
+   add_foreign_key "organization_users", "organizations"

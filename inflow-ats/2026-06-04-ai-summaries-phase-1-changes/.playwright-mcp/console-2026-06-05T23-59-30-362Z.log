@@ -1,0 +1,48 @@
+[      82ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[      90ms] [INFO] %cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:38733
+[      90ms] [ERROR] Warning: Please use `require("history").createBrowserHistory` instead of `require("history/createBrowserHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:8419
+[      91ms] [ERROR] Warning: Please use `require("history").createHashHistory` instead of `require("history/createHashHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:8419
+[     101ms] [ERROR] Warning: Please use `require("history").createMemoryHistory` instead of `require("history/createMemoryHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:8419
+[     101ms] [ERROR] Warning: Please use `require("history").PathUtils` instead of `require("history/PathUtils")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-5b5dfaff415a0bd15e0a.chunk.js:8419
+[     112ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/vendors~ats_application-3107942bc81312205206.chunk.js:145570
+[     112ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/vendors~ats_application-3107942bc81312205206.chunk.js:145570
+[     113ms] [LOG] [store/index.js] store.getState() {} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:10849
+[     114ms] [LOG] %c
+
+
+[App] render background-color: #b0d219 {props: Object, queryClient: QueryClient} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:44838
+[     116ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/settings, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     122ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: undefined} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application-314d8b8b5855e33341ee.chunk.js:3392
+[     123ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/settings, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     131ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/flipper/features} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[     132ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/settings, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     141ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0
+[     142ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[     143ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/settings, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     145ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: 18476} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application-314d8b8b5855e33341ee.chunk.js:3392
+[     146ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/settings, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     180ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/organizations/18476} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[     181ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/settings, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     196ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 18476, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:12095
+[     213ms] [WARNING] @reach/tooltip styles not found. If you are using a bundler like webpack or parcel include this in the entry file of your app before any of your own styles:
+
+    import "@reach/tooltip/styles.css";
+
+  Otherwise you'll need to include them some other way:
+
+    <link rel="stylesheet" type="text/css" href="node_modules/@reach/tooltip/styles.css" />
+
+  For more information visit https://ui.reach.tech/styling.
+   @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application-6aeca7e7c066c5220658.chunk.js:3483
+[     213ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: 18476} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application-314d8b8b5855e33341ee.chunk.js:3392
+[     218ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/settings, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     223ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 18476, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:12095
+[     232ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/settings, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     237ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 18476, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:12095
+[     246ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me/job_application_notifications/has_unread} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[     258ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[     259ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/settings, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     264ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 18476, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:12095
+[     287ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/organizations/18476} @ http://app.lvh.me:5007/packs-test/js/account_application~ats_application~connect_application~job_board_form_application-1cc0eb5c9a7c207967e1.chunk.js:2882
+[     288ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /hire/settings/plato-ai/settings, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:45035
+[     292ms] [LOG] %c[AccountContainer] render color: #19FFD2; background: green; {history: Object, me: Object, organizationId: 18476, returnPathname: /jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-60cd62213003fe772c0f.chunk.js:12095

@@ -1,0 +1,66 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e7]:
+      - img [ref=e8]
+      - heading "Polymer" [level=1] [ref=e11]
+    - list [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e15]:
+          - generic [ref=e16]: RM
+          - generic [ref=e17]: Rezu May
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - generic [ref=e23] [cursor=pointer]:
+          - generic [ref=e25]: A
+          - img [ref=e27]
+        - generic [ref=e32]: Acme Inc.
+      - generic [ref=e34]:
+        - img [ref=e37] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - link [ref=e43] [cursor=pointer]:
+      - /url: /hire/settings/organization
+      - img [ref=e44]
+  - generic [ref=e47]:
+    - generic [ref=e48]:
+      - generic [ref=e49]:
+        - heading "Your assigned jobs View all active jobs View archived jobs" [level=2] [ref=e50]:
+          - generic [ref=e51]:
+            - generic [ref=e52] [cursor=pointer]:
+              - text: Your assigned jobs
+              - img [ref=e53]
+            - generic:
+              - generic:
+                - link "View all active jobs":
+                  - /url: /jobs/all
+                - link "View archived jobs":
+                  - /url: /jobs/archived
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - generic [ref=e57]: "0"
+            - text: Job Board Subscribers
+          - generic [ref=e58]:
+            - generic [ref=e59]: "0"
+            - text: Published Jobs
+      - button [ref=e62]:
+        - img [ref=e63]
+    - generic [ref=e66]:
+      - img [ref=e68]
+      - heading "You have no assigned jobs" [level=2] [ref=e70]
+      - paragraph [ref=e71]: When you are on a job's hiring team, it will appear here. View all active jobs using the dropdown on the left.

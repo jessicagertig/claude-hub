@@ -1,0 +1,86 @@
+{
+  "agent": "script-runner-agent-2",
+  "round": 1,
+  "focus": "BulkChannelMessageSendJob subject variable substitution",
+  "timestamp": "2026-06-05T05:28:36Z",
+  "overall_result": "PASS",
+  "summary": "All 18 assertions passed. BulkChannelMessageSendJob correctly processes the subject field through parse_text with full mail-merge variable substitution. Blank/nil subjects are handled gracefully (parse_text returns '' for blank input). Duplicate detection correctly uses body-only comparison, so different subjects with the same body are still blocked.",
+  "tests_run": 7,
+  "assertions_total": 18,
+  "assertions_passed": 18,
+  "assertions_failed": 0,
+  "findings": [],
+  "test_details": [
+    {
+      "test": "Test 1: Subject with mail-merge variables",
+      "assertions": 8,
+      "result": "PASS",
+      "detail": "Sent bulk message to 3 candidates with subject 'Hello {{CandidateFirstName}}, opportunity at {{OrganizationName}} for {{JobTitle}}'. All 3 messages had correctly substituted subjects (e.g., 'Hello Bob, opportunity at BulkSendQAOrg for Lead QA Engineer'). No unsubstituted {{variables}} remained."
+    },
+    {
+      "test": "Test 2: All 7 mail-merge variables in subject",
+      "assertions": 2,
+      "result": "PASS",
+      "detail": "All 7 variables (SenderFullName, SenderFirstName, JobTitle, CandidateFullName, CandidateFirstName, CandidateLastName, OrganizationName) substituted correctly in subject."
+    },
+    {
+      "test": "Test 3: Nil subject fallback",
+      "assertions": 2,
+      "result": "PASS",
+      "detail": "When subject is nil, parse_text returns '' (nil.blank? is true, so the early return fires). Job runs without error. Message created with empty string subject."
+    },
+    {
+      "test": "Test 4: Empty string subject",
+      "assertions": 2,
+      "result": "PASS",
+      "detail": "When subject is '', parse_text returns '' (''.blank? is true). Job runs without error. Message created with empty string subject."
+    },
+    {
+      "test": "Test 5: Plain subject without variables",
+      "assertions": 1,
+      "result": "PASS",
+      "detail": "Subject 'Follow up about your application' preserved unchanged through parse_text (no variables to substitute)."
+    },
+    {
+      "test": "Test 6: Duplicate detection based on body, not subject",
+      "assertions": 1,
+      "result": "PASS",
+      "detail": "Sending a message with a different subject but identical body to an existing message was correctly blocked by duplicate_message_exists? which checks body only."
+    },
+    {
+      "test": "Test 7: Non-duplicate message with different body",
+      "assertions": 2,
+      "result": "PASS",
+      "detail": "A message with both a different subject and different body was correctly created (not blocked by duplicate detection). Subject stored correctly."
+    }
+  ],
+  "code_observations": [
+    {
+      "file": "app/jobs/channel_messages/bulk_channel_message_send_job.rb",
+      "observation": "Line 14: subject is processed through parse_text identically to body (line 13). Both use the same mail-merge substitution logic.",
+      "assessment": "CORRECT"
+    },
+    {
+      "file": "app/jobs/channel_messages/bulk_channel_message_send_job.rb",
+      "observation": "Lines 51-66: parse_text returns '' for blank input (nil or empty string), then applies .scrub and 7 gsub substitutions for all supported variables.",
+      "assessment": "CORRECT"
+    },
+    {
+      "file": "app/jobs/channel_messages/bulk_channel_message_send_job.rb",
+      "observation": "Line 18: duplicate_message_exists? checks body only, not subject. This means changing only the subject does not bypass duplicate detection.",
+      "assessment": "CORRECT - this is the intended behavior since duplicate_message_exists? was designed before subject existed"
+    },
+    {
+      "file": "app/validators/custom_channel_message_validator.rb",
+      "observation": "Line 13: validates that body and subject do not contain unsubstituted {{variables}}. Both fields use this validator (channel_message.rb lines 24-25). If parse_text fails to substitute a variable, the record will fail validation and not be saved.",
+      "assessment": "CORRECT - provides a safety net against unsubstituted variables"
+    }
+  ],
+  "script_path": "/tmp/qa-l2-agent2-bulk-send-subject.rb",
+  "environment": {
+    "worktree": "/Users/jessica/wrk/wrk-corp/inflow-ats.messaging-improvements",
+    "rails_env": "test",
+    "database": "inflow_test",
+    "runner": "test_frr (RAILS_ENV=test foreman run rails runner)"
+  }
+}

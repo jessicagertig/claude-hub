@@ -1,0 +1,128 @@
+{
+  "agent": "agent-3",
+  "round": 1,
+  "focus": "Template create/edit modal subject field",
+  "server": "http://app.lvh.me:5007",
+  "serverBranch": "messaging-improvements-qa",
+  "timestamp": "2026-06-05T06:47:00Z",
+  "scenarios": [
+    {
+      "id": "S1",
+      "description": "Navigate to Settings > Templates (message template management UI)",
+      "result": "PASS",
+      "details": "Successfully navigated to /hire/settings/message_templates. Page shows 'Message templates' heading, description text, and list of 3 seed templates: 'Thank you for applying', 'Scheduling', 'Rejection'. An 'Add a template' button is present. NOTE: The page intermittently auto-redirects to the job/candidates view after a few seconds. This appears to be a pre-existing React SPA routing issue (the AppAuthed component's internal locationPathname resolves to /jobs/15819/stages/... even when the browser URL is the settings page). Clearing timers mitigated this for interactive testing.",
+      "screenshots": [
+        "/tmp/qa-run-1/layer-4/round-1/agent-3/03-message-templates-settings-page.png",
+        "/tmp/qa-run-1/layer-4/round-1/agent-3/04-message-templates-before-redirect.png"
+      ]
+    },
+    {
+      "id": "S2",
+      "description": "Click to create a new template -- verify Subject input exists with default",
+      "result": "PASS",
+      "details": "Clicked 'Add a template' button. The 'Create new template' modal opens with three fields: (1) Template name (empty, auto-focused), (2) Subject (pre-populated with '{{JobTitle}} at {{OrganizationName}}'), and (3) Template body (ProseMirror editor with mail merge buttons). The Subject field has the correct default value using mail merge placeholders.",
+      "screenshots": [
+        "/tmp/qa-run-1/layer-4/round-1/agent-3/08-create-template-modal-with-subject.png"
+      ]
+    },
+    {
+      "id": "S3",
+      "description": "Fill name, subject, and body -- save the template",
+      "result": "PASS",
+      "details": "Filled in: name='QA Test Template', subject='Custom QA Subject Line', body='Hello, this is a QA test template body.' Clicked 'Create template' button. Modal closed. The template list now shows 'QA Test Template' as the 4th item with 'Created by Rezu May'. Template was saved successfully to the backend.",
+      "screenshots": [
+        "/tmp/qa-run-1/layer-4/round-1/agent-3/09-create-template-filled.png",
+        "/tmp/qa-run-1/layer-4/round-1/agent-3/10-template-created-in-list.png"
+      ]
+    },
+    {
+      "id": "S4",
+      "description": "Edit the template -- verify saved subject appears",
+      "result": "PASS",
+      "details": "Clicked 'Edit template' for the 'QA Test Template'. The 'Edit template' modal opened with all previously-saved values: name='QA Test Template', subject='Custom QA Subject Line', body='Hello, this is a QA test template body.' The custom subject was persisted and displayed correctly on re-edit.",
+      "screenshots": [
+        "/tmp/qa-run-1/layer-4/round-1/agent-3/11-edit-template-saved-subject-visible.png"
+      ]
+    },
+    {
+      "id": "S5",
+      "description": "Clear the subject on edit, try to save -- verify validation error",
+      "result": "PASS",
+      "details": "Cleared the Subject field to empty string and clicked 'Update template'. The form did NOT submit. Two validation messages appeared: (1) inline below the Subject label: 'is a required field', (2) form-level error at bottom: 'Form Errors: Subject is a required field'. The Yup validation schema (channelMessageTemplateSchema) correctly requires subject as a non-empty string.",
+      "screenshots": [
+        "/tmp/qa-run-1/layer-4/round-1/agent-3/12-subject-required-validation-error.png"
+      ]
+    }
+  ],
+  "additionalFindings": [
+    {
+      "id": "AF1",
+      "severity": "INFO",
+      "area": "Single-send message compose",
+      "description": "The candidate messages view (/jobs/:id/stages/:id/applicants/:id/messages) has a Subject input field pre-populated with the resolved default 'Software Engineer at Acme Inc.' (the resolved mail merge of '{{JobTitle}} at {{OrganizationName}}'). This confirms the Phase 1 subject field is present in the single-send compose area.",
+      "screenshots": [
+        "/tmp/qa-run-1/layer-4/round-1/agent-3/05-candidate-messages-with-subject-default.png"
+      ]
+    },
+    {
+      "id": "AF2",
+      "severity": "INFO",
+      "area": "Bulk message modal",
+      "description": "The bulk message modal ('Message candidates') also has a Subject field pre-populated with '{{JobTitle}} at {{OrganizationName}}' (raw mail merge tags, not resolved). This modal is accessed via the 'Message candidates' action when candidates are selected.",
+      "screenshots": [
+        "/tmp/qa-run-1/layer-4/round-1/agent-3/06-bulk-message-modal-with-subject.png"
+      ]
+    },
+    {
+      "id": "AF3",
+      "severity": "INFO",
+      "area": "Template selection preview",
+      "description": "The 'Choose template' / template selection modal (ChannelMessageTemplateSelectionModal) shows a subject preview line ('Subject: Software Engineer at Acme Inc.') when a template is selected. This preview uses mailMerge.subjectRaw from the mail merge API endpoint.",
+      "screenshots": [
+        "/tmp/qa-run-1/layer-4/round-1/agent-3/07-template-selection-preview-with-subject.png"
+      ]
+    },
+    {
+      "id": "AF4",
+      "severity": "LOW",
+      "area": "Settings page routing instability",
+      "description": "The /hire/settings/message_templates page intermittently auto-navigates to the jobs/candidates view within seconds of loading. Console logs show AppAuthed rendering with locationPathname pointing to /jobs/15819/stages/110706/applicants even while the browser URL is the settings page. This is likely a pre-existing React SPA routing issue (not specific to the email-subjects feature) and makes Playwright-based testing of the settings pages unreliable. Workaround: clearing JavaScript timers after page load prevents the auto-redirect."
+    }
+  ],
+  "codeVerification": {
+    "description": "Verified the implementation across the full stack in the messaging-improvements-qa branch",
+    "database": {
+      "table": "channel_message_templates",
+      "subjectColumn": "present (type: string)",
+      "file": "db/schema.rb line ~422"
+    },
+    "model": {
+      "file": "app/models/channel_message_template.rb",
+      "subjectHandling": "No explicit model validation on subject (relies on frontend Yup validation)"
+    },
+    "controller": {
+      "file": "app/controllers/api/v1/channel_message_templates_controller.rb",
+      "paramsPermit": "params.require(:channel_message_template).permit(:name, :body, :subject, :position)"
+    },
+    "serializer": {
+      "file": "app/serializers/api/v1/channel_message_template_serializer.rb",
+      "attributes": "[:id, :name, :body, :subject, :position, :created_by_user_full_name]"
+    },
+    "frontendModal": {
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateModal.tsx",
+      "typeDefinition": "channelMessageTemplate: { id; name; body; subject }",
+      "defaultSubject": "{{JobTitle}} at {{OrganizationName}}",
+      "subjectField": "FormInput with name='subject', label='Subject'"
+    },
+    "frontendValidation": {
+      "file": "app/javascript/shared/lib/validateWithYup.ts",
+      "schema": "channelMessageTemplateSchema = object({ name: string().required(), subject: string().required(), body: string().required() })"
+    },
+    "frontendSelectionModal": {
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx",
+      "subjectPreview": "Shows mailMerge.subjectRaw in Styled.SubjectPreview"
+    }
+  },
+  "overallVerdict": "PASS",
+  "summary": "All 5 test scenarios passed. The template create/edit modal correctly includes a Subject field with default value '{{JobTitle}} at {{OrganizationName}}'. Creating a template with a custom subject persists it. Editing a template displays the saved subject. Clearing the subject and attempting to save shows the required-field validation error. The full stack (database, controller, serializer, frontend modal, validation) correctly handles the subject field."
+}

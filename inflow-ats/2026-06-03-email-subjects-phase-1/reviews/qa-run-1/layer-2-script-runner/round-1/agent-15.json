@@ -1,0 +1,206 @@
+{
+  "agent": 15,
+  "focus": "End-to-end flow: template with subject -> render -> message -> mailer -> body unchanged",
+  "timestamp": "2026-06-05T00:28:30-05:00",
+  "tests": [
+    {
+      "name": "Template creation with subject",
+      "status": "pass",
+      "details": "Template 13942 created",
+      "expected": "Template persisted with subject",
+      "actual": "persisted, subject={{JobTitle}} - Update for {{CandidateFirstName}}"
+    },
+    {
+      "name": "Template subject persisted in DB",
+      "status": "pass",
+      "expected": "{{JobTitle}} - Update for {{CandidateFirstName}}",
+      "actual": "\"{{JobTitle}} - Update for {{CandidateFirstName}}\""
+    },
+    {
+      "name": "subject_raw has variables substituted",
+      "status": "pass",
+      "expected": "Senior Ruby Engineer - Update for TestCandidate0First",
+      "actual": "\"Senior Ruby Engineer - Update for TestCandidate0First\""
+    },
+    {
+      "name": "subject_html contains span-highlighted variables",
+      "status": "pass",
+      "expected": "HTML with <span> tags for variables",
+      "actual": "\"<span class='mail-merge-tag'>Senior Ruby Engineer</span> - Update for <span class='mail-merge-tag'>TestCandidate0First</span>\""
+    },
+    {
+      "name": "template_subject_html contains unfilled spans",
+      "status": "pass",
+      "expected": "HTML with unfilled <span> tags for variable placeholders",
+      "actual": "\"<span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>JobTitle</span><span class='mail-merge-brackets'>}}</span> - Update for <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>CandidateFirstName</span><span class='mail-merge-brackets'>}}</span>\""
+    },
+    {
+      "name": "message_raw (body) has variables substituted",
+      "status": "pass",
+      "expected": "Body containing TestCandidate0First",
+      "actual": "\"<p>Hi TestCandidate0First,</p><p>We have an update about the Senior Ruby Engineer position.</p>\""
+    },
+    {
+      "name": "has_invalid_tags is false for valid template",
+      "status": "pass"
+    },
+    {
+      "name": "subject_raw has no Markdown/HTML artifacts (no Redcarpet)",
+      "status": "pass",
+      "expected": "Plain text subject with no <p> or <br> tags",
+      "actual": "\"Senior Ruby Engineer - Update for TestCandidate0First\""
+    },
+    {
+      "name": "Channel message created with subject",
+      "status": "pass",
+      "details": "Message 372 created",
+      "expected": "Message persisted with subject",
+      "actual": "persisted"
+    },
+    {
+      "name": "Channel message subject persisted in DB",
+      "status": "pass",
+      "expected": "Senior Ruby Engineer - Update for TestCandidate0First",
+      "actual": "\"Senior Ruby Engineer - Update for TestCandidate0First\""
+    },
+    {
+      "name": "Mailer uses stored subject (not fallback)",
+      "status": "pass",
+      "details": "Fallback would be: Senior Ruby Engineer at Acme Inc.",
+      "expected": "Senior Ruby Engineer - Update for TestCandidate0First",
+      "actual": "Senior Ruby Engineer - Update for TestCandidate0First"
+    },
+    {
+      "name": "Stored subject differs from fallback (proves subject is custom)",
+      "status": "pass",
+      "expected": "Subject != fallback",
+      "actual": "subject=\"Senior Ruby Engineer - Update for TestCandidate0First\", fallback=\"Senior Ruby Engineer at Acme Inc.\""
+    },
+    {
+      "name": "subject.presence is truthy (non-blank stored subject)",
+      "status": "pass",
+      "expected": "Non-nil .presence",
+      "actual": "\"Senior Ruby Engineer - Update for TestCandidate0First\""
+    },
+    {
+      "name": "NULL subject falls back to hardcoded default",
+      "status": "pass",
+      "expected": "Senior Ruby Engineer at Acme Inc.",
+      "actual": "Senior Ruby Engineer at Acme Inc."
+    },
+    {
+      "name": "NULL subject .presence returns nil",
+      "status": "pass",
+      "expected": "nil",
+      "actual": "nil"
+    },
+    {
+      "name": "Empty string subject falls back to hardcoded default",
+      "status": "pass",
+      "expected": "Senior Ruby Engineer at Acme Inc.",
+      "actual": "Senior Ruby Engineer at Acme Inc."
+    },
+    {
+      "name": "html_safe_body still works (body pipeline intact)",
+      "status": "pass",
+      "expected": "Non-empty html_safe_body",
+      "actual": "\"<p>Hi TestCandidate0First,</p><p>We have an update about the Senior Ruby Engineer\""
+    },
+    {
+      "name": "cleaned_body still works (body pipeline intact)",
+      "status": "pass",
+      "expected": "Non-empty cleaned_body",
+      "actual": "\"<p>Hi TestCandidate0First,</p><p>We have an update about the Senior Ruby Engineer\""
+    },
+    {
+      "name": "Body content does not contain subject-only text",
+      "status": "pass",
+      "details": "Body and subject should be independent data pipelines",
+      "expected": "Body does not contain subject-specific text 'Update for'",
+      "actual": "\"<p>Hi TestCandidate0First,</p><p>We have an update about the Senior Ruby Engineer position.</p>\""
+    },
+    {
+      "name": "Subject does not contain body HTML tags",
+      "status": "pass",
+      "expected": "Subject has no <p> tags",
+      "actual": "\"Senior Ruby Engineer - Update for TestCandidate0First\""
+    },
+    {
+      "name": "Body render goes through Redcarpet (contains HTML structure)",
+      "status": "pass",
+      "expected": "Body HTML contains <p> tags from Redcarpet",
+      "actual": "message_raw snippet: \"<p>Hi TestCandidate0First,</p><p>We have an update about the \""
+    },
+    {
+      "name": "has_invalid_tags detects invalid tags in subject",
+      "status": "pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "invalid_tags includes the bad subject tag",
+      "status": "pass",
+      "expected": "InvalidTag in invalid_tags list",
+      "actual": "[\"InvalidTag\"]"
+    },
+    {
+      "name": "has_invalid_tags detects invalid tags in body (not just subject)",
+      "status": "pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "ChannelMessageSerializer exposes subject",
+      "status": "pass",
+      "expected": "subject key in serialized output",
+      "actual": "[:id, :channel_id, :hash_id, :user_id, :candidate_id, :sent_by, :source, :body, :subject, :cleaned_body, :html_safe_body, :body_sanitized_html, :payload, :created_at, :created_at_time_ago_short, :published_at_time_ago_short, :created_at_timestamp, :updated_at_timestamp, :job_application_url, :job_title, :candidate_full_name, :files_array, :user, :candidate]"
+    },
+    {
+      "name": "Serialized subject matches stored value",
+      "status": "pass",
+      "expected": "Senior Ruby Engineer - Update for TestCandidate0First",
+      "actual": "\"Senior Ruby Engineer - Update for TestCandidate0First\""
+    },
+    {
+      "name": "ChannelMessageTemplateSerializer exposes subject",
+      "status": "pass",
+      "expected": "subject key in serialized template output",
+      "actual": "[:id, :name, :body, :subject, :position, :created_by_user_full_name]"
+    },
+    {
+      "name": "CustomChannelMessageValidator catches {{}} in subject",
+      "status": "pass",
+      "expected": "Validation failure on subject with leftover {{}}",
+      "actual": "valid?=false, subject_errors=[\"Message not sent. An invalid placeholder formatted like {{Something}} was found.\"]"
+    },
+    {
+      "name": "Clean subject passes CustomChannelMessageValidator",
+      "status": "pass",
+      "expected": "No validation errors on subject",
+      "actual": "subject_errors=[]"
+    },
+    {
+      "name": "CustomChannelMessageValidator still catches {{}} in body",
+      "status": "pass",
+      "expected": "Validation failure on body with leftover {{}}",
+      "actual": "valid?=false, body_errors=[\"Message not sent. An invalid placeholder formatted like {{Something}} was found.\"]"
+    },
+    {
+      "name": "All default templates include subject field",
+      "status": "pass",
+      "expected": "Every default template hash has a :subject key",
+      "actual": "[[:name, :subject, :body, :created_by_organization_user_id], [:name, :subject, :body, :created_by_organization_user_id], [:name, :subject, :body, :created_by_organization_user_id]]"
+    },
+    {
+      "name": "Default template subjects match expected pattern",
+      "status": "pass",
+      "expected": "{{JobTitle}} at {{OrganizationName}}",
+      "actual": "[\"{{JobTitle}} at {{OrganizationName}}\", \"{{JobTitle}} at {{OrganizationName}}\", \"{{JobTitle}} at {{OrganizationName}}\"]"
+    }
+  ],
+  "summary": {
+    "pass": 32,
+    "fail": 0,
+    "error": 0
+  }
+}

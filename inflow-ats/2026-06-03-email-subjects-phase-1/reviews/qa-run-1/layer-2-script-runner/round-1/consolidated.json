@@ -1,0 +1,48 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agents_dispatched": 15,
+  "total_tests": 252,
+  "total_passed": 252,
+  "findings": [
+    {
+      "id": "L2-001",
+      "severity": "LOW",
+      "title": "text.blank? raises ArgumentError on malformed UTF-8 before text.scrub can clean it",
+      "evidence": "Both parse_text methods call `return '' if text.blank?` before `text.scrub`. ActiveSupport's blank? performs a regex match that raises on malformed input. Pre-existing pattern (affects body too).",
+      "recommendation": "No action — pre-existing, affects body identically, browsers always send valid UTF-8.",
+      "reported_by": [13]
+    },
+    {
+      "id": "L2-INFO-001",
+      "severity": "LOW",
+      "title": "QA harness starts Cypress server from main checkout, not worktree",
+      "evidence": "Seeded data reflects base branch code (no subject column in default templates). Feature-branch defaults must be tested via rails runner in the worktree.",
+      "recommendation": "Infrastructure improvement for qa-harness: allow configuring the server working directory.",
+      "reported_by": [10]
+    }
+  ],
+  "pipelines_verified": {
+    "single_send": "PASS - Agent 1: subject persists, mailer reads it, fallback works",
+    "bulk_send": "PASS - Agent 2: parse_text substitutes all 7 variables, nil/blank handled",
+    "automation": "PASS - Agent 3: template subject → automation job → parse_text → channel_message",
+    "apply_response": "PASS - Agent 4: parse_apply_response_text, add_default_apply_response_template",
+    "inbound_capture": "PASS - Agent 8: send_message_to_company/to_candidate capture email.subject"
+  },
+  "cross_cutting_verified": {
+    "validator": "PASS - Agent 5: CustomChannelMessageValidator on :subject, edge cases",
+    "render_template_message": "PASS - Agent 6: subject_raw/html/template, invalid_tags, no Redcarpet",
+    "mailer_fallback": "PASS - Agent 7: .presence fallback for nil/blank/whitespace",
+    "anonymization": "PASS - Agent 9: text_replacer on subject, nil handling",
+    "default_templates": "PASS - Agent 10: Organization defaults, Job defaults",
+    "serializers": "PASS - Agent 11: all 4 serializers expose subject",
+    "controller_permit_sanitize": "PASS - Agent 12: XSS sanitization, permit/deny",
+    "parse_text_substitution": "PASS - Agent 13: all 7 variables, .scrub, edge cases",
+    "schema": "PASS - Agent 14: all columns correct type/nullable",
+    "end_to_end": "PASS - Agent 15: full lifecycle template → render → persist → mailer"
+  },
+  "convergence": {
+    "high_plus_findings": 0,
+    "round_status": "CLEAN"
+  }
+}

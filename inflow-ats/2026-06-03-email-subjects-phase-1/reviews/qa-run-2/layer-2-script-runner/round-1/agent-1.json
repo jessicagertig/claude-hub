@@ -1,0 +1,75 @@
+{
+  "agent": "agent-1",
+  "layer": "layer-2-script-runner",
+  "round": "round-1",
+  "qa_run": "qa-run-2",
+  "scope": "backend-sanity-check",
+  "timestamp": "2026-06-05T02:20:34-05:00",
+  "summary": "All 12 backend sanity checks passed",
+  "overall_status": "PASS",
+  "total_tests": 12,
+  "passed": 12,
+  "failed": 0,
+  "results": [
+    {
+      "test": "ChannelMessage has 'subject' column",
+      "status": "PASS",
+      "detail": "column exists"
+    },
+    {
+      "test": "ChannelMessageTemplate has 'subject' column",
+      "status": "PASS",
+      "detail": "column exists"
+    },
+    {
+      "test": "Job has 'apply_response_template_subject' column",
+      "status": "PASS",
+      "detail": "column exists"
+    },
+    {
+      "test": "ChannelMessage has 'mailgun_message_id' column",
+      "status": "PASS",
+      "detail": "column exists"
+    },
+    {
+      "test": "ChannelMessage subject persists after save",
+      "status": "PASS",
+      "detail": "subject='QA Run 2 — custom subject test c7463295'"
+    },
+    {
+      "test": "parse_apply_response_text substitutes all placeholders",
+      "status": "PASS",
+      "detail": "output='Re: Software Engineer application from Glen Stoltenberg at Acme Inc.'"
+    },
+    {
+      "test": "parse_apply_response_text returns '' for nil",
+      "status": "PASS",
+      "detail": "correctly returned empty string"
+    },
+    {
+      "test": "parse_apply_response_text returns '' for empty string",
+      "status": "PASS",
+      "detail": "correctly returned empty string"
+    },
+    {
+      "test": "ChannelMessage with nil subject stores nil",
+      "status": "PASS",
+      "detail": "subject is nil"
+    },
+    {
+      "test": "Mailer fallback expression produces correct subject for nil",
+      "status": "PASS",
+      "detail": "fallback='Software Engineer at Acme Inc.'"
+    },
+    {
+      "test": "Mailer expression uses custom subject when present",
+      "status": "PASS",
+      "detail": "uses custom='QA Run 2 — custom subject test c7463295'"
+    },
+    {
+      "test": "Mailer fallback expression produces correct subject for empty string",
+      "status": "PASS",
+      "detail": "fallback='Software Engineer at Acme Inc.'"
+    }
+  ]
+}

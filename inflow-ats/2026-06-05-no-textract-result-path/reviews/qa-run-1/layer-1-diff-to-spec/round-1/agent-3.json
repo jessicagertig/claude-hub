@@ -1,0 +1,19 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 3,
+  "focus_area": "Change 3 (AiJobApplicationSummary nil guard) + Change 3 test",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "Change 3: add return unless textract_result guard",
+      "Change 3: guard must be FIRST line of destroy_previous_textract_results (before saved_change_to_status?)",
+      "Change 3 test: add test to ai_job_application_summary_spec.rb",
+      "Change 3 test: create summary with nil textract_result_id",
+      "Change 3 test: update status to succeeded",
+      "Change 3 test: assert no error raised"
+    ],
+    "all_implemented": true,
+    "notes": "Guard is correctly placed as the first line of the method, before the existing saved_change_to_status? guard. Test correctly creates summary with nil textract_result and verifies no NoMethodError on status transition to succeeded."
+  }
+}

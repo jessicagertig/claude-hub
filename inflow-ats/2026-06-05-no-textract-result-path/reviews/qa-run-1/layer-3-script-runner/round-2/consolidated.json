@@ -1,0 +1,19 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "findings": [],
+  "scripts_run": [
+    {
+      "script": "/tmp/qa-verify-edge-cases.rb",
+      "target": "Edge cases across all 3 changes",
+      "result": "PASS",
+      "details": "Verified: (1) safe navigation with no waiting summary, (2) stale: false filter excludes stale summaries, (3) cleanup works even without TextractResult, (4) multiple status transitions with nil textract_result"
+    }
+  ],
+  "convergence": {
+    "findings_count": 0,
+    "clean_round": true,
+    "consecutive_clean_rounds": 2,
+    "gate_passed": true
+  }
+}

@@ -1,33 +1,28 @@
-# CLAUDE.md Compliance — Round 1
+# claude-md-compliance — Round 1 Findings
 
-## Global CLAUDE.md Hard Rules
+## Checked against global CLAUDE.md hard rules:
 
-### Database Safety
+### Database safety rules
+- **NEVER drop or recreate a database**: The harness does not perform any database operations directly. Data seeding is exclusively via Cypress HTTP endpoints (which are gated on `Rails.env.test?`). PASS.
+- **Cleanup via DELETE /cypress/cleanup only**: The harness calls the configured cleanup endpoint, which for inflow-ats is `DELETE /cypress/cleanup`. PASS.
+- **No direct psql access**: The harness does not make any direct database connections. PASS.
+- **No .env file modification**: The harness does not read or write `.env` files. PASS.
 
-- **NEVER drop or recreate a database:** PASS. The harness does not execute any database commands directly. All data operations go through `/cypress/*` HTTP endpoints, which are gated on `Rails.env.test?`. The harness never imports Rails, never runs `bundle exec rails db:*`, never uses `psql`.
+### HIGH-3: Harness does NOT set DATABASE_URL (verified) but also does NOT enforce RAILS_ENV=test in subprocess env
 
-- **NEVER modify .env files:** PASS. No code in the harness reads, writes, or modifies `.env` files. `grep -rn "\.env" src/` returns zero hits for file operations on `.env` files. The config module reads `QA_CONFIG_PATH` from `os.environ.get()` (read-only) -- this is an env var, not a `.env` file.
+Cross-reference with server-lifecycle HIGH-1. The global CLAUDE.md says:
+- "NEVER set DATABASE_URL yourself" -- PASS, the harness does not set this.
+- But the related rule "control it via RAILS_ENV ONLY" implies the harness should set `RAILS_ENV=test` in the subprocess environment. The current code (`env = os.environ.copy()` without modification) does NOT enforce this.
 
-- **NEVER set DATABASE_URL:** PASS. `grep -rn "DATABASE_URL" src/` returns zero hits. The server module uses `env = os.environ.copy()` but never mutates it. No `env["DATABASE_URL"]` or `os.environ["DATABASE_URL"]` anywhere.
+This is the same finding as server-lifecycle HIGH-1, cross-referenced here for completeness.
 
-- **Data written only via app interaction, Rails console, or rails runner:** PASS. Seed data is written via HTTP POST to `/cypress/*` endpoints on the running Rails test server. This is "actual app interaction" per the rules.
+### Hub CLAUDE.md rules
+- **Never write files into source repos from a hub session**: The harness writes to `/tmp` (state file) and to the feature working directory (via agents). It does not write to source repos. PASS.
+- **Always create a subdirectory for new work**: The qa-harness package is at `~/claude-hub/qa-harness/`, which is a new directory at the hub level. The plan-review confirmed this is acceptable. PASS.
 
-### Other Global Rules
-
-- **Never work directly on main/master:** N/A -- the harness is infrastructure code in claude-hub, not a source repo with branches.
-
-- **Never delete git branches:** N/A.
-
-- **Platform (Mac M1):** PASS. No hardcoded `/usr/local/` paths. Uses `bash -c` wrapper for shell commands. No architecture-specific assumptions.
-
-## Hub CLAUDE.md Rules
-
-- **Never write files into source repos from a hub session:** PASS. The harness writes only to `/tmp` (state file, agent evidence) and to the feature working directory (`reviews/`). No writes to source repos.
-
-- **Always create a subdirectory for new work:** PASS. The harness package is at `~/claude-hub/qa-harness/`, a new top-level directory. The pipeline config is at `~/claude-hub/inflow-ats/qa-config.yml`, inside an existing pipeline directory.
-
-- **Source repo's CLAUDE.md and cursor_rules/ are authoritative:** N/A for the harness itself. The qa-prompt.md instructs agents to respect source repo conventions.
-
-## Verdict
-
-All hard rules pass. No compliance issues.
+### Spec hard rules
+- **`RAILS_ENV=test` always**: FAIL -- see server-lifecycle HIGH-1.
+- **Data seeding via Cypress endpoints only**: PASS.
+- **Temporary scripts in /tmp only**: QA agent instructions in qa-prompt.md correctly specify `/tmp` (line 70, 95, 106).
+- **No .env modification**: PASS.
+- **No DATABASE_URL**: PASS.

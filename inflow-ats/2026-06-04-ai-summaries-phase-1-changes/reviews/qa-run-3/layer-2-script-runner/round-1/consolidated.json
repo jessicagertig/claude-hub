@@ -1,0 +1,29 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 3,
+  "findings": [],
+  "scripts_run": [
+    "qa-verify-credit-packs.rb - PASS: 4 real packs, class methods working",
+    "qa-verify-enum-rename.rb - PASS: enum values, prefix methods, cascade method, org method",
+    "qa-verify-model-validations.rb - PASS: pre-checkout relaxation, one-off requires session_id, period dates required with sub_id",
+    "qa-verify-routes-and-methods.rb - PASS (partial): routes confirmed, method renames confirmed",
+    "qa-verify-plan-feature-gate.rb - PASS: daily/monthly allocation, Variables, mailer, declaration order",
+    "API endpoint check - PASS: all 3 endpoints return 401 (auth required, not 404)"
+  ],
+  "areas_verified": [
+    "CREDIT_PACKS_BY_LOOKUP_KEY constant and class methods",
+    "Job enum auto_generate_ai_summaries with new values (default/enabled/disabled)",
+    "should_auto_generate_ai_summaries? cascade method",
+    "Organization#auto_generate_ai_summaries_enabled (no ?)",
+    "OrganizationAiCreditPurchase validation relaxation for pre-checkout state",
+    "Routes: 6 AI credit routes (GET balance, GET/POST/POST/PUT/GET purchases)",
+    "process_ai_credit_resets renamed from process_overdue_ai_credit_resets",
+    "PlanFeatureGate daily_ai_credit_allocation fallback (|| DAILY_AI_CREDIT_ALLOCATION)",
+    "Variables::AI_DAILY_CREDIT_ALLOCATION = 5",
+    "CreateAiCreditBalanceTransaction class (renamed from ConsumeAiCredits)",
+    "broadcast_ai_summary_failed method (renamed from broadcast_credits_exhausted)",
+    "BulkGenerateAiSummariesJob rescue_handlers order: StandardError first, CustomErrorAiSummary second",
+    "BulkJobApplicationAiSummaryResultMailer complete/failed methods"
+  ]
+}

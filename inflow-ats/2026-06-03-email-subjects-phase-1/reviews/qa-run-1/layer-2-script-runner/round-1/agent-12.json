@@ -1,0 +1,172 @@
+{
+  "agent": 12,
+  "round": 1,
+  "layer": "layer-2-script-runner",
+  "focus": "Controller permitting and sanitization — verify that subject is permitted and sanitized correctly via API calls",
+  "timestamp": "2026-06-05T00:25:00Z",
+  "seed_plan": "paid-user-with-job-and-candidates.json",
+  "seed_status": "cleanup succeeded; seed endpoints returned 500 (server restart timing issue) — tests ran via rails runner without needing seeded data",
+  "scripts_run": [
+    "/tmp/qa-l2-agent12-sanitizer.rb",
+    "/tmp/qa-l2-agent12-params.rb",
+    "/tmp/qa-l2-agent12-e2e-sanitize.rb"
+  ],
+  "summary": {
+    "total_tests": 21,
+    "passed": 21,
+    "failed": 0,
+    "verdict": "PASS"
+  },
+  "test_groups": [
+    {
+      "group": "Sanitizer module XSS handling",
+      "script": "/tmp/qa-l2-agent12-sanitizer.rb",
+      "tests": 7,
+      "passed": 7,
+      "results": [
+        {
+          "test": "XSS script tag stripped, text preserved",
+          "input": "<script>alert('xss')</script>Important Subject",
+          "output": "Important Subject",
+          "pass": true
+        },
+        {
+          "test": "Plain text subject passes through unchanged",
+          "input": "Interview Invitation - Software Engineer",
+          "output": "Interview Invitation - Software Engineer",
+          "pass": true
+        },
+        {
+          "test": "HTML content sanitized (safe tags preserved per RELAXED config)",
+          "input": "<b>Bold Subject</b> &amp; More",
+          "output": "<b>Bold Subject</b> &amp; More",
+          "pass": true
+        },
+        {
+          "test": "Empty string handled correctly",
+          "input": "",
+          "output": "",
+          "pass": true
+        },
+        {
+          "test": "<p></p> special case returns empty string",
+          "input": "<p></p>",
+          "output": "",
+          "pass": true
+        },
+        {
+          "test": "Multiple XSS vectors stripped (img onerror, svg onload)",
+          "input": "<img src=x onerror=alert('xss')>Subject<svg onload=alert('xss')>",
+          "output": "<img src=\"x\">Subject",
+          "pass": true
+        },
+        {
+          "test": "nil input handled without error",
+          "input": "nil",
+          "output": "",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "group": "ActionController::Parameters permitting",
+      "script": "/tmp/qa-l2-agent12-params.rb",
+      "tests": 8,
+      "passed": 8,
+      "results": [
+        {
+          "test": "ChannelMessagesController permits :body and :subject",
+          "pass": true,
+          "details": "Both keys present in permitted params; evil_param filtered out"
+        },
+        {
+          "test": "Subject key is present in permitted params",
+          "pass": true,
+          "details": "Value: 'Test Subject Line'"
+        },
+        {
+          "test": "Params without subject still work (backward compatibility)",
+          "pass": true,
+          "details": "body preserved, subject nil"
+        },
+        {
+          "test": "HiringStageMessageAutomationsController does NOT permit :subject",
+          "pass": true,
+          "details": "subject filtered out; permitted keys: [channel_message_template_id, hiring_stage_id, frequency, enabled]"
+        },
+        {
+          "test": "ChannelMessagesController source has :subject in permit AND sanitize call",
+          "pass": true,
+          "details": "permit(:body, :subject) found; sanitize(next_params[:subject]) found"
+        },
+        {
+          "test": "HiringStageMessageAutomationsController source does NOT contain :subject",
+          "pass": true,
+          "details": "No :subject anywhere in the controller source"
+        },
+        {
+          "test": "ChannelMessagesController includes Sanitizer module",
+          "pass": true,
+          "details": "'include Sanitizer' found in source"
+        },
+        {
+          "test": "Sanitize calls are conditional (only when key present)",
+          "pass": true,
+          "details": "Both body and subject use 'if next_params.key?(:field)' guard"
+        }
+      ]
+    },
+    {
+      "group": "End-to-end controller sanitization flow",
+      "script": "/tmp/qa-l2-agent12-e2e-sanitize.rb",
+      "tests": 6,
+      "passed": 6,
+      "results": [
+        {
+          "test": "Full flow: both body and subject XSS sanitized",
+          "pass": true,
+          "details": "Script tags stripped from both fields; text preserved"
+        },
+        {
+          "test": "Subject javascript: protocol stripped",
+          "pass": true,
+          "input": "<a href=\"javascript:alert(1)\">Click me</a> Real Subject",
+          "output": "<a target=\"_blank\" rel=\"nofollow\">Click me</a> Real Subject",
+          "details": "javascript: href removed; nofollow added; text preserved"
+        },
+        {
+          "test": "Subject only, no body (backward compatible)",
+          "pass": true,
+          "details": "Subject sanitized and preserved; body is nil"
+        },
+        {
+          "test": "Body only, no subject (backward compatible)",
+          "pass": true,
+          "details": "Body sanitized and preserved; subject is nil"
+        },
+        {
+          "test": "Subject event handler attributes stripped",
+          "pass": true,
+          "input": "<div onmouseover=\"steal()\">Hover Subject</div>",
+          "output": "<div>Hover Subject</div>",
+          "details": "onmouseover attribute removed; text preserved"
+        },
+        {
+          "test": "Subject with style-based XSS",
+          "pass": true,
+          "input": "<div style=\"background:url(javascript:alert(1))\">Styled Subject</div>",
+          "output": "<div>Styled Subject</div>",
+          "details": "Dangerous style attribute stripped; text preserved"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "notes": [
+    "The Sanitizer module uses Sanitize::Config::RELAXED which preserves safe HTML tags (b, p, div, a, img) while stripping dangerous elements (script, svg event handlers, javascript: protocols, style-based XSS).",
+    "The sanitize call in ChannelMessagesController is conditional on the key being present, which means omitting subject does not cause errors — backward compatible.",
+    "HiringStageMessageAutomationsController correctly does NOT permit :subject — it only permits channel_message_template_id, hiring_stage_id, frequency, and enabled. This is correct because automations reference templates, not direct message content.",
+    "The Sanitizer also adds target='_blank' and rel='nofollow' to all anchor tags, which applies equally to subjects — though subjects with HTML anchors would be unusual in practice.",
+    "Seed endpoints returned 500 during this run (server restart timing), but all tests were designed to run via rails runner without HTTP-level seed data, so this did not affect test validity."
+  ]
+}

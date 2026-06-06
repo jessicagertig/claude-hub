@@ -1,0 +1,81 @@
+{
+  "agent": 7,
+  "round": 2,
+  "focus": "Apply-response with nil apply_response_template_subject (legacy job) — does the full chain handle it?",
+  "scripts": [
+    "/tmp/qa-l2r2-agent7-all-tests.rb"
+  ],
+  "seed_plan": "paid-user-with-job-and-candidates.json",
+  "test_count": 18,
+  "pass_count": 18,
+  "fail_count": 0,
+  "findings": [],
+  "observations": [
+    {
+      "id": "OBS-1",
+      "severity": "INFO",
+      "title": "Migration does not backfill apply_response_template_subject for existing jobs",
+      "description": "The migration (20260603212057) adds apply_response_template_subject as a nullable string column with no default and no data migration. All existing jobs in production will have nil for this column after migration. Only newly created jobs receive the default '{{JobTitle}} at {{OrganizationName}}' via add_default_apply_response_template. This is correctly handled by the fallback chain but worth noting.",
+      "files": [
+        "db/migrate/20260603212057_add_subject_and_mailgun_message_id_to_channel_messages.rb",
+        "app/models/job.rb (line 346-350: add_default_apply_response_template)",
+        "app/models/job_application.rb (line 548-558: parse_apply_response_text)",
+        "app/mailers/channel_message_mailer.rb (line 116: subject fallback)"
+      ]
+    },
+    {
+      "id": "OBS-2",
+      "severity": "INFO",
+      "title": "Cypress seeder does not set apply_response_template_subject (simulates legacy)",
+      "description": "The Cypress job seeder appears to skip add_default_apply_response_template, so seeded jobs have apply_response_template_subject=nil. This actually serves as a realistic test scenario for legacy jobs."
+    }
+  ],
+  "chain_verified": {
+    "description": "Full chain from legacy nil apply_response_template_subject through email delivery verified",
+    "steps": [
+      {
+        "step": 1,
+        "component": "JobApplication#parse_apply_response_text(nil)",
+        "file": "app/models/job_application.rb:548-549",
+        "result": "Returns '' because text.blank? is true for nil",
+        "status": "PASS"
+      },
+      {
+        "step": 2,
+        "component": "JobApplication#send_candidate_confirmation_email",
+        "file": "app/models/job_application.rb:521-535",
+        "result": "Calls CreateOrganizationChannelMessage with subject: ''",
+        "status": "PASS"
+      },
+      {
+        "step": 3,
+        "component": "CustomerApi::CompleteJobApplication#send_confirmation_email",
+        "file": "app/interactors/customer_api/complete_job_application.rb:44-65",
+        "result": "Same path, also passes subject: '' when template subject is nil",
+        "status": "PASS"
+      },
+      {
+        "step": 4,
+        "component": "ChannelMessages::CreateOrganizationChannelMessage",
+        "file": "app/interactors/channel_messages/create_organization_channel_message.rb",
+        "result": "Creates ChannelMessage with subject='' successfully",
+        "status": "PASS"
+      },
+      {
+        "step": 5,
+        "component": "CustomChannelMessageValidator",
+        "file": "app/validators/custom_channel_message_validator.rb",
+        "result": "Empty string passes validation (no {{placeholder}} pattern found)",
+        "status": "PASS"
+      },
+      {
+        "step": 6,
+        "component": "ChannelMessageMailer#notify_candidate",
+        "file": "app/mailers/channel_message_mailer.rb:116",
+        "result": "''.presence returns nil, fallback fires: 'Software Engineer at Acme Inc.'",
+        "status": "PASS"
+      }
+    ]
+  },
+  "summary": "All 18 tests passed. The full chain correctly handles legacy jobs with nil apply_response_template_subject. parse_apply_response_text(nil) returns '', ChannelMessage is created with subject='', and the mailer fallback at line 116 of channel_message_mailer.rb produces the correct default subject '<job_title> at <org_name>'. Both the JobApplication model path and the CustomerApi::CompleteJobApplication interactor path are verified. No bugs found."
+}

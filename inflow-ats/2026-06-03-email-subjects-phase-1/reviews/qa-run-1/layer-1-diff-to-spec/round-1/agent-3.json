@@ -1,0 +1,31 @@
+{
+  "agent_index": 3,
+  "focus_area": "Serializers",
+  "findings": [
+    {
+      "id": "S-F1",
+      "severity": "MED",
+      "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx",
+      "lines": "307",
+      "summary": "font-size: ${t.text.sm} produces invalid CSS (double font-size declaration)",
+      "detail": "In the Styled.SubjectPreview component added by this diff, line 307 uses `font-size: ${t.text.sm};`. The theme's `t.text.sm` is a `css` template literal that already includes the full `font-size: 0.875rem;` property declaration (confirmed in app/javascript/ats/styles/theme.ts line 94-96). Using it inside a `font-size:` property produces invalid CSS like `font-size: font-size: 0.875rem;`. This is the exact failure pattern documented in the pipeline CLAUDE.md (Known Failure Pattern #1, motivated by this same feature's earlier review rounds). The fix is to use `${t.text.sm};` standalone instead of `font-size: ${t.text.sm};`.",
+      "spec_ref": "No direct spec requirement for styling; this is a CSS correctness bug in the template selection modal's subject preview display.",
+      "note": "This file is outside my four assigned serializer files but is directly adjacent -- it consumes the serialized subject data via the mail-merge preview. Flagging it here because it was found while tracing the serializer data flow. If another agent with frontend focus area has already flagged this, this is a duplicate and can be dropped."
+    }
+  ],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "ChannelMessageSerializer: expose :subject",
+      "ChannelMessageTemplateSerializer: expose :subject",
+      "JobSerializer: expose :apply_response_template_subject",
+      "Hire::ChannelMessageSerializer (public API): expose :subject"
+    ],
+    "implemented": [
+      "ChannelMessageSerializer: expose :subject -- verified at app/serializers/api/v1/channel_message_serializer.rb line 8. Added :subject after :body in the attributes list. Correct placement and correct attribute name. The underlying column exists (migration adds `subject` string column to `channel_messages`). ActiveModel::Serializer will call `object.subject` which maps directly to the column. NULL values for legacy rows will serialize as null in JSON, which is correct per spec (nullable column, no backfill).",
+      "ChannelMessageTemplateSerializer: expose :subject -- verified at app/serializers/api/v1/channel_message_template_serializer.rb line 7. Added :subject after :body. Correct. The underlying column exists (migration adds `subject` string column to `channel_message_templates`). Same NULL-safe behavior for legacy templates.",
+      "JobSerializer: expose :apply_response_template_subject -- verified at app/serializers/api/v1/job_serializer.rb line 53. Added :apply_response_template_subject after :apply_response_template. Correct attribute name matching the database column name. Correct placement alongside the related `use_apply_response_template` and `apply_response_template` attributes. The underlying column exists (migration adds `apply_response_template_subject` string column to `jobs`). Legacy jobs with NULL value will serialize as null, frontend defaults to '{{JobTitle}} at {{OrganizationName}}' via the || fallback in JobSetupAutomations.tsx.",
+      "Hire::ChannelMessageSerializer (public API): expose :subject -- verified at app/serializers/api_public/v1/hire/channel_message_serializer.rb line 7. Added :subject between :body and :body_plain_text on the same attributes line. Correct."
+    ],
+    "missing": []
+  }
+}

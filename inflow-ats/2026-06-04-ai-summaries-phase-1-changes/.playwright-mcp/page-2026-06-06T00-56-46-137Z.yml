@@ -1,0 +1,131 @@
+- generic [ref=e8]:
+  - generic [ref=e9]:
+    - generic [ref=e11]:
+      - img [ref=e12]
+      - heading "Polymer" [level=1] [ref=e15]
+    - list [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: RM
+          - generic [ref=e21]: Rezu May
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e27] [cursor=pointer]:
+          - generic [ref=e29]: A
+          - img [ref=e31]
+        - generic [ref=e36]: Acme Inc.
+      - generic [ref=e38]:
+        - img [ref=e41] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - generic [ref=e46]:
+      - img [ref=e47]
+      - textbox "Search candidates" [ref=e50]
+    - generic [ref=e52]:
+      - link [ref=e54] [cursor=pointer]:
+        - /url: /notifications
+        - img [ref=e55]
+      - link [ref=e59] [cursor=pointer]:
+        - /url: /hire/settings/organization
+        - img [ref=e60]
+  - generic [ref=e63]:
+    - generic [ref=e233]:
+      - img [ref=e236] [cursor=pointer]
+      - heading "App settings" [level=2] [ref=e239]
+    - generic [ref=e240]:
+      - generic [ref=e241]:
+        - link "User preferences" [ref=e243] [cursor=pointer]:
+          - /url: /hire/settings/preferences
+          - generic [ref=e245]: User preferences
+          - img [ref=e246]
+        - separator
+        - generic [ref=e248]: Admin
+        - generic [ref=e249]:
+          - link "Organization" [ref=e250] [cursor=pointer]:
+            - /url: /hire/settings/organization
+            - generic [ref=e252]: Organization
+            - img [ref=e253]
+          - link "Team" [ref=e255] [cursor=pointer]:
+            - /url: /hire/settings/team
+            - generic [ref=e257]: Team
+            - img [ref=e258]
+          - link "Message templates" [ref=e260] [cursor=pointer]:
+            - /url: /hire/settings/message_templates
+            - generic [ref=e262]: Message templates
+            - img [ref=e263]
+          - link "Review templates" [ref=e265] [cursor=pointer]:
+            - /url: /hire/settings/review_templates
+            - generic [ref=e267]: Review templates
+            - img [ref=e268]
+          - link "Job board" [ref=e270] [cursor=pointer]:
+            - /url: /hire/settings/jobboard
+            - generic [ref=e272]: Job board
+            - img [ref=e273]
+          - link "Job categories" [ref=e275] [cursor=pointer]:
+            - /url: /hire/settings/categories
+            - generic [ref=e277]: Job categories
+            - img [ref=e278]
+          - link "Integrations" [ref=e280] [cursor=pointer]:
+            - /url: /hire/settings/integrations
+            - generic [ref=e282]: Integrations
+            - img [ref=e283]
+          - link "Plan & billing" [ref=e285] [cursor=pointer]:
+            - /url: /hire/settings/billing
+            - generic [ref=e287]: Plan & billing
+            - img [ref=e288]
+          - link "Plato AI" [ref=e290] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai
+            - generic [ref=e292]: Plato AI
+            - img [ref=e293]
+      - generic [ref=e369]:
+        - generic [ref=e370]:
+          - link "Settings" [ref=e371] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/settings
+            - generic [ref=e373]: Settings
+            - img [ref=e374]
+          - link "Billing" [ref=e376] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/billing
+            - generic [ref=e378]: Billing
+            - img [ref=e379]
+          - link "Usage" [active] [ref=e381] [cursor=pointer]:
+            - /url: /hire/settings/plato-ai/usage
+            - generic [ref=e383]: Usage
+            - img [ref=e384]
+        - generic [ref=e425]:
+          - heading "AI usage" [level=2] [ref=e428]
+          - paragraph [ref=e429]: See your organization's current AI credit balance and usage this period.
+          - generic [ref=e430]:
+            - heading "Credit balance" [level=4] [ref=e433]
+            - generic [ref=e434]:
+              - generic [ref=e435]:
+                - generic [ref=e436]: Monthly
+                - generic [ref=e437]: "25"
+                - generic [ref=e438]: resets on renewal
+              - generic [ref=e439]:
+                - generic [ref=e440]: Purchased
+                - generic [ref=e441]: "0"
+                - generic [ref=e442]: never expire
+              - generic [ref=e443]:
+                - generic [ref=e444]: Total
+                - generic [ref=e445]: "25"
+                - generic [ref=e446]: credits remaining
+          - generic [ref=e447]:
+            - heading "Usage this period" [level=4] [ref=e450]
+            - generic [ref=e451]: 0 of 25 monthly credits used this period
+            - generic [ref=e453]: Monthly credits reset on Jul 05, 2026

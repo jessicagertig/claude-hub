@@ -1,0 +1,12 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "findings": [],
+  "notes": "Navigated to Resume tab on candidate page. No crashes, no new console errors. 'No resume to show' state renders correctly. Same 7 pre-existing console errors (heap SDK 404, history deprecation warnings, Redux reducer warnings). No regressions from model changes.",
+  "convergence": {
+    "findings_count": 0,
+    "clean_round": true,
+    "consecutive_clean_rounds": 2,
+    "gate_passed": true
+  }
+}

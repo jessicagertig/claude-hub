@@ -1,0 +1,95 @@
+{
+  "agent": "playwright-qa-5",
+  "round": 2,
+  "layer": "layer-4-playwright",
+  "timestamp": "2026-06-05T07:05:00Z",
+  "server": "http://app.lvh.me:5007",
+  "branch": "messaging-improvements-qa",
+  "worktree": "/Users/jessica/wrk/wrk-corp/inflow-ats.messaging-improvements",
+  "findings": [
+    {
+      "id": "C-001",
+      "prior_severity": "MED",
+      "validated_severity": "LOW",
+      "status": "CONFIRMED",
+      "title": "CSS font-size bug in SubjectPreview produces invalid CSS declaration",
+      "description": "Line 207 of ChannelMessageTemplateSelectionModal.tsx uses `font-size: ${t.text.sm};` but t.text.sm is a css template literal that already includes the `font-size:` property declaration (resolves to `font-size: 0.875rem;`). This produces `font-size: font-size: 0.875rem;` which is invalid CSS. The browser silently drops the font-size property entirely.",
+      "evidence": {
+        "code": {
+          "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateSelectionModal.tsx",
+          "line": 207,
+          "content": "font-size: ${t.text.sm};"
+        },
+        "theme_definition": {
+          "file": "app/javascript/ats/styles/theme.ts",
+          "lines": "94-96",
+          "content": "sm: css`\n    font-size: 0.875rem;\n  `"
+        },
+        "runtime_css_rule": ".css-ebb3nb-ChannelMessageTemplateSelectionModal_Styled-SubjectPreview... { margin-bottom: 0.75rem; padding-bottom: 0.75rem; font-weight: 600; border-bottom: 1px solid rgb(212, 212, 212); color: rgb(38, 38, 38); }",
+        "runtime_computed_font_size": "14px",
+        "note": "No font-size property appears in the generated CSS rule, confirming the browser rejected the invalid declaration. The computed 14px is an inherited default, not the result of the intended t.text.sm."
+      },
+      "severity_rationale": "Downgraded from MED to LOW: the invalid CSS causes the font-size property to be silently dropped, but the inherited font size (14px) happens to approximately match the intended 0.875rem (14px at 16px root). The visual result is indistinguishable from the intended design in default viewport conditions. The CSS is technically wrong and should be fixed (use `${t.text.sm}` standalone without wrapping in `font-size:`), but the user-facing impact is negligible.",
+      "fix": "Replace `font-size: ${t.text.sm};` with `${t.text.sm};` on line 207",
+      "known_failure_pattern": "Matches pipeline known failure pattern #1: 'Emotion theme utilities are complete CSS declarations, not raw values'"
+    },
+    {
+      "id": "C-002",
+      "prior_severity": "MED",
+      "validated_severity": "MED",
+      "status": "CONFIRMED_CODE_ONLY",
+      "title": "Automation modal existing-template preview does not show subject",
+      "description": "The HiringStageAutomationModal's read-only preview of the selected existing template (lines 420-424) renders only selectedTemplate.body via dangerouslySetInnerHTML. It does not display selectedTemplate.subject. The spec's data flow section states: 'Automation modal's existing-template preview: show the saved template's subject as-is.' The template object does have a subject field (confirmed via schema and serializer).",
+      "evidence": {
+        "code": {
+          "file": "app/javascript/ats/src/components/modals/HiringStageAutomationModal.tsx",
+          "lines": "420-424",
+          "content": "{/* Read-only preview of the selected template's rendered body. */}\n{selectedTemplate != null && (\n  <Styled.PreviewContainer translate=\"no\" className=\"notranslate\">\n    <div dangerouslySetInnerHTML={{ __html: selectedTemplate.body || '' }} />\n  </Styled.PreviewContainer>\n)}"
+        },
+        "spec_requirement": "SPEC.md line 62: 'Automation modal's existing-template preview: show the saved template's subject as-is.'",
+        "schema_confirmation": "channel_message_templates table has a `subject` string column (db/schema.rb). Serializer exposes id, name, body, position, created_by_user_full_name (but does NOT expose subject in the API serializer - this is a separate issue).",
+        "ui_test_blocked": "The HIRING_STAGE_AUTOMATIONS feature flag is not enabled for the test user, so the HiringStageAutomationModal is not reachable via UI. Finding confirmed via code analysis only."
+      },
+      "severity_rationale": "MED maintained. The user cannot see what subject their automation template will send when previewing an existing template selection. This is a functional gap vs. the spec. However, the inline-create-template path (which IS in the same modal) does have a subject input, so only the existing-template selection path is affected.",
+      "fix": "Add subject display above the body preview in the existing-template section, similar to SubjectPreview in ChannelMessageTemplateSelectionModal. Also ensure the ChannelMessageTemplateSerializer exposes :subject.",
+      "note": "Additionally, the Api::V1::ChannelMessageTemplateSerializer does NOT include :subject in its attributes list (only :id, :name, :body, :position, :created_by_user_full_name). Even if the preview code were added, selectedTemplate.subject would be undefined unless the serializer is also updated. This may be a separate, more impactful bug affecting all template-driven subject usage on the frontend."
+    },
+    {
+      "id": "C-003",
+      "prior_severity": "MED",
+      "validated_severity": "MED",
+      "status": "CONFIRMED_CODE_ONLY",
+      "title": "Template modal does not repopulate subject with default on validation error",
+      "description": "The ChannelMessageTemplateModal's handleSubmit (lines 81-97) calls setErrors(validationErrors) when yup validation fails, but does NOT repopulate the subject field with the default value ('{{JobTitle}} at {{OrganizationName}}'). The spec explicitly requires: 'On submit with a cleared field, fire the standard form-error AND repopulate the field with the rendered default so the user sees the baseline.' Only the first half (error display) is implemented.",
+      "evidence": {
+        "code": {
+          "file": "app/javascript/ats/src/components/modals/ChannelMessageTemplateModal.tsx",
+          "lines": "81-97",
+          "content": "const handleSubmit = async (e) => {\n    e.preventDefault();\n    const { name, subject } = channelMessageTemplate;\n    const [isValid, validationErrors] = await validateChannelMessageTemplate({\n      name,\n      subject,\n      body: editorRef.current.serializedState(),\n    });\n\n    if (isValid) {\n      ...\n    } else {\n      setErrors(validationErrors);\n    }\n  };"
+        },
+        "validation_schema": {
+          "file": "app/javascript/shared/lib/validateWithYup.ts",
+          "lines": "45-49",
+          "content": "const channelMessageTemplateSchema = object({\n  name: string().required(),\n  subject: string().required(),\n  body: string().required(),\n});"
+        },
+        "spec_requirement": "SPEC.md line 68: 'On submit with a cleared field, fire the standard form-error AND repopulate the field with the rendered default so the user sees the baseline.'",
+        "ui_test_note": "UI testing was attempted multiple times but the SPA's aggressive routing behavior (the app navigates away from the current page during Playwright interactions) prevented reliable capture. The code analysis is conclusive: the else branch on line 96 only calls setErrors() with no state mutation to repopulate subject."
+      },
+      "severity_rationale": "MED maintained. When a user clears the subject and submits, they see a validation error but the subject field remains empty. They must manually re-type the default or recall what it was. This is a UX gap vs. the spec's explicit repopulation requirement. Not blocking (the user can still type a subject and submit), but the spec explicitly calls this behavior out as intentional design.",
+      "fix": "In the else branch of handleSubmit, after setErrors(), add: setChannelMessageTemplate(prev => ({ ...prev, subject: prev.subject || defaultSubject })); where defaultSubject is '{{JobTitle}} at {{OrganizationName}}'"
+    }
+  ],
+  "test_environment_notes": [
+    "Server running messaging-improvements-qa branch from worktree /Users/jessica/wrk/wrk-corp/inflow-ats.messaging-improvements",
+    "RAILS_ENV=test confirmed from process command",
+    "HIRING_STAGE_AUTOMATIONS feature flag not enabled - C-002 could not be tested via UI",
+    "SPA routing behavior caused frequent page navigations during Playwright interactions, limiting UI-level testing. Core findings confirmed via code analysis + targeted JS evaluation."
+  ],
+  "screenshots": [
+    "qa-screenshots/round-2/agent-5/01-messages-tab-with-subject.png",
+    "qa-screenshots/round-2/agent-5/02-messages-tab-with-subject.png",
+    "qa-screenshots/round-2/agent-5/03-create-template-modal-with-subject.png",
+    "qa-screenshots/round-2/agent-5/04-template-modal-subject-preview.png",
+    "qa-screenshots/round-2/agent-5/05-automations-page-no-stage-automations.png"
+  ]
+}

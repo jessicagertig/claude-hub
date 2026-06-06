@@ -1,0 +1,75 @@
+<h2>Edit Mode — What happens when you click the pencil?</h2>
+<p class="subtitle">Three options for how the input appears. The subject row transforms in place.</p>
+
+<div class="cards">
+
+  <!-- Option A: Current — bordered input -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <div style="padding: 12px 20px 0 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+            <input type="text" value="Software Engineer at Acme Inc." style="font-size: 13px; padding: 4px 8px; border: 1px solid #d1d5db; border-radius: 4px; flex: 1; outline: none; box-shadow: 0 0 0 1px #9ca3af; color: #374151; font-family: inherit;" />
+          </div>
+        </div>
+        <div style="padding: 12px 20px 0; color: #9ca3af; font-size: 14px; min-height: 40px;">Type a message to the candidate here...</div>
+        <div style="display: flex; gap: 12px; padding: 12px 20px 16px;">
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px;">Send message</div>
+          <div style="background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 13px; border: 1px solid #e5e7eb;">Use template</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. Bordered Input (current)</h3>
+      <p>Standard input field with border + focus ring. "Subject:" label disappears. Clear and familiar, but visually heavier — the border + shadow draws attention.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Underline only -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <div style="padding: 12px 20px 0 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+            <span style="font-size: 13px; font-weight: 500; color: #9ca3af; flex-shrink: 0;">Subject:</span>
+            <input type="text" value="Software Engineer at Acme Inc." style="font-size: 13px; padding: 2px 0; border: none; border-bottom: 1.5px solid #6b7280; flex: 1; outline: none; color: #374151; background: none; font-family: inherit;" />
+          </div>
+        </div>
+        <div style="padding: 12px 20px 0; color: #9ca3af; font-size: 14px; min-height: 40px;">Type a message to the candidate here...</div>
+        <div style="display: flex; gap: 12px; padding: 12px 20px 16px;">
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px;">Send message</div>
+          <div style="background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 13px; border: 1px solid #e5e7eb;">Use template</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. Underline Only</h3>
+      <p>"Subject:" label stays visible. Text becomes editable with just an underline — no box, no shadow. Lightest visual footprint. Keeps the compact feel.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Inline text swap — just change color -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <div style="padding: 12px 20px 0 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0; background: #f9fafb; margin: 0 -8px; padding: 4px 8px; border-radius: 4px;">
+            <span style="font-size: 13px; font-weight: 500; color: #9ca3af; flex-shrink: 0;">Subject:</span>
+            <input type="text" value="Software Engineer at Acme Inc." style="font-size: 13px; padding: 0; border: none; flex: 1; outline: none; color: #111827; background: none; font-family: inherit;" />
+            <span style="font-size: 11px; color: #9ca3af; flex-shrink: 0; font-style: italic;">esc to cancel</span>
+          </div>
+        </div>
+        <div style="padding: 12px 20px 0; color: #9ca3af; font-size: 14px; min-height: 40px;">Type a message to the candidate here...</div>
+        <div style="display: flex; gap: 12px; padding: 12px 20px 16px;">
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px;">Send message</div>
+          <div style="background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 13px; border: 1px solid #e5e7eb;">Use template</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. Subtle Highlight — Background tint + darker text</h3>
+      <p>"Subject:" label stays. Text darkens to show it's active. Light background tint on the row. Tiny "esc to cancel" hint. No border at all — the row just shifts from passive to active. Most seamless.</p>
+    </div>
+  </div>
+
+</div>

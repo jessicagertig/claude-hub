@@ -1,0 +1,24 @@
+{
+  "agent_index": 4,
+  "focus_area": "Mailer fallback and inbound subject capture",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "notify_candidate: read channel_message.subject with fallback to existing hardcoded literal when blank",
+      "Fallback must use .presence (returns nil for nil and blank strings)",
+      "Inbound: Channel#send_message_to_company captures email.subject on the channel_message",
+      "Inbound: Channel#send_message_to_candidate captures email.subject on the channel_message",
+      "No changes to notify_team in phase 1a (phase 1b)",
+      "No changes to transcript UI in phase 1a (phase 1b)"
+    ],
+    "implemented": [
+      "notify_candidate: read channel_message.subject with fallback to existing hardcoded literal when blank",
+      "Fallback must use .presence (returns nil for nil and blank strings)",
+      "Inbound: Channel#send_message_to_company captures email.subject on the channel_message",
+      "Inbound: Channel#send_message_to_candidate captures email.subject on the channel_message",
+      "No changes to notify_team in phase 1a (phase 1b)",
+      "No changes to transcript UI in phase 1a (phase 1b)"
+    ],
+    "missing": []
+  }
+}

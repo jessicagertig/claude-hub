@@ -1,0 +1,52 @@
+{
+  "agent_index": 2,
+  "focus_area": "Controllers: permitting and sanitization",
+  "round": 2,
+  "findings": [],
+  "round_2_analysis": {
+    "edge_cases_verified": [
+      "ChannelMessageTemplatesController does NOT include Sanitizer and does NOT sanitize body -- confirmed via git log that body was NEVER sanitized in this controller. Subject follows the same pattern (no sanitization at template level). Sanitization happens when template content is used to create channel messages in ChannelMessagesController and BulkChannelMessagesController. Not a gap.",
+      "XSS path via template subject: template subject (unsanitized) flows through render_template_message to frontend as subjectRaw. Frontend renders subjectRaw via JSX text interpolation ({mailMerge.subjectRaw}), NOT dangerouslySetInnerHTML. React auto-escapes JSX interpolation. No XSS vector.",
+      "subject_html and template_subject_html are computed in render_template_message but NOT consumed anywhere in the phase 1a frontend diff. Available for future use (phase 1b). Not a gap.",
+      "BulkChannelMessagesController calls bulk_channel_message_params multiple times (lines 20, 27, 29, 30, 32, 33, 36). Each call re-runs sanitize on subject/body. This is the pre-existing pattern for body and is idempotent. Not a new issue.",
+      "JobsController: apply_response_template_subject is placed correctly as a scalar symbol before the hash/array entries in the permit list. The 'arrays need to be last' comment refers to array entries like remote_restriction_country_list: []. Correct positioning.",
+      "CandidatesController anonymization: text_replacer handles nil subject gracefully -- nil.blank? is true, so text_replacer returns nil unchanged. channel_message.subject = nil is a no-op assignment on legacy rows. channel_message.save! succeeds without issue.",
+      "HiringStageMessageAutomationsController confirmed unchanged -- permits only :channel_message_template_id, :hiring_stage_id, :frequency, :enabled. Subject correctly NOT permitted per spec (automations inherit subject from their template via HiringStageMessageAutomationJob).",
+      "ChannelMessageTemplateModal subject FormInput uses handleChangeChannelMessageName handler -- handler is generic (uses computed property [name]: value), so it correctly updates channelMessageTemplate.subject when name='subject'. handleCreate/handleUpdate spread ...channelMessageTemplate which includes subject. Works correctly despite misleading handler name (already noted as C-005 LOW in round 1)."
+    ],
+    "sanitization_pattern_verification": {
+      "ChannelMessagesController": "sanitize(next_params[:subject]) if next_params.key?(:subject) -- identical pattern to body. Correct.",
+      "BulkChannelMessagesController": "sanitize(next_params[:subject]) if next_params.key?(:subject) -- identical pattern to body. Correct.",
+      "JobsController": "sanitized_params[:apply_response_template_subject] = sanitize(sanitized_params[:apply_response_template_subject]) inside key? guard -- follows same pattern as apply_response_template and description. Correct.",
+      "ChannelMessageTemplatesController": "No sanitization for subject OR body. Intentional pre-existing pattern -- templates store raw content; sanitization happens at message-creation time. Correct."
+    },
+    "conclusion": "Round 1 correctly identified zero issues in the controllers area. Round 2 verified all 10 spec requirements are implemented correctly. Probed deeper into XSS vectors through template subject (safe -- JSX escaping), sanitization consistency across all four controllers (correct -- matches pre-existing patterns), nil-safety in anonymization (safe -- text_replacer handles nil), and the BulkChannelMessagesController hand-built hash propagation (correct). No new findings."
+  },
+  "spec_coverage": {
+    "assigned_requirements": [
+      "ChannelMessagesController: permit :subject alongside :body",
+      "ChannelMessagesController: sanitize subject same as body",
+      "BulkChannelMessagesController: permit :subject alongside :body",
+      "BulkChannelMessagesController: sanitize subject same as body",
+      "BulkChannelMessagesController: include subject in the hand-built literal hash",
+      "ChannelMessageTemplatesController: permit :subject alongside :name, :body, :position",
+      "JobsController: permit :apply_response_template_subject",
+      "JobsController: sanitize apply_response_template_subject",
+      "HiringStageMessageAutomationsController: do NOT permit :subject",
+      "CandidatesController anonymization: add text_replacer calls for subject"
+    ],
+    "implemented": [
+      "ChannelMessagesController: permit :subject alongside :body",
+      "ChannelMessagesController: sanitize subject same as body",
+      "BulkChannelMessagesController: permit :subject alongside :body",
+      "BulkChannelMessagesController: sanitize subject same as body",
+      "BulkChannelMessagesController: include subject in the hand-built literal hash",
+      "ChannelMessageTemplatesController: permit :subject alongside :name, :body, :position",
+      "JobsController: permit :apply_response_template_subject",
+      "JobsController: sanitize apply_response_template_subject",
+      "HiringStageMessageAutomationsController: do NOT permit :subject",
+      "CandidatesController anonymization: add text_replacer calls for subject"
+    ],
+    "missing": []
+  }
+}

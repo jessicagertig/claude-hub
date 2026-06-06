@@ -1,0 +1,23 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 2,
+  "focus_area": "Change 2 (GetResumeTextFromTextractJob) + Change 2 test",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "Change 2: add exhaustion block to retry_on",
+      "Change 2: find textract_processing summary (stale: false)",
+      "Change 2: destroy the summary",
+      "Change 2: call broadcast_ai_summary_failed on latest TextractResult",
+      "Change 2: notify requesting_organization_user_id from destroyed summary",
+      "Change 2: leave failed TextractResult intact",
+      "Change 2 test: create spec file",
+      "Change 2 test: test exhaustion with textract_processing summary",
+      "Change 2 test: assert summary destroyed",
+      "Change 2 test: assert broadcast_ai_summary_failed called"
+    ],
+    "all_implemented": true,
+    "notes": "Implementation extracts logic to cleanup_orphaned_summary class method rather than inline in block. Functionally equivalent - block delegates to class method. All behavioral requirements from spec are met. destroy happens before broadcast per plan requirement. send(:broadcast_ai_summary_failed) used correctly for private method access."
+  }
+}

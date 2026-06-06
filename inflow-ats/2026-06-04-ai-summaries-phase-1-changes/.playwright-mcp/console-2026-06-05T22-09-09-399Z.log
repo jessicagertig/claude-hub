@@ -1,0 +1,230 @@
+[     181ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[     213ms] [INFO] %cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:34
+[     213ms] [ERROR] Warning: Please use `require("history").createBrowserHistory` instead of `require("history/createBrowserHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[     213ms] [ERROR] Warning: Please use `require("history").createHashHistory` instead of `require("history/createHashHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[     223ms] [ERROR] Warning: Please use `require("history").createMemoryHistory` instead of `require("history/createMemoryHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[     223ms] [ERROR] Warning: Please use `require("history").PathUtils` instead of `require("history/PathUtils")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[     229ms] [ERROR] You are currently using minified code outside of NODE_ENV === "production". This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or setting mode to production in webpack (https://webpack.js.org/concepts/mode/) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     234ms] [ERROR] You are currently using minified code outside of NODE_ENV === 'production'. This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     234ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     234ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     234ms] [LOG] [store/index.js] store.getState() {} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:264
+[     236ms] [LOG] %c
+
+
+[App] render background-color: #b0d219 {props: Object, queryClient: e} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     237ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     248ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[     250ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     258ms] [ERROR] Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s darkModeAllowed darkmodeallowed 
+    in button (created by EmotionCssPropInternal)
+    in EmotionCssPropInternal (created by W)
+    in W (created by GoogleSSOButton_Styled-GoogleButton)
+    in GoogleSSOButton_Styled-GoogleButton (created by i)
+    in form (created by i)
+    in i (created by R)
+    in div (created by Styled_Styled-GoogleSSOWrapper)
+    in Styled_Styled-GoogleSSOWrapper (created by R)
+    in div (created by Styled_Styled-AuthForm)
+    in Styled_Styled-AuthForm (created by R)
+    in R
+    in div
+    in div (created by Styled_Styled-Form)
+    in Styled_Styled-Form
+    in div (created by Styled_Styled-FormContent)
+    in Styled_Styled-FormContent
+    in div (created by Styled_Styled-UI)
+    in Styled_Styled-UI (created by l)
+    in div (created by Styled_Styled-Container)
+    in Styled_Styled-Container (created by l)
+    in l
+    in Unknown (created by t)
+    in t (created by withRouter())
+    in withRouter() (created by t)
+    in t (created by f)
+    in t (created by f)
+    in Unknown (created by f)
+    in Unknown (created by f)
+    in Unknown (created by f)
+    in g (created by f)
+    in Unknown (created by f)
+    in Unknown (created by f)
+    in div (created by AppAuthRouter_Styled-AppWrapper)
+    in AppAuthRouter_Styled-AppWrapper (created by f)
+    in b (created by f)
+    in f
+    in Unknown (created by t)
+    in t (created by withRouter())
+    in withRouter() (created by i)
+    in Unknown (created by t)
+    in t (created by withRouter())
+    in withRouter()
+    in X
+    in Unknown (created by i)
+    in t (created by t)
+    in t (created by i)
+    in Unknown (created by i)
+    in s (created by i)
+    in i @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:21
+[     264ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[     264ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[     264ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[     264ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[     264ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[     264ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[     271ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/flipper/features} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[     272ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[     288ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0
+[    1817ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[    1822ms] [INFO] %cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:34
+[    1822ms] [ERROR] Warning: Please use `require("history").createBrowserHistory` instead of `require("history/createBrowserHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[    1822ms] [ERROR] Warning: Please use `require("history").createHashHistory` instead of `require("history/createHashHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[    1828ms] [ERROR] Warning: Please use `require("history").createMemoryHistory` instead of `require("history/createMemoryHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[    1828ms] [ERROR] Warning: Please use `require("history").PathUtils` instead of `require("history/PathUtils")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[    1833ms] [ERROR] You are currently using minified code outside of NODE_ENV === "production". This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or setting mode to production in webpack (https://webpack.js.org/concepts/mode/) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[    1838ms] [ERROR] You are currently using minified code outside of NODE_ENV === 'production'. This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[    1838ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[    1838ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[    1838ms] [LOG] [store/index.js] store.getState() {} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:264
+[    1840ms] [LOG] %c
+
+
+[App] render background-color: #b0d219 {props: Object, queryClient: e} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[    1842ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[    1852ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[    1853ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[    1858ms] [ERROR] Warning: React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from a parent component, remove it from the DOM element.%s darkModeAllowed darkmodeallowed 
+    in button (created by EmotionCssPropInternal)
+    in EmotionCssPropInternal (created by W)
+    in W (created by GoogleSSOButton_Styled-GoogleButton)
+    in GoogleSSOButton_Styled-GoogleButton (created by i)
+    in form (created by i)
+    in i (created by R)
+    in div (created by Styled_Styled-GoogleSSOWrapper)
+    in Styled_Styled-GoogleSSOWrapper (created by R)
+    in div (created by Styled_Styled-AuthForm)
+    in Styled_Styled-AuthForm (created by R)
+    in R
+    in div
+    in div (created by Styled_Styled-Form)
+    in Styled_Styled-Form
+    in div (created by Styled_Styled-FormContent)
+    in Styled_Styled-FormContent
+    in div (created by Styled_Styled-UI)
+    in Styled_Styled-UI (created by l)
+    in div (created by Styled_Styled-Container)
+    in Styled_Styled-Container (created by l)
+    in l
+    in Unknown (created by t)
+    in t (created by withRouter())
+    in withRouter() (created by t)
+    in t (created by f)
+    in t (created by f)
+    in Unknown (created by f)
+    in Unknown (created by f)
+    in Unknown (created by f)
+    in g (created by f)
+    in Unknown (created by f)
+    in Unknown (created by f)
+    in div (created by AppAuthRouter_Styled-AppWrapper)
+    in AppAuthRouter_Styled-AppWrapper (created by f)
+    in b (created by f)
+    in f
+    in Unknown (created by t)
+    in t (created by withRouter())
+    in withRouter() (created by i)
+    in Unknown (created by t)
+    in t (created by withRouter())
+    in withRouter()
+    in X
+    in Unknown (created by i)
+    in t (created by t)
+    in t (created by i)
+    in Unknown (created by i)
+    in s (created by i)
+    in i @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:21
+[    1862ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[    1862ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[    1863ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[    1863ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[    1863ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[    1863ms] [ERROR] The pseudo class ":first-child" is potentially unsafe when doing server-side rendering. Try changing it to ":first-of-type". @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:0
+[    1870ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/flipper/features} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[    1870ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /auth, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[    1876ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0
+[   15876ms] [LOG] %c[useSession] magicLink color: #1976D2 {email: rezu.may@wrkhq.com, redirectTo: /, organizationSlug: null, loginIntent: hire, recaptchaToken: null} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   15876ms] [LOG] %c[queryHooks] apiPost color: #109902 {path: /magic_login, variables: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[   15924ms] [LOG] %c[queryHooks] apiMutate color: #1976D2 {data: Object, variables: Object, requestPath: /api/v1/magic_login} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[   15924ms] [LOG] %c[useSession] useMagicLink onSuccess color: #1976D2 {message: Check your email to login, needsEmailConfirmation: false, acceptedAnInvite: false, magicUrl: http://app.lvh.me:5007/magic_links/validate?token=EKdhYS6xCGdjyRqS6FPs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   15924ms] [LOG] [AuthForm] data {message: Check your email to login, needsEmailConfirmation: false, acceptedAnInvite: false, magicUrl: http://app.lvh.me:5007/magic_links/validate?token=EKdhYS6xCGdjyRqS6FPs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   15924ms] [LOG] %c[Auth] onComplete Auth - Regular Magic Link color: #1976D2 {acceptedAnInvite: false, email: rezu.may@wrkhq.com, needsEmailConfirmation: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:256
+[   15925ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /verify-email, meEnabled: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   15926ms] [LOG] %c[VerifyEmail] RENDER color: #1976D2 {magicLinkStatusData: undefined, email: rezu.may@wrkhq.com} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:256
+[   15926ms] [LOG] %c[VerifyEmail] RENDER color: #1976D2 {magicLinkStatusData: undefined, email: rezu.may@wrkhq.com} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:256
+[   15938ms] [LOG] %c[useSession] emailHash color: #1976D2 {emailHash: cmV6dS5tYXlAd3JraHEuY29t} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   15950ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/magic_link_status/cmV6dS5tYXlAd3JraHEuY29t} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[   15951ms] [LOG] %c[VerifyEmail] RENDER color: #1976D2 {magicLinkStatusData: Object, email: rezu.may@wrkhq.com} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:256
+[   15951ms] [LOG] %c[VerifyEmail] RENDER color: #1976D2 {magicLinkStatusData: Object, email: rezu.may@wrkhq.com} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:256
+[   24001ms] [WARNING] You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS. @ https://js.stripe.com/v3/:0
+[   24006ms] [INFO] %cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:34
+[   24006ms] [ERROR] Warning: Please use `require("history").createBrowserHistory` instead of `require("history/createBrowserHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[   24006ms] [ERROR] Warning: Please use `require("history").createHashHistory` instead of `require("history/createHashHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[   24015ms] [ERROR] Warning: Please use `require("history").createMemoryHistory` instead of `require("history/createMemoryHistory")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[   24015ms] [ERROR] Warning: Please use `require("history").PathUtils` instead of `require("history/PathUtils")`. Support for the latter will be removed in the next major release. @ http://app.lvh.me:5007/packs-test/js/vendors~account_application~ats_application~connect_application~job_board_form_application-fd86c167c16ee21b4372.chunk.js:76
+[   24020ms] [ERROR] You are currently using minified code outside of NODE_ENV === "production". This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or setting mode to production in webpack (https://webpack.js.org/concepts/mode/) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[   24025ms] [ERROR] You are currently using minified code outside of NODE_ENV === 'production'. This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) to ensure you have the correct code for your production build. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24025ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24025ms] [ERROR] Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers. @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24025ms] [LOG] [store/index.js] store.getState() {} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:264
+[   24027ms] [LOG] %c
+
+
+[App] render background-color: #b0d219 {props: Object, queryClient: e} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24029ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24043ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[   24044ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24049ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/flipper/features} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[   24049ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24053ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://sdk.us.heap-api.com/js/heap-.js:0
+[   24116ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[   24117ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24127ms] [LOG] %c[useOrganization] getOrganization background-color: #00F6D2 {organizationId: 18070} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[   24127ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24295ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/organizations/18070} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[   24296ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24298ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24313ms] [LOG] %c[JobList] RENDER  color: #1976D2 {currentUser: Object, currentOrganization: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24313ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[   24313ms] [LOG] %c[useJob] useAllJobs color: #1976D2 {status: undefined, enabled: false, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[   24313ms] [LOG] %c[JobList] showHud background-color: #47967b {showHud: true, hudDisplayVisibility: all_members, isAdmin: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24320ms] [WARNING] @reach/tooltip styles not found. If you are using a bundler like webpack or parcel include this in the entry file of your app before any of your own styles:
+
+    import "@reach/tooltip/styles.css";
+
+  Otherwise you'll need to include them some other way:
+
+    <link rel="stylesheet" type="text/css" href="node_modules/@reach/tooltip/styles.css" />
+
+  For more information visit https://ui.reach.tech/styling.
+   @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[   24320ms] [LOG] %c[useJob] getJobs
+
+ background-color: #FF76D2 {status: undefined} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[   24320ms] [LOG] %c[JobList] Refetch Regular Jobs background-color: #038b85 @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24324ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24330ms] [LOG] %c[JobList] RENDER  color: #1976D2 {currentUser: Object, currentOrganization: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24330ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[   24330ms] [LOG] %c[useJob] useAllJobs color: #1976D2 {status: undefined, enabled: false, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[   24330ms] [LOG] %c[JobList] showHud background-color: #47967b {showHud: true, hudDisplayVisibility: all_members, isAdmin: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24394ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[   24395ms] [LOG] %c[AppAuthed] console RENDER background-color: #FFA500; color: #1976D2 {location: Object, locationPathname: /jobs, meEnabled: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24400ms] [LOG] %c[JobList] RENDER  color: #1976D2 {currentUser: Object, currentOrganization: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24400ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[   24400ms] [LOG] %c[useJob] useAllJobs color: #1976D2 {status: undefined, enabled: false, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[   24400ms] [LOG] %c[JobList] showHud background-color: #47967b {showHud: true, hudDisplayVisibility: all_members, isAdmin: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24404ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/me/job_application_notifications/has_unread} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[   24412ms] [LOG] %c[queryHooks] apiGet color: #1976D2 {data: Object, requestPath: /api/v1/jobs} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:38
+[   24412ms] [LOG] %c[JobList] RENDER  color: #1976D2 {currentUser: Object, currentOrganization: Object} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70
+[   24412ms] [LOG] %c[useJob] useJobs color: #1976D2 {status: undefined, enabled: true, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[   24412ms] [LOG] %c[useJob] useAllJobs color: #1976D2 {status: undefined, enabled: false, refetchOnWindowFocus: false} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:59
+[   24412ms] [LOG] %c[JobList] showHud background-color: #47967b {showHud: true, hudDisplayVisibility: all_members, isAdmin: true} @ http://app.lvh.me:5007/packs-test/js/ats_application-2f6caaa3d1352cabde07.chunk.js:70

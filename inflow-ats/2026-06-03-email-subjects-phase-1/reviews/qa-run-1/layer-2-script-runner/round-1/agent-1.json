@@ -1,0 +1,29 @@
+{
+  "agent_index": 1,
+  "focus": "Single-send pipeline: subject persistence, mailer consumption, fallback behavior, serializer exposure",
+  "scripts_run": [
+    {
+      "path": "/tmp/qa-l2-agent1-01-subject-persistence.rb",
+      "description": "Channel message subject persistence: custom subject, nil, blank, special chars, validator {{placeholder}} rejection",
+      "tests": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "path": "/tmp/qa-l2-agent1-02-mailer-subject.rb",
+      "description": "Mailer subject consumption and fallback: custom subject used, nil/blank/whitespace fallback to default, notify_team isolation, .presence edge cases",
+      "tests": 7,
+      "passed": 7,
+      "failed": 0
+    },
+    {
+      "path": "/tmp/qa-l2-agent1-03-serializer-and-flow.rb",
+      "description": "Serializer exposure, interactor pass-through, controller permit/sanitize, ChannelMessageTemplate and Job column checks",
+      "tests": 7,
+      "passed": 7,
+      "failed": 0
+    }
+  ],
+  "findings": [],
+  "summary": "All 20 tests passed across 3 scripts. The single-send pipeline for custom email subjects is correctly implemented. Key verified behaviors: (1) The 'subject' column exists on channel_messages as a nullable varchar/string with no default. (2) Custom subjects persist correctly through save and reload, including special characters. (3) The CustomChannelMessageValidator correctly rejects subjects containing {{placeholder}} patterns. (4) The ChannelMessageMailer.notify_candidate method uses `@channel_message.subject.presence || fallback` which correctly falls back to 'Job Title at Org Name' for nil, blank, and whitespace-only subjects. (5) The notify_team method uses its own hardcoded subject format and does NOT use channel_message.subject, which is correct by design. (6) The Api::V1::ChannelMessageSerializer exposes subject in its output. (7) The channel_messages_controller permits and sanitizes :subject. (8) The CreateChannelMessage interactor passes subject through via channel.channel_messages.build(params). (9) Both ChannelMessageTemplate and Job.apply_response_template_subject columns exist. No bugs, no findings."
+}

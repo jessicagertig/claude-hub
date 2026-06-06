@@ -1,0 +1,55 @@
+{
+  "agent": 11,
+  "round": 2,
+  "focus": "render_template_message with edge case templates — nil body + non-nil subject, empty everything, template with only subject",
+  "scripts": [
+    "/tmp/qa-l2r2-agent11-test1-empty-body-with-subject.rb",
+    "/tmp/qa-l2r2-agent11-test2-body-with-nil-subject.rb",
+    "/tmp/qa-l2r2-agent11-test3-long-subject.rb",
+    "/tmp/qa-l2r2-agent11-test4-html-in-subject.rb",
+    "/tmp/qa-l2r2-agent11-test5-nil-body-with-subject.rb"
+  ],
+  "findings": [
+    {
+      "id": "R2-A11-F1",
+      "severity": "LOW",
+      "category": "robustness",
+      "title": "render_template_message crashes with NoMethodError when body is nil",
+      "description": "Line 775 of job_application.rb calls `channel_message_template.body.gsub(...)` without safe navigation. If body is nil, this raises NoMethodError: undefined method 'gsub' for nil:NilClass. The subject path (line 784) correctly uses `|| ''` to guard against nil. The body path does not.",
+      "file": "app/models/job_application.rb",
+      "line": 775,
+      "pre_existing": true,
+      "introduced_by_subject_feature": false,
+      "evidence": "Test 5 confirmed: creating a template with body=nil and subject='Test Subject {{JobTitle}}' causes NoMethodError on line 775. In practice, body is always empty string (not nil) because the UI always sends a string, but the asymmetry with the nil-guarded subject path is notable.",
+      "reproduction": "Create a ChannelMessageTemplate with body: nil (via save!(validate: false)) and call render_template_message — crashes immediately."
+    }
+  ],
+  "tests_passed": [
+    {
+      "test": 1,
+      "description": "Template with body='' and subject='{{JobTitle}}'",
+      "result": "PASS — subject_raw correctly resolved to 'Software Engineer', empty body returned empty strings for message_raw and message_html"
+    },
+    {
+      "test": 2,
+      "description": "Template with body='Hello {{CandidateFirstName}}' and subject=nil",
+      "result": "PASS — nil subject correctly fell back to empty string via || '' on line 784, body rendered correctly with placeholder resolved"
+    },
+    {
+      "test": 3,
+      "description": "Template with 274-char subject using all 7 placeholders (some twice)",
+      "result": "PASS — all placeholders resolved, no unresolved {{}} remaining, JobTitle correctly appeared twice, subject_raw length was 213 chars after resolution"
+    },
+    {
+      "test": 4,
+      "description": "Template with HTML tags in subject including <b>, <script>, and &amp;",
+      "result": "PASS — HTML tags passed through Mustache unmodified (expected behavior since subject skips Redcarpet). subject_raw contains raw HTML but is consumed safely: React's JSX text interpolation ({mailMerge.subjectRaw}) auto-escapes HTML. subject_html is not consumed by any frontend component currently."
+    },
+    {
+      "test": 5,
+      "description": "Template with body=nil and subject='Test Subject {{JobTitle}}'",
+      "result": "CONFIRMED pre-existing crash — NoMethodError on line 775. Not introduced by subject feature."
+    }
+  ],
+  "summary": "All 4 assigned test scenarios passed. The subject handling in render_template_message is correctly implemented: nil subject falls back to empty string, placeholders resolve correctly in long subjects with all variable types, and HTML in subjects passes through safely (React auto-escapes on the frontend). One LOW pre-existing issue found: body lacks the same nil guard that subject has (line 775 vs line 784). No HIGH or MEDIUM findings. 0 bugs introduced by the email subjects feature."
+}

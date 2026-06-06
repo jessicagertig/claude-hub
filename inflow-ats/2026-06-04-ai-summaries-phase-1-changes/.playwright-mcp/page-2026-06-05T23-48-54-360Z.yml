@@ -1,0 +1,56 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e7]:
+      - img [ref=e8]
+      - heading "Polymer" [level=1] [ref=e11]
+    - list [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e15]:
+          - generic [ref=e16]: TB
+          - generic [ref=e17]: Taylor Brooks
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - generic [ref=e23] [cursor=pointer]:
+          - generic [ref=e25]: A
+          - img [ref=e27]
+        - generic [ref=e32]: Acme Inc.
+      - generic [ref=e34]:
+        - img [ref=e37] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - link [ref=e43] [cursor=pointer]:
+      - /url: /hire/settings/preferences
+      - img [ref=e44]
+  - generic [ref=e47]:
+    - generic [ref=e49]:
+      - img [ref=e52] [cursor=pointer]
+      - heading "App settings" [level=2] [ref=e55]
+    - generic [ref=e58]:
+      - link "Message templates" [ref=e59] [cursor=pointer]:
+        - /url: /hire/settings/message_templates
+        - generic [ref=e61]: Message templates
+        - img [ref=e62]
+      - link "Review templates" [ref=e64] [cursor=pointer]:
+        - /url: /hire/settings/review_templates
+        - generic [ref=e66]: Review templates
+        - img [ref=e67]
+      - link "User preferences" [ref=e69] [cursor=pointer]:
+        - /url: /hire/settings/preferences
+        - generic [ref=e71]: User preferences
+        - img [ref=e72]

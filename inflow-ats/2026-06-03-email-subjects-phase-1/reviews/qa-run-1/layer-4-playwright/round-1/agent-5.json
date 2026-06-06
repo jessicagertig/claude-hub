@@ -1,0 +1,69 @@
+{
+  "agent": 5,
+  "round": 1,
+  "focus": "Job Setup → Automations — apply response template subject",
+  "status": "BLOCKED",
+  "environment_issue": {
+    "severity": "BLOCKER",
+    "summary": "Server is running from branch 'feature-ai-credits-summaries-scoring-qa', NOT 'messaging-improvements' where the email-subjects feature was implemented. The feature code (commit e7f272279) exists only on 'messaging-improvements' and 'messaging-improvements-qa' branches. All test scenarios are untestable because the feature is not deployed to the running server.",
+    "details": "The running server at http://app.lvh.me:5007 serves code from a branch that does not contain any email-subjects changes. The JobSetupAutomations component on the current branch has no applyResponseTemplateSubject state, no FormInput for subject, and the jobs table schema has no apply_response_template_subject column."
+  },
+  "scenarios": [
+    {
+      "id": 1,
+      "description": "Navigate to a job's setup page (Job → Setup/Settings)",
+      "status": "PASS",
+      "details": "Successfully navigated to /jobs/15819/setup/details. The job setup page loaded correctly with sidebar links including 'Automations'."
+    },
+    {
+      "id": 2,
+      "description": "Find the 'Automations' or 'Apply Response Template' section",
+      "status": "PASS",
+      "details": "Successfully navigated to /jobs/15819/setup/automations. The page shows 'Automations' heading with an 'Application confirmation' section containing 'Custom confirmation message' dropdown (currently 'Disabled')."
+    },
+    {
+      "id": 3,
+      "description": "Verify a Subject input exists for the apply response template",
+      "status": "FAIL",
+      "severity": "HIGH",
+      "details": "No Subject input field exists on the automations page. The 'Application confirmation' section contains only the 'Custom confirmation message' enable/disable dropdown. The accessibility snapshot confirms no textbox with 'Subject' label exists anywhere in the automations page DOM. Code inspection confirms: the current branch's JobSetupAutomations.tsx manages only useApplyResponseTemplate and applyResponseTemplate state — no applyResponseTemplateSubject. The messaging-improvements branch DOES add a FormInput for 'Subject' with name='applyResponseTemplateSubject' between the enable/disable dropdown and the ProseMirrorEditor body. This is a deployment/branch issue, not a code bug.",
+      "expected": "A text input labeled 'Subject' should appear in the Application confirmation section when custom confirmation is enabled",
+      "actual": "No Subject input exists. Only the Custom confirmation message dropdown and the message body editor are present.",
+      "root_cause": "Feature code not deployed to running server — wrong branch"
+    },
+    {
+      "id": 4,
+      "description": "Verify subject is pre-populated with '{{JobTitle}} at {{OrganizationName}}'",
+      "status": "BLOCKED",
+      "details": "Cannot verify — Subject input does not exist on running server. Code review of messaging-improvements branch confirms the implementation sets default to '{{JobTitle}} at {{OrganizationName}}' via: passedJob.applyResponseTemplateSubject || '{{JobTitle}} at {{OrganizationName}}'."
+    },
+    {
+      "id": 5,
+      "description": "Change the subject to something custom, save — verify it persists on reload",
+      "status": "BLOCKED",
+      "details": "Cannot verify — Subject input does not exist on running server. Code review confirms the messaging-improvements branch sends applyResponseTemplateSubject in the updateJob mutation call."
+    }
+  ],
+  "code_review_notes": [
+    {
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAutomations.tsx",
+      "branch": "messaging-improvements",
+      "observation": "Subject field implementation looks correct: FormInput with name='applyResponseTemplateSubject' is placed inside FormConditionalFields (shown only when useApplyResponseTemplate is enabled), between the enable dropdown and the ProseMirrorEditor body. Default value falls back to '{{JobTitle}} at {{OrganizationName}}'. Subject is included in the updateJob mutation payload."
+    },
+    {
+      "file": "db/schema.rb",
+      "branch": "current (feature-ai-credits-summaries-scoring-qa)",
+      "observation": "No apply_response_template_subject column on jobs table. The jobs table has apply_response_template (string) and use_apply_response_template (boolean) but no subject column. The migration from the feature branch has not been applied."
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "/Users/jessica/claude-hub/inflow-ats/2026-06-03-email-subjects-phase-1/02-automations-page-viewport.png",
+      "description": "Automations page showing Application confirmation section with only Custom confirmation message dropdown — no Subject input field"
+    }
+  ],
+  "additional_observations": [
+    "The automations page has an intermittent redirect issue: after loading, the app sometimes navigates away to the candidates inbox view (/jobs/15819/stages/110706/applicants/12137/...). This happened consistently during testing and may be related to a React Router redirect or notification polling. This is unrelated to the email-subjects feature but worth noting as it affects testability.",
+    "The single-send message composer (visible on the candidates messages tab) DOES show a Subject field pre-populated with 'Software Engineer at Acme Inc.' — but this was observed on the candidates page, not the automations page, and may or may not be from the feature branch."
+  ]
+}

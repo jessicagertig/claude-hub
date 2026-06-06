@@ -1,0 +1,105 @@
+{
+  "agent": "playwright-qa-agent-3",
+  "round": 2,
+  "focus": "End-to-end: send a message with custom subject and verify it persists in the database",
+  "timestamp": "2026-06-05T06:56:00Z",
+  "environment": {
+    "server": "http://app.lvh.me:5007",
+    "user": "rezu.may@wrkhq.com",
+    "worktree": "/Users/jessica/wrk/wrk-corp/inflow-ats.messaging-improvements",
+    "rails_env": "test"
+  },
+  "test_scenarios": [
+    {
+      "id": "E2E-1",
+      "name": "Navigate to candidate messages tab",
+      "status": "PASS",
+      "details": "Navigated to /jobs/15824/stages/110741/applicants/12149/messages. Messages tab loaded showing 'No messages have been sent to this candidate' with Subject field pre-filled with 'Software Engineer at Acme Inc.' and a ProseMirror rich text editor for the body."
+    },
+    {
+      "id": "E2E-2",
+      "name": "Type custom subject",
+      "status": "PASS",
+      "details": "Cleared the default subject 'Software Engineer at Acme Inc.' and typed 'QA Test Subject - Unique 12345'. Verified via inputValue() that the field contained the expected value."
+    },
+    {
+      "id": "E2E-3",
+      "name": "Type message body",
+      "status": "PASS",
+      "details": "Clicked on the ProseMirror contenteditable editor and typed 'QA test body content'. Verified via textContent() that the editor contained the expected text."
+    },
+    {
+      "id": "E2E-4",
+      "name": "Send message",
+      "status": "PASS",
+      "details": "Clicked 'Send message' button. After 3 seconds, the page showed the sent message in the message history: 'Rezu May - less than a min, Sent via email' with body 'QA test body content'. The compose area reset with Subject back to default 'Software Engineer at Acme Inc.' and empty body placeholder."
+    },
+    {
+      "id": "E2E-5",
+      "name": "Verify subject persists in database",
+      "status": "PASS",
+      "details": "Ran rails runner script to query ChannelMessage.order(created_at: :desc).first. Result: ID=495, subject='QA Test Subject - Unique 12345', body='<p>QA test body content</p>', created_at=2026-06-05 06:55:05 UTC. Subject matches expected value exactly."
+    },
+    {
+      "id": "E2E-6",
+      "name": "Subject not displayed in message history UI",
+      "status": "OBSERVATION",
+      "details": "The sent message in the UI message history does NOT display the subject line. Only the body 'QA test body content' is visible in the message bubble. The custom subject 'QA Test Subject - Unique 12345' is stored in the database but not shown in the conversation thread. This may be intentional design (subject is an email header, not part of the visible conversation) or could be a gap worth noting."
+    }
+  ],
+  "observations": [
+    {
+      "id": "OBS-1",
+      "severity": "INFO",
+      "title": "Subject field pre-populates with job title",
+      "details": "The Subject field on the messages tab pre-populates with 'Software Engineer at Acme Inc.' (format: '{JobTitle} at {OrgName}'). This is the default subject for new messages."
+    },
+    {
+      "id": "OBS-2",
+      "severity": "INFO",
+      "title": "Subject resets to default after sending",
+      "details": "After sending a message with a custom subject, the Subject field resets to the default 'Software Engineer at Acme Inc.' for the next message. This is expected behavior."
+    },
+    {
+      "id": "OBS-3",
+      "severity": "LOW",
+      "title": "Sent message subject not visible in UI",
+      "details": "The custom subject 'QA Test Subject - Unique 12345' was correctly stored in the database (ChannelMessage.subject) but is not displayed anywhere in the message history UI. The message bubble shows only sender, timestamp, delivery method ('Sent via email'), and body text. There is no way for the user to see what subject was used for a previously sent message without database access."
+    },
+    {
+      "id": "OBS-4",
+      "severity": "INFO",
+      "title": "Page navigation instability during testing",
+      "details": "The messages tab experienced intermittent automatic navigation to other pages (automations, message templates settings) during snapshot/interaction operations. This was worked around by using browser_run_code_unsafe for atomic operations. The navigation issue may be related to keyboard shortcut handlers or React Router behavior when the Playwright snapshot tool interacts with the DOM."
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "/tmp/qa-run-1/layer-4/round-2/agent-3/01-before-send.png",
+      "description": "Messages tab with custom subject 'QA Test Subject - Unique 12345' and body 'QA test body content' filled in, before clicking Send"
+    },
+    {
+      "path": "/tmp/qa-run-1/layer-4/round-2/agent-3/02-after-send.png",
+      "description": "Messages tab after successful send, showing the message in history with body visible, subject field reset to default"
+    },
+    {
+      "path": "/tmp/qa-run-1/layer-4/round-2/agent-3/03-message-in-history.png",
+      "description": "Final state of messages tab showing sent message in conversation history"
+    }
+  ],
+  "database_verification": {
+    "method": "rails runner",
+    "script": "/tmp/qa-l4r2-verify.rb",
+    "command": "cd /Users/jessica/wrk/wrk-corp/inflow-ats.messaging-improvements && RAILS_ENV=test bundle exec rails runner /tmp/qa-l4r2-verify.rb",
+    "result": "PASS",
+    "record": {
+      "model": "ChannelMessage",
+      "id": 495,
+      "subject": "QA Test Subject - Unique 12345",
+      "body": "<p>QA test body content</p>",
+      "created_at": "2026-06-05 06:55:05 UTC"
+    }
+  },
+  "overall_verdict": "PASS",
+  "summary": "End-to-end test passed. A custom subject 'QA Test Subject - Unique 12345' was entered in the Subject field, body 'QA test body content' was typed in the ProseMirror editor, and the message was sent successfully. Database verification confirmed the subject was persisted correctly in ChannelMessage record #495. One observation: the custom subject is not displayed in the UI message history (only stored in DB), which may or may not be intentional."
+}

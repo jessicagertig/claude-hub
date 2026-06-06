@@ -1,0 +1,205 @@
+{
+  "agent": 6,
+  "focus": "render_template_message subject fields",
+  "tests": [
+    {
+      "name": "subject_raw has variables substituted with actual values",
+      "pass": true,
+      "details": {
+        "expected": "Hello Cicely - Software Engineer",
+        "actual": "Hello Cicely - Software Engineer"
+      }
+    },
+    {
+      "name": "subject_html has spanified variables with actual values",
+      "pass": true,
+      "details": {
+        "expected_contains": [
+          "<span class='mail-merge-tag'>Cicely</span>",
+          "<span class='mail-merge-tag'>Software Engineer</span>"
+        ],
+        "actual": "Hello <span class='mail-merge-tag'>Cicely</span> - <span class='mail-merge-tag'>Software Engineer</span>"
+      }
+    },
+    {
+      "name": "template_subject_html has unfilled spanified bracket variables",
+      "pass": true,
+      "details": {
+        "expected_contains": [
+          "<span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>CandidateFirstName</span><span class='mail-merge-brackets'>}}</span>",
+          "<span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>JobTitle</span><span class='mail-merge-brackets'>}}</span>"
+        ],
+        "actual": "Hello <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>CandidateFirstName</span><span class='mail-merge-brackets'>}}</span> - <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>JobTitle</span><span class='mail-merge-brackets'>}}</span>"
+      }
+    },
+    {
+      "name": "subject is NOT run through Redcarpet (no HTML wrapping)",
+      "pass": true,
+      "details": {
+        "subject_raw_no_p": true,
+        "subject_html_no_p": true,
+        "template_subject_html_no_p": true,
+        "body_does_have_html": true,
+        "subject_raw": "Hello Cicely - Software Engineer",
+        "message_html_snippet": "<p>Dear <span class='mail-merge-tag'>Cicely Donnelly</span>,</p><p>We have an opening for <span class='mail-merge-tag'>Software Engineer</span> at <span class='mail-merge-tag'>Acme Inc.</span>.</p>"
+      }
+    },
+    {
+      "name": "subject_html exact format matches expected",
+      "pass": true,
+      "details": {
+        "expected": "Hello <span class='mail-merge-tag'>Cicely</span> - <span class='mail-merge-tag'>Software Engineer</span>",
+        "actual": "Hello <span class='mail-merge-tag'>Cicely</span> - <span class='mail-merge-tag'>Software Engineer</span>"
+      }
+    },
+    {
+      "name": "template_subject_html exact format matches expected",
+      "pass": true,
+      "details": {
+        "expected": "Hello <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>CandidateFirstName</span><span class='mail-merge-brackets'>}}</span> - <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>JobTitle</span><span class='mail-merge-brackets'>}}</span>",
+        "actual": "Hello <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>CandidateFirstName</span><span class='mail-merge-brackets'>}}</span> - <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>JobTitle</span><span class='mail-merge-brackets'>}}</span>"
+      }
+    },
+    {
+      "name": "all expected keys present in response",
+      "pass": true,
+      "details": {
+        "expected_keys": [
+          "message_raw",
+          "message_html",
+          "template_html",
+          "subject_raw",
+          "subject_html",
+          "template_subject_html",
+          "has_invalid_tags",
+          "invalid_tags"
+        ],
+        "actual_keys": [
+          "message_raw",
+          "message_html",
+          "template_html",
+          "subject_raw",
+          "subject_html",
+          "template_subject_html",
+          "has_invalid_tags",
+          "invalid_tags"
+        ],
+        "extra_keys": [
+
+        ]
+      }
+    },
+    {
+      "name": "has_invalid_tags is false with valid tags only",
+      "pass": true,
+      "details": {
+        "has_invalid_tags": false,
+        "invalid_tags": [
+
+        ]
+      }
+    },
+    {
+      "name": "invalid_tags is empty with valid tags only",
+      "pass": true,
+      "details": {
+        "invalid_tags": [
+
+        ]
+      }
+    },
+    {
+      "name": "has_invalid_tags is true when subject has invalid tag",
+      "pass": true,
+      "details": {
+        "has_invalid_tags": true,
+        "invalid_tags": [
+          "Typo"
+        ]
+      }
+    },
+    {
+      "name": "invalid_tags includes 'Typo' from subject",
+      "pass": true,
+      "details": {
+        "invalid_tags": [
+          "Typo"
+        ]
+      }
+    },
+    {
+      "name": "subject_raw renders invalid tag as empty (Mustache default)",
+      "pass": true,
+      "details": {
+        "expected": "Hello  and Cicely",
+        "actual": "Hello  and Cicely"
+      }
+    },
+    {
+      "name": "invalid tags in body only still detected via combined check",
+      "pass": true,
+      "details": {
+        "has_invalid_tags": true,
+        "invalid_tags": [
+          "BodyTypo"
+        ]
+      }
+    },
+    {
+      "name": "invalid tags from both subject and body are combined in invalid_tags",
+      "pass": true,
+      "details": {
+        "has_invalid_tags": true,
+        "invalid_tags": [
+          "BodyTypo2",
+          "SubjectTypo"
+        ]
+      }
+    },
+    {
+      "name": "nil subject produces empty strings and no invalid tags",
+      "pass": true,
+      "details": {
+        "subject_raw": "",
+        "subject_html": "",
+        "template_subject_html": "",
+        "has_invalid_tags": false
+      }
+    },
+    {
+      "name": "empty string subject produces empty strings",
+      "pass": true,
+      "details": {
+        "subject_raw": "",
+        "subject_html": "",
+        "template_subject_html": ""
+      }
+    },
+    {
+      "name": "all 7 placeholder types render correctly in subject_raw",
+      "pass": true,
+      "details": {
+        "expected": "Cicely Donnelly Cicely Donnelly Software Engineer Rezu Rezu May Acme Inc.",
+        "actual": "Cicely Donnelly Cicely Donnelly Software Engineer Rezu Rezu May Acme Inc."
+      }
+    },
+    {
+      "name": "all 7 placeholder types render as spans in subject_html",
+      "pass": true,
+      "details": {
+        "actual": "<span class='mail-merge-tag'>Cicely</span> <span class='mail-merge-tag'>Donnelly</span> <span class='mail-merge-tag'>Cicely Donnelly</span> <span class='mail-merge-tag'>Software Engineer</span> <span class='mail-merge-tag'>Rezu</span> <span class='mail-merge-tag'>Rezu May</span> <span class='mail-merge-tag'>Acme Inc.</span>"
+      }
+    },
+    {
+      "name": "all 7 placeholder types render as bracket spans in template_subject_html",
+      "pass": true,
+      "details": {
+        "actual": "<span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>CandidateFirstName</span><span class='mail-merge-brackets'>}}</span> <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>CandidateLastName</span><span class='mail-merge-brackets'>}}</span> <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>CandidateFullName</span><span class='mail-merge-brackets'>}}</span> <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>JobTitle</span><span class='mail-merge-brackets'>}}</span> <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>SenderFirstName</span><span class='mail-merge-brackets'>}}</span> <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>SenderFullName</span><span class='mail-merge-brackets'>}}</span> <span class='mail-merge-brackets'>{{</span><span class='mail-merge-tag'>OrganizationName</span><span class='mail-merge-brackets'>}}</span>"
+      }
+    }
+  ],
+  "summary": {
+    "pass": 19,
+    "fail": 0
+  }
+}

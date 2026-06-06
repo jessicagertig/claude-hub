@@ -1,0 +1,84 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e7]:
+      - img [ref=e8]
+      - heading "Polymer" [level=1] [ref=e11]
+    - list [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e15]:
+          - generic [ref=e16]: TB
+          - generic [ref=e17]: Taylor Brooks
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - generic [ref=e23] [cursor=pointer]:
+          - generic [ref=e25]: A
+          - img [ref=e27]
+        - generic [ref=e32]: Acme Inc.
+      - generic [ref=e34]:
+        - img [ref=e37] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - generic [ref=e42]:
+      - img [ref=e43]
+      - textbox "Search candidates" [ref=e46]
+    - generic [ref=e48]:
+      - link [ref=e50] [cursor=pointer]:
+        - /url: /notifications
+        - img [ref=e51]
+      - link [active] [ref=e55] [cursor=pointer]:
+        - /url: /hire/settings/preferences
+        - img [ref=e56]
+  - generic [ref=e59]:
+    - generic [ref=e116]:
+      - img [ref=e119] [cursor=pointer]
+      - heading "App settings" [level=2] [ref=e122]
+    - generic [ref=e123]:
+      - generic [ref=e125]:
+        - link "Message templates" [ref=e126] [cursor=pointer]:
+          - /url: /hire/settings/message_templates
+          - generic [ref=e128]: Message templates
+          - img [ref=e129]
+        - link "Review templates" [ref=e131] [cursor=pointer]:
+          - /url: /hire/settings/review_templates
+          - generic [ref=e133]: Review templates
+          - img [ref=e134]
+        - link "User preferences" [ref=e136] [cursor=pointer]:
+          - /url: /hire/settings/preferences
+          - generic [ref=e138]: User preferences
+          - img [ref=e139]
+      - generic [ref=e143]:
+        - generic [ref=e144]:
+          - heading "User preferences" [level=2] [ref=e147]
+          - paragraph [ref=e148]: Here's where you can configure your user preferences.
+          - generic [ref=e150]:
+            - heading "Notifications" [level=4] [ref=e153]
+            - group "Emails" [ref=e154]:
+              - generic [ref=e155]: Emails
+              - paragraph [ref=e156]: For jobs that you are on the hiring team of, you will receive email notifications for the events selected below.
+              - generic [ref=e157]:
+                - checkbox "New candidate application" [checked] [ref=e158]
+                - generic [ref=e159] [cursor=pointer]: New candidate application
+              - generic [ref=e160]:
+                - checkbox "New comment or review" [checked] [ref=e161]
+                - generic [ref=e162] [cursor=pointer]: New comment or review
+              - generic [ref=e163]:
+                - checkbox "New message from a candidate" [checked] [ref=e164]
+                - generic [ref=e165] [cursor=pointer]: New message from a candidate
+        - button "Save changes" [ref=e167] [cursor=pointer]:
+          - generic [ref=e168]: Save changes

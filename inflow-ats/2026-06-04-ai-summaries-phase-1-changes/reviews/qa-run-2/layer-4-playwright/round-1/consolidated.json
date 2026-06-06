@@ -1,0 +1,77 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "run": 2,
+  "findings": [],
+  "tests_performed": [
+    {
+      "area": "Plato AI container - Settings tab",
+      "url": "/hire/settings/plato-ai/settings",
+      "result": "PASS",
+      "checks": [
+        "Plato AI appears in main sidebar (admin only, behind AI_APPLICANT_SUMMARY Flipper flag)",
+        "Clicking Plato AI navigates to /hire/settings/plato-ai and redirects to /plato-ai/settings",
+        "Internal sub-nav shows Settings, Billing, Usage tabs",
+        "Settings tab displays: Auto-generate summaries checkbox, Hiring team credit control checkbox, Notifications section",
+        "Save changes button present"
+      ]
+    },
+    {
+      "area": "Plato AI container - Billing tab",
+      "url": "/hire/settings/plato-ai/billing",
+      "result": "PASS",
+      "checks": [
+        "Billing tab active state correct",
+        "AI billing heading and description rendered",
+        "AI Credits balance display: Monthly 25, Purchased 0, Total 25",
+        "Subscribe to a credit pack button present",
+        "Buy a one-time top-up button present",
+        "API calls: GET /ai_credits (200), GET /ai_credit_purchases (200), GET /ai_credit_purchases/prices (200)",
+        "Prices endpoint returns 4 packs with correct lookup keys from Stripe"
+      ]
+    },
+    {
+      "area": "Plato AI container - Usage tab (FIX VERIFIED)",
+      "url": "/hire/settings/plato-ai/usage",
+      "result": "PASS",
+      "checks": [
+        "Usage tab renders without crash (blocking-fix-1 verified)",
+        "AI usage heading and description rendered",
+        "Credit balance section: Monthly 25, Purchased 0, Total 25",
+        "Usage this period: '25 of 50 monthly credits used this period'",
+        "Date formatted correctly: 'Monthly credits reset on Jul 05, 2026'",
+        "No RangeError in console"
+      ]
+    },
+    {
+      "area": "Job Setup - AI Settings",
+      "url": "/jobs/{id}/setup/ai",
+      "result": "PASS",
+      "checks": [
+        "AI settings tab appears in job setup sidebar",
+        "Auto-generation dropdown shows 'Use organization default' (renamed from 'inherit')",
+        "Page renders without errors"
+      ]
+    },
+    {
+      "area": "Console errors",
+      "result": "PASS",
+      "checks": [
+        "All 9 console errors are pre-existing (history deprecation x4, Redux x4, heap SDK x1)",
+        "Zero new errors from this feature"
+      ]
+    },
+    {
+      "area": "API endpoints",
+      "result": "PASS",
+      "checks": [
+        "GET /api/v1/ai_credits returns 200 with balance data",
+        "GET /api/v1/ai_credit_purchases returns 200 (null for no active subscription)",
+        "GET /api/v1/ai_credit_purchases/prices returns 200 with 4 Stripe prices"
+      ]
+    }
+  ],
+  "high_findings": 0,
+  "blocker_findings": 0,
+  "notes": "Complete pass of all frontend feature areas. No blocking errors, no non-blocking HIGH+ errors. The blocking-fix-1 from qa-run-1 (prettyDate -> prettyDateSimpleISO) is verified working. Clean round."
+}

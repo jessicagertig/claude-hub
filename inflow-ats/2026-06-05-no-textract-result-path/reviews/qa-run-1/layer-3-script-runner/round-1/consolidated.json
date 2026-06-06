@@ -1,0 +1,29 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "findings": [],
+  "scripts_run": [
+    {
+      "script": "/tmp/qa-verify-change1.rb",
+      "target": "Change 1: SubmitResumeToTextract updates textract_result_id",
+      "result": "PASS",
+      "details": "Created textract_processing summary with nil textract_result_id, simulated SubmitResumeToTextract logic, verified textract_result_id was updated to newly created TextractResult id"
+    },
+    {
+      "script": "/tmp/qa-verify-change2.rb",
+      "target": "Change 2: GetResumeTextFromTextractJob.cleanup_orphaned_summary",
+      "result": "PASS",
+      "details": "Verified: (1) summary destroyed with requesting user, (2) summary destroyed without requesting user (no broadcast), (3) no error for non-existent job application"
+    },
+    {
+      "script": "/tmp/qa-verify-change3.rb + /tmp/qa-verify-change3b.rb",
+      "target": "Change 3: nil guard on destroy_previous_textract_results",
+      "result": "PASS",
+      "details": "Verified: (1) no NoMethodError when status transitions to succeeded with nil textract_result, (2) normal path with textract_result still destroys older results"
+    }
+  ],
+  "convergence": {
+    "findings_count": 0,
+    "clean_round": true
+  }
+}

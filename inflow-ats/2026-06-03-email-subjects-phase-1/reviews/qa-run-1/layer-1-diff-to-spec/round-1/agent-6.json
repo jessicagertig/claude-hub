@@ -1,0 +1,26 @@
+{
+  "agent_index": 6,
+  "focus_area": "Bulk send pipeline",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "Rename parse_body to parse_text",
+      "parse_text takes (user, job_application, text) arguments instead of (user, job_application, params)",
+      "parse_text returns empty string if text is blank",
+      "Call parse_text for both body and subject in the merge",
+      "parse_text keeps .scrub and all gsub substitutions",
+      "parse_text does NOT call .html_safe (unlike the interactor version)",
+      "Existing create! with rescue handling is preserved unchanged"
+    ],
+    "implemented": [
+      "Rename parse_body to parse_text",
+      "parse_text takes (user, job_application, text) arguments instead of (user, job_application, params)",
+      "parse_text returns empty string if text is blank",
+      "Call parse_text for both body and subject in the merge",
+      "parse_text keeps .scrub and all gsub substitutions",
+      "parse_text does NOT call .html_safe (unlike the interactor version)",
+      "Existing create! with rescue handling is preserved unchanged"
+    ],
+    "missing": []
+  }
+}

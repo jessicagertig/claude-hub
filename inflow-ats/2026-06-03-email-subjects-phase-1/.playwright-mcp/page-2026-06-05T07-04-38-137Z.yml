@@ -1,0 +1,160 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e11]:
+        - img [ref=e12]
+        - heading "Polymer" [level=1] [ref=e15]
+      - list [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e19]:
+            - generic [ref=e20]: RM
+            - generic [ref=e21]: Rezu May
+          - generic:
+            - generic:
+              - link "Account settings":
+                - /url: /account
+              - button "Contact us"
+              - button "Help docs":
+                - text: Help docs
+                - img
+              - button "Changelog":
+                - text: Changelog
+                - img
+              - link "Log out":
+                - /url: /logout
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e25]:
+          - generic [ref=e27] [cursor=pointer]:
+            - generic [ref=e29]: A
+            - img [ref=e31]
+          - generic [ref=e36]: Acme Inc.
+        - generic [ref=e38]:
+          - img [ref=e41] [cursor=pointer]
+          - generic:
+            - generic:
+              - link "Your organizations":
+                - /url: /organization/manage
+      - generic [ref=e46]:
+        - img [ref=e47]
+        - textbox "Search candidates" [ref=e50]
+      - generic [ref=e52]:
+        - link [ref=e54] [cursor=pointer]:
+          - /url: /notifications
+          - img [ref=e55]
+        - link [ref=e59] [cursor=pointer]:
+          - /url: /hire/settings/organization
+          - img [ref=e60]
+    - generic [ref=e63]:
+      - generic [ref=e65]:
+        - img [ref=e68] [cursor=pointer]
+        - heading "App settings" [level=2] [ref=e71]
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - link "User preferences" [ref=e75] [cursor=pointer]:
+            - /url: /hire/settings/preferences
+            - generic [ref=e77]: User preferences
+            - img [ref=e78]
+          - separator
+          - generic [ref=e80]: Admin
+          - generic [ref=e81]:
+            - link "Organization" [ref=e82] [cursor=pointer]:
+              - /url: /hire/settings/organization
+              - generic [ref=e84]: Organization
+              - img [ref=e85]
+            - link "Team" [ref=e87] [cursor=pointer]:
+              - /url: /hire/settings/team
+              - generic [ref=e89]: Team
+              - img [ref=e90]
+            - link "Message templates" [ref=e92] [cursor=pointer]:
+              - /url: /hire/settings/message_templates
+              - generic [ref=e94]: Message templates
+              - img [ref=e95]
+            - link "Review templates" [ref=e97] [cursor=pointer]:
+              - /url: /hire/settings/review_templates
+              - generic [ref=e99]: Review templates
+              - img [ref=e100]
+            - link "Job board" [ref=e102] [cursor=pointer]:
+              - /url: /hire/settings/jobboard
+              - generic [ref=e104]: Job board
+              - img [ref=e105]
+            - link "Job categories" [ref=e107] [cursor=pointer]:
+              - /url: /hire/settings/categories
+              - generic [ref=e109]: Job categories
+              - img [ref=e110]
+            - link "Integrations" [ref=e112] [cursor=pointer]:
+              - /url: /hire/settings/integrations
+              - generic [ref=e114]: Integrations
+              - img [ref=e115]
+            - link "Plan & billing" [ref=e117] [cursor=pointer]:
+              - /url: /hire/settings/billing
+              - generic [ref=e119]: Plan & billing
+              - img [ref=e120]
+        - generic [ref=e125]:
+          - heading "Message templates" [level=2] [ref=e128]
+          - paragraph [ref=e129]: These templates allow hiring team members to easily send pre-authored messages to candidates. Changes to the ordering of the templates displayed here will affect how they are listed when selecting one for use.
+          - generic [ref=e130]:
+            - generic [ref=e131]:
+              - generic [ref=e132]:
+                - generic [ref=e133]:
+                  - generic [ref=e134]: Thank you for applying
+                  - generic [ref=e135]: Created by Polymer
+                - generic [ref=e136]:
+                  - img [ref=e139] [cursor=pointer]
+                  - generic:
+                    - generic:
+                      - link "Edit template":
+                        - /url: ""
+                      - link "Delete template":
+                        - /url: ""
+              - generic [ref=e143]:
+                - generic [ref=e144]:
+                  - generic [ref=e145]: Scheduling
+                  - generic [ref=e146]: Created by Polymer
+                - generic [ref=e147]:
+                  - img [ref=e150] [cursor=pointer]
+                  - generic:
+                    - generic:
+                      - link "Edit template":
+                        - /url: ""
+                      - link "Delete template":
+                        - /url: ""
+              - generic [ref=e154]:
+                - generic [ref=e155]:
+                  - generic [ref=e156]: Rejection
+                  - generic [ref=e157]: Created by Polymer
+                - generic [ref=e158]:
+                  - img [ref=e161] [cursor=pointer]
+                  - generic:
+                    - generic:
+                      - link "Edit template":
+                        - /url: ""
+                      - link "Delete template":
+                        - /url: ""
+              - generic [ref=e165]:
+                - generic [ref=e166]:
+                  - generic [ref=e167]: QA Test Template
+                  - generic [ref=e168]: Created by Rezu May
+                - generic [ref=e169]:
+                  - img [ref=e172] [cursor=pointer]
+                  - generic:
+                    - generic:
+                      - link "Edit template":
+                        - /url: ""
+                      - link "Delete template":
+                        - /url: ""
+              - generic [ref=e176]:
+                - generic [ref=e177]:
+                  - generic [ref=e178]: Round Trip Test Template
+                  - generic [ref=e179]: Created by Rezu May
+                - generic [ref=e180]:
+                  - img [ref=e183] [cursor=pointer]
+                  - generic:
+                    - generic:
+                      - link "Edit template":
+                        - /url: ""
+                      - link "Delete template":
+                        - /url: ""
+            - button "Add a template" [ref=e187] [cursor=pointer]:
+              - generic [ref=e188]: Add a template
+  - log [ref=e189]

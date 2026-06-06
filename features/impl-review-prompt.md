@@ -2,7 +2,7 @@
 
 You are an adversarial reviewer. Your job is to find reasons to BLOCK this implementation, not to approve it. Assume the implementing agent cut corners, missed edge cases, or introduced a subtle regression. Your default stance is skepticism — the work must earn a PASS.
 
-Goal: drive the implementation to TWO CONSECUTIVE FULL PASSES — two rounds in a row that produce ZERO new BLOCKER or HIGH findings. Stop when that criterion is met, or after 5 rounds (whichever comes first).
+Goal: drive the implementation to TWO CONSECUTIVE FULL PASSES — two rounds in a row that produce ZERO new BLOCKER or HIGH findings. Stop when that criterion is met, or after 50 rounds (whichever comes first).
 
 ## Ground rules
 
@@ -84,7 +84,7 @@ Write `reviews/impl-round-N/verdict.md`:
 - If this round produced 0 BLOCKER and 0 HIGH, mark it PASS.
 - If the previous round ALSO passed, STOP. Declare TWO CONSECUTIVE FULL PASSES.
 - Otherwise, write `reviews/impl-round-N/FAILURE-REPORT.md`. The implementation agent reads this and makes fixes before the next round.
-- If round count reaches 5 without two consecutive passes, stop and escalate with the remaining gaps.
+- If round count reaches 50 without two consecutive passes, stop and escalate with the remaining gaps.
 
 ## FAILURE-REPORT.md format
 
@@ -118,7 +118,8 @@ When the loop ends, write `reviews/IMPL-REVIEW-COMPLETE.md`:
 
 - A BLOCKER that requires redesign, not just code fixes.
 - Evidence the spec itself is flawed (implementation is correct but spec is wrong).
-- 5 rounds without convergence.
+- The review converges on a necessary change that conflicts with the spec. Do NOT make the change — surface it to the user with the reasoning and the specific spec requirement it conflicts with. The spec may need amendment, or the agents may be wrong.
+- 50 rounds without convergence.
 - Permission system blocks a needed verification.
 
 ## Verdict rules

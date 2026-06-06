@@ -1,0 +1,90 @@
+{
+  "agent": 7,
+  "focus": "ChannelMessageMailer#notify_candidate subject fallback logic",
+  "timestamp": "2026-06-05T05:28:17Z",
+  "tests": [
+    {
+      "name": "Unit: Custom subject 'Custom Test Subject' resolves correctly",
+      "expected": "Custom Test Subject",
+      "actual": "Custom Test Subject",
+      "passed": true,
+      "details": "subject=\"Custom Test Subject\", .presence=\"Custom Test Subject\""
+    },
+    {
+      "name": "Unit: nil subject resolves correctly",
+      "expected": "Lead QA Engineer at QA7 Final Corp e2843474",
+      "actual": "Lead QA Engineer at QA7 Final Corp e2843474",
+      "passed": true,
+      "details": "subject=nil, .presence=nil"
+    },
+    {
+      "name": "Unit: Empty string subject resolves correctly",
+      "expected": "Lead QA Engineer at QA7 Final Corp e2843474",
+      "actual": "Lead QA Engineer at QA7 Final Corp e2843474",
+      "passed": true,
+      "details": "subject=\"\", .presence=nil"
+    },
+    {
+      "name": "Unit: Whitespace-only subject '   ' resolves correctly",
+      "expected": "Lead QA Engineer at QA7 Final Corp e2843474",
+      "actual": "Lead QA Engineer at QA7 Final Corp e2843474",
+      "passed": true,
+      "details": "subject=\"   \", .presence=nil"
+    },
+    {
+      "name": "Mailer integration: custom subject 'Specific Position Follow-Up'",
+      "expected": "Specific Position Follow-Up",
+      "actual": "Specific Position Follow-Up",
+      "passed": true,
+      "details": "captured email_data[:subject] = \"Specific Position Follow-Up\""
+    },
+    {
+      "name": "Mailer integration: nil subject falls back to 'Lead QA Engineer at QA7 Final Corp e2843474'",
+      "expected": "Lead QA Engineer at QA7 Final Corp e2843474",
+      "actual": "Lead QA Engineer at QA7 Final Corp e2843474",
+      "passed": true,
+      "details": "captured email_data[:subject] = \"Lead QA Engineer at QA7 Final Corp e2843474\""
+    },
+    {
+      "name": "Mailer integration: empty string subject falls back to 'Lead QA Engineer at QA7 Final Corp e2843474'",
+      "expected": "Lead QA Engineer at QA7 Final Corp e2843474",
+      "actual": "Lead QA Engineer at QA7 Final Corp e2843474",
+      "passed": true,
+      "details": "captured email_data[:subject] = \"Lead QA Engineer at QA7 Final Corp e2843474\""
+    },
+    {
+      "name": "Mailer integration: whitespace subject '   ' falls back to 'Lead QA Engineer at QA7 Final Corp e2843474'",
+      "expected": "Lead QA Engineer at QA7 Final Corp e2843474",
+      "actual": "Lead QA Engineer at QA7 Final Corp e2843474",
+      "passed": true,
+      "details": "captured email_data[:subject] = \"Lead QA Engineer at QA7 Final Corp e2843474\""
+    },
+    {
+      "name": "Ruby .presence returns nil for nil/empty/whitespace, self for non-blank",
+      "expected": "All 5 checks pass",
+      "actual": "All 5 checks pass",
+      "passed": true,
+      "details": "\"Custom Subject\".presence => \"Custom Subject\" (OK); nil.presence => nil (OK); \"\".presence => nil (OK); \"   \".presence => nil (OK); \"  Real Subject  \".presence => \"  Real Subject  \" (OK)"
+    },
+    {
+      "name": "channel_messages table has 'subject' column of type string",
+      "expected": "Column exists with type :string",
+      "actual": "Column exists with type :string",
+      "passed": true,
+      "details": "null: true, default: nil"
+    },
+    {
+      "name": "Mailer source contains correct subject fallback pattern",
+      "expected": "subject: @channel_message.subject.presence || \"#{@job.title} at #{@organization.name}\"",
+      "actual": "subject: @channel_message.subject.presence || \"#{@job.title} at #{@organization.name}\",",
+      "passed": true,
+      "details": "Uses .presence for nil/blank detection, falls back to job.title at org.name"
+    }
+  ],
+  "summary": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0,
+    "errors": 0
+  }
+}

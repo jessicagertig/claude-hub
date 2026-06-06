@@ -1,0 +1,113 @@
+{
+  "agent_index": 4,
+  "focus_area": "Apply-response pipeline — verify apply_response_template_subject with variable substitution, nil handling, and default template",
+  "findings": [],
+  "tests_run": [
+    {
+      "id": "T1-basic-substitution",
+      "description": "parse_apply_response_text substitutes {{JobTitle}} and {{OrganizationName}} in apply_response_template_subject",
+      "status": "PASS"
+    },
+    {
+      "id": "T1-all-5-variables",
+      "description": "parse_apply_response_text substitutes all 5 variables: {{CandidateFullName}}, {{CandidateFirstName}}, {{CandidateLastName}}, {{JobTitle}}, {{OrganizationName}}",
+      "status": "PASS"
+    },
+    {
+      "id": "T2-nil",
+      "description": "parse_apply_response_text(nil) returns empty string",
+      "status": "PASS"
+    },
+    {
+      "id": "T2-empty",
+      "description": "parse_apply_response_text('') returns empty string",
+      "status": "PASS"
+    },
+    {
+      "id": "T2-whitespace",
+      "description": "parse_apply_response_text('   ') returns empty string (blank? catches whitespace-only)",
+      "status": "PASS"
+    },
+    {
+      "id": "T3-default-subject",
+      "description": "Job#add_default_apply_response_template sets apply_response_template_subject to '{{JobTitle}} at {{OrganizationName}}'",
+      "status": "PASS"
+    },
+    {
+      "id": "T3-default-body",
+      "description": "Job#add_default_apply_response_template also sets the body template (existing behavior preserved)",
+      "status": "PASS"
+    },
+    {
+      "id": "T4-msg-subject",
+      "description": "CreateOrganizationChannelMessage receives the substituted subject and persists it on the channel_message",
+      "status": "PASS"
+    },
+    {
+      "id": "T4-msg-body",
+      "description": "CreateOrganizationChannelMessage receives the substituted body with candidate name",
+      "status": "PASS"
+    },
+    {
+      "id": "T5-send-confirmation-subject",
+      "description": "JobApplication#send_candidate_confirmation_email creates a channel_message with correctly substituted subject when use_apply_response_template is true",
+      "status": "PASS"
+    },
+    {
+      "id": "T6-nbsp",
+      "description": "parse_apply_response_text replaces non-breaking spaces (U+00A0) with regular spaces",
+      "status": "PASS"
+    },
+    {
+      "id": "T7-not-html-safe",
+      "description": "parse_apply_response_text does NOT mark result as html_safe (correct — subject goes into Mailgun Subject: header, not HTML)",
+      "status": "PASS"
+    },
+    {
+      "id": "T7-body-is-html-safe",
+      "description": "html_safe_apply_email IS html_safe (existing behavior — body is HTML for rendering)",
+      "status": "PASS"
+    },
+    {
+      "id": "T8-public-method",
+      "description": "parse_apply_response_text is a public method on JobApplication (required because CustomerApi::CompleteJobApplication calls it externally)",
+      "status": "PASS"
+    },
+    {
+      "id": "T8-complete-ja-uses-method",
+      "description": "CustomerApi::CompleteJobApplication references parse_apply_response_text with apply_response_template_subject in its send_confirmation_email method",
+      "status": "PASS"
+    }
+  ],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "job.apply_response_template_subject provides subject for apply-response confirmation emails",
+      "parse_apply_response_text performs same gsub mail-merge substitution chain as html_safe_apply_email on subject",
+      "parse_apply_response_text returns '' when text is blank (nil, empty, whitespace)",
+      "send_candidate_confirmation_email passes subject: parse_apply_response_text(job.apply_response_template_subject) to CreateOrganizationChannelMessage",
+      "CustomerApi::CompleteJobApplication#send_confirmation_email also passes subject via parse_apply_response_text",
+      "Job#add_default_apply_response_template sets apply_response_template_subject to '{{JobTitle}} at {{OrganizationName}}'",
+      "parse_apply_response_text does NOT call html_safe (unlike html_safe_apply_email)",
+      "parse_apply_response_text handles non-breaking spaces (U+00A0 -> regular space) and malformed UTF-8 (.scrub)"
+    ],
+    "verified": [
+      "job.apply_response_template_subject provides subject for apply-response confirmation emails",
+      "parse_apply_response_text performs same gsub mail-merge substitution chain as html_safe_apply_email on subject",
+      "parse_apply_response_text returns '' when text is blank (nil, empty, whitespace)",
+      "send_candidate_confirmation_email passes subject: parse_apply_response_text(job.apply_response_template_subject) to CreateOrganizationChannelMessage",
+      "CustomerApi::CompleteJobApplication#send_confirmation_email also passes subject via parse_apply_response_text",
+      "Job#add_default_apply_response_template sets apply_response_template_subject to '{{JobTitle}} at {{OrganizationName}}'",
+      "parse_apply_response_text does NOT call html_safe (unlike html_safe_apply_email)",
+      "parse_apply_response_text handles non-breaking spaces (U+00A0 -> regular space) and malformed UTF-8 (.scrub)"
+    ],
+    "not_verified": []
+  },
+  "additional_verifications": [
+    "JobsController permits :apply_response_template_subject (line 236)",
+    "JobsController sanitizes apply_response_template_subject via Sanitizer#sanitize (lines 272-273)",
+    "JobSerializer exposes :apply_response_template_subject (line 53)"
+  ],
+  "scripts_used": [
+    "/tmp/qa-l2-agent4-all-tests-v2.rb"
+  ]
+}

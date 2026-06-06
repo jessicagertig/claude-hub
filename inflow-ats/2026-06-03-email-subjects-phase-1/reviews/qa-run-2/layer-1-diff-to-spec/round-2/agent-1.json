@@ -1,0 +1,38 @@
+{
+  "reviewer": "agent-1",
+  "round": 2,
+  "layer": "layer-1-diff-to-spec",
+  "qa_run": "qa-run-2",
+  "focus": "Adversarial deep sweep: ChannelMessageListItem.tsx cross-file interactions, legacy template edge cases, render_template_message subject pipeline, db/schema.rb correctness, spec coverage gaps",
+  "verdict": "CLEAN",
+  "findings": [],
+  "methodology": "Read the full diff, full spec, all 5 round-1 agent reports, and the qa-run-1 round-2 consolidated findings. Then performed targeted analysis of: (1) ChannelMessageListItem.tsx fix correctness and cross-file interactions with ChannelMessageTemplateModal, (2) legacy template handling in ChannelMessageTemplateSelectionModal and ChannelMessageNew when template subject is nil/empty, (3) render_template_message subject pipeline including Mustache.render of empty subject_source, (4) db/schema.rb column definitions vs migration, (5) full spec re-read hunting for requirements consistently missed by all prior agents.",
+  "analysis": {
+    "channelMessageListItem_fix": {
+      "result": "CORRECT",
+      "details": "Passing subject: \"\" is the right choice for the 'Create template from message' flow. The modal's initializer applies `props.channelMessageTemplate.subject || defaultSubject`, so empty string triggers the template-variable default '{{JobTitle}} at {{OrganizationName}}'. This matches the spec's Data flow section: template create modal shows variables literally because no single candidate context applies. Using message.subject (the rendered candidate-specific subject) would be wrong for a template."
+    },
+    "legacy_template_edge_cases": {
+      "result": "CORRECT",
+      "details": "Traced the full chain: legacy template with nil subject -> render_template_message produces subject_raw: '' -> frontend ChannelMessageTemplateSelectionModal uses `mailMerge?.subjectRaw &&` conditional rendering -> empty string is falsy -> subject preview hidden for legacy templates. In ChannelMessageNew, when a legacy template is inserted, `mailMerge?.subjectRaw` is falsy so setSubject is not called and the field keeps its current rendered default. Both paths degrade gracefully."
+    },
+    "schema_vs_migration": {
+      "result": "MATCH",
+      "details": "Migration adds 4 columns: channel_messages.subject (string, null), channel_messages.mailgun_message_id (string, null), channel_message_templates.subject (string, null), jobs.apply_response_template_subject (string, null). Schema dump confirms all 4 at the correct positions in their respective tables. The unrelated AI feature tables in the schema dump are from a separate merged branch and do not interact with the email-subjects feature."
+    },
+    "spec_coverage_gap_hunt": {
+      "result": "NO GAPS FOUND",
+      "details": "Re-read every spec requirement with fresh eyes. All backend requirements (migration, validator rename, parse_text rename, HiringStageMessageAutomationJob subject threading, apply-response pipeline, inbound capture, mailer fallback, controller permits/sanitize, serializer exposure, render_template_message extension, anonymization, default template seeds) are implemented. All frontend requirements (yup schemas, 4 subject input surfaces, per-surface default rendering, template selection preview, repopulate-on-error for 2 of 4 surfaces) are implemented. The 2 surfaces missing repopulate-on-error (ChannelMessageTemplateModal and HiringStageAutomationModal inline template) were already captured as C-003 in qa-run-1. No new gaps identified."
+    }
+  },
+  "prior_findings_status": {
+    "C-001_css_font_size_bug": "Still present. Carryover from qa-run-1. MED severity per qa-run-1 consolidation.",
+    "C-002_automation_modal_existing_template_preview": "Still present. Carryover from qa-run-1. MED severity.",
+    "C-003_template_modal_repopulation": "Still present. Carryover from qa-run-1. MED severity.",
+    "C-004_invalid_tags_dedup": "Still present. Carryover from qa-run-1. LOW severity.",
+    "C-005_misleading_handler_name": "Still present. Carryover from qa-run-1. LOW severity.",
+    "C-006_bulk_job_rescue_no_subject_check": "Still present. Carryover from qa-run-1 round 2. MED severity.",
+    "C-007_duplicate_message_body_only": "Still present. Carryover from qa-run-1 round 2. LOW severity."
+  },
+  "notes": "After a thorough adversarial sweep focused specifically on (1) the new ChannelMessageListItem.tsx code, (2) cross-file interactions the fix might affect, and (3) spec requirements that might have been consistently missed, I found nothing new. The fix is minimal, correct, and introduces no new issues. All 7 prior findings from qa-run-1 are confirmed as the complete finding set. The implementation is well-aligned with the spec."
+}

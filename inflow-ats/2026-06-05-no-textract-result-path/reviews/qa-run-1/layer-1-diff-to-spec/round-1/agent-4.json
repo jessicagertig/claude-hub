@@ -1,0 +1,17 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 4,
+  "focus_area": "Cross-cutting behavioral correctness and edge cases across all 3 changes",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "Change 1 edge case: Race condition - two SubmitResumeToTextractJob runs overlap",
+      "Change 2 edge case: Auto-generated summaries with nil requesting user",
+      "Change 2: broadcast_ai_summary_failed guards on nil requesting_organization_user internally",
+      "Change 3: defensive guard for optional association"
+    ],
+    "all_implemented": true,
+    "notes": "Race condition mitigated by update_columns being idempotent (sets same value). Auto-generated summary case handled: OrganizationUser.find_by returns nil, broadcast_ai_summary_failed has internal return-unless guard (verified at textract_result.rb line 128). Change 3 guard is defensive as spec states."
+  }
+}

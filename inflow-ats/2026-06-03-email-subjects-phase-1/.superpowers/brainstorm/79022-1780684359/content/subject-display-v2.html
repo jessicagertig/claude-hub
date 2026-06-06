@@ -1,0 +1,79 @@
+<h2>Option A Refined — Alignment + Pencil Visibility</h2>
+<p class="subtitle">Fixed: subject text aligns with body text, pencil icon is more visible. Compare before/after.</p>
+
+<div class="split">
+
+  <!-- Before -->
+  <div class="mockup">
+    <div class="mockup-header">Before (current)</div>
+    <div class="mockup-body" style="padding: 0;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <!-- Subject row - OLD with offset -->
+        <div style="padding: 12px 20px 0 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+            <span style="font-size: 13px; font-weight: 500; color: #9ca3af; flex-shrink: 0;">Subject:</span>
+            <span style="font-size: 13px; color: #6b7280; flex: 1;">Software Engineer at Acme Inc.</span>
+            <svg style="width: 14px; height: 14px; stroke: #d1d5db; fill: none; stroke-width: 1.75;" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          </div>
+        </div>
+        <!-- Guide line showing misalignment -->
+        <div style="border-left: 2px dashed #ef4444; margin-left: 20px; padding: 8px 0 8px 18px;">
+          <div style="color: #9ca3af; font-size: 14px; min-height: 40px;">Type a message to the candidate here...</div>
+        </div>
+        <div style="display: flex; gap: 12px; padding: 0 20px 16px;">
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px;">Send message</div>
+          <div style="background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 13px; border: 1px solid #e5e7eb;">Use template</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- After -->
+  <div class="mockup">
+    <div class="mockup-header">After (fixed)</div>
+    <div class="mockup-body" style="padding: 0;">
+      <div style="background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <!-- Subject row - FIXED alignment -->
+        <div style="padding: 12px 20px 0 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer;">
+            <span style="font-size: 13px; font-weight: 500; color: #9ca3af; flex-shrink: 0;">Subject:</span>
+            <span style="font-size: 13px; color: #6b7280; flex: 1;">Software Engineer at Acme Inc.</span>
+            <svg style="width: 14px; height: 14px; stroke: #6b7280; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          </div>
+        </div>
+        <!-- Guide line showing alignment -->
+        <div style="border-left: 2px dashed #22c55e; margin-left: 20px; padding: 8px 0 8px 18px;">
+          <div style="color: #9ca3af; font-size: 14px; min-height: 40px;">Type a message to the candidate here...</div>
+        </div>
+        <div style="display: flex; gap: 12px; padding: 0 20px 16px;">
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px;">Send message</div>
+          <div style="background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 13px; border: 1px solid #e5e7eb;">Use template</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>Changes</h3>
+  <ul>
+    <li><strong>Alignment:</strong> Removed inner padding on the subject row (<code>px(2)</code> → <code>0</code>) so "Subject:" starts flush with the body text's left edge</li>
+    <li><strong>Pencil visibility:</strong> Darker stroke (<code>gray[400]</code> → <code>gray[500]</code>) and slightly thicker (<code>1.75px</code> → <code>2px</code>)</li>
+  </ul>
+</div>
+
+<div class="options" style="margin-top: 16px;">
+  <div class="option" data-choice="good" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Looks good — apply these fixes</h3>
+    </div>
+  </div>
+  <div class="option" data-choice="more" onclick="toggleSelect(this)">
+    <div class="letter">→</div>
+    <div class="content">
+      <h3>Getting closer but needs more tweaking</h3>
+    </div>
+  </div>
+</div>

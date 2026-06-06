@@ -1,0 +1,126 @@
+{
+  "agent": 5,
+  "focus": "CustomChannelMessageValidator — subject validation parity with body",
+  "round": 1,
+  "timestamp": "2026-06-05T00:00:00Z",
+  "seed_plan": "paid-user-with-job-and-candidates.json",
+  "scripts_executed": [
+    "/tmp/qa-l2-agent5-all-tests.rb"
+  ],
+  "summary": "All 20 tests PASS. CustomChannelMessageValidator correctly validates :subject using the same regex and error message as :body. The validator is registered on both attributes without conditional guards, handles nil and empty string gracefully, and catches all {{Placeholder}} patterns including spaced, dotted, uppercase, lowercase, and mixed-case variants. Single braces, empty braces, and normal text correctly pass validation.",
+  "results": [
+    {
+      "test": "1. Subject with {{CandidateName}} triggers validation error",
+      "status": "PASS",
+      "details": "Error correctly added: 'Message not sent. An invalid placeholder formatted like {{Something}} was found.'"
+    },
+    {
+      "test": "2. Clean subject passes validation",
+      "status": "PASS",
+      "details": "No :subject errors for clean text"
+    },
+    {
+      "test": "3. Nil subject passes validation",
+      "status": "PASS",
+      "details": "Nil value handled gracefully — regex =~ nil returns nil, no error added"
+    },
+    {
+      "test": "4. Empty string subject passes validation",
+      "status": "PASS",
+      "details": "Empty string does not match {{...}} regex"
+    },
+    {
+      "test": "5A. Both body and subject with {{Var}} get errors",
+      "status": "PASS",
+      "details": "Validator adds errors to both attributes independently"
+    },
+    {
+      "test": "5B. Only body with {{Var}} → only body gets error",
+      "status": "PASS",
+      "details": "Clean subject not affected by body validation"
+    },
+    {
+      "test": "5C. Only subject with {{Var}} → only subject gets error",
+      "status": "PASS",
+      "details": "Clean body not affected by subject validation"
+    },
+    {
+      "test": "5D. Neither has {{Var}} → neither gets error",
+      "status": "PASS",
+      "details": "Both clean values pass"
+    },
+    {
+      "test": "5E. Same error message on both attributes",
+      "status": "PASS",
+      "details": "Both produce: 'Message not sent. An invalid placeholder formatted like {{Something}} was found.'"
+    },
+    {
+      "test": "5F. Both :body and :subject have CustomChannelMessageValidator registered",
+      "status": "PASS",
+      "details": "Exactly 1 CustomChannelMessageValidator on each attribute in ChannelMessage.validators_on"
+    },
+    {
+      "test": "5G. Subject validator has no conditional guards (always runs)",
+      "status": "PASS",
+      "details": "No :if or :unless options — validates on every ChannelMessage"
+    },
+    {
+      "test": "6.1. Spaced: {{ SpacedVar }}",
+      "status": "PASS",
+      "details": "Regex \\s* handles inner whitespace"
+    },
+    {
+      "test": "6.2. Dotted: {{var.with.dots}}",
+      "status": "PASS",
+      "details": "Regex [\\w.]+ matches dotted identifiers"
+    },
+    {
+      "test": "6.3. All caps: {{ALLCAPS}}",
+      "status": "PASS",
+      "details": "Case-insensitive flag handles uppercase"
+    },
+    {
+      "test": "6.4. Lowercase: {{lowercase}}",
+      "status": "PASS",
+      "details": "Lowercase identifiers caught"
+    },
+    {
+      "test": "6.5. Mixed with numbers: {{MixedCase123}}",
+      "status": "PASS",
+      "details": "\\w includes digits"
+    },
+    {
+      "test": "6.6. Single braces: {SingleBrace}",
+      "status": "PASS",
+      "details": "Single braces correctly not flagged (requires double braces)"
+    },
+    {
+      "test": "6.7. Normal text",
+      "status": "PASS",
+      "details": "Plain text passes"
+    },
+    {
+      "test": "6.8. Empty braces with spaces: {{ }}",
+      "status": "PASS",
+      "details": "Empty inner content (whitespace only) not matched by [\\w.]+"
+    },
+    {
+      "test": "6.9. Empty braces: {{}}",
+      "status": "PASS",
+      "details": "Empty double braces not matched — regex requires at least one \\w or . character"
+    }
+  ],
+  "findings": [
+    {
+      "severity": "INFO",
+      "category": "deprecation",
+      "description": "CustomChannelMessageValidator uses deprecated `record.errors[attribute] << msg` syntax (line 13). Rails 6.1 emits a deprecation warning recommending `record.errors.add(attribute, msg)` instead. This is a pre-existing issue not introduced by the email-subjects feature, but it will fire on every subject validation now that subject is validated. Not blocking.",
+      "file": "app/validators/custom_channel_message_validator.rb",
+      "line": 13
+    }
+  ],
+  "verdict": "PASS",
+  "pass_count": 20,
+  "fail_count": 0,
+  "total_count": 20
+}

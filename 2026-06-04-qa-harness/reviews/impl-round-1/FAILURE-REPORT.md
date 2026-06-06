@@ -1,14 +1,22 @@
-# Failure Report — Round 1
+# Round 1 — FAILURE REPORT
 
-## HIGH issues to fix
+## HIGH-1: No defensive RAILS_ENV=test enforcement in subprocess environment
 
-### 1. `_execute_step` hardcodes status_code 200
+**File:** `src/qa_harness/server.py`, line 50
 
-**File:** `src/qa_harness/seed.py`
-**Lines:** 192-206 (`_execute_step`) and 209-235 (`_request`)
+**Problem:** `start()` copies `os.environ` without setting `RAILS_ENV=test`. The spec's hard rules say "`RAILS_ENV=test` always. Never dev, never production." The analog (`inflow_bootstrap.py`, line 72) explicitly sets `env["RAILS_ENV"] = "test"`.
 
-**Problem:** `_request` returns only the parsed response body (JSON, text, or None). `_execute_step` always reports `"status_code": 200` in the result dict because it has no access to the actual HTTP response status code. This means `cmd_seed` prints "200" for every step regardless of the actual response (which could be 201, 204, etc.), producing misleading output for QA agents.
+**Required fix:** After `env = os.environ.copy()`, add `env["RAILS_ENV"] = "test"`. Add a test verifying the env passed to Popen includes `RAILS_ENV=test`.
 
-**Fix:** Change `_request` to return a dict with both `status_code` and `body`, or return a tuple. Then have `_execute_step` use the actual status code. Update the test `test_loads_and_executes_plan` to verify the actual status code is propagated.
+---
 
-**Evidence:** Read `seed.py` lines 192-235. The `_request` method on line 215 does `return response.json()` or `return response.text` or `return None` -- never includes `response.status_code`. The `_execute_step` method on line 201 hardcodes `"status_code": 200`.
+## HIGH-2: State file missing config_path
+
+**File:** `src/qa_harness/server.py`, lines 273-286 and `src/qa_harness/cli.py`, lines 57-79
+
+**Problem:** The plan specifies the state file should contain `config_path`. The implementation omits it. This makes `qa-harness stop` fail if run from a different working directory than `start` (because `resolve_config_path` can't find the config).
+
+**Required fix:**
+1. Add a `config_path` parameter to `ServerManager.__init__` (or to `_write_state_file`) and store it in the state JSON.
+2. In `cmd_stop`, before loading config via `resolve_config_path`, try reading `config_path` from the state file as a fallback.
+3. Same for `cmd_status`.

@@ -1,0 +1,152 @@
+{
+  "agent_id": 13,
+  "round": 1,
+  "focus": "parse_text method in CreateStageAutomationMessage and BulkChannelMessageSendJob — verify variable substitution works correctly for subject",
+  "timestamp": "2026-06-05T05:30:00Z",
+  "scripts_executed": [
+    "/tmp/qa-l2-agent13-01-parse-text-variables.rb",
+    "/tmp/qa-l2-agent13-02-edge-cases.rb",
+    "/tmp/qa-l2-agent13-03-utf8-debug.rb",
+    "/tmp/qa-l2-agent13-04-blank-before-scrub-bug.rb"
+  ],
+  "seed_data": "paid-user-with-job-and-candidates.json",
+  "seed_note": "Used OpenStruct mocks instead of seeded database records due to concurrent agent cleanup races on shared inflow_test database",
+  "summary": {
+    "total_tests": 34,
+    "passed": 30,
+    "failed": 4,
+    "verdict": "PASS with LOW-severity pre-existing findings"
+  },
+  "findings": [
+    {
+      "id": "A13-F1",
+      "severity": "PASS",
+      "category": "variable_substitution",
+      "title": "All 7 template variables substitute correctly in subject for both classes",
+      "details": "Tested {{SenderFullName}}, {{SenderFirstName}}, {{JobTitle}}, {{CandidateFullName}}, {{CandidateFirstName}}, {{CandidateLastName}}, {{OrganizationName}} individually and combined in a single subject string. Both CreateStageAutomationMessage#parse_text and BulkChannelMessageSendJob#parse_text produce identical correct substitutions.",
+      "files_tested": [
+        "app/interactors/channel_messages/create_stage_automation_message.rb",
+        "app/jobs/channel_messages/bulk_channel_message_send_job.rb"
+      ]
+    },
+    {
+      "id": "A13-F2",
+      "severity": "PASS",
+      "category": "nil_empty_handling",
+      "title": "nil, empty string, and whitespace-only subject all return '' correctly",
+      "details": "Both classes return '' for nil, '', and '   ' inputs. The blank? guard on the first line of parse_text handles all three cases correctly."
+    },
+    {
+      "id": "A13-F3",
+      "severity": "PASS",
+      "category": "passthrough",
+      "title": "Subjects without variables pass through unchanged",
+      "details": "Plain text subjects with no {{...}} variables are returned unmodified (aside from html_safe wrapping in CSAM)."
+    },
+    {
+      "id": "A13-F4",
+      "severity": "PASS",
+      "category": "unknown_variables",
+      "title": "Unknown variables are left in place unsubstituted",
+      "details": "Subjects containing {{UnknownVariable}} or {{AnotherOne}} are returned with those placeholders intact, as expected from the gsub-based approach."
+    },
+    {
+      "id": "A13-F5",
+      "severity": "PASS",
+      "category": "html_entities",
+      "title": "HTML entities in subject are preserved, not double-escaped",
+      "details": "Subjects containing &amp;, <script> tags, etc. pass through with variable substitution but no HTML encoding/escaping. This is consistent with the body field behavior."
+    },
+    {
+      "id": "A13-F6",
+      "severity": "PASS",
+      "category": "nbsp_handling",
+      "title": "CreateStageAutomationMessage correctly strips NBSP from subject",
+      "details": "Non-breaking space characters (U+00A0) are replaced with regular spaces by the .gsub(/\\u00A0/, ' ') on line 46 of create_stage_automation_message.rb."
+    },
+    {
+      "id": "A13-F7",
+      "severity": "INFO",
+      "category": "behavioral_inconsistency",
+      "title": "BulkChannelMessageSendJob does NOT strip NBSP or apply html_safe, unlike CreateStageAutomationMessage",
+      "details": "CreateStageAutomationMessage#parse_text has .gsub(/\\u00A0/, ' ')&.html_safe on line 46 but BulkChannelMessageSendJob#parse_text does not. This means: (1) NBSP characters survive in bulk-sent subject lines but are replaced in automation-sent ones. (2) CSAM returns an html_safe ActiveSupport::SafeBuffer, BulkJob returns a plain String. This may be intentional (automation messages may come from rich-text editors that insert NBSP) or an accidental inconsistency. Same pattern existed for body before subject was added.",
+      "files": [
+        "app/interactors/channel_messages/create_stage_automation_message.rb:46",
+        "app/jobs/channel_messages/bulk_channel_message_send_job.rb:58-65"
+      ],
+      "pre_existing": true
+    },
+    {
+      "id": "A13-F8",
+      "severity": "LOW",
+      "category": "malformed_utf8",
+      "title": "text.blank? raises ArgumentError on malformed UTF-8 before text.scrub can clean it",
+      "details": "Both parse_text implementations call `return '' if text.blank?` before `text.scrub`. ActiveSupport's blank? method internally performs a regex match which raises ArgumentError ('invalid byte sequence in UTF-8') on strings with malformed UTF-8 bytes. The scrub call on the next non-blank line never executes. This defeats the stated intent of the scrub call. The same pattern exists in app/models/job_application.rb:549-551. Impact is LOW because browser form input is always valid UTF-8, making malformed bytes in subject (or body) extremely unlikely in production. Fix: change `return '' if text.blank?` to `return '' if text.nil? || text.to_s.scrub.blank?` or call scrub before blank?.",
+      "files": [
+        "app/interactors/channel_messages/create_stage_automation_message.rb:34,38",
+        "app/jobs/channel_messages/bulk_channel_message_send_job.rb:52,58",
+        "app/models/job_application.rb:549,551"
+      ],
+      "pre_existing": true,
+      "affects_subject": true,
+      "affects_body": true
+    },
+    {
+      "id": "A13-F9",
+      "severity": "PASS",
+      "category": "html_safe_behavior",
+      "title": "html_safe is correctly applied in CreateStageAutomationMessage but not BulkChannelMessageSendJob",
+      "details": "CreateStageAutomationMessage#parse_text returns html_safe? == true. BulkChannelMessageSendJob#parse_text returns html_safe? == false. Verified via .html_safe? check on return values."
+    }
+  ],
+  "test_results": {
+    "script_1_variable_substitution": {
+      "tests_run": 18,
+      "passed": 18,
+      "failed": 0,
+      "tests": [
+        {"test": "CreateStageAutomationMessage_all_variables", "status": "PASS"},
+        {"test": "CreateStageAutomationMessage_{{SenderFullName}}", "status": "PASS"},
+        {"test": "CreateStageAutomationMessage_{{SenderFirstName}}", "status": "PASS"},
+        {"test": "CreateStageAutomationMessage_{{JobTitle}}", "status": "PASS"},
+        {"test": "CreateStageAutomationMessage_{{CandidateFullName}}", "status": "PASS"},
+        {"test": "CreateStageAutomationMessage_{{CandidateFirstName}}", "status": "PASS"},
+        {"test": "CreateStageAutomationMessage_{{CandidateLastName}}", "status": "PASS"},
+        {"test": "CreateStageAutomationMessage_{{OrganizationName}}", "status": "PASS"},
+        {"test": "BulkChannelMessageSendJob_all_variables", "status": "PASS"},
+        {"test": "BulkChannelMessageSendJob_{{SenderFullName}}", "status": "PASS"},
+        {"test": "BulkChannelMessageSendJob_{{SenderFirstName}}", "status": "PASS"},
+        {"test": "BulkChannelMessageSendJob_{{JobTitle}}", "status": "PASS"},
+        {"test": "BulkChannelMessageSendJob_{{CandidateFullName}}", "status": "PASS"},
+        {"test": "BulkChannelMessageSendJob_{{CandidateFirstName}}", "status": "PASS"},
+        {"test": "BulkChannelMessageSendJob_{{CandidateLastName}}", "status": "PASS"},
+        {"test": "BulkChannelMessageSendJob_{{OrganizationName}}", "status": "PASS"},
+        {"test": "CSAM_html_safe_result", "status": "PASS"},
+        {"test": "BulkJob_not_html_safe_result", "status": "PASS"}
+      ]
+    },
+    "script_2_edge_cases": {
+      "tests_run": 16,
+      "passed": 14,
+      "failed": 2,
+      "tests": [
+        {"test": "CSAM_malformed_utf8", "status": "FAIL", "error": "ArgumentError: invalid byte sequence in UTF-8"},
+        {"test": "BulkJob_malformed_utf8", "status": "FAIL", "error": "ArgumentError: invalid byte sequence in UTF-8"},
+        {"test": "CSAM_nbsp_replacement", "status": "PASS"},
+        {"test": "BulkJob_nbsp_behavior", "status": "PASS", "note": "NBSP preserved — differs from CSAM"},
+        {"test": "CSAM_nil_subject", "status": "PASS"},
+        {"test": "BulkJob_nil_subject", "status": "PASS"},
+        {"test": "CSAM_empty_subject", "status": "PASS"},
+        {"test": "BulkJob_empty_subject", "status": "PASS"},
+        {"test": "CSAM_whitespace_subject", "status": "PASS"},
+        {"test": "BulkJob_whitespace_subject", "status": "PASS"},
+        {"test": "CSAM_plain_subject", "status": "PASS"},
+        {"test": "BulkJob_plain_subject", "status": "PASS"},
+        {"test": "CSAM_unknown_variables", "status": "PASS"},
+        {"test": "BulkJob_unknown_variables", "status": "PASS"},
+        {"test": "CSAM_html_entities", "status": "PASS"},
+        {"test": "BulkJob_html_entities", "status": "PASS"}
+      ]
+    }
+  }
+}

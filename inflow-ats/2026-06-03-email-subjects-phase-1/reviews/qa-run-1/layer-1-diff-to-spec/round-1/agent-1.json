@@ -1,0 +1,38 @@
+{
+  "agent_index": 1,
+  "focus_area": "Schema, Migration, and Model layer",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "Add nullable subject column (string) to channel_messages",
+      "Add nullable mailgun_message_id column (string) to channel_messages",
+      "Add nullable subject column (string) to channel_message_templates",
+      "Add nullable apply_response_template_subject column (string) to jobs",
+      "Rename CustomChannelMessageBodyValidator to CustomChannelMessageValidator",
+      "Update model validation: validates :body, custom_channel_message: true (renamed key)",
+      "Add validates :subject, custom_channel_message: true on ChannelMessage model",
+      "Validator works generically via validate_each(record, attribute, value) - no logic changes needed"
+    ],
+    "implemented": [
+      "Add nullable subject column (string) to channel_messages",
+      "Add nullable mailgun_message_id column (string) to channel_messages",
+      "Add nullable subject column (string) to channel_message_templates",
+      "Add nullable apply_response_template_subject column (string) to jobs",
+      "Rename CustomChannelMessageBodyValidator to CustomChannelMessageValidator",
+      "Update model validation: validates :body, custom_channel_message: true (renamed key)",
+      "Add validates :subject, custom_channel_message: true on ChannelMessage model",
+      "Validator works generically via validate_each(record, attribute, value) - no logic changes needed"
+    ],
+    "missing": []
+  },
+  "notes": {
+    "edge_cases_verified": [
+      "Migration uses def change with add_column -- automatically reversible by Rails",
+      "All four columns in one migration per spec instruction",
+      "Column type is :string (varchar 255) not :text -- intentional per spec ('plain non-rich-text string'); subjects are short, varchar 255 is appropriate",
+      "Validator handles nil subject correctly: nil =~ regex returns nil (falsy), so nil values pass validation -- correct for nullable column with no presence requirement",
+      "Validator's validate_each(record, attribute, value) is attribute-agnostic -- only class name and comment changed, no logic changes (76% similarity in diff confirms minimal diff)"
+    ],
+    "out_of_scope_observation": "ChannelMessageTemplateSelectionModal.tsx line 307 uses 'font-size: ${t.text.sm}' but t.text.sm is already a complete CSS declaration including 'font-size:' per known failure pattern #1 in pipeline CLAUDE.md. This produces invalid CSS. This file is outside this agent's focus area but is flagged for the relevant agent."
+  }
+}

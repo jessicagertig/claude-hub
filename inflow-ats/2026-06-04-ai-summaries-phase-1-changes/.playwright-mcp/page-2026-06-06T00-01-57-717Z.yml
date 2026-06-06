@@ -1,0 +1,63 @@
+- generic [ref=e8]:
+  - generic [ref=e9]:
+    - generic [ref=e11]:
+      - img [ref=e12]
+      - heading "Polymer" [level=1] [ref=e15]
+    - list [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: TB
+          - generic [ref=e21]: Taylor Brooks
+        - generic:
+          - generic:
+            - link "Account settings":
+              - /url: /account
+            - button "Contact us"
+            - button "Help docs":
+              - text: Help docs
+              - img
+            - button "Changelog":
+              - text: Changelog
+              - img
+            - link "Log out":
+              - /url: /logout
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e27] [cursor=pointer]:
+          - generic [ref=e29]: A
+          - img [ref=e31]
+        - generic [ref=e36]: Acme Inc.
+      - generic [ref=e38]:
+        - img [ref=e41] [cursor=pointer]
+        - generic:
+          - generic:
+            - link "Your organizations":
+              - /url: /organization/manage
+    - generic [ref=e46]:
+      - img [ref=e47]
+      - textbox "Search candidates" [ref=e50]
+    - generic [ref=e52]:
+      - link [ref=e54] [cursor=pointer]:
+        - /url: /notifications
+        - img [ref=e55]
+      - link [ref=e59] [cursor=pointer]:
+        - /url: /hire/settings/preferences
+        - img [ref=e60]
+  - generic [ref=e63]:
+    - generic [ref=e65]:
+      - img [ref=e68] [cursor=pointer]
+      - heading "App settings" [level=2] [ref=e71]
+    - generic [ref=e74]:
+      - link "Message templates" [ref=e75] [cursor=pointer]:
+        - /url: /hire/settings/message_templates
+        - generic [ref=e77]: Message templates
+        - img [ref=e78]
+      - link "Review templates" [ref=e80] [cursor=pointer]:
+        - /url: /hire/settings/review_templates
+        - generic [ref=e82]: Review templates
+        - img [ref=e83]
+      - link "User preferences" [ref=e85] [cursor=pointer]:
+        - /url: /hire/settings/preferences
+        - generic [ref=e87]: User preferences
+        - img [ref=e88]

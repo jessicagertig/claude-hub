@@ -1,0 +1,82 @@
+<h2>Inline Subject Display — Pick a Direction</h2>
+<p class="subtitle">Each mockup shows the composer bottom area. Click the one that feels right.</p>
+
+<div class="cards">
+
+  <!-- Option A: Current implementation -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; padding: 16px 20px; border-top: 1px solid #e5e7eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <!-- Subject row -->
+        <div style="display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-radius: 4px; cursor: pointer; margin-bottom: 8px;">
+          <span style="font-size: 13px; font-weight: 500; color: #9ca3af; flex-shrink: 0;">Subject:</span>
+          <span style="font-size: 13px; color: #6b7280; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Software Engineer at Acme Inc.</span>
+          <svg style="width: 14px; height: 14px; stroke: #9ca3af; fill: none; stroke-width: 1.75; flex-shrink: 0;" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </div>
+        <!-- Body placeholder -->
+        <div style="color: #9ca3af; font-size: 14px; padding: 8px 0; min-height: 48px;">Type a message to the candidate here...</div>
+        <!-- Buttons -->
+        <div style="display: flex; gap: 12px; padding-top: 8px;">
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500;">Send message</div>
+          <div style="background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; border: 1px solid #e5e7eb;">Use template</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. Current — Label + Text + Pencil</h3>
+      <p>"Subject:" label, value in gray, pencil always visible. What's implemented now.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Minimal inline -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; padding: 16px 20px; border-top: 1px solid #e5e7eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <!-- Subject row - more minimal -->
+        <div style="display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid #f3f4f6; margin-bottom: 8px; cursor: pointer;">
+          <svg style="width: 13px; height: 13px; stroke: #d1d5db; fill: none; stroke-width: 1.75; flex-shrink: 0;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span style="font-size: 13px; color: #9ca3af; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Software Engineer at Acme Inc.</span>
+          <svg style="width: 12px; height: 12px; stroke: #d1d5db; fill: none; stroke-width: 1.75; flex-shrink: 0;" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </div>
+        <!-- Body placeholder -->
+        <div style="color: #9ca3af; font-size: 14px; padding: 8px 0; min-height: 48px;">Type a message to the candidate here...</div>
+        <!-- Buttons -->
+        <div style="display: flex; gap: 12px; padding-top: 8px;">
+          <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500;">Send message</div>
+          <div style="background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; border: 1px solid #e5e7eb;">Use template</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. Minimal — Mail icon + Text</h3>
+      <p>No "Subject:" label. Small mail envelope icon hints at what it is. Thin bottom border separates from body. Even lighter visual weight.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Integrated header bar -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden;">
+      <div style="background: #fff; border-top: 1px solid #e5e7eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+        <!-- Subject as a header bar -->
+        <div style="display: flex; align-items: center; gap: 8px; padding: 8px 20px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; cursor: pointer;">
+          <span style="font-size: 12px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;">Subj</span>
+          <span style="font-size: 13px; color: #6b7280; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Software Engineer at Acme Inc.</span>
+          <svg style="width: 12px; height: 12px; stroke: #9ca3af; fill: none; stroke-width: 1.75; flex-shrink: 0;" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </div>
+        <!-- Body area -->
+        <div style="padding: 16px 20px;">
+          <div style="color: #9ca3af; font-size: 14px; min-height: 48px;">Type a message to the candidate here...</div>
+          <div style="display: flex; gap: 12px; padding-top: 8px;">
+            <div style="background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500;">Send message</div>
+            <div style="background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; border: 1px solid #e5e7eb;">Use template</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. Header Bar — Tinted background strip</h3>
+      <p>Subject lives in its own subtle gray bar above the body. "SUBJ" label is compact uppercase. Feels like an email client header. Clear visual separation.</p>
+    </div>
+  </div>
+
+</div>

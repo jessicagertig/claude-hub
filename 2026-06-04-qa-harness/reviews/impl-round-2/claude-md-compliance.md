@@ -1,33 +1,24 @@
-# CLAUDE.md Compliance — Round 2
+# claude-md-compliance — Round 2 Findings
 
-## Global CLAUDE.md Hard Rules
+## Prior findings reviewed:
 
-### Database Safety
+### HIGH-3 (RAILS_ENV=test not enforced) -- RESOLVED
+Cross-reference to server-lifecycle HIGH-1. `env["RAILS_ENV"] = "test"` is now set in `ServerManager.start()`.
 
-- **NEVER drop or recreate a database:** PASS. No database commands in harness code. All data via `/cypress/*` HTTP endpoints.
-- **NEVER modify .env files:** PASS. No `.env` file operations anywhere in the codebase.
-- **NEVER set DATABASE_URL:** PASS. No `DATABASE_URL` references in the codebase. Server env uses `os.environ.copy()` without mutation.
-- **Data via app interaction only:** PASS. Seed data via HTTP POST to Cypress endpoints on running Rails server.
+## Rechecked all global CLAUDE.md hard rules:
 
-### Other Global Rules
+- **NEVER drop or recreate a database**: PASS. Harness uses Cypress endpoints only.
+- **Cleanup via DELETE /cypress/cleanup only**: PASS.
+- **No direct psql access**: PASS. No database connections in harness code.
+- **No .env file modification**: PASS. Harness does not touch .env files.
+- **NEVER set DATABASE_URL**: PASS. Harness sets only `RAILS_ENV=test`.
+- **RAILS_ENV=test always**: PASS (fixed in Round 1).
+- **Data via app interaction / Rails console / rails runner only**: PASS. Seed data via Cypress HTTP endpoints (which run inside the Rails app context).
+- **Temporary scripts in /tmp only**: PASS. qa-prompt.md specifies `/tmp`.
 
-- **Platform (Mac M1):** PASS. No hardcoded `/usr/local/` paths.
-- **Pattern Matching (find it first):** PASS. Implementation follows `inflow_bootstrap.py` and `cypress_api.py` patterns.
+## Hub CLAUDE.md rules:
 
-## Hub CLAUDE.md Rules
+- **Never write files into source repos from a hub session**: PASS.
+- **Always create a subdirectory for new work**: PASS.
 
-- **Never write files into source repos:** PASS.
-- **Always create a subdirectory for new work:** PASS.
-
-## qa-prompt.md Agent Constraints
-
-The agent instructions in qa-prompt.md correctly include:
-- "Temporary scripts go in `/tmp` only -- never write to the source repo"
-- "Never modify `.env` files"
-- "Never set `DATABASE_URL`"
-- "`RAILS_ENV=test` always"
-- "Do NOT start or stop the server"
-
-## Verdict
-
-All hard rules pass. No compliance issues. Identical to Round 1.
+No BLOCKER, HIGH, or MED findings.
