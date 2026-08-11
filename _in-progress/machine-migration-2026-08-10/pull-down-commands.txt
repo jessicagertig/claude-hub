@@ -13,20 +13,33 @@ STEP 1 — CLONE claude-hub, UPDATE THE OTHER THREE
 ------------------------------------------------------------------------
 git clone https://github.com/jessicagertig/claude-hub.git ~/claude-hub
 
+inflow-ats is fetched one branch at a time, not with --all, to keep the
+download off the Air. These are the 8 branches touched in the two weeks
+before 2026-08-10.
+
+git -C ~/wrk/wrk-corp/inflow-ats fetch origin ai-credit-posthog-events:refs/remotes/origin/ai-credit-posthog-events
+git -C ~/wrk/wrk-corp/inflow-ats fetch origin develop:refs/remotes/origin/develop
+git -C ~/wrk/wrk-corp/inflow-ats fetch origin server-side-conversion-events:refs/remotes/origin/server-side-conversion-events
+git -C ~/wrk/wrk-corp/inflow-ats fetch origin top-up-invoice-exclude-pending-items:refs/remotes/origin/top-up-invoice-exclude-pending-items
+git -C ~/wrk/wrk-corp/inflow-ats fetch origin cross-subdomain-user-cookie:refs/remotes/origin/cross-subdomain-user-cookie
+git -C ~/wrk/wrk-corp/inflow-ats fetch origin attribution-work-qa:refs/remotes/origin/attribution-work-qa
+git -C ~/wrk/wrk-corp/inflow-ats fetch origin data-migration-pre-deploy:refs/remotes/origin/data-migration-pre-deploy
+git -C ~/wrk/wrk-corp/inflow-ats fetch origin subscription-events-ledger-setup:refs/remotes/origin/subscription-events-ledger-setup
+
+wrk-marketing and polymer-mail keep --all: 17 of wrk-marketing's branches
+are inside the two-week window anyway, and polymer-mail has 3 branches.
+
 git -C ~/wrk/wrk-corp/wrk-marketing fetch --all --prune
 git -C ~/wrk/wrk-corp/wrk-marketing pull
-
-git -C ~/wrk/wrk-corp/inflow-ats fetch --all --prune
-git -C ~/wrk/wrk-corp/inflow-ats pull
 
 git -C ~/wrk/wrk-corp/polymer-mail fetch --all --prune
 git -C ~/wrk/wrk-corp/polymer-mail pull
 
 A fresh clone lands on main, so claude-hub needs nothing after it.
 
-fetch --all downloads the commits for every branch, including all 34
-pushed on 2026-08-10. After this, `git checkout <branch>` materializes
-any branch instantly and offline — no per-branch setup needed.
+Once fetched, `git checkout <branch>` materializes a branch instantly and
+offline. To add an older inflow-ats branch later, reuse a fetch line
+above with a different branch name — the full list is in STEP 6.
 
 If a `pull` reports local changes in the way, the Air has uncommitted
 work on that branch. The fetch already succeeded, so every branch is
