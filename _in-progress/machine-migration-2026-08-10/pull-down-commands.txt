@@ -1,0 +1,158 @@
+========================================================================
+SETTING UP THE OTHER COMPUTER  —  generated 2026-08-10
+========================================================================
+Everything committed in these four repos is pushed as of now:
+  claude-hub, wrk-marketing, inflow-ats, polymer-mail
+
+Run the steps in order. Paths match the current machine exactly so that
+Warp sessions and CLAUDE.md references resolve the same way.
+
+
+------------------------------------------------------------------------
+STEP 1 — CLONE THE FOUR REPOS
+------------------------------------------------------------------------
+mkdir -p ~/wrk/wrk-corp
+
+git clone https://github.com/jessicagertig/claude-hub.git ~/claude-hub
+git clone https://github.com/wrk-corp/wrk-marketing.git ~/wrk/wrk-corp/wrk-marketing
+git clone https://github.com/wrk-corp/inflow-ats.git ~/wrk/wrk-corp/inflow-ats
+git clone https://github.com/wrk-corp/polymer-mail.git ~/wrk/wrk-corp/polymer-mail
+
+
+------------------------------------------------------------------------
+STEP 2 — FETCH EVERY BRANCH
+------------------------------------------------------------------------
+git -C ~/claude-hub fetch --all --prune
+git -C ~/wrk/wrk-corp/wrk-marketing fetch --all --prune
+git -C ~/wrk/wrk-corp/inflow-ats fetch --all --prune
+git -C ~/wrk/wrk-corp/polymer-mail fetch --all --prune
+
+
+------------------------------------------------------------------------
+STEP 3 — CHECK OUT THE BRANCH EACH MAIN CHECKOUT IS CURRENTLY ON
+------------------------------------------------------------------------
+git -C ~/claude-hub checkout main
+git -C ~/wrk/wrk-corp/wrk-marketing checkout restore-blog-page-redirect
+git -C ~/wrk/wrk-corp/inflow-ats checkout ai-credit-posthog-events
+git -C ~/wrk/wrk-corp/polymer-mail checkout master
+
+
+------------------------------------------------------------------------
+STEP 4 — RECREATE THE WORKTREES  (uses wt / worktrunk)
+------------------------------------------------------------------------
+Install worktrunk first if it is not on the new machine:
+  brew install worktrunk
+
+Each `wt switch` below creates the worktree for an existing remote branch.
+Run from inside the corresponding main checkout.
+
+--- inflow-ats: 10 worktrees ---
+cd ~/wrk/wrk-corp/inflow-ats
+wt switch billing-bonanza
+wt switch top-up-invoice-exclude-pending-items
+wt switch db-pool-50
+wt switch hiring-stage-move-webhooks
+wt switch job-criteria-settings-qa
+wt switch keyword-search-connect-version
+wt switch linkedin-extensions
+wt switch integrate-subject-into-editor
+wt switch websocket-consumer-memoize
+wt switch weekly-engagement-digest
+
+--- wrk-marketing: 3 worktrees ---
+cd ~/wrk/wrk-corp/wrk-marketing
+wt switch contact-page
+wt switch privacy-markup
+wt switch small-business-industry-page
+
+NOTE ON DIRECTORY NAMES: on the current machine two worktree directory
+names no longer match the branch inside them, because the branch was
+switched after the directory was created:
+  inflow-ats.cross-subdomain-user-cookie -> branch top-up-invoice-exclude-pending-items
+  inflow-ats.job-criteria-settings       -> branch job-criteria-settings-qa
+wt will name the new directories after the branch. That is fine — nothing
+references the old directory names.
+
+
+------------------------------------------------------------------------
+STEP 5 — REOPEN THE WARP TERMINALS
+------------------------------------------------------------------------
+20 terminals are open on the current machine, in these directories:
+
+  7x  ~/wrk/wrk-corp/inflow-ats
+  5x  ~/claude-hub/inflow-ats
+  2x  ~/claude-hub/thought-leadership-automation
+  1x  ~/claude-hub/wrk-marketing
+  1x  ~/claude-hub/wrk-marketing/builds/plato-landing-page
+  1x  ~/claude-hub/inflow-ats/2026-06-10-keyword-search-connect-version
+  1x  ~/claude-hub/inflow-ats/plato-ai-qa-touchups-2026-07-02
+  1x  ~/wrk/wrk-corp/wrk-marketing/web
+  1x  ~/wrk/wrk-corp/inflow-ats.cross-subdomain-user-cookie
+  1x  ~
+
+All the ~/claude-hub/... paths arrive with the clone in Step 1.
+
+
+------------------------------------------------------------------------
+STEP 6 — RECENT BRANCHES, FOR REFERENCE
+------------------------------------------------------------------------
+The branches worked on most recently, newest first. All are on the remote.
+
+inflow-ats:
+  2026-08-10  ai-credit-posthog-events
+  2026-08-05  develop
+  2026-08-05  server-side-conversion-events
+  2026-07-30  top-up-invoice-exclude-pending-items
+  2026-07-30  cross-subdomain-user-cookie
+  2026-07-29  attribution-work-qa
+  2026-07-29  data-migration-pre-deploy
+  2026-07-27  subscription-events-ledger-setup
+  2026-07-22  sso-funnel-events-specs
+  2026-07-15  attribution-work
+
+wrk-marketing:
+  2026-08-10  contact-page
+  2026-08-10  main
+  2026-08-10  small-business-industry-page
+  2026-08-10  restore-blog-page-redirect
+  2026-08-10  seo-phase-8-faq
+  2026-08-10  seo-phase-7-final-report
+  2026-08-09  seo-phase-6-images-links-headers
+  2026-08-08  seo-phase-5-structured-data
+  2026-08-08  seo-phase-4-metadata-headings
+  2026-08-06  seo-phase-9-content-refresh
+
+polymer-mail:
+  2026-06-25  master
+
+
+========================================================================
+WHAT DOES NOT TRAVEL WITH A GIT PULL
+========================================================================
+These exist only on the current machine. Git push does not carry them.
+
+1. STASHES — 35 of them.
+     inflow-ats:     26 stashes
+     wrk-marketing:   9 stashes
+   Stashes are local refs and were not pushed. If any hold work needed
+   next week, they have to be turned into commits on a branch first.
+
+2. polymer-mail UNCOMMITTED TEMPLATE EDITS — 2 files.
+     transactional/user-facing/user-bulk-all-stages-ai-summary-complete.mjml
+     transactional/user-facing/user-bulk-all-stages-ai-summary-failed.mjml
+   Both remove the line: <p>Hi {{user_first_name}},</p>
+   These are uncommitted ON PURPOSE — the repo convention is that the
+   commit waits until after the template is pasted into Mailgun. Left
+   alone deliberately.
+
+3. .env FILES — not in git, for either inflow-ats or wrk-marketing.
+   These have to be moved across by hand.
+
+4. ~/.claude — CLAUDE.md, settings.json, hooks/, skills/,
+   keybindings.json, and the memory files under projects/*/memory/.
+   Not a git repo, exists nowhere but this disk.
+
+5. inflow-ats/_in-progress/org-clone/data/ — 541MB, 1451 candidate
+   resume PDFs. Gitignored on purpose. Not on the remote.
+
+6. node_modules / bundle — run the usual install steps after cloning.
