@@ -1,0 +1,23 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 3,
+  "focus": "Zero-criteria review guard in ValidateAutoAiSummaryGeneration (auto path — silent decline; entry points 3 & 4). SPEC.md §6.2.2. File: app/interactors/validate_auto_ai_summary_generation.rb line 19.",
+  "scenarios_run": [
+    "Built an isolated org/job/candidate/job_application in-script (unique SecureRandom suffix); stubbed only not-under-test preconditions per-process (ja.has_resume=true, target_org.ai_credits_available?=true); READ the global AI_APPLICANT_SUMMARY flag (returned true); job has a description.",
+    "Precondition sanity: verified interactor's @organization (ja.job.organization) is the exact stubbed object; flipper on; has_resume true; credits true; description present — so guard-ordering reaches the zero-criteria check.",
+    "MAIN: for each of AiJobCriteria::ZERO_CRITERIA_ERROR_MESSAGES (all 3 messages) as the latest row's status:failed error_message → ValidateAutoAiSummaryGeneration.call(job_application: ja) returns failure?==true AND result.error == the zero-criteria message (NOT the has_job_description? message), confirming guard fires AFTER has_job_description? with its own message.",
+    "CONTROL latest succeeded (criteria present) → success?==true, error != zero-criteria msg (guard not fired).",
+    "CONTROL latest pending → success?==true.",
+    "CONTROL latest non-zero-criteria failure ('Job description is blank') → success?==true, error != zero-criteria msg.",
+    "CONTROL no AiJobCriteria rows → success?==true.",
+    "CONTROL in_progress row (created_at newer) atop a zero-criteria failed row → success?==true (latest_ai_job_criteria = the in_progress row, guard not fired).",
+    "CONTROL retrying row atop a zero-criteria failed row → success?==true.",
+    "SILENT DECLINE: ValidateAutoAiSummaryGeneration.call (non-bang) on a zero-criteria failure does NOT raise; returns failed context.",
+    "SILENT DECLINE via full auto path: stubbed job.should_auto_generate_ai_summaries?=true, called ja.auto_generate_ai_summary_if_enabled — no exception raised AND no AiJobApplicationSummary created (validation failure means CreateAiSummaryGeneration is not called; no AI triggered).",
+    "FALSIFIABILITY: identical preconditions, only the AiJobCriteria row state differs — zero-criteria => failure with zero-criteria error, succeeded => success. Removing the guard line (validate_auto_ai_summary_generation.rb:19) would make the zero-criteria case also succeed, so the failure assertion is falsifiable and tied to the guard.",
+    "Confirmed by reading source that this validator is the auto-path validator: job_application.rb:176 enqueue_new_job_application -> :187 auto_generate_ai_summary_if_enabled -> ValidateAutoAiSummaryGeneration.call; guard delegates to job.rb:696 zero_criteria_extraction_failure? -> latest_ai_job_criteria&.zero_criteria_failure? (ai_job_criteria.rb:17).",
+    "Result: 23/23 assertions PASS."
+  ],
+  "findings": []
+}

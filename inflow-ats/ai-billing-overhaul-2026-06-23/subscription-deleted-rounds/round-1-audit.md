@@ -1,0 +1,13 @@
+DEVIATION COUNT: 6
+
+DEVIATION: Missing credit-pack lookup-key read | ANALOG/SPEC: trace "What SHOULD exist" Step 1 (mirror of subscription.updated stripe_webhook_handler_job.rb:120) — read `plan_lookup_key = object.items&.data&.first&.price&.lookup_key` in the subscription.deleted handler | OURS: stripe_webhook_handler_job.rb:167-188 — no plan_lookup_key is read; the handler never inspects the deleted subscription's lookup key.
+
+DEVIATION: Missing credit-pack vs main-plan branch | ANALOG/SPEC: trace "What SHOULD exist" Step 2 (mirror of subscription.updated :125/:149) — `if OrganizationAiCreditPurchase.ai_credit_subscription_plan_lookup_key?(plan_lookup_key) ... else <existing main-plan code> end` | OURS: stripe_webhook_handler_job.rb:179-184 — no branch exists; the existing main-plan code runs unconditionally for every deletion, including credit-pack deletions.
+
+DEVIATION: Missing credit-pack purchase lookup | ANALOG/SPEC: trace "What SHOULD exist" Step 3 (mirror of subscription.updated :130-133) — `OrganizationAiCreditPurchase.find_by(stripe_subscription_id: stripe_subscription_id, kind: :subscription)` | OURS: stripe_webhook_handler_job.rb:167-188 — the OrganizationAiCreditPurchase row is never looked up or updated for a credit-pack deletion.
+
+DEVIATION: Missing purchase-not-found error log + return | ANALOG/SPEC: trace "What SHOULD exist" Step 3 (mirror of subscription.updated :146-148) — if purchase is nil, `Rails.logger.error "subscription.deleted credit-pack: no OrganizationAiCreditPurchase for stripe_subscription_id #{stripe_subscription_id}"` and return | OURS: stripe_webhook_handler_job.rb:167-188 — no nil guard / error log / return for a missing credit-pack purchase.
+
+DEVIATION: Missing purchase subscription_status/subscription_canceled_at update | ANALOG/SPEC: trace "What SHOULD exist" Step 4 — `purchase.update(subscription_status: :canceled, subscription_canceled_at: Time.at(subscription_ended_at).to_datetime)` on organization_ai_credit_purchases.subscription_status (canceled:2) and subscription_canceled_at | OURS: stripe_webhook_handler_job.rb:167-188 — the purchase's subscription_status and subscription_canceled_at are never written; current code writes organizations.subscription_canceled_at instead (:182), clobbering main-plan data.
+
+DEVIATION: Missing captured/logged update return value | ANALOG/SPEC: trace "What SHOULD exist" Step 4 + task — capture the `purchase.update(...)` return value and on failure log `Rails.logger.error` with `purchase.errors.full_messages` (mirror of subscription.updated :135-145) | OURS: stripe_webhook_handler_job.rb:167-188 — no purchase.update call exists, so its return value is neither captured nor logged.

@@ -1,0 +1,53 @@
+{
+  "job": "go",
+  "runs": 3,
+  "criteria_range": "25-28",
+  "criteria_mean": 26.0,
+  "t1_range": "2-4",
+  "decomp_delta_range": "5-8",
+  "always_present_count": 18,
+  "always_present": [
+    "a good understanding of how a paas product works and what it means to abstract away infrastructure for developers while still giving control",
+    "ability to work cross functionally",
+    "ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies",
+    "excellent communication skills",
+    "experience publishing or integrating software or solutions on cloud marketplaces such as aws marketplace, gcp marketplace, or azure marketplace",
+    "experience with customer facing deployment scenarios",
+    "experience working in multi cloud or hybrid cloud environments",
+    "experience working with terraform or a similar iac tool to define and manage infrastructure across cloud providers",
+    "familiarity with ci/cd pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus",
+    "familiarity with monitoring and logging tools and observability such as prometheus, grafana, or elk stack",
+    "familiarity with system design for high availability, multi region, and multi tenant architectures",
+    "hands on experience in one or more major cloud platforms such as aws, gcp, or azure including managing services, network, compute, storage, and security",
+    "help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment",
+    "participate in code reviews, mentor others, and help define best practices for backend infrastructure, go services, and cloud deployments",
+    "solid understanding of kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads",
+    "strong programming experience in go (golang) for production backend systems",
+    "thrive within a fast moving product engineering environment",
+    "work closely with our infrastructure team to integrate with kubernetes (clusters, deployments, autoscaling) and terraform (infrastructure as code) across aws, gcp, azure and other clouds"
+  ],
+  "total_cost": 0.0426,
+  "per_run": [
+    {
+      "run": 1,
+      "count": 28,
+      "t1": 2,
+      "decomp": 8,
+      "cost": 0.014564
+    },
+    {
+      "run": 2,
+      "count": 25,
+      "t1": 4,
+      "decomp": 5,
+      "cost": 0.013949
+    },
+    {
+      "run": 3,
+      "count": 25,
+      "t1": 2,
+      "decomp": 5,
+      "cost": 0.014121
+    }
+  ]
+}

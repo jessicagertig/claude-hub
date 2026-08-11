@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "batch": 15,
+    "criteria_prompt_version": 14,
+    "job_id": 25552,
+    "title": "Moderator (Freelance)",
+    "organization": "Hear Me Out",
+    "cost": 0.008337
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Hear Me Out is a culture strategy service for growing teams. We talk to employees one-on-one, find the patterns in their feedback, then use the insights we uncover to make work more rewarding for everyone."
+      },
+      {
+        "heading": "Role",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "We’re always looking for good listeners to interview employees about their experiences on the job. As one of our moderators, you’ll use your skills as a researcher to build rapport, elicit thoughtful feedback, and ask insightful follow-up questions.\n\nOur recommendations hinge on the insights from these one-on-one interviews, so your work will be critical to our clients’ success."
+      },
+      {
+        "heading": "Qualifications",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "You’ve interviewed at least a dozen people \nin pursuit of a wider research goal. This could be reporting, sociological research, customer interviews, or other kinds of ethnographic research. It does not include interviewing candidates for the purpose of hiring.\n\nYou’re comfortable setting up and configuring Zoom and Slack.\n\nYou feel confident building rapport with professionals from a wide range of backgrounds."
+      },
+      {
+        "heading": "Schedule and Compensation",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "The work is flexible, and compensated at a rate of $120/hour.\n\nCandidates who pass our initial screen are added to a our moderator pool and matched to studies on an ad hoc basis.\n\nModerators are only onboarded after being matched to a study."
+      },
+      {
+        "heading": "Culture",
+        "inferred_section_type": "culture",
+        "type": "non_criteria",
+        "content": "Hear Me Out is a remote-first company.\n\nWe’re small, and growing with intent. We’re here to build an organization; not a family, or a professional sports team. We love our work, but we also find purpose elsewhere. Life moves pretty fast."
+      },
+      {
+        "heading": "Diversity, Equity, and Inclusion",
+        "inferred_section_type": "legal",
+        "type": "non_criteria",
+        "content": "Hear Me Out is an equal opportunity employer. We work hard to build a workplace that’s welcoming, inclusive, and equitable for all. That includes Black, Hispanic, Latinx, Asian, First People, and non-native English speaking employees; gay, lesbian, transgender, nonbinary, and other members of the LGBTQIA+ community; parents and caregivers, veterans, those living with a disability; and those who grew up without the privileges many take for granted.\n\nThis applies to everything we do, including hiring, promotion, termination, leaves of absence, compensation, and training.\n\nWe do not require a résumé or cover letter to apply.\n\nIf you need accommodations, please let us know at the email below."
+      },
+      {
+        "heading": "Feedback",
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "Hear Me Out welcomes feedback on our interview process. Thoughtful, honest critique will only ever work in your favor, never against it. If you see anything that can be improved, no matter how small, we encourage you to let us know at feedback@hearmeout.co."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "You’ve interviewed at least a dozen people in pursuit of a wider research goal.",
+        "tier": "tier_2",
+        "tier_reasoning": "Default — no signal word",
+        "binary": false,
+        "source_text": "You’ve interviewed at least a dozen people in pursuit of a wider research goal."
+      },
+      {
+        "text": "You’re comfortable setting up and configuring Zoom and Slack.",
+        "tier": "tier_2",
+        "tier_reasoning": "Signal word: comfortable",
+        "binary": false,
+        "source_text": "You’re comfortable setting up and configuring Zoom and Slack."
+      },
+      {
+        "text": "You feel confident building rapport with professionals from a wide range of backgrounds.",
+        "tier": "tier_2",
+        "tier_reasoning": "Default — no signal word",
+        "binary": false,
+        "source_text": "You feel confident building rapport with professionals from a wide range of backgrounds."
+      }
+    ]
+  }
+}

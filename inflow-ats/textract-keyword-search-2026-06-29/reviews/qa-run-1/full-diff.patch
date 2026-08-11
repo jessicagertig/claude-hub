@@ -1,0 +1,950 @@
+diff --git a/Gemfile b/Gemfile
+index 00b34260a..93732a299 100644
+--- a/Gemfile
++++ b/Gemfile
+@@ -123,6 +123,7 @@ gem 'posthog-ruby', '~> 2.0'
+ gem 'ohm', '3.1.1'
+ gem 'oj', '3.10.6' # JSON parser
+ gem 'pg_search', '2.3.2'
++gem 'fx', '~> 0.8.0'
+ gem 'postmark-rails', '0.21.0'
+ gem 'premailer', '1.11.1'
+ gem 'public_activity', '1.6.4' # activity feed
+diff --git a/Gemfile.lock b/Gemfile.lock
+index 4603fc22c..839ef676f 100644
+--- a/Gemfile.lock
++++ b/Gemfile.lock
+@@ -192,6 +192,9 @@ GEM
+     foreman (0.87.2)
+     friendly_id (5.3.0)
+       activerecord (>= 4.0.0)
++    fx (0.8.0)
++      activerecord (>= 6.0.0)
++      railties (>= 6.0.0)
+     gems (1.2.0)
+     ginjo-omniauth-slack (2.5.0)
+       omniauth-oauth2 (>= 1.4.0)
+@@ -640,6 +643,7 @@ DEPENDENCIES
+   flipper-cloud (~> 0.21.0)
+   foreman
+   friendly_id (= 5.3.0)
++  fx (~> 0.8.0)
+   ginjo-omniauth-slack (= 2.5.0)
+   google-api-client (= 0.53.0)
+   griddler (= 1.5.2)
+diff --git a/app/errors/custom_error_structured_extraction.rb b/app/errors/custom_error_structured_extraction.rb
+new file mode 100644
+index 000000000..473b20dd5
+--- /dev/null
++++ b/app/errors/custom_error_structured_extraction.rb
+@@ -0,0 +1,10 @@
++# frozen_string_literal: true
++
++class CustomErrorStructuredExtraction < StandardError
++  attr_reader :param
++
++  def initialize(msg = 'Custom Error - Structured Extraction', param = '')
++    @param = param.to_s
++    super(msg)
++  end
++end
+diff --git a/app/jobs/backfill_structured_extraction_job.rb b/app/jobs/backfill_structured_extraction_job.rb
+new file mode 100644
+index 000000000..8ce54072e
+--- /dev/null
++++ b/app/jobs/backfill_structured_extraction_job.rb
+@@ -0,0 +1,33 @@
++# frozen_string_literal: true
++
++class BackfillStructuredExtractionJob < ApplicationJob
++  queue_as :default
++
++  def perform
++    ap '[BackfillStructuredExtractionJob] starting backfill'
++
++    textract_results_scope = TextractResult.where(
++      textract_job_status: :succeeded,
++      structured_extraction: nil
++    ).where.not(textract_job_result_text: [nil, ''])
++
++    total = textract_results_scope.count
++    ap "[BackfillStructuredExtractionJob] #{total} records to backfill"
++
++    processed = 0
++    failed = 0
++
++    textract_results_scope.find_each(batch_size: 100) do |textract_result|
++      ExtractStructuredResumeData.new(textract_result_id: textract_result.id).extract
++      processed += 1
++      ap "[BackfillStructuredExtractionJob] processed #{processed}/#{total}" if (processed % 100).zero?
++      sleep 0.2
++    rescue StandardError => e
++      failed += 1
++      Rails.logger.error "BackfillStructuredExtractionJob failed for TextractResult #{textract_result.id}: #{e.message}"
++      ap "[BackfillStructuredExtractionJob] failed TextractResult #{textract_result.id}: #{e.message}"
++    end
++
++    ap "[BackfillStructuredExtractionJob] complete: #{processed} processed, #{failed} failed out of #{total}"
++  end
++end
+diff --git a/app/jobs/extract_structured_resume_data_job.rb b/app/jobs/extract_structured_resume_data_job.rb
+new file mode 100644
+index 000000000..9dd17576a
+--- /dev/null
++++ b/app/jobs/extract_structured_resume_data_job.rb
+@@ -0,0 +1,23 @@
++# frozen_string_literal: true
++
++class ExtractStructuredResumeDataJob < ApplicationJob
++  queue_as :default
++
++  retry_on CustomErrorStructuredExtraction, wait: 5.minutes, attempts: 3 do |job, error|
++    ap '[ExtractStructuredResumeDataJob] retries exhausted'
++    ap error
++    Rails.logger.error "ExtractStructuredResumeDataJob exhausted retries for TextractResult #{job.arguments.first}: #{error.message}"
++  end
++
++  def perform(textract_result_id)
++    ExtractStructuredResumeData.new(textract_result_id: textract_result_id).extract
++  rescue CustomErrorStructuredExtraction => e
++    ap '[ExtractStructuredResumeDataJob] CustomErrorStructuredExtraction — retrying'
++    ap e
++    raise
++  rescue StandardError => e
++    Rails.logger.error "ExtractStructuredResumeDataJob failed for TextractResult #{textract_result_id}: #{e.message}"
++    ap '[ExtractStructuredResumeDataJob] StandardError'
++    ap e
++  end
++end
+diff --git a/app/models/textract_result.rb b/app/models/textract_result.rb
+index 0ad5632da..7a1058f22 100644
+--- a/app/models/textract_result.rb
++++ b/app/models/textract_result.rb
+@@ -1,10 +1,14 @@
+ # frozen_string_literal: true
+ 
+ class TextractResult < ApplicationRecord
++  include PgSearch::Model
++
+   belongs_to :job_application
+   has_many :ai_job_application_summaries, inverse_of: :textract_result, dependent: :destroy
++  has_many :ai_api_requests, as: :requestable
+ 
+   after_commit :queue_ai_summary_job, on: [:create, :update]
++  after_commit :queue_structured_extraction_job, on: [:create, :update]
+ 
+   enum textract_job_status: {
+     not_started: 0,
+@@ -13,6 +17,40 @@ class TextractResult < ApplicationRecord
+     failed: 3
+   }, _prefix: true
+ 
++  pg_search_scope :search_resume_text,
++                  against: :structured_extraction_text,
++                  using: {
++                    tsearch: {
++                      dictionary: 'simple',
++                      tsvector_column: 'textsearch_vector',
++                      prefix: true,
++                      highlight: {
++                        StartSel: '<span class="highlight">',
++                        StopSel:  '</span>',
++                        MaxFragments: 3,
++                        MaxWords:    20,
++                        MinWords:    7,
++                        ShortWord:   3,
++                        FragmentDelimiter: ' .... '
++                      }
++                    }
++                  },
++                  ranked_by: ":tsearch"
++
++  ########################
++  # SEARCH BY KEYWORD
++  ########################
++  def self.search_resume_by_keyword(search_params, limit = 15)
++    search_term = search_params[:search_term].presence
++    return none unless search_term
++
++    search_resume_text(search_term)
++      .with_pg_search_rank
++      .with_pg_search_highlight
++      .order(Arel.sql('pg_search_rank DESC'))
++      .limit(limit)
++  end
++
+   #######################
+   # TEXTRACT JOB RESULT DATA PROCESSING FUNCTIONS
+   #######################
+@@ -143,6 +181,13 @@ class TextractResult < ApplicationRecord
+     end
+   end
+ 
++  def queue_structured_extraction_job
++    return unless textract_job_result_text.present?
++    return unless saved_change_to_textract_job_result_text?
++
++    ExtractStructuredResumeDataJob.perform_later(id)
++  end
++
+   def broadcast_ai_summary_failed(requesting_organization_user, validation_error = nil)
+     return unless requesting_organization_user
+ 
+diff --git a/app/services/extract_structured_resume_data.rb b/app/services/extract_structured_resume_data.rb
+new file mode 100644
+index 000000000..7b3f4268c
+--- /dev/null
++++ b/app/services/extract_structured_resume_data.rb
+@@ -0,0 +1,107 @@
++# frozen_string_literal: true
++
++class ExtractStructuredResumeData
++  def initialize(textract_result_id:)
++    @textract_result_id = textract_result_id
++    @textract_result = TextractResult.find_by(id: textract_result_id)
++  end
++
++  def extract
++    return unless @textract_result
++    return unless @textract_result.textract_job_result_text.present?
++
++    organization = @textract_result.job_application&.job&.organization
++    return unless organization
++
++    job_title = @textract_result.job_application.job&.title
++    messages = AiJobApplicationAction::Summary::Prompts::ResumeStructuredData.messages(
++      resume_text: @textract_result.textract_job_result_text,
++      job_title: job_title
++    )
++
++    ai_client = AiClient.new(provider: 'openai')
++    result = ai_client.chat(
++      messages: messages,
++      model: AiJobApplicationAction::Summary::Prompts::ResumeStructuredData.model,
++      response_format: AiJobApplicationAction::Summary::Prompts::ResumeStructuredData.response_format
++    )
++
++    structured_data = JSON.parse(result[:content])
++
++    flattened_text = flatten_structured_data(structured_data)
++
++    if @textract_result.update(
++      structured_extraction: structured_data,
++      structured_extraction_text: flattened_text
++    )
++      create_ai_api_request(organization: organization, result: result, messages: messages)
++    else
++      Rails.logger.error "Failed to update TextractResult #{@textract_result.id}: #{@textract_result.errors.full_messages.join(', ')}"
++      ap "Failed to update TextractResult #{@textract_result.id} with structured extraction"
++      ap @textract_result.errors.full_messages
++    end
++  rescue CustomErrorAiSummary => e
++    Rails.logger.error "Structured extraction failed for TextractResult #{@textract_result_id}: #{e.message}"
++    ap "Structured extraction API error for TextractResult #{@textract_result_id}"
++    ap e
++    raise CustomErrorStructuredExtraction, e.message
++  rescue JSON::ParserError => e
++    Rails.logger.error "Structured extraction JSON parse failed for TextractResult #{@textract_result_id}: #{e.message}"
++    ap "Structured extraction JSON parse error for TextractResult #{@textract_result_id}"
++    ap e
++    raise CustomErrorStructuredExtraction, e.message
++  end
++
++  private
++
++  def flatten_structured_data(structured_data)
++    parts = []
++
++    %w[name email phone location professional_summary stated_experience].each do |field|
++      value = structured_data[field]
++      parts << value if value.present?
++    end
++
++    %w[skills certifications links].each do |field|
++      values = structured_data[field]
++      values&.each { |value| parts << value if value.present? }
++    end
++
++    work_experiences = structured_data['work_experience']
++    work_experiences&.each do |work_experience_entry|
++      %w[company title start_date end_date description].each do |sub_field|
++        value = work_experience_entry[sub_field]
++        parts << value if value.present?
++      end
++    end
++
++    education_entries = structured_data['education']
++    education_entries&.each do |education_entry|
++      %w[institution degree field_of_study graduation_year].each do |sub_field|
++        value = education_entry[sub_field]
++        parts << value if value.present?
++      end
++    end
++
++    parts.join("\n")
++  end
++
++  def create_ai_api_request(organization:, result:, messages:)
++    model = result[:model]
++    input_tokens = result[:input_tokens] || 0
++    output_tokens = result[:output_tokens] || 0
++
++    AiApiRequest.create(
++      organization: organization,
++      requestable: @textract_result,
++      call_type: 'keyword_extraction',
++      provider: 'openai',
++      model: model,
++      input_tokens: input_tokens,
++      output_tokens: output_tokens,
++      cost: AiClient.calculate_cost(model: model, input_tokens: input_tokens, output_tokens: output_tokens).to_f.round(6),
++      prompt_text: messages.to_json,
++      response_body: result[:content]
++    )
++  end
++end
+diff --git a/db/data/20260630050055_enqueue_structured_extraction_backfill.rb b/db/data/20260630050055_enqueue_structured_extraction_backfill.rb
+new file mode 100644
+index 000000000..4dbc6627e
+--- /dev/null
++++ b/db/data/20260630050055_enqueue_structured_extraction_backfill.rb
+@@ -0,0 +1,11 @@
++# frozen_string_literal: true
++
++class EnqueueStructuredExtractionBackfill < ActiveRecord::Migration[6.1]
++  def up
++    BackfillStructuredExtractionJob.perform_later
++  end
++
++  def down
++    raise ActiveRecord::IrreversibleMigration
++  end
++end
+diff --git a/db/migrate/20260630050052_add_structured_extraction_columns_to_textract_results.rb b/db/migrate/20260630050052_add_structured_extraction_columns_to_textract_results.rb
+new file mode 100644
+index 000000000..dc66d53aa
+--- /dev/null
++++ b/db/migrate/20260630050052_add_structured_extraction_columns_to_textract_results.rb
+@@ -0,0 +1,6 @@
++class AddStructuredExtractionColumnsToTextractResults < ActiveRecord::Migration[6.1]
++  def change
++    add_column :textract_results, :structured_extraction, :jsonb
++    add_column :textract_results, :structured_extraction_text, :text
++  end
++end
+diff --git a/db/migrate/20260630050053_add_textsearch_vector_to_textract_results.rb b/db/migrate/20260630050053_add_textsearch_vector_to_textract_results.rb
+new file mode 100644
+index 000000000..710fea91c
+--- /dev/null
++++ b/db/migrate/20260630050053_add_textsearch_vector_to_textract_results.rb
+@@ -0,0 +1,6 @@
++class AddTextsearchVectorToTextractResults < ActiveRecord::Migration[6.1]
++  def change
++    add_column :textract_results, :textsearch_vector, :tsvector unless column_exists?(:textract_results, :textsearch_vector)
++    add_index :textract_results, :textsearch_vector, using: 'gin' unless index_exists?(:textract_results, :textsearch_vector)
++  end
++end
+diff --git a/db/migrate/20260630050054_create_trigger_tsvectorupdate.rb b/db/migrate/20260630050054_create_trigger_tsvectorupdate.rb
+new file mode 100644
+index 000000000..3a0aa6279
+--- /dev/null
++++ b/db/migrate/20260630050054_create_trigger_tsvectorupdate.rb
+@@ -0,0 +1,19 @@
++class CreateTriggerTsvectorupdate < ActiveRecord::Migration[6.1]
++  def up
++    execute 'DROP TRIGGER IF EXISTS tsvectorupdate ON textract_results'
++
++    create_trigger :tsvectorupdate, on: :textract_results, sql_definition: <<-SQL
++      CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE ON public.textract_results
++      FOR EACH ROW EXECUTE FUNCTION tsvector_update_trigger('textsearch_vector', 'pg_catalog.simple', 'structured_extraction_text')
++    SQL
++  end
++
++  def down
++    execute 'DROP TRIGGER IF EXISTS tsvectorupdate ON textract_results'
++
++    create_trigger :tsvectorupdate, on: :textract_results, sql_definition: <<-SQL
++      CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE ON public.textract_results
++      FOR EACH ROW EXECUTE FUNCTION tsvector_update_trigger('textsearch_vector', 'pg_catalog.simple', 'textract_job_result_text')
++    SQL
++  end
++end
+diff --git a/spec/jobs/extract_structured_resume_data_job_spec.rb b/spec/jobs/extract_structured_resume_data_job_spec.rb
+new file mode 100644
+index 000000000..c15e079d1
+--- /dev/null
++++ b/spec/jobs/extract_structured_resume_data_job_spec.rb
+@@ -0,0 +1,66 @@
++# frozen_string_literal: true
++
++require 'rails_helper'
++
++RSpec.describe ExtractStructuredResumeDataJob, type: :job do
++  let(:textract_result_id) { 123 }
++  let(:service_instance) { instance_double(ExtractStructuredResumeData) }
++
++  before do
++    allow(ExtractStructuredResumeData).to receive(:new)
++      .with(textract_result_id: textract_result_id)
++      .and_return(service_instance)
++  end
++
++  describe '#perform' do
++    it 'delegates to ExtractStructuredResumeData service' do
++      allow(service_instance).to receive(:extract)
++
++      described_class.new.perform(textract_result_id)
++
++      expect(service_instance).to have_received(:extract)
++    end
++
++    context 'when service raises CustomErrorStructuredExtraction' do
++      it 're-raises the error for retry_on to catch' do
++        allow(service_instance).to receive(:extract)
++          .and_raise(CustomErrorStructuredExtraction, 'API failure')
++
++        expect do
++          described_class.new.perform(textract_result_id)
++        end.to raise_error(CustomErrorStructuredExtraction)
++      end
++    end
++
++    context 'when service raises StandardError' do
++      it 'rescues and does not re-raise' do
++        allow(service_instance).to receive(:extract)
++          .and_raise(StandardError, 'unexpected error')
++
++        expect do
++          described_class.new.perform(textract_result_id)
++        end.not_to raise_error
++      end
++    end
++  end
++
++  describe 'retry_on configuration' do
++    include ActiveJob::TestHelper
++
++    around do |example|
++      original_adapter = ActiveJob::Base.queue_adapter
++      ActiveJob::Base.queue_adapter = :test
++      example.run
++      ActiveJob::Base.queue_adapter = original_adapter
++    end
++
++    it 're-enqueues the job via retry_on when CustomErrorStructuredExtraction is raised' do
++      allow(service_instance).to receive(:extract)
++        .and_raise(CustomErrorStructuredExtraction, 'API failure')
++
++      expect do
++        described_class.perform_now(textract_result_id)
++      end.to have_enqueued_job(described_class)
++    end
++  end
++end
+diff --git a/spec/models/textract_result_keyword_search_spec.rb b/spec/models/textract_result_keyword_search_spec.rb
+new file mode 100644
+index 000000000..d2fed27fe
+--- /dev/null
++++ b/spec/models/textract_result_keyword_search_spec.rb
+@@ -0,0 +1,151 @@
++# frozen_string_literal: true
++
++require 'rails_helper'
++
++RSpec.describe TextractResult, type: :model do
++  include ActiveJob::TestHelper
++
++  around do |example|
++    original_adapter = ActiveJob::Base.queue_adapter
++    ActiveJob::Base.queue_adapter = :test
++    example.run
++    ActiveJob::Base.queue_adapter = original_adapter
++  end
++
++  let(:organization) { create_credit_test_organization }
++  let(:job_record) { create_credit_test_job(organization: organization) }
++  let(:job_application) { create_credit_test_job_application(job: job_record) }
++
++  before do
++    organization.update_settings(auto_generate_ai_summaries_enabled: false)
++  end
++
++  describe '#queue_structured_extraction_job' do
++    context 'on create with text present' do
++      it 'enqueues ExtractStructuredResumeDataJob' do
++        expect do
++          TextractResult.create!(
++            job_application: job_application,
++            textract_job_result_text: 'a fresh resume',
++            textract_job_id: "tx-#{SecureRandom.hex(4)}",
++            textract_job_status: :succeeded
++          )
++        end.to have_enqueued_job(ExtractStructuredResumeDataJob)
++      end
++    end
++
++    context 'on create with no text' do
++      it 'does not enqueue ExtractStructuredResumeDataJob' do
++        expect do
++          TextractResult.create!(
++            job_application: job_application,
++            textract_job_result_text: nil,
++            textract_job_id: "tx-#{SecureRandom.hex(4)}",
++            textract_job_status: :in_progress
++          )
++        end.not_to have_enqueued_job(ExtractStructuredResumeDataJob)
++      end
++    end
++
++    context 'on update that does NOT change the text' do
++      let!(:textract_result) do
++        TextractResult.create!(
++          job_application: job_application,
++          textract_job_result_text: 'initial',
++          textract_job_id: "tx-#{SecureRandom.hex(4)}",
++          textract_job_status: :succeeded
++        )
++      end
++
++      before { clear_enqueued_jobs }
++
++      it 'does not enqueue when only the timestamp changes' do
++        expect do
++          textract_result.touch
++        end.not_to have_enqueued_job(ExtractStructuredResumeDataJob)
++      end
++
++      it 'does not enqueue when textract_job_status changes alone' do
++        expect do
++          textract_result.update!(textract_job_status: :failed)
++        end.not_to have_enqueued_job(ExtractStructuredResumeDataJob)
++      end
++    end
++
++    context 'on update that changes the text' do
++      let!(:textract_result) do
++        TextractResult.create!(
++          job_application: job_application,
++          textract_job_result_text: 'initial resume',
++          textract_job_id: "tx-#{SecureRandom.hex(4)}",
++          textract_job_status: :succeeded
++        )
++      end
++
++      before { clear_enqueued_jobs }
++
++      it 'enqueues ExtractStructuredResumeDataJob' do
++        expect do
++          textract_result.update!(textract_job_result_text: 'replaced resume content')
++        end.to have_enqueued_job(ExtractStructuredResumeDataJob).with(textract_result.id)
++      end
++    end
++
++    context 'both callbacks fire independently' do
++      before do
++        organization.update_settings(auto_generate_ai_summaries_enabled: true)
++        allow(ValidateAiSummaryGeneration).to receive(:call).and_return(
++          double('result', success?: true, textract_result: nil, textract_pending: false)
++        )
++      end
++
++      it 'enqueues both GenerateAiJobApplicationSummaryJob and ExtractStructuredResumeDataJob' do
++        expect do
++          TextractResult.create!(
++            job_application: job_application,
++            textract_job_result_text: 'dual callback resume',
++            textract_job_id: "tx-#{SecureRandom.hex(4)}",
++            textract_job_status: :succeeded
++          )
++        end.to have_enqueued_job(GenerateAiJobApplicationSummaryJob)
++          .and have_enqueued_job(ExtractStructuredResumeDataJob)
++      end
++    end
++  end
++
++  describe '.search_resume_by_keyword' do
++    context 'with a TextractResult that has structured_extraction_text' do
++      let!(:textract_result) do
++        TextractResult.create!(
++          job_application: job_application,
++          textract_job_result_text: 'raw ocr text',
++          textract_job_id: "tx-#{SecureRandom.hex(4)}",
++          textract_job_status: :succeeded,
++          structured_extraction_text: 'Ruby developer with Rails experience building web applications'
++        )
++      end
++
++      it 'returns results matching the search term' do
++        results = TextractResult.search_resume_by_keyword({ search_term: 'Ruby' })
++        expect(results).to include(textract_result)
++      end
++
++      it 'returns results with prefix matching' do
++        results = TextractResult.search_resume_by_keyword({ search_term: 'Rub' })
++        expect(results).to include(textract_result)
++      end
++    end
++
++    context 'with blank search term' do
++      it 'returns none for empty string' do
++        results = TextractResult.search_resume_by_keyword({ search_term: '' })
++        expect(results).to eq(TextractResult.none)
++      end
++
++      it 'returns none for nil' do
++        results = TextractResult.search_resume_by_keyword({ search_term: nil })
++        expect(results).to eq(TextractResult.none)
++      end
++    end
++  end
++end
+diff --git a/spec/services/extract_structured_resume_data_spec.rb b/spec/services/extract_structured_resume_data_spec.rb
+new file mode 100644
+index 000000000..682cdb0ee
+--- /dev/null
++++ b/spec/services/extract_structured_resume_data_spec.rb
+@@ -0,0 +1,344 @@
++# frozen_string_literal: true
++
++require 'rails_helper'
++
++RSpec.describe ExtractStructuredResumeData do
++  include ActiveJob::TestHelper
++
++  around do |example|
++    original_adapter = ActiveJob::Base.queue_adapter
++    ActiveJob::Base.queue_adapter = :test
++    example.run
++    ActiveJob::Base.queue_adapter = original_adapter
++  end
++
++  let(:organization) { create_credit_test_organization }
++  let(:job_record) { create_credit_test_job(organization: organization) }
++  let(:job_application) { create_credit_test_job_application(job: job_record) }
++
++  let(:structured_data) do
++    {
++      'name' => 'Jane Doe',
++      'email' => 'jane@example.com',
++      'phone' => '555-1234',
++      'location' => 'New York, NY',
++      'links' => ['https://linkedin.com/in/janedoe', 'https://github.com/janedoe'],
++      'professional_summary' => 'Experienced software engineer with 5 years in full-stack development.',
++      'stated_experience' => '5 years of experience in software engineering',
++      'work_experience' => [
++        {
++          'company' => 'Acme Corp',
++          'title' => 'Senior Developer',
++          'start_date' => 'January/2020',
++          'end_date' => 'Present',
++          'description' => 'Led a team of 5 developers building microservices.'
++        },
++        {
++          'company' => 'StartupCo',
++          'title' => 'Junior Developer',
++          'start_date' => 'June/2018',
++          'end_date' => 'December/2019',
++          'description' => 'Built React frontend applications.'
++        }
++      ],
++      'education' => [
++        {
++          'institution' => 'MIT',
++          'degree' => 'Bachelor of Science',
++          'field_of_study' => 'Computer Science',
++          'graduation_year' => '2018'
++        }
++      ],
++      'skills' => ['Ruby', 'Rails', 'React', 'PostgreSQL'],
++      'certifications' => ['AWS Certified Developer']
++    }
++  end
++
++  let(:ai_response) do
++    {
++      content: structured_data.to_json,
++      model: 'gpt-4o-mini-2024-07-18',
++      input_tokens: 500,
++      output_tokens: 200
++    }
++  end
++
++  let(:ai_client_instance) { instance_double(AiClient) }
++
++  before do
++    allow(AiClient).to receive(:new).with(provider: 'openai').and_return(ai_client_instance)
++    allow(ai_client_instance).to receive(:chat).and_return(ai_response)
++    allow(AiClient).to receive(:calculate_cost).and_return(BigDecimal('0.000150'))
++  end
++
++  describe '#extract' do
++    context 'happy path' do
++      let!(:textract_result) do
++        TextractResult.create!(
++          job_application: job_application,
++          textract_job_result_text: 'Jane Doe jane@example.com Senior Developer at Acme Corp',
++          textract_job_id: "tx-#{SecureRandom.hex(4)}",
++          textract_job_status: :succeeded
++        )
++      end
++
++      it 'stores structured_extraction as parsed JSON on the TextractResult' do
++        described_class.new(textract_result_id: textract_result.id).extract
++
++        textract_result.reload
++        expect(textract_result.structured_extraction).to eq(structured_data)
++      end
++
++      it 'stores structured_extraction_text as flattened plain text' do
++        described_class.new(textract_result_id: textract_result.id).extract
++
++        textract_result.reload
++        expect(textract_result.structured_extraction_text).to be_present
++        expect(textract_result.structured_extraction_text).to include('Jane Doe')
++        expect(textract_result.structured_extraction_text).to include('Ruby')
++        expect(textract_result.structured_extraction_text).to include('Acme Corp')
++        expect(textract_result.structured_extraction_text).to include('MIT')
++        expect(textract_result.structured_extraction_text).not_to include('{')
++        expect(textract_result.structured_extraction_text).not_to include('"')
++      end
++    end
++
++    context 'flattening correctness' do
++      let!(:textract_result) do
++        TextractResult.create!(
++          job_application: job_application,
++          textract_job_result_text: 'Some resume text',
++          textract_job_id: "tx-#{SecureRandom.hex(4)}",
++          textract_job_status: :succeeded
++        )
++      end
++
++      it 'contains every non-null value separated by newlines with no JSON syntax or labels' do
++        described_class.new(textract_result_id: textract_result.id).extract
++
++        textract_result.reload
++        text = textract_result.structured_extraction_text
++        lines = text.split("\n")
++
++        expect(lines).to include('Jane Doe')
++        expect(lines).to include('jane@example.com')
++        expect(lines).to include('555-1234')
++        expect(lines).to include('New York, NY')
++        expect(lines).to include('https://linkedin.com/in/janedoe')
++        expect(lines).to include('https://github.com/janedoe')
++        expect(lines).to include('Experienced software engineer with 5 years in full-stack development.')
++        expect(lines).to include('5 years of experience in software engineering')
++        expect(lines).to include('Ruby')
++        expect(lines).to include('Rails')
++        expect(lines).to include('React')
++        expect(lines).to include('PostgreSQL')
++        expect(lines).to include('AWS Certified Developer')
++        expect(lines).to include('Acme Corp')
++        expect(lines).to include('Senior Developer')
++        expect(lines).to include('January/2020')
++        expect(lines).to include('Present')
++        expect(lines).to include('Led a team of 5 developers building microservices.')
++        expect(lines).to include('StartupCo')
++        expect(lines).to include('MIT')
++        expect(lines).to include('Bachelor of Science')
++        expect(lines).to include('Computer Science')
++        expect(lines).to include('2018')
++
++        expect(text).not_to include('{')
++        expect(text).not_to include('}')
++        expect(text).not_to include('[')
++        expect(text).not_to include(']')
++        expect(text).not_to include('name:')
++        expect(text).not_to include('email:')
++      end
++    end
++
++    context 'null handling' do
++      let!(:textract_result) do
++        TextractResult.create!(
++          job_application: job_application,
++          textract_job_result_text: 'Some resume text',
++          textract_job_id: "tx-#{SecureRandom.hex(4)}",
++          textract_job_status: :succeeded
++        )
++      end
++
++      let(:structured_data_with_nulls) do
++        {
++          'name' => 'John Smith',
++          'email' => nil,
++          'phone' => nil,
++          'location' => 'Chicago, IL',
++          'links' => [],
++          'professional_summary' => nil,
++          'stated_experience' => nil,
++          'work_experience' => [],
++          'education' => [],
++          'skills' => ['Python'],
++          'certifications' => []
++        }
++      end
++
++      let(:ai_response) do
++        {
++          content: structured_data_with_nulls.to_json,
++          model: 'gpt-4o-mini-2024-07-18',
++          input_tokens: 300,
++          output_tokens: 100
++        }
++      end
++
++      it 'omits null values from flattened text' do
++        described_class.new(textract_result_id: textract_result.id).extract
++
++        textract_result.reload
++        text = textract_result.structured_extraction_text
++        expect(text).not_to include('null')
++        expect(text).to include('John Smith')
++        expect(text).to include('Chicago, IL')
++        expect(text).to include('Python')
++      end
++    end
++
++    context 'AiApiRequest creation' do
++      let!(:textract_result) do
++        TextractResult.create!(
++          job_application: job_application,
++          textract_job_result_text: 'Some resume text',
++          textract_job_id: "tx-#{SecureRandom.hex(4)}",
++          textract_job_status: :succeeded
++        )
++      end
++
++      it 'creates an AiApiRequest with correct attributes' do
++        expect do
++          described_class.new(textract_result_id: textract_result.id).extract
++        end.to change(AiApiRequest, :count).by(1)
++
++        ai_api_request = AiApiRequest.last
++        expect(ai_api_request.requestable).to eq(textract_result)
++        expect(ai_api_request.call_type).to eq('keyword_extraction')
++        expect(ai_api_request.provider).to eq('openai')
++        expect(ai_api_request.model).to eq('gpt-4o-mini-2024-07-18')
++        expect(ai_api_request.input_tokens).to eq(500)
++        expect(ai_api_request.output_tokens).to eq(200)
++        expect(ai_api_request.organization).to eq(organization)
++      end
++    end
++
++    context 'API failure' do
++      let!(:textract_result) do
++        TextractResult.create!(
++          job_application: job_application,
++          textract_job_result_text: 'Some resume text',
++          textract_job_id: "tx-#{SecureRandom.hex(4)}",
++          textract_job_status: :succeeded
++        )
++      end
++
++      it 'raises CustomErrorStructuredExtraction when AiClient raises CustomErrorAiSummary' do
++        allow(ai_client_instance).to receive(:chat).and_raise(CustomErrorAiSummary, 'API timeout')
++
++        expect do
++          described_class.new(textract_result_id: textract_result.id).extract
++        end.to raise_error(CustomErrorStructuredExtraction)
++      end
++    end
++
++    context 'JSON parse failure' do
++      let!(:textract_result) do
++        TextractResult.create!(
++          job_application: job_application,
++          textract_job_result_text: 'Some resume text',
++          textract_job_id: "tx-#{SecureRandom.hex(4)}",
++          textract_job_status: :succeeded
++        )
++      end
++
++      let(:ai_response) do
++        {
++          content: 'not valid json {{{',
++          model: 'gpt-4o-mini-2024-07-18',
++          input_tokens: 500,
++          output_tokens: 200
++        }
++      end
++
++      it 'raises CustomErrorStructuredExtraction' do
++        expect do
++          described_class.new(textract_result_id: textract_result.id).extract
++        end.to raise_error(CustomErrorStructuredExtraction)
++      end
++    end
++
++    context 'guard: missing textract_result' do
++      it 'returns early without error' do
++        expect do
++          described_class.new(textract_result_id: -1).extract
++        end.not_to raise_error
++      end
++    end
++
++    context 'guard: no text' do
++      let!(:textract_result) do
++        TextractResult.create!(
++          job_application: job_application,
++          textract_job_result_text: nil,
++          textract_job_id: "tx-#{SecureRandom.hex(4)}",
++          textract_job_status: :in_progress
++        )
++      end
++
++      it 'returns early without calling AiClient' do
++        described_class.new(textract_result_id: textract_result.id).extract
++
++        expect(ai_client_instance).not_to have_received(:chat)
++      end
++    end
++
++    context 'guard: no organization' do
++      let!(:textract_result) do
++        TextractResult.create!(
++          job_application: job_application,
++          textract_job_result_text: 'Some resume text',
++          textract_job_id: "tx-#{SecureRandom.hex(4)}",
++          textract_job_status: :succeeded
++        )
++      end
++
++      it 'returns early when organization is nil' do
++        stubbed_textract_result = TextractResult.find(textract_result.id)
++        stubbed_job_application = stubbed_textract_result.job_application
++        stubbed_job = stubbed_job_application.job
++        allow(stubbed_job).to receive(:organization).and_return(nil)
++        allow(stubbed_job_application).to receive(:job).and_return(stubbed_job)
++        allow(stubbed_textract_result).to receive(:job_application).and_return(stubbed_job_application)
++        allow(TextractResult).to receive(:find_by).with(id: textract_result.id).and_return(stubbed_textract_result)
++
++        described_class.new(textract_result_id: textract_result.id).extract
++
++        expect(ai_client_instance).not_to have_received(:chat)
++      end
++    end
++
++    context 'idempotency' do
++      let!(:textract_result) do
++        TextractResult.create!(
++          job_application: job_application,
++          textract_job_result_text: 'Some resume text',
++          textract_job_id: "tx-#{SecureRandom.hex(4)}",
++          textract_job_status: :succeeded
++        )
++      end
++
++      it 'overwrites structured_extraction and structured_extraction_text cleanly on second call' do
++        described_class.new(textract_result_id: textract_result.id).extract
++        described_class.new(textract_result_id: textract_result.id).extract
++
++        textract_result.reload
++        expect(textract_result.structured_extraction).to eq(structured_data)
++        expect(textract_result.structured_extraction_text).to be_present
++      end
++    end
++  end
++end

@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "version": 7,
+    "call": 2,
+    "model": "gpt-4o-mini",
+    "job_id": 30664,
+    "title": "Full Stack Engineer ",
+    "organization": "Levellr",
+    "input_tokens": 2434,
+    "output_tokens": 610,
+    "cost": 0.000731,
+    "criteria_count": 10,
+    "tier_counts": {
+      "tier_1": 2,
+      "tier_2": 8,
+      "tier_3": 0
+    },
+    "binary_count": 0,
+    "decomposed_count": 0
+  },
+  "result": {
+    "criteria": [
+      {
+        "text": "You have a proven ability to learn fast, ship fast, and get stuff done as part of a small team",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You have a proven ability to learn fast, ship fast, and get stuff done as part of a small team"
+      },
+      {
+        "text": "You have 5+ years of professional software development experience, including both frontend and backend work",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You have 5+ years of professional software development experience, including both frontend and backend work"
+      },
+      {
+        "text": "You want to work as part of a fully-remote development team, and you’re happy to work in a European timezone",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You want to work as part of a fully-remote development team, and you’re happy to work in a European timezone"
+      },
+      {
+        "text": "You have strong knowledge of TypeScript and/or JavaScript",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"strong knowledge\"",
+        "binary": false,
+        "source_text": "You have strong knowledge of TypeScript and/or JavaScript"
+      },
+      {
+        "text": "You ship beautiful web apps with frontend frameworks like Svelte, React or Vue",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You ship beautiful web apps with frontend frameworks like Svelte, React or Vue"
+      },
+      {
+        "text": "You’re not afraid of SQL and getting your hands dirty with relational databases like PostgreSQL",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You’re not afraid of SQL and getting your hands dirty with relational databases like PostgreSQL"
+      },
+      {
+        "text": "You know your way around GitHub and you’re comfortable with Git",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You know your way around GitHub and you’re comfortable with Git"
+      },
+      {
+        "text": "Ideally you have previous startup/growth-stage experience and previous remote-work experience, or you’re excited to acquire that",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"ideally\"",
+        "binary": false,
+        "source_text": "Ideally you have previous startup/growth-stage experience and previous remote-work experience, or you’re excited to acquire that"
+      },
+      {
+        "text": "You are self-motivated and proactive with an independent working style",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You are self-motivated and proactive with an independent working style"
+      },
+      {
+        "text": "You have excellent written and verbal communication skills in English.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"excellent\"",
+        "binary": false,
+        "source_text": "You have excellent written and verbal communication skills in English."
+      }
+    ]
+  }
+}

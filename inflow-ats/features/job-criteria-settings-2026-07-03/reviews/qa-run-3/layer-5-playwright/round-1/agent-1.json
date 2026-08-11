@@ -1,0 +1,35 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 1,
+  "assignment": "(A) Verify the NAVIGATION PATH to the Job criteria section works by CLICKS (not URL typing). (B) Verify the NEVER-RAN empty state (SPEC 8.2 state 5) on job 28054 'QA Never Ran'.",
+  "steps": [
+    "Logged in already as rezu.may@wrkhq.com (org 'Acme Inc.'). Navigated to http://app.lvh.me:5007/jobs -> jobs list rendered with all 7 seeded jobs.",
+    "CLICKED job title 'QA Never Ran' (heading) -> landed on /jobs/28054/stages/196323/applicants (job page). Click target present and worked.",
+    "CLICKED 'Job setup' left-nav link -> /jobs/28054/setup/details. Click target present and worked.",
+    "CLICKED 'Plato AI settings' nav item (second column, href /jobs/28054/setup/ai) -> reached /jobs/28054/setup/ai VIA CLICKS. Full click-path works; feature is reachable without typing URLs.",
+    "Verified Plato AI settings page shows 'Plato reviews' section then 'Job criteria' heading (level 4).",
+    "NEVER-RAN empty state verified: intro paragraph present ('Plato extracts scoring criteria from your job description when you publish the job, and extracts them again when you update the description while the job is published. Each review scores a candidate against the criteria as they stand when it runs. To change them, edit your job description.') with inline 'job description' link -> /jobs/28054/setup/description.",
+    "EmptyState verified: file-text icon (confirmed visually in screenshot), title 'No job criteria have been generated', message 'Plato extracts scoring criteria when you publish the job, or you can generate them now.'",
+    "Action row verified: ONLY a 'Generate criteria' button. NO 'View criteria', NO 'Regenerate criteria'. Correct for never-ran state.",
+    "Right sidebar 'Criteria tiers' glossary (Core/Preferred/Bonus) present and correct.",
+    "Copy rules check: sentence case, uses 'extract'/'extracts' vocabulary, no em dashes, static button label 'Generate criteria' (no interpolated count). PASS.",
+    "Opened the Generate confirm modal (clicked 'Generate criteria'): CenterModal titled 'Regenerate job criteria?', lead paragraph 'Plato will re-extract scoring criteria from the current job description. Reviews that have already run keep the criteria they were scored against.', bordered statement box (refresh-cw icon) 'Regenerating works best when you have changed the parts of the description that affect scoring...', footer primary 'Regenerate criteria' + secondary 'Cancel'. Matches SPEC 8.5 (shared modal, documented to open from Generate criteria too).",
+    "Clicked 'Cancel' to dismiss the modal. DID NOT click the Regenerate/Generate confirm button. No mutation fired.",
+    "Console (level error, all): 7 errors = exactly the known pre-existing set (4 react-router history deprecation warnings, 2 'Store does not have a valid reducer' Redux warnings, 1 heap-api.com 404). No NEW feature-referencing errors (no aiJobCriteria/JobCriteria/useAiJobCriteria/ai_job_criteria failures, no React errors in the criteria section)."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-1/never-ran-empty-state.png"
+  ],
+  "findings": [
+    {
+      "id": "l5-r1-a1-001",
+      "severity": "LOW",
+      "title": "Generate confirm modal (never-ran) uses 'Regenerate'/'re-extract' wording",
+      "url": "http://app.lvh.me:5007/jobs/28054/setup/ai",
+      "expected": "SPEC 8.5 documents a single shared confirm modal titled 'Regenerate job criteria?' that opens from both 'Regenerate criteria' and 'Generate criteria'.",
+      "actual": "From the never-ran state, the 'Generate criteria' button opens a modal titled 'Regenerate job criteria?' whose lead paragraph says Plato will 're-extract' criteria - wording that implies a prior extraction that never happened for this job. This matches the SPEC (shared modal is explicitly sanctioned), so it is spec-compliant; noted only for transparency. Not a defect and does not affect convergence.",
+      "evidence": "Accessibility snapshot of modal ref=f43e765: title 'Regenerate job criteria?', paragraph 'Plato will re-extract scoring criteria from the current job description...'"
+    }
+  ]
+}

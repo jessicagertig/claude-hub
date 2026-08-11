@@ -1,0 +1,112 @@
+{
+  "meta": {
+    "batch": 15,
+    "criteria_prompt_version": 14,
+    "job_id": 24774,
+    "title": "Restaurant Team Member (Malta)",
+    "organization": "eeetwell",
+    "cost": 0.012
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Eeetwell is looking for an energetic Restaurant Team Member, experienced in the Food and Beverage sector (both kitchen and customer-facing areas), and with a good command of the English language. As a Restaurant Team Member, you will be an ambassador of our brand’s core values, and an integral part of the guest experience. This position reports directly to the Team Leader and General Manager. We encourage our Restaurant Team Members to be well-rounded team players, willing to get their hands dirty and do whatever it takes to keep your store running smoothly. No matter what position you start in with us, you will have the opportunity to be cross-trained and will be tasked to take on different positions within our team."
+      },
+      {
+        "heading": "Key responsibilities:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Maintain cleanliness of kitchen, lobby, bathrooms and outdoor area, take out the trash, clean tables and chairs.\nLearn and maintain knowledge of our seasonal menu to effectively communicate all ingredients to guests.\nEnsure all food in the store meets food safety and quality standards, eliminating cross-contamination in the back of the house.\nMaintain knowledge of critical dietary information and demonstrate proper food handling.\nOperate POS register to complete customer transactions.\nGreet guests, guide the customer journey, resolve guest issues and properly inform guests of special campaigns or loyalty programs."
+      },
+      {
+        "heading": "Requirements:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Food, restaurant, team and / or customer service experience.\nA team player with a positive can-do attitude.\nQuick and adaptable learner.\nExcellent and collaborative communication skills."
+      },
+      {
+        "heading": "Perks of joining the eeetwell family:",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "An attractive salary in line with the industry standards.\nComplimentary weekly greens.\nMultiple discount opportunities through our partners’ network.\nA collaborative and invested family of people who live our core values and have your back.\nA clear career path with solid personal and professional development opportunities.\nThe chance to make a real impact on the people and communities that surround us, both by growing them and by changing the way they think about food."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Maintain cleanliness of kitchen, lobby, bathrooms and outdoor area, take out the trash, clean tables and chairs.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Maintain cleanliness of kitchen, lobby, bathrooms and outdoor area, take out the trash, clean tables and chairs."
+      },
+      {
+        "text": "Learn and maintain knowledge of our seasonal menu to effectively communicate all ingredients to guests.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Learn and maintain knowledge of our seasonal menu to effectively communicate all ingredients to guests."
+      },
+      {
+        "text": "Ensure all food in the store meets food safety and quality standards, eliminating cross-contamination in the back of the house.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Ensure all food in the store meets food safety and quality standards, eliminating cross-contamination in the back of the house."
+      },
+      {
+        "text": "Maintain knowledge of critical dietary information and demonstrate proper food handling.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Maintain knowledge of critical dietary information and demonstrate proper food handling."
+      },
+      {
+        "text": "Operate POS register to complete customer transactions.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Operate POS register to complete customer transactions."
+      },
+      {
+        "text": "Greet guests, guide the customer journey, resolve guest issues and properly inform guests of special campaigns or loyalty programs.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Greet guests, guide the customer journey, resolve guest issues and properly inform guests of special campaigns or loyalty programs."
+      },
+      {
+        "text": "Food, restaurant, team and / or customer service experience.",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"experience with/in/using\"",
+        "binary": false,
+        "source_text": "Food, restaurant, team and / or customer service experience."
+      },
+      {
+        "text": "A team player with a positive can-do attitude.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "A team player with a positive can-do attitude."
+      },
+      {
+        "text": "Quick and adaptable learner.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Quick and adaptable learner."
+      },
+      {
+        "text": "Excellent and collaborative communication skills.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"excellent\"",
+        "binary": false,
+        "source_text": "Excellent and collaborative communication skills."
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 4,
+  "focus_area": "Api::V1::JobAiJobCriteriaSerializer six-state payload (SPEC §5.3) — CONFIRMATION re-verify from scratch",
+  "files_reviewed": [
+    "app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb"
+  ],
+  "method": "Rendered Api::V1::JobAiJobCriteriaSerializer.new(job).as_json (AMS 0.10.12, the codebase's serializer-spec render path) on seeded 'Senior Engineer' job (#27625, org 'Acme Inc.') via RAILS_ENV=test foreman run rails runner. Hand-built AiJobCriteria rows with controlled created_at (row ordering) and a distinctive updated_at (2025-03-10 08:15:00 via update_columns) on succeeded rows to prove extracted_at comes from the correct row. ActiveJob queue_adapter=:test, no OpenAI. 46 assertions across all six states; all PASS. Rows cleaned via AiJobCriteria.where(job_id: job.id).delete_all (0 remaining).",
+  "results_summary": {
+    "total_checks": 46,
+    "passed": 46,
+    "failed": 0,
+    "state_1_never_ran": "criteria/extracted_at/status null; zero_criteria_failure EXACTLY nil (not false) — PASS",
+    "state_2_first_extraction_running": "pending/in_progress/retrying each: criteria+extracted_at null, status = in-flight enum STRING (String, not Integer), zcf false — PASS",
+    "state_3_succeeded": "criteria = [{text,tier:tier_1,source_heading}] keys preserved + tier value 'tier_1', extracted_at = succeeded row updated_at, status 'succeeded', zcf false — PASS",
+    "state_4_regenerating": "older succeeded + newer in_progress: criteria/extracted_at from OLD succeeded, status 'in_progress' (in-flight string), zcf false — PASS",
+    "state_5a_zero_criteria_failure_no_older": "criteria/extracted_at null, status 'failed', zcf true — PASS",
+    "state_5b_zero_criteria_failure_older_succeeded": "criteria/extracted_at from older succeeded, status 'failed', zcf true — PASS",
+    "state_6a_other_failure_no_older": "criteria/extracted_at null, status 'failed', zcf false — PASS",
+    "state_6b_other_failure_older_succeeded": "criteria/extracted_at from older succeeded, status 'failed', zcf false — PASS"
+  },
+  "findings": []
+}

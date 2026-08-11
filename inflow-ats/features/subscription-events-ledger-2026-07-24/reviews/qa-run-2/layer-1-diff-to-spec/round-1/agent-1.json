@@ -1,0 +1,19 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 2,
+  "agent_index": 1,
+  "slice": "trial_started writer chain",
+  "findings": [],
+  "verified": [
+    "organization.rb diff (a0d59115d..7574df408) is exactly two hunks: the subscription_started_trial_after_commit? branch (Discord::NotifyFreeTrialStartedJob.perform_later(id) removed, CreateSubscriptionEvent.call added) and the trial_converted_to_paid_after_commit? branch (Discord::NotifyTrialConvertedToPaidJob.perform_later(id) removed). Nothing else in the file changed (stat: 1 insertion, 2 deletions).",
+    "Writer call at organization.rb:1131 is byte-identical to SPEC 5.1: CreateSubscriptionEvent.call(organization: self, event_type: 'trial_started', to_plan: plan, stripe_subscription_id: stripe_subscription_id). No amount passed (spec table: trial_started has no amount).",
+    "Notification::FreeTrialStartedJob.perform_later(id) (organization.rb:1130) and organization_ai_credit_balance&.reset_ai_credits (organization.rb:1133) byte-identical context lines; ap 'FREE TRIAL STARTED' untouched.",
+    "Full callback chain traced in committed code: after_commit :handle_after_commit_on_update, on: [:update] (organization.rb:59) -> handle_after_commit_on_update (1023, status handler first of five) -> handle_subscription_status_change_after_commit (1103, gates return unless persisted? / return unless saved_changes.key?('stripe_subscription_status')) -> if subscription_started_trial_after_commit? (1128) -> helper at 1188 requires previous_status.nil? && current_status == 'trialing'. Writer fires on exactly the nil -> 'trialing' transition and no other (trialing->active, past_due->active, nil->active hit other non-exclusive ifs, none of which call the writer).",
+    "trial_started guarded as spec states: SubscriptionEvent::CONVERSION_EVENT_TYPES = %w[converted_to_paid trial_converted_to_paid] excludes trial_started, so conversion_duplicate_exists? no-ops; the partial unique index (migration 20260725033136, where event_type IN (2, 8)) does not cover trial_started; the interactor's 5-minute same-params dedupe is the guard.",
+    "trial_started: 7 present in the SubscriptionEvent enum; interactor accepts optional context.stripe_subscription_id and merges it into event_params; return unless organization guard sits above the ap logging lines (SPEC 6 guard-order fix in place, so the writer path is nil-safe).",
+    "Tests (spec/models/organization_subscription_events_spec.rb, SPEC 9.4): starting state is genuinely nil stripe_subscription_status (create_credit_test_organization with stripe_active: false sets no status; the tap uses update_columns for ids only, callback-silent). Test 1 asserts change(SubscriptionEvent, :count).by(1), event_type/organization_id/to_plan/stripe_subscription_id on the row, Slack enqueued, and Discord::NotifyFreeTrialStartedJob enqueued exactly(:once) — non-vacuous: deleting the writer fails the count assertion; deleting the fan-out fails the Discord assertion; restoring the removed callback Discord line makes it enqueue twice and fails exactly(:once).",
+    "Test 2 asserts trialing -> active enqueues Notification::TrialConvertedToPaidJob (Slack stays) and NOT Discord::NotifyTrialConvertedToPaidJob, and creates no SubscriptionEvent row (conversion rows are invoice.paid-only) — non-vacuous: restoring the removed line fails not_to have_been_enqueued. Setup uses update_column (callback-silent) plus clear_enqueued_jobs, so assertions isolate the transition under test. Queue adapter :test around-block present per pipeline rule 31.",
+    "No unsanctioned changes visible from this slice: stripe_webhook_handler_job.rb diff is purely additive (+34, no deletions per stat) — detailed audit belongs to other agents' slices."
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The candidate has experience with NAT test environments and local infrastructure management, but there is no evidence of multi-cloud architectural experience or managing environments in customer accounts."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate developed a CLI tool (DebForge) and backend systems, demonstrating potential, but lacks explicit evidence of working with product/UX teams to enhance CI/CD or cloud provider integrations."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with load balancers and system security (firewalls, RBAC), but there is no evidence of implementing enterprise-grade monitoring, logging, or multi-cloud failover."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "While the candidate authored technical guides, there is no evidence of mentoring or formal participation in code review processes for team-based infrastructure or Go services."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has professional experience building a distributed Go-based ETL pipeline and other Go-based web applications."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The candidate does not list Kubernetes in their technical skills or projects."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate lists Ansible, which is a related configuration management/IaC tool, but lacks direct experience with Terraform."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The resume lists projects that were remote and utilized local/virtualized environments (VirtualBox, Devuan/Debian). There is no evidence of experience with AWS, GCP, or Azure platforms."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate's work with Juju (orchestration) and CLI tooling shows an understanding of infrastructure automation, though exposure to a formal PaaS product is not explicit."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate created a CLI tool (DebForge), which is developer tooling, but does not provide clear evidence of CI/CD pipeline management or marketplace integrations."
+    },
+    {
+      "criterion_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate authored technical guides and worked in remote teams, which shows some capability, but cross-functional experience beyond software development is limited."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of cloud marketplace experience found in the resume."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate designed a load balancer (BalancerX) with high-traffic handling, but there is no evidence of multi-region or multi-tenant system design."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly mentions contributing to open-source tools and building a distributed Go-based ETL pipeline."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The candidate does not mention familiarity with Prometheus, Grafana, or the ELK stack."
+    }
+  ],
+  "computed_score": {
+    "points": 39.0,
+    "max": 92,
+    "percentage": 42.4
+  }
+}

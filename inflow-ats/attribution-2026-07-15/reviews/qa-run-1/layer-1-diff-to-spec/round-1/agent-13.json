@@ -1,0 +1,42 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 13,
+  "focus_area": "cross-cutting constraints",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "§2 Not-touched list (serializers, policies, models other than user.rb, Sidekiq jobs, api.ts, contexts, existing Cypress tests)",
+      "§6 no new endpoints / no policy changes / no authorization changes",
+      "§7.1 sanitization capture-side only",
+      "§7.2 nil for absent at every layer (no || \"\" / || {} / fabricated defaults)",
+      "§7.3 no backfill / data migration",
+      "§7.4 raw storage, no mapping/downcasing of the four new values",
+      "§7.5 creation-time only",
+      "§7.6 no serializer changes / four columns not exposed in any Api::V1 serializer",
+      "§7.7 browser-first events, no PosthogTrackJob/PosthogIdentifyJob added/removed/modified",
+      "§7.8 exact event names, all plain no-property trackEvent calls",
+      "§7.9 utm_data inner keys are raw param names",
+      "§7.10 no api.ts/context/core-infrastructure changes; only new files are the two migrations plus §9 spec/test files",
+      "§9 event-name grep check (user_signed_up_client_side exactly two frontend callsites; server user_signed_up unmodified)",
+      "§10 deferred items absent (no signup-page/auth-register page-view event, no browser login event, no serializer exposure, no server-side identify/event at confirmations#show, no backfill)"
+    ],
+    "verified": [
+      "§2: diff file list (24 files) contains no serializer, policy, job/worker, api.ts, context, or cypress files; app/models/user.rb is the only model touched; `git diff 62dd55867..8dcc2f06f -- app/serializers/ app/policies/ app/jobs/ app/workers/ cypress/` all empty",
+      "§6: config/routes.rb not in diff (no new endpoints); no policy files in diff; `authorize @organization` in organizations_controller.rb unchanged (context line); Hire::ConfirmationsController token auth via User.confirm_by_token unchanged — only the success redirect string changed",
+      "§7.1: all backend assignments are raw pass-throughs (sign_up_params[:utm_*] merges, current_user copies, from_omniauth keyword assignments, omniauth.rb allowed_keys addition); no truncation/first-occurrence/key-cap logic added server-side; sanitizeTrackingParams lives only in app/javascript/shared/lib/utils.js",
+      "§7.2: grep of all added diff lines for `|| \"\"`, `|| {}`, `|| 0`, `|| [` returned nothing; both migrations add nullable columns with no defaults (contrast confirmed against schema.rb hunks); sanitizeTrackingParams emits absent fields for absent params (utils.test.js pins absence) and passes null through unfabricated",
+      "§7.3: no db/data/ files in diff; migrations are add_column only",
+      "§7.4: grep of added lines for downcase/get_created_via returned nothing; from_omniauth assigns the four raw (partner_source&.downcase is a pre-existing context line); registrations and organizations controllers assign/copy verbatim",
+      "§7.5: from_omniauth assignments are inside the first_or_create block; magic_create existing-user branches (confirmed and unconfirmed) read only user_params[:email] — only the else branch calls build_resource(user_params); organizations get values only at #create copied from current_user; no update path added anywhere",
+      "§7.6: `git diff 62dd55867..8dcc2f06f -- app/serializers/` is empty (SessionSerializer and OrganizationSerializer untouched); `git grep utm|internal_ref` in session_serializer.rb/organization_serializer.rb returns nothing; the only serializer matches repo-wide are app/serializers/api/v1/ahoy_visit_serializer.rb:14,18 — AhoyVisit's own pre-existing columns, file untouched by the diff",
+      "§7.7: grep of the diff for Posthog.*Job returned nothing; existing PosthogIdentifyJob/PosthogTrackJob calls in registrations_controller.rb (lines 189-190, 52), omniauth_callbacks_controller.rb (line 35 area), invites_controller.rb are all outside the diff hunks",
+      "§7.8: exhaustive grep of added lines for trackEvent/identifyUser/ph.identify/ph.capture shows exactly: trackEvent(\"email_verified\"), trackEvent(\"user_signed_up_client_side\") x2, trackEvent(\"organization_created\"), trackEvent(\"organization_owner_user_name_submitted\"), trackEvent(\"invited_user_name_submitted\") — all plain calls with no properties argument — plus the D12 identifyUser({ id: Number(id), email }); trackEvent definition read (posthog.ts): omitted properties arrives undefined at ph.capture",
+      "§7.9: sanitizeTrackingParams keys utmData by the decoded raw param name from the query string (no camelCasing of inner keys); GoogleSSOButton renders name={\"utm_data[\" + key + \"]\"} with the key verbatim",
+      "§7.10: api.ts and PostHogContext.tsx not in diff; new files are exactly the 2 migrations + utils.test.js + 5 RSpec files, matching §9 items 1-6 one-to-one; posthog.ts window.logger change is the declared §1/§5.9 branch change (excluded from findings per instructions)",
+      "§9 grep: `git grep -n user_signed_up_client_side app/` returns exactly AuthForm.tsx:91 and SignupForm.tsx:75 (repo-wide grep identical); server 'user_signed_up' strings at registrations_controller.rb:52,190, omniauth_callbacks_controller.rb:35, invites_controller.rb:80 all unmodified by the diff",
+      "§10: AuthRegister.tsx not in diff and no page-view event added anywhere; no browser user_logged_in trackEvent added; no serializer exposure; confirmations_controller.rb diff is the redirect string only (no identify/event added server-side); no backfill"
+    ],
+    "missing": []
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 5,
+  "focus": "Gating change in Job#extract_job_criteria_immediately(requesting_organization_user_id: nil) and extract_job_criteria_if_needed (app/models/job.rb:730-747), SPEC.md §4.1",
+  "scenarios_run": [
+    "Setup: built isolated org/owner_ou/job (draft, description present) in-script; ActiveJob queue_adapter=:test so ExtractJobCriteriaJob only enqueues, never runs (no real AI). Counted job.ai_job_criteria rows before/after and inspected enqueued_jobs for ExtractJobCriteriaJob.",
+    "Blank description (job.description='' in-memory): NO new AiJobCriteria row (created=0), NO enqueue (0) -- return unless description.present? fires.",
+    "Latest row in_progress: NO new row (0), NO enqueue (0) -- return if latest_ai_job_criteria&.status_in_progress? no-op guard fires.",
+    "Latest row retrying: NO new row (0), NO enqueue (0) -- return if latest_ai_job_criteria&.status_retrying? no-op guard fires.",
+    "Latest row pending: NEW pending row created (+1) + enqueue (1) -- documents DELIBERATE absence of a pending guard (spec-correct, not a bug).",
+    "Latest row failed (non-zero-criteria msg 'Job description is blank'): NEW row (+1) + enqueue (1).",
+    "Latest row failed (zero-criteria msg ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE): NEW row (+1) + enqueue (1) -- _immediately has no zero-criteria guard (guard lives at the 4 review-start sites, not here).",
+    "No rows at all: NEW row (+1) + enqueue (1).",
+    "Latest row succeeded: NEW row (+1) + enqueue (1) -- _immediately has no succeeded guard (that guard is only in extract_job_criteria_if_needed).",
+    "requesting_organization_user_id threading (pass value): enqueued ExtractJobCriteriaJob args == [new_row.id, owner_ou.id] (observed [2817, 35413]).",
+    "requesting_organization_user_id threading (omitted): enqueued args == [new_row.id, nil] (observed [2818, nil]).",
+    "Falsifiability control: same method call yields pending_delta=+1 (no pending guard) vs in_progress_delta=0 (guard present) -- proving the in_progress/retrying no-op assertions flip to FAIL if those guard lines were removed."
+  ],
+  "findings": []
+}

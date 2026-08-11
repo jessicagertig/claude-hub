@@ -1,0 +1,19 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 13,
+  "focus": "Cross-cutting end-to-end guard coverage: ONE zero-criteria job blocks ALL 4 user-facing AI-summary creation entry points, driven by the SAME predicate (Job#zero_criteria_extraction_failure?) with an IDENTICAL canonical message (SPEC §6.1/§6.2). Integration view across the 4 guard sites.",
+  "scenarios_run": [
+    "Built ONE isolated org/user/job(with description)/candidate/job_application (unique SecureRandom suffix); stubbed ja.has_resume=true and org.ai_credits_available?=true (not-under-test preconditions), READ the already-enabled global AI_APPLICANT_SUMMARY flag (never enabled it). Set ActiveJob queue_adapter=:test for THIS process only (test env default is :inline which would RUN jobs / trigger real AI) — no DB write, no leak.",
+    "Verified object identity so all paths share one org/job: ja.job.equal?(job) true, ja.job.organization.equal?(org) true.",
+    "PHASE 1 (zero-criteria failure state: latest AiJobCriteria = failed + ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE): asserted job.zero_criteria_extraction_failure? and ja.job.zero_criteria_extraction_failure? both true (common predicate driver).",
+    "Entry #1 manual single: ValidateAiSummaryGeneration.call(job_application, organization) -> failure? true, error == canonical message.",
+    "Entry #2 auto: ValidateAutoAiSummaryGeneration.call(job_application) -> failure? true, error == canonical message.",
+    "Entry #3 bulk: QueueBulkAiSummaryJobs.call(organization, user, job_application_ids:[ja.id], job, params:{}) -> failure? true, error == canonical; NO BulkGenerateAiSummariesJob enqueued; NO BulkAiSummaryJobApplication claim row created (fail-fast at guard, line 19, before any perform_later).",
+    "Entry #4 funnel: TextractResult#generate_ai_summary_with_credit_flow (stubbed generate_ai_summary and job.extract_job_criteria_if_needed to observation no-ops so no AI runs) -> returned BEFORE both extract_job_criteria_if_needed and generate_ai_summary; created no AiJobApplicationSummary and no new AiJobCriteria row (bare defensive return at textract_result.rb:70, before extract at line 72).",
+    "INTEGRATION assertions: the 3 validators produced the EXACT SAME error string (r1.error == r2.error == r3.error) and that single string == the one canonical message; all four blocked simultaneously while the predicate was true on the SAME job.",
+    "PHASE 2 CONTROL (same objects; added a newer succeeded AiJobCriteria row -> latest succeeded -> predicate false): all four now ALLOW past the guard. ValidateAiSummaryGeneration success? true (error != canonical); ValidateAutoAiSummaryGeneration success? true (error != canonical); QueueBulkAiSummaryJobs not zero-criteria-blocked (error != canonical); funnel proceeded PAST guard and reached generate_ai_summary. Proves the block is criteria-state-driven, not incidental.",
+    "All 22 checks PASS."
+  ],
+  "findings": []
+}

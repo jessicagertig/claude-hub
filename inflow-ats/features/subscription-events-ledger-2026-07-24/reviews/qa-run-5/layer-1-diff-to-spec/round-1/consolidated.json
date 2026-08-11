@@ -1,0 +1,20 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 5,
+  "agents": 10,
+  "verdict": "CLEAN — terminal (one clean round per harness-profile)",
+  "findings": [],
+  "adjudicated": [
+    {
+      "id": "r5-l1-a9-001",
+      "filed_severity": "HIGH",
+      "adjudicated_severity": "MED (report-only, disclosed in QA-MED-FINDINGS.md)",
+      "title": "§5.2/§5.3 'appended at the END' placement has no runtime test pin",
+      "orchestrator_reasoning": "Placement is a structural/positional property, verified line-by-line by the D11 delicacy audit every Layer 1 round (run 5 agent 8: byte-compare of base vs head outside the insertions; both blocks at exact branch end; blob-hash proof across all four fix commits). The run-4 matrix already used a 'verified-by-diff-read' category for structural rows. A runtime pin would require raise-an-earlier-line contortions duplicating the audit. CORRECTION recorded: the run-4 consolidation claimed r4-l1-a9-002's ledger-failure example covered placement — agent 9 correctly showed that claim was incomplete (with the own-rescue intact, moving the block passes the suite). Disclosed for Jessica's ruling: after QA, an in-file move of either insertion would not fail RSpec.",
+      "consistency_note": "All six prior instances of the falsifiability class were BEHAVIORAL mechanisms (guards, rescues, mappings, scoping) with cheap runtime observables — all were fixed as HIGH. This is the only positional-structure row."
+    }
+  ],
+  "matrix_reverification": {"formerly_unpinned_now_pinned": 11, "still_unpinned_after_adjudication": 0, "pinned_spot_checks": 18, "regressions": 0},
+  "notes": "All 10 slices clean. Fix commit 33dffbe3e audited hunk-by-hunk by agents 1,2,3,4,5,6,7; delicacy audit 34/0 with blob-hash proof; reverse traceability mapped every hunk incl. fix-commit hunks to SPEC sections or finding ids; branch shape = feature + 4 spec-only fix commits."
+}

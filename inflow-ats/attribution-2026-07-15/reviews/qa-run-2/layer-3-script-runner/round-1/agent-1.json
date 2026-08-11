@@ -1,0 +1,32 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 1,
+  "scenarios": [
+    {
+      "name": "magic_create new-user attribution capture (SPEC 4.2, 7.2, 7.4)",
+      "method": "http",
+      "result": "PASS",
+      "evidence": "cleanup + seed clean-slate-flags-only.json. POST /api/v1/magic_login for qa-utm-1@example.com with utm_source=QA-RawCase, utm_campaign=Camp1, internal_ref=ref-9, utm_data={utm_medium:m1,utm_term:t1} (login_intent=hire) -> 200. rails runner assert: utm_source=\"QA-RawCase\" stored raw (no downcase), utm_campaign=\"Camp1\", internal_ref=\"ref-9\", utm_data round-tripped as Hash {\"utm_term\"=>\"t1\",\"utm_medium\"=>\"m1\"} == expected (Hash equality is order-independent). Second POST for qa-utm-2@example.com with NONE of the four params -> 200; all four columns nil, utm_data nil NOT {}."
+    },
+    {
+      "name": "magic_create existing-user no-touch (SPEC 4.2, 7.5) — both existing-user branches",
+      "method": "http",
+      "result": "PASS",
+      "evidence": "POST /api/v1/magic_login for existing UNCONFIRMED qa-utm-2@example.com WITH utm_source=ShouldNotStick etc. -> 200 (resend-confirmation branch); rails runner: all four columns still nil. Then confirmed the user via rails runner (user.confirm) and POSTed again WITH utm_source=ShouldNotStick2 etc. -> 200 (confirmed-user magic-link branch); all four columns still nil. Both existing-user branches of magic_create leave attribution untouched."
+    },
+    {
+      "name": "User.from_omniauth keyword interface (SPEC 4.6, 7.4, 7.5)",
+      "method": "rails-runner",
+      "result": "PASS",
+      "evidence": "OmniAuth::AuthHash with info.email/first_name/last_name. (a) New user qa-sso-1@example.com via User.from_omniauth(auth:, created_via: 'created_via_signup', partner_source: 'WwR', utm_source: 'SSO-Raw', utm_campaign: 'c', utm_data: {'utm_medium'=>'sso-m'}, internal_ref: 'ir') -> utm_source=\"SSO-Raw\" raw, utm_campaign=\"c\", utm_data={\"utm_medium\"=>\"sso-m\"}, internal_ref=\"ir\", partner_source=\"wwr\" (downcased). NOTE: task asked for partner_source 'MiXeD', but users.partner_source is an integer enum permitting only none/wwr — 'mixed' would raise ArgumentError (pre-existing enum behavior, unrelated to this feature); 'WwR' exercises the same &.downcase path against a valid key. (b) Second call, SAME email, different utm values -> all four columns UNCHANGED (first_or_create block did not run). (c) Third email qa-sso-2@example.com with all optional keywords omitted -> all four columns nil."
+    },
+    {
+      "name": "organizations#create copies attribution from current_user (SPEC 4.4); sign_up password path (SPEC 4.3)",
+      "method": "http",
+      "result": "PASS",
+      "evidence": "cleanup + seed clean-slate-flags-only.json. Full HTTP path exercised — no fallback needed (Api::V1::BaseController has skip_before_action :verify_authenticity_token; session cookie from sign_up authenticates). (a) POST /api/v1/sign_up for qa-org-1@example.com WITH the four utm params (curl -c cookie jar) -> 200, user created with all four values (this also verifies SPEC 4.3: the password path assigns via sign_up_params with no extra merge code). POST /api/v1/organizations {\"organization\":{\"name\":\"QA Org A\"}} with the cookie -> 200. rails runner: Organization 'QA Org A' columns utm_source=\"OrgCopy-Raw\", utm_campaign=\"OrgCamp\", utm_data={\"utm_term\"=>\"ot1\",\"utm_medium\"=>\"om1\"}, internal_ref=\"org-ref\" — identical to the creating user's values. (b) POST /api/v1/sign_up for qa-org-2@example.com with NO utm params (fresh cookie jar) then POST /api/v1/organizations 'QA Org B' -> user all-nil columns produced organization with all four columns nil (no {} fabrication)."
+    }
+  ],
+  "findings": []
+}

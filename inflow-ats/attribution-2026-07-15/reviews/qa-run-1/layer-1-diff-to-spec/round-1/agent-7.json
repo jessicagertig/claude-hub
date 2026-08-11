@@ -1,0 +1,31 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 7,
+  "focus_area": "omniauth chain",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "SPEC §4.5 (D8) — omniauth.rb setup lambda allowed_keys",
+      "SPEC §4.6 (D9) — User.from_omniauth keyword conversion, first_or_create-block-only assignment, call-site search",
+      "SPEC §4.7 (D9) — omniauth_callbacks_controller keyword call site from merged_tracking string keys, nothing else changed",
+      "SPEC §9.2 — user_from_omniauth_spec scenarios",
+      "SPEC §9.3 — omniauth_callbacks_controller_spec scenarios",
+      "SPEC §7 constraint 5 — creation-time only (existing SSO user untouched)"
+    ],
+    "verified": [
+      "§4.5: config/initializers/omniauth.rb line 14 is exactly allowed_keys = %w[partner referral utm_source utm_campaign utm_data internal_ref]; the diff touches only that line — the loop (value && !value.empty?), session write, and logger line are byte-identical to 62dd55867",
+      "§4.6 signature: app/models/user.rb:379 declares def self.from_omniauth(auth:, created_via:, partner_source: nil, utm_source: nil, utm_campaign: nil, utm_data: nil, internal_ref: nil) — exact keyword order per spec; auth:/created_via: required, rest default nil",
+      "§4.6 assignment: the four assignments (lines 389-392) sit inside the first_or_create block alongside created_via and partner_source&.downcase; new values assigned raw with no downcase; partner_source keeps &.downcase; no assignment outside the block",
+      "§4.6 post-block: assign_attributes(remember_me: true), update(first_name:, last_name:), enqueue_complete_user_setup('organization_user') verified identical to the 62dd55867 version; the ap debug lines unchanged; user.rb diff is confined to from_omniauth (5 insertions, 1 deletion)",
+      "§4.6 call-site search re-run: git grep -ln from_omniauth at 8dcc2f06f returns app/models/user.rb (definition), app/controllers/api/v1/users/omniauth_callbacks_controller.rb (sole call site, keyword form), and the two new spec files — every usage in all four files is keyword-form; no positional call site remains",
+      "§4.7: omniauth_callbacks_controller.rb lines 22-30 match the spec's code block verbatim (auth:, created_via:, partner_source:, then the four from merged_tracking['utm_source'/'utm_campaign'/'utm_data'/'internal_ref'] — string keys); the file's only diff hunk is the call replacement; PosthogIdentifyJob/PosthogTrackJob calls, sign_in, previously_new_record? event selection, and both redirects untouched",
+      "§4.7 behavioral trace: merged_tracking = request_phase_params.merge(tracking_from_session); tracking_from_session = session.delete(:oauth_tracking) || {} — the setup lambda builds tracking_params keyed by the %w allowed_keys strings, so session values are string-keyed (json cookie serializer round-trip preserves string keys); Rails-nested utm_data[<key>] form inputs parse to a Hash which passes the value && !value.empty? guard (Hash#empty?)",
+      "§9.2: spec/models/user_from_omniauth_spec.rb covers all required scenarios — keyword interface persists raw values ('SomeRawValue', 'Camp01', string-keyed utm_data hash, 'ref-99'); omitted keywords → all four nil; existing user (matching email, .not_to change(User, :count)) left with nil columns after a values-supplied SSO login; auth:/created_via: each raise ArgumentError when omitted; partner_source 'WWR' → 'wwr' (enum partner_source wwr: 1 verified at user.rb:57-60); assertions are falsifiable — deleting the four block assignments fails test 1, moving assignment outside the block fails test 3, reverting to positional signature fails tests 1-3 with ArgumentError",
+      "§9.3: spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb is type: :controller with Devise::Test::ControllerHelpers (sign_in needs warden) and @request.env['devise.mapping'] = Devise.mappings[:api_v1_user]; stubs request.env['omniauth.auth']; seeds session[:oauth_tracking] with all six tracking keys (string keys); asserts have_received(:from_omniauth).with keyword form including the four values — pins both the keyword call site and the string-key session read (a symbol-key read or positional call fails the matcher); second example pins nil-for-absent when no tracking rode the session (created_via 'created_via_signup', all four nil); devise 4.8.1 comment matches Gemfile.lock; callback route exists (config/routes.rb:128, devise_scope :api_v1_user); created_via_weworkremotely_referral mapping verified in get_created_via and CreatedViaAble",
+      "§7 constraint 5: creation-time-only holds for SSO — assignment exists only in the first_or_create block, the existing-user path runs only the pre-existing post-block updates (remember_me, first_name/last_name, enqueue_complete_user_setup), and the model spec pins it",
+      "Diff-to-spec direction: every hunk in the five focus files traces to §4.5/§4.6/§4.7/§9.2/§9.3; the spec files' ActiveJob :test queue-adapter around blocks and header comments are test scaffolding for the required coverage, not untraceable behavior; db/schema.rb shows the four columns on users and organizations backing the model spec"
+    ],
+    "missing": []
+  }
+}

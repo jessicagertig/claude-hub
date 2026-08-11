@@ -1,0 +1,93 @@
+{
+  "job": "go",
+  "runs": 10,
+  "criteria_range": "24-27",
+  "criteria_mean": 25.9,
+  "t1_range": "11-15",
+  "decomp_delta_range": "4-7",
+  "always_present_count": 9,
+  "always_present": [
+    "ability to work cross functionally",
+    "excellent communication skills",
+    "experience with open source projects or distributed systems",
+    "experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios",
+    "experience working with terraform or a similar iac tool to define and manage infrastructure across cloud providers",
+    "familiarity with monitoring and logging tools and observability such as prometheus, grafana, or elk stack",
+    "familiarity with system design for high availability, multi region, and multi tenant architectures",
+    "strong programming experience in go (golang) for production backend systems",
+    "thrive within a fast moving product engineering environment"
+  ],
+  "total_cost": 0.1105,
+  "per_run": [
+    {
+      "run": 1,
+      "count": 26,
+      "t1": 14,
+      "decomp": 6,
+      "cost": 0.011151
+    },
+    {
+      "run": 2,
+      "count": 26,
+      "t1": 11,
+      "decomp": 6,
+      "cost": 0.011128
+    },
+    {
+      "run": 3,
+      "count": 26,
+      "t1": 14,
+      "decomp": 6,
+      "cost": 0.011109
+    },
+    {
+      "run": 4,
+      "count": 26,
+      "t1": 14,
+      "decomp": 6,
+      "cost": 0.011025
+    },
+    {
+      "run": 5,
+      "count": 24,
+      "t1": 12,
+      "decomp": 4,
+      "cost": 0.010874
+    },
+    {
+      "run": 6,
+      "count": 26,
+      "t1": 14,
+      "decomp": 6,
+      "cost": 0.011218
+    },
+    {
+      "run": 7,
+      "count": 26,
+      "t1": 14,
+      "decomp": 6,
+      "cost": 0.010658
+    },
+    {
+      "run": 8,
+      "count": 26,
+      "t1": 14,
+      "decomp": 6,
+      "cost": 0.011007
+    },
+    {
+      "run": 9,
+      "count": 26,
+      "t1": 14,
+      "decomp": 6,
+      "cost": 0.011162
+    },
+    {
+      "run": 10,
+      "count": 27,
+      "t1": 15,
+      "decomp": 7,
+      "cost": 0.011176
+    }
+  ]
+}

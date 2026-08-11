@@ -6,13 +6,13 @@ Run individual phases manually when you want to drive the process yourself inste
 
 ```bash
 # 1. Create the working directory under the relevant pipeline
-mkdir -p ~/claude-hub/<pipeline>/YYYY-MM-DD-feature-name/
+mkdir -p ~/claude-hub/<pipeline>/feature-name-YYYY-MM-DD/
 
 # 2. Write the repo path (the worktree or repo this feature lives in)
-echo '/absolute/path/to/repo-or-worktree/' > ~/claude-hub/<pipeline>/YYYY-MM-DD-feature-name/REPO-PATH
+echo '/absolute/path/to/repo-or-worktree/' > ~/claude-hub/<pipeline>/feature-name-YYYY-MM-DD/REPO-PATH
 
 # 3. If you already have a spec, copy it in
-cp /path/to/your/spec ~/claude-hub/<pipeline>/YYYY-MM-DD-feature-name/SPEC.md
+cp /path/to/your/spec ~/claude-hub/<pipeline>/feature-name-YYYY-MM-DD/SPEC.md
 ```
 
 ## Running phases individually
@@ -45,7 +45,7 @@ claude --append-system-prompt-file ~/claude-hub/<pipeline>/features/<prompt-file
 Instead of running phases manually, let an orchestrating agent drive the whole thing:
 
 ```bash
-cd ~/claude-hub/<pipeline>/YYYY-MM-DD-feature-name/
+cd ~/claude-hub/<pipeline>/feature-name-YYYY-MM-DD/
 claude "Run the feature development harness. Read LIFECYCLE.md at ~/claude-hub/features/LIFECYCLE.md for the full flow."
 ```
 

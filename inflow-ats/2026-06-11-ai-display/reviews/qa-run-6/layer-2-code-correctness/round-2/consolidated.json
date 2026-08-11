@@ -1,0 +1,34 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "run": 6,
+  "findings": [
+    {
+      "id": "l2r2-h1",
+      "severity": "HIGH",
+      "title": "Credit loading race: 'Buy credits' flashes during useOrganizationAiCreditBalance fetch",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "lines": [83, 146, 362],
+      "agents": [2],
+      "description": "During credit balance loading, creditData is undefined so totalRemaining evaluates to 0. All three totalRemaining > 0 checks fail, showing zero-credits UI instead of the generate/regenerate button. Analog (AiSummaryState.tsx line 58) guards with !isLoadingCredits && totalRemaining <= 0.",
+      "fix": "Add isLoadingCredits || before totalRemaining > 0 at all three sites. Button is already disabled via buttonLoading during load.",
+      "status": "FIXED"
+    }
+  ],
+  "dismissed": [
+    {
+      "id": "l2r2-d1",
+      "title": "|| 0 fabricated fallback (repeat from R1)",
+      "agents": [1],
+      "reason": "Same finding as R1 A2-H1 / A5-H2. Already evaluated and downgraded to MED. Hook enabled guard prevents runtime impact."
+    }
+  ],
+  "med_findings_cumulative": [
+    "l2-m1: credit hint string comparison (from prior runs)",
+    "l2-m2: kebab button no functionality",
+    "l2-m3: FitHeader gray[700] dark mode (FIXED in R1)",
+    "l2-m4: callout state order",
+    "l2-m5: AiAssessment optional fields",
+    "l2-m6: || 0 fabricated fallback (no runtime impact, code smell)"
+  ]
+}

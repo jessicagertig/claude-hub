@@ -1,0 +1,19 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 5,
+  "agent_index": 6,
+  "assignment": "fan-out matrix live",
+  "findings": [],
+  "verified": [
+    "Four written types -> exactly the SPEC 7 jobs (org 37136 Acme Inc., owner 41110, direct-row 11.3 console path, queue_adapter :test, enqueues cleared between creates): trial_started -> PosthogTrackJob [41110, 'trial_started', props] + Discord::NotifyFreeTrialStartedJob [37136] (2 enqueues exactly); trial_converted_to_paid -> PosthogTrackJob + Discord::NotifyTrialConvertedToPaidJob [37136] (2 exactly); converted_to_paid -> PosthogTrackJob ONLY (1 exactly); canceled_subscription with subscription_canceled_at set (Time.utc 2026-07-25 12:00) -> PosthogTrackJob + Discord::NotifySubscriptionDeletedJob [37136, 1784980800] -- second arg live-verified == organization.subscription_canceled_at.to_i",
+    "canceled_subscription with organization.subscription_canceled_at NIL: PosthogTrackJob fired (1 enqueue), Discord::NotifySubscriptionDeletedJob SKIPPED (0) -- the SPEC 7 nil-skip guard live",
+    "assigned_free_plan and assigned_free_plan_on_creation direct rows: ZERO enqueues of any kind. Real production caller driven: Organization#log_assigned_free_plan_event (organization.rb:1230) with previous_plan 'plan_no_plan' and org plan set to 'plan_ats_tier_free_v2' -> interactor ran, row created (event_type assigned_free_plan_on_creation), ZERO enqueues; CreateSubscriptionEvent.call with event_type 'assigned_free_plan' -> success, row created, ZERO enqueues. Reachability note (pre-existing guard, unchanged): assigned_free_plan? bails unless CURRENT plan == 'plan_ats_tier_free_v2' -- first probe with the seeded org's 'plan_simple_ats_free' plan produced no interactor call at all (script setup, not a defect)",
+    "Deferred types downgraded_to_free / upgraded_plan / downgraded_plan: rows create fine, each -> ZERO enqueues (fall through the if/elsif chain in handle_after_commit_on_create)",
+    "No owner (owner_id nil'd via update_columns, fresh org objects): NO PosthogTrackJob for any of the four types. Discord per table still enqueues: trial_started -> Discord::NotifyFreeTrialStartedJob [37136] only; trial_converted_to_paid -> Discord::NotifyTrialConvertedToPaidJob [37136] only; converted_to_paid -> ZERO; canceled_subscription (canceled_at set) -> Discord::NotifySubscriptionDeletedJob [37136, 1784980800] only. ANSWER to the embedded question: in the committed handler the owner bail-out (return unless organization&.owner) lives INSIDE enqueue_posthog_track (subscription_event.rb:57), so every Discord enqueue is independent of it -- observed behavior matches SPEC 7, which scopes the no-owner bail-out to PostHog only",
+    "Row update (update! to_plan) and destroy!: ZERO enqueues each -- after_commit on: :create confirmed live",
+    "PostHog payload spot-check from live enqueues: event name == enum string; props .compact drops nils (trial_started row: only stripe_customer_id + to_plan present; conversion rows carried stripe_subscription_id + amount); attribution fields absent on the seeded org/owner as expected"
+  ],
+  "scripts": ["/tmp/qa5_agent6_fanout.rb", "/tmp/qa5_agent6_t7a_redo.rb"],
+  "raw_results": "/tmp/qa5_agent6_results.json (18 checks; T7a superseded by /tmp/qa5_agent6_results_t7a.json, final 18/18 pass)"
+}

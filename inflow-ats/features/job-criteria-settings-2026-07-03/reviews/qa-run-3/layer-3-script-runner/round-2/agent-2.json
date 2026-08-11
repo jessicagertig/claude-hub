@@ -1,0 +1,20 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 2,
+  "focus": "ExtractJobCriteriaJob#perform SUCCESS-PATH broadcast (SPEC §7). Ran the FULL perform() method (not just the private helper) with AiJobApplicationAction::Scoring::ExtractCriteria stubbed so no AI call is made; verified the completion broadcast fires only when a requesting OrganizationUser id is present and AFTER extraction. app/jobs/extract_job_criteria_job.rb:15-35.",
+  "scenarios_run": [
+    "Built own uniquely-suffixed org/job/owner OrganizationUser. Set ActiveJob queue_adapter = :test. Stubbed GlobalChannel.broadcast_to to capture every call and to record ordering, and stubbed ExtractCriteria.new to return a fake whose .extract sets the target AiJobCriteria row to succeeded (with a criteria array) WITHOUT any AI/OpenAI call.",
+    "CASE A — perform(row.id, owner_ou.id) with a valid requesting OU: exactly ONE broadcast; ordering log == [:extract, :broadcast] (broadcast happens AFTER extraction); kwargs action == 'JOB_CRITERIA_EXTRACTION_COMPLETE'; payload status=='succeeded', jobId==job.id, jobTitle==job.title, zeroCriteriaFailure==false, NO :errorMessage key; broadcast target == the requesting user. All PASS.",
+    "CASE B (KEY) — perform(row.id) with nil requesting id (auto path): extraction still ran (row succeeded, :extract recorded) but ZERO broadcasts. Auto extractions never broadcast. PASS. Falsifiable pair with A: identical code path, only the requesting id differs; broadcast presence tracks the requesting id (if broadcasting were unconditional, B would also broadcast).",
+    "CASE C — perform(bad_id) and perform(bad_id, owner_ou.id): early `return unless ai_job_criteria` fires; no crash, no extraction (:extract never recorded), no broadcast in either variant (early return dominates even with a requesting id present). PASS.",
+    "CASE D — control re-run of A: valid requesting id again -> exactly ONE broadcast, confirming the A/B delta is driven solely by the requesting-id presence. PASS.",
+    "Ordering proof of 'broadcast after extraction': broadcast_completion re-reads the row from the DB and its terminal-status guard (`return unless status_succeeded? || status_failed?`) would suppress the broadcast if it fired before extract while the row was still pending; the observed 'succeeded' broadcast therefore proves extraction preceded the broadcast (corroborated by the explicit [:extract, :broadcast] event log)."
+  ],
+  "findings": [],
+  "notes": [
+    "No real AI calls: ExtractCriteria.new stubbed process-locally to a fake extractor; no ExtractCriteria#extract, ScoreJobApplication, or GenerateAiJobApplicationSummaryJob ran end-to-end. queue_adapter set to :test; no awaiting_job_criteria summaries created so resume_waiting_summaries (after_commit on succeeded update) enqueued nothing.",
+    "Non-finding observation (defense-in-depth, spec-compliant): the nil-requesting-id case is doubly-guarded — the outer `if requesting_organization_user_id` at extract_job_criteria_job.rb:23 AND the inner `OrganizationUser.find_by(id: nil) -> nil; return unless requesting_organization_user` at line 41. Removing only the outer guard would not change the observable no-broadcast outcome for a nil id; the meaningful falsifiable signal is the present-valid-id vs nil-id behavioral delta (CASE A vs CASE B), which holds. Not a defect.",
+    "Confirms round-1 agent-9 (which tested broadcast_completion in isolation) at the full-perform level: success path emits exactly one JOB_CRITERIA_EXTRACTION_COMPLETE / 'succeeded' broadcast, only when a requesting user is present, and after extraction."
+  ]
+}

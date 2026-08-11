@@ -1,0 +1,23 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 2,
+  "focus_area": "Zero-criteria guard chain end-to-end: model constant/predicate (ai_job_criteria.rb) -> constant writer sites (extract_criteria.rb:62,122; score_job_application.rb:43) -> Job predicate (job.rb) -> 4 guard sites (validate_ai_summary_generation.rb, validate_auto_ai_summary_generation.rb, queue_bulk_ai_summary_jobs.rb, textract_result.rb funnel) -> bulk controller job: @job threading -> bulk_generate_ai_summaries_job.rb claim-row :failed fix + logger. Coverage of SPEC 6.1's 7 entry points.",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC 4.2 (ZERO_CRITERIA_* constants + zero_criteria_failure?)",
+      "SPEC 4.2 (writer substitutions extract_criteria.rb:62,122; score_job_application.rb:43)",
+      "SPEC 4.3 (Job#zero_criteria_extraction_failure? = latest row predicate)",
+      "SPEC 6.1 (all 7 AI-summary creation entry points)",
+      "SPEC 6.2.1 (ValidateAiSummaryGeneration guard)",
+      "SPEC 6.2.2 (ValidateAutoAiSummaryGeneration guard)",
+      "SPEC 6.2.3 (QueueBulkAiSummaryJobs optional job input + guard; bulk controller job: @job both actions)",
+      "SPEC 6.2.4 (TextractResult funnel guard ordering)",
+      "SPEC 6.3 (BulkGenerateAiSummariesJob claim-row :failed fix + adjudicated logger line)"
+    ],
+    "implemented": 9,
+    "missing": 0,
+    "notes": "Full guard chain re-verified independently by reading code. (1) Model: ai_job_criteria.rb:7-19 defines the 3 constants and the frozen ZERO_CRITERIA_ERROR_MESSAGES array exactly as SPEC 4.2; zero_criteria_failure? = status_failed? && ZERO_CRITERIA_ERROR_MESSAGES.include?(error_message). (2) Writer substitutions correct and NOT swapped: extract_criteria.rb:62 (criteria_sections.empty?) -> NO_SECTIONS; extract_criteria.rb:122 (non_duplicates.empty?) -> NONE_EXTRACTED; score_job_application.rb:43 (criteria.blank?) -> EMPTY_ARRAY; each is a one-line string->constant swap with no behavior change (score_job_application.rb still runs update(status: :awaiting_job_criteria) + extract_job_criteria + return unchanged). (3) Job predicate job.rb:696-698 delegates latest_ai_job_criteria&.zero_criteria_failure?, placed next to latest_ai_job_criteria (job.rb:688), correct 'latest row (any status)' semantics per 4.3. (4) All four guards use the EXACT spec string 'No scoring criteria were found in the job description. Regenerate job criteria in Plato AI settings before running reviews.' and correct placement: validate_ai_summary_generation.rb:30 after has_job_description? fail (29) with @job_application.job&. safe-nav; validate_auto_ai_summary_generation.rb:19 after has_job_description? fail (18) with @job_application.job&. safe-nav; queue_bulk_ai_summary_jobs.rb:19 after credits fail (18) with context.job&. safe-nav (optional input preserved, no other context.job reference); textract_result.rb:70 funnel guard placed AFTER the succeeded-summary early return (68) and BEFORE extract_job_criteria_if_needed (72), with no safe-nav on job (matching spec code block). (5) bulk_ai_job_application_summaries_controller.rb passes job: @job in BOTH create (17, @job set line 9) and all_stages (43, @job set line 35). (6) bulk_generate_ai_summaries_job.rb:62-66 replaces bare 'return unless result.success?' with unless block: Rails.logger.error (conventions-pass fix batch #2, adjudicated IN-SPEC) + job_application_bulk_job_status.update_columns(status: :failed) + return; update_columns matches sibling row-status writes (56,64,72,92) and is not inside a transaction (pipeline rule 25); the funnel call at line 86 (generate_ai_summary_with_credit_flow) remains unconditional. (7) All 7 SPEC 6.1 entry points covered: EP1 ValidateAiSummaryGeneration; EP2 QueueBulkAiSummaryJobs fail-fast + per-record ValidateAiSummaryGeneration backstop + claim-row fix; EP3/EP4 ValidateAutoAiSummaryGeneration; EP5 ValidateAiSummaryGeneration (both textract branches) + funnel; EP6 definitionally-false (resume fires only on succeeded, no guard needed); EP7 TextractResult funnel guard. Branch-wide grep confirms no stray/extra call sites of zero_criteria_extraction_failure?, zero_criteria_failure?, the guard message, or the ZERO_CRITERIA_* constants beyond the spec-mapped locations (serializer.rb:19 and extract_job_criteria_job.rb:55 are the SPEC 5.3 / SPEC 7 uses, outside this focus but traceable; JobCriteriaSection.tsx:125 is the distinct SPEC 8.2 state-2 empty-state copy, not the guard message). Zero deviations, zero missing paths, zero ordering errors, zero untraceable changes."
+  }
+}

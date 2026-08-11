@@ -1,0 +1,23 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 2,
+  "agent_index": 6,
+  "slice": "fan-out + PostHog payload",
+  "findings": [],
+  "verified": [
+    "after_commit :handle_after_commit_on_create, on: :create registered on SubscriptionEvent; dispatch keyed on event_type via if/elsif on enum predicates (trial_started?/trial_converted_to_paid?/converted_to_paid?/canceled_subscription?); assigned_free_plan* fall through to NOTHING (spec table row 5)",
+    "Structural match with analog Organization#handle_after_commit_on_update (organization.rb:59 registration, :1023 method): private model callback method, ap-logging line at method top (analog handlers all open with ap lines), perform_later enqueue style, return-unless bail-out guard shape — no structural mismatch",
+    "Event-type table exact: trial_started -> PostHog 'trial_started' + Discord::NotifyFreeTrialStartedJob.perform_later(organization_id); trial_converted_to_paid -> PostHog + Discord::NotifyTrialConvertedToPaidJob.perform_later(organization_id); converted_to_paid -> PostHog only, zero Discord; canceled_subscription -> PostHog + Discord::NotifySubscriptionDeletedJob.perform_later(organization_id, organization.subscription_canceled_at.to_i) gated on organization.subscription_canceled_at.present? — absent -> Discord skipped, PostHog still fires; no nil.to_i 1970 fabrication path exists",
+    "Discord::NotifySubscriptionDeletedJob committed contract confirmed: def perform(organization_id, ended_at) (required positional, line 7) and Time.at(ended_at) (line 14)",
+    "PostHog enqueue: PosthogTrackJob.perform_later(organization.owner.id, event_type, posthog_properties) — event name = enum name string; bail-out is exactly `return unless organization&.owner`; properties built at enqueue time from row + organization + owner only, zero Stripe calls",
+    "Properties: amount, stripe_subscription_id, stripe_customer_id (organization), to_plan (row); hash .compact'ed so nil amount (and any nil attribution field) is dropped; email/organization_id/organization_name/plan NOT duplicated — confirmed they ride Posthog::Track#default_properties (services/posthog/track.rb); billing_interval omitted; no groups, no $set (Posthog::Track only calls POSTHOG_CLIENT.capture with distinct_id/event/properties)",
+    "Attribution: exactly 13 fields (utm_source, utm_campaign, utm_data, internal_ref, google_click_id, adroll_click_id, adroll_first_party_cookie, fbclid, fbp, fbc, li_fat_id, ga_client_id, ga_session_id), each via attribution_value(owner.<col>, organization.<col>) — owner first, organization fallback; helper is full if/elsif/else with present? tests and explicit nil else; zero .presence anywhere in the model (D10)",
+    "All 13 attribution columns exist on BOTH users and organizations tables in the committed schema (git show 7574df408:db/schema.rb)",
+    "Helper placement: enqueue_posthog_track, posthog_properties, attribution_value all private methods on SubscriptionEvent (SPEC-PROPOSED placement honored)",
+    "CONVERSION_EVENT_TYPES constant on the model is consumed by create_subscription_event.rb:57,60 (interactor uniqueness guard) — not dead code",
+    "Tests: spec/models/subscription_event_fanout_spec.rb (committed) — :test queue-adapter around-block per rule 31; per-event-type job assertions via have_enqueued_job; converted_to_paid asserts NO Discord::* class enqueued; assigned_free_plan/assigned_free_plan_on_creation assert enqueued_jobs empty; no-owner case asserts no PosthogTrackJob but Discord still enqueues; nil subscription_canceled_at asserts no Discord::NotifySubscriptionDeletedJob but PostHog enqueues; properties block-form assertions cover owner-first (utm_source), org fallback (utm_campaign), .compact absence (fbclid), default_properties non-duplication (email/organization_id/organization_name/plan absent), amount present on conversion row and absent on canceled row; assertions are non-vacuous — have_enqueued_job fails if the callback is deleted; create_credit_test_organization helper exists (spec/support/ai_credits_test_helpers.rb:21)",
+    "D11 delicacy flag-duty: stripe_webhook_handler_job.rb diff a0d59115d..7574df408 contains EXACTLY the two sanctioned rescue-wrapped additive blocks at the ends of the subscription.deleted and invoice.paid main branches (lines +211-224, +312-331); no branch reordering, no other changes in that file",
+    "organization.rb diff is exactly the sanctioned 3 lines: Discord::NotifyFreeTrialStartedJob line replaced by the CreateSubscriptionEvent trial_started writer; Discord::NotifyTrialConvertedToPaidJob line removed; Slack Notification::* lines and organization_ai_credit_balance&.reset_ai_credits byte-identical"
+  ]
+}

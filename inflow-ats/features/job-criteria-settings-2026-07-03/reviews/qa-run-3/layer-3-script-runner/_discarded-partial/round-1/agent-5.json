@@ -1,0 +1,27 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 5,
+  "focus_area": "Api::V1::JobAiJobCriteriaSerializer six-state payload (SPEC §5.3 table)",
+  "files_reviewed": [
+    "app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb"
+  ],
+  "verification": {
+    "method": "rails runner (RAILS_ENV=test) serializing the seeded 'Senior Engineer' Job with hand-built AiJobCriteria rows (created_at controlled, no OpenAI) across all six SPEC §5.3 states plus sub-cases; asserted every serialized attribute against the table via BOTH ActiveModelSerializers::SerializableResource.new(job, serializer: ...).as_json and Api::V1::JobAiJobCriteriaSerializer.new(job).as_json.",
+    "checks_total": 64,
+    "checks_failed": 0,
+    "states_verified": [
+      "State 1 (never ran, 0 rows): criteria=nil, extracted_at=nil, status=nil, zero_criteria_failure=nil (verified EXACTLY nil, NOT fabricated false).",
+      "State 2 (first extraction running): pending/in_progress/retrying each -> criteria=nil, extracted_at=nil, status=in-flight enum string, zero_criteria_failure=false. status verified String not Integer.",
+      "State 3 (succeeded): criteria=stored jsonb array with keys preserved (text/tier/source_heading) and tier value snake_case 'tier_1'; extracted_at == succeeded row updated_at; status='succeeded'; zero_criteria_failure=false.",
+      "State 4 (regenerating after success, old succeeded + newer in-flight): pending/in_progress/retrying each -> criteria=OLD succeeded array, extracted_at=OLD succeeded ts, status=in-flight string, zero_criteria_failure=false.",
+      "State 5a (zero-criteria failure, no succeeded): all 3 ZERO_CRITERIA_ERROR_MESSAGES -> criteria=nil, extracted_at=nil, status='failed', zero_criteria_failure=true.",
+      "State 5b (zero-criteria failure over older succeeded): criteria=OLD succeeded array, extracted_at=OLD succeeded ts, status='failed', zero_criteria_failure=true.",
+      "State 6a (other failure, non-zero msg, no succeeded): criteria=nil, extracted_at=nil, status='failed', zero_criteria_failure=false.",
+      "State 6b (other failure over older succeeded): criteria=OLD succeeded array, extracted_at=OLD succeeded ts, status='failed', zero_criteria_failure=false."
+    ]
+  },
+  "findings": []
+}

@@ -1,0 +1,22 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 6,
+  "focus": "li_fat_id chain",
+  "findings": [],
+  "chain_verified": [
+    "1 sanitizeTrackingParams capture rule — PASS: URL param first via liFatIdParamValue = isArray(parsedParams.li_fat_id) ? parsedParams.li_fat_id[0] : parsedParams.li_fat_id (first occurrence); guard typeof liFatIdParamValue === \"string\" && liFatIdParamValue.length > 0 (valueless ?li_fat_id parses to null, ?li_fat_id= to \"\" — both fail the guard and fall to the else/cookie branch); cookie fallback getCookieValue(cookieEntries, \"li_fat_id\") with strict-equality name match (cookieEntry.name === cookieName), value = substring after FIRST '=' (indexOf + substring in getCookieEntries), empty-value cookie skipped in getCookieEntries (cookieValue.length === 0 → return); no assignment when neither source (field absent, never null/\"\"); both branches capped via sanitizeTrackingValue(value, ATTRIBUTION_IDENTIFIER_MAX_LENGTH=1024) with the surrogate-safe trailing-lone-high-surrogate drop",
+    "2 AuthForm.tsx — PASS: liFatId: trackingParams.liFatId in the magicLink payload inside handleAuth; liFatId={trackingParams.liFatId} passed as GoogleSSOButton prop",
+    "3 SignupForm.tsx — PASS: liFatId: trackingParams.liFatId in the register mutation payload",
+    "4 GoogleSSOButton.tsx — PASS: liFatId?: string in Props, destructured, hidden input name=\"li_fat_id\" rendered under typeof liFatId === \"string\" && liFatId.length > 0",
+    "5 useSession.ts — PASS: liFatId destructured in both register and magicLink, typed liFatId?: string | null in the magicLink inline type, present in BOTH variables objects; apiPost → apiMutate → allKeysToSnake(variables) (api.ts:25,52; neither call passes skipKeysToSnake); lodash snakeCase(\"liFatId\") === \"li_fat_id\" verified empirically via node against the repo's lodash",
+    "6 sign_up_params — PASS: :li_fat_id plain scalar permit, positioned before the trailing utm_data: {} (registrations_controller.rb:328)",
+    "7 #magic_create — PASS: li_fat_id: sign_up_params[:li_fat_id] present in BOTH branches of the user_params conditional",
+    "8 omniauth.rb allowed_keys — PASS: li_fat_id in the %w[] list; existing value if value && !value.empty? loop unchanged",
+    "9 User.from_omniauth — PASS: li_fat_id: nil keyword in the signature; omniauth_user.li_fat_id = li_fat_id assigned inside the first_or_create block only (before skip_confirmation!); post-block behavior unchanged",
+    "10 Callbacks controller — PASS: li_fat_id: merged_tracking['li_fat_id'] (string key) in the from_omniauth call",
+    "11 OrganizationsController#create — PASS: @organization.li_fat_id = current_user.li_fat_id in the copy block; value never read from request params",
+    "12 Migrations — PASS: add_column :users, :li_fat_id, :string (20260724183710) and add_column :organizations, :li_fat_id, :string (20260724183711), bare add_column (nullable, no default, no index); committed schema (git show a0d59115d:db/schema.rb) has t.string \"li_fat_id\" on both organizations (line 1100) and users (line 1303)",
+    "13 Four extended spec files — PASS: registrations_controller_spec.rb (magic_create raw + all-nil + both existing-user-branch untouched examples + create raw + create all-nil all include li_fat_id); user_from_omniauth_spec.rb (creation raw 'li-fat-123', omitted → nil, existing user untouched); omniauth_callbacks_controller_spec.rb (session seeded 'li_fat_id' => 'li-fat-123', both exhaustive have_received(:from_omniauth).with(...) expectations include li_fat_id: 'li-fat-123' / li_fat_id: nil); organizations_controller_spec.rb (copy example asserts organization.li_fat_id == 'li-fat-123', nil example asserts nil)"
+  ]
+}

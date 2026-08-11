@@ -1,0 +1,31 @@
+{
+  "layer": "diff-to-spec",
+  "round": 3,
+  "agent_index": 4,
+  "focus_area": "Test coverage — SPEC §12 completeness, ghost-test/falsifiability sweep (rule 26), mailer delivery (rule 4), and the auth-context delta falsifiability (hiring-team member allowed vs outsider 403)",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §12 new: ai_job_criteria_controller_spec.rb — #show all six §5.3 states",
+      "SPEC §12 new: ai_job_criteria_controller_spec.rb — #create pending-row+enqueue, blank 422, flipper 422, in_progress/retrying no-op, draft/published",
+      "SPEC §12 new: ai_job_criteria_controller_spec.rb — auth contexts (hiring-team member allowed on show+create; outsider 403 on create)",
+      "SPEC §12 new: validate_ai_summary_generation_spec.rb — happy path + 3 zero-criteria msgs + blank/pending/in-flight-on-top negatives",
+      "SPEC §12 new: job_ai_job_criteria_serializer_spec.rb — mixed-state derivation + never-ran all-nil",
+      "SPEC §12 mod: job_criteria_lifecycle_spec.rb — _immediately guards + kwarg passthrough/nil default; _if_needed succeeded/failed/none",
+      "SPEC §12 mod: ai_job_criteria_spec.rb — #zero_criteria_failure? truth table",
+      "SPEC §12 mod: extract_job_criteria_job_spec.rb — behavioral broadcasts (success/zero/StandardError/exhaustion/CustomError re-enqueue/no-requesting-user)",
+      "SPEC §12 mod: validate_auto_ai_summary_generation_spec.rb — zero-criteria fail + in-flight-on-top negative",
+      "SPEC §12 mod: queue_bulk_ai_summary_jobs_spec.rb — job: zero-criteria fail! + optional-input still-succeeds",
+      "SPEC §12 mod: bulk_ai_job_application_summaries_controller_spec.rb — both actions pass job:, zero-criteria 422",
+      "SPEC §12 mod: textract_result_ai_trigger_spec.rb — funnel guard returns before if_needed + Orchestrate",
+      "SPEC §12 mod: bulk_generate_ai_summaries_job_spec.rb — validation-fail row :failed; zero-criteria batch all :failed + notification (rule 4)",
+      "SPEC §12 frontend: None (documented decision, matches spec)",
+      "SPEC §9 / BRIEF: auth-context falsifiability under old update_ai_settings? gate",
+      "Pipeline rule 26: ghost-test sweep across all new/modified assertions",
+      "Pipeline rule 4: mailer delivery via instance_double(ActionMailer::MessageDelivery) + deliver_later"
+    ],
+    "implemented": 17,
+    "missing": 0,
+    "notes": "Every SPEC §12 item maps to a behavioral, falsifiable example — no gaps. #show covers all six §5.3 states (never-ran, first-extraction-running, succeeded, regenerating-over-success, zero-criteria-failure, other-failure). #create covers pending-row+enqueue-with(row_id, org_user.id), blank/flipper 422 with exact messages and no row, in_progress/retrying no-op, draft+published. GHOST-TEST SWEEP CLEAN: no reflection-only assertions (no instance_method/rescue_handlers/always-true type checks/unused vars); every test calls the real code path and asserts on side effects (change(count), have_been_enqueued.with, GlobalChannel.broadcast_to, have_enqueued_job, response status + parsed body, expect_any_instance_of(Job).not_to receive(:extract_job_criteria_if_needed) + Orchestrate.not_to receive(:new)). RULE 4 SATISFIED: bulk_generate_ai_summaries_job_spec zero-criteria batch stubs BulkJobApplicationAiSummaryResultMailer.failed => instance_double(ActionMailer::MessageDelivery, deliver_later: true) and asserts have_received(:deliver_later); it is the only mailer-delivery-relevant path in the diff (the extract job broadcasts over GlobalChannel, no mailer). AUTH DELTA FALSIFIABLE AND LOAD-BEARING: hiring-team context creates a real HiringTeamMembership(organization_user, job) and runs the real Pundit policy (no pundit_user override => default current_user; policy not stubbed). Member is role :org_user (not admin) with settings['hiring_team_ai_credits_control_enabled']=false. Under the NEW gate update? = on_hiring_team? = is_org_admin? || record.users.include?(user); record.users flows through hiring_team_memberships so the member is included => allowed (test expects :ok). Under the OLD gate update_ai_settings? = can_use_ai_credits? = is_org_admin? || (is_org_user? && hiring_team_ai_credits_control_enabled?) => false||(true&&false) => rejected. The explicit control=false setting is load-bearing (flip it to true and the old gate would also allow, killing falsifiability). Outsider context is role :org_user, no membership, not admin => update? false => 403; falsifiable (removing authorize would yield 200/422). Both share the same org so the exists() lookup finds the job and authorize (not a 404) is what rejects — the member's passing #show test in the same org confirms the lookup pipeline resolves. All referenced lets/helpers exist (create_credit_test_job defaults description 'Test job description'; create_credit_test_organization_user defaults :org_admin but auth contexts explicitly pass :org_user). No test coverage gaps, no ghost tests, no untraceable spec-file changes in my focus area."
+  }
+}

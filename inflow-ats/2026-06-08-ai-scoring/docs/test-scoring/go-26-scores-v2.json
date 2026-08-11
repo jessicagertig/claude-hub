@@ -1,0 +1,111 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has strong experience building Go microservices and APIs at My Normative and Sharecare, but lacks direct experience building PaaS-specific components like schedulers or orchestrators."
+    },
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with Kubernetes, Terraform, and multiple clouds (GCP, AWS, Azure) across various roles, but lacks specific evidence of working within a dedicated infrastructure team."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no evidence in the resume of architecting or maintaining multi-cloud environments within customer accounts."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has built a CLI tool (Poison Queue) and improved observability (tracing/MTTR reduction), but lacks explicit mentions of collaborating with product/UX for developer-focused features."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with monitoring and tracing (Grafana, Prometheus, DataDog), but lacks documented experience with multi-cloud failover strategies or advanced rollback mechanisms."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate is a software engineer with significant Go experience, implying participation in standard practices like code reviews, but there is no explicit evidence of mentoring others or defining organizational best practices."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive Go experience in production roles at My Normative, Sharecare, and GOcery, including building microservices and APIs."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate holds CKA and CKAD certifications and has practical experience deploying to Kubernetes in multiple production roles."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Terraform in their GOcery experience, indicating practical usage of IaC."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has multi-cloud experience including GCP, AWS, and Azure across various roles."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume focuses on application backend development rather than building platform-as-a-service infrastructure."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has experience with CI/CD tools (Jenkins, ArgoCD) and developer tooling (CLI project)."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no mention of cloud marketplace publication or integration in the resume."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has worked across multiple cloud providers (AWS, Azure, GCP) across different roles, but it is not clear if these were integrated multi-cloud/hybrid environments."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate mentions designing microservices to support growth across multiple regions at My Normative, indicating some exposure to HA concepts."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate is a contributor to the open-source project Yorkie and has experience with distributed systems (gRPC microservices, message queues)."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists Grafana, Prometheus, and DataDog as part of their technical stack and explicitly mentions implementing observability."
+    }
+  ],
+  "computed_score": {
+    "points": 46.0,
+    "max": 72,
+    "percentage": 63.9
+  }
+}

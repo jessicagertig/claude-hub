@@ -1,0 +1,171 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Design, build, and maintain backend services in Go that power our PaaS",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience building backend services in Golang at Octadesk, but there is no specific mention of PaaS (Platform as a Service) development experience."
+    },
+    {
+      "criterion_text": "Ability to develop APIs, scheduler and orchestrator logic in Go",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience developing APIs and event-driven systems in Golang, but lacks specific evidence of developing schedulers or orchestrator logic."
+    },
+    {
+      "criterion_text": "Ability to develop integrations with cloud providers using Go",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "While the candidate has GCP experience, there is no evidence of building cloud provider integrations specifically using Go."
+    },
+    {
+      "criterion_text": "Ability to build internal tooling in Go",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with internal refactors and code quality at Octadesk, but the language used for these specific internal tools is not explicitly stated as Go."
+    },
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with Kubernetes on GCP, but lacks evidence of Terraform experience or multi-cloud (AWS, Azure) experience."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence provided regarding multi-cloud rack deployment or management in customer accounts."
+    },
+    {
+      "criterion_text": "Ability to deliver features for developers to improve CLI usage",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No mention of CLI development experience."
+    },
+    {
+      "criterion_text": "Ability to enhance CI/CD workflows",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly mentions managing CI/CD pipelines in their experience at Octadesk."
+    },
+    {
+      "criterion_text": "Ability to enable marketplace and cloud provider integrations",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of marketplace or cloud provider integration development."
+    },
+    {
+      "criterion_text": "Ability to create better observability and logging experiences",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate contributed to observability using APM tools and mentions experience with Grafana and Kibana."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate has experience with monitoring and scalability, but lacks evidence of implementing failover strategies or rollback capabilities."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate mentions contributing to code quality and internal refactors, implying code review practices, but mentorship is not explicitly mentioned."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists Golang as a primary skill and used it for building production backend systems at Octadesk."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Candidate has experience managing deployments via Kubernetes but lacks evidence of deeper cluster design or service mesh experience."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume contains no mention of Terraform or other IaC tools."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Candidate has documented hands-on experience with GCP."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No relevant evidence in the resume."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Explicitly mentions GitLab CI/CD in technical skills and management of pipelines at Octadesk."
+    },
+    {
+      "criterion_text": "Familiarity with developer tooling",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate mentions experience with SonarQube and APM tools."
+    },
+    {
+      "criterion_text": "Exposure to marketplace or cloud provider integrations",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence provided."
+    },
+    {
+      "criterion_text": "Excellent communication skills",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume lists language skills but provides no evidence or description of professional communication, soft skills, or cross-team collaboration effectiveness beyond standard job duties."
+    },
+    {
+      "criterion_text": "Ability to work cross functionally",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Mentions 'agile collaboration' in the professional summary, which suggests cross-functional work, but lacks specific examples."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence provided."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of multi-cloud or hybrid-cloud deployment."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate has experience with microservices and event-driven systems which relate to system design, but no explicit mention of multi-region or high availability design."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Candidate mentions experience with distributed systems like RabbitMQ and Kafka."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Candidate explicitly lists Grafana and Kibana (part of the ELK stack) in their technical skills."
+    }
+  ],
+  "computed_score": {
+    "points": 79.0,
+    "max": 164,
+    "percentage": 48.2
+  }
+}

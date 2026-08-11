@@ -1,0 +1,65 @@
+{
+  "agent": "agent-1",
+  "round": 3,
+  "layer": "layer-2-code-correctness",
+  "assigned_files": [
+    "app/javascript/ats/src/components/shared/PlatoMark.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationSidebar.tsx",
+    "app/javascript/shared/types/aiJobApplicationSummary.ts",
+    "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts"
+  ],
+  "spec_sections_reviewed": [1, 4, 5, 7],
+  "high_findings": [],
+  "notes": [
+    {
+      "id": "N1",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+      "concern": "possiblePaths includes 'ai' unconditionally and Route is unconditional — confirmed user-directed override. No infinite redirect risk because the Route is not wrapped in FeatureFlipper. Navigating to /ai when flag is off will render PlatoTab. User explicitly accepted this tradeoff.",
+      "disposition": "override — do not flag"
+    },
+    {
+      "id": "N2",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+      "concern": "FeatureFlipper, useFeatureFlipper, Features not imported — consistent with the override. The conditional possiblePaths and FeatureFlipper route wrapping are both absent, so these imports are not needed. No dead imports.",
+      "disposition": "not a defect"
+    },
+    {
+      "id": "N3",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationSidebar.tsx",
+      "concern": "PlatoNavItem uses shouldForwardProp: isPropValid and isPropValid('chevron') returns false. This correctly prevents 'chevron' from reaching the DOM <a> element. The Emotion style function platoNavLinkStyles still receives props.chevron for padding-right calculation. This matches the identical pattern in NavItem.tsx StyledNavLinkComponent. No DOM warning, correct behavior.",
+      "disposition": "not a defect"
+    },
+    {
+      "id": "N4",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationSidebar.tsx",
+      "concern": "PlatoNavLabel uses '> span:first-of-type' to apply margin-right: 8px to PlatoChip's outer Styled.Chip span. PlatoChip renders Styled.Chip which is styled.span — the first span child of the PlatoNavLabel div. This is the correct adaptation of NavItem.tsx StyledLabel's 'svg { margin-right: 8px }' for a span element instead of SVG.",
+      "disposition": "not a defect"
+    },
+    {
+      "id": "N5",
+      "file": "app/javascript/ats/src/components/shared/PlatoMark.tsx",
+      "concern": "PlatoMark interface includes a 'color' prop not specified in the spec. The spec says props are variant, size only. The color prop is used by PlatoChip to pass colors.gray[900] for the chip's always-dark glyph requirement. Applied via style={{ color }} on Styled.Wrapper (valid CSS on a span). This is a pragmatic internal implementation — the exported component still defaults to currentColor and the color prop is not part of the documented public API. No runtime error.",
+      "disposition": "not a defect — implementation detail to satisfy PlatoChip's always-dark-glyph requirement"
+    },
+    {
+      "id": "N6",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+      "concern": "history={history} at line 202 passes window.history (browser native) not React Router's history object to JobApplicationSidebar. This is pre-existing code present before any ai-display commits. Not introduced by this feature.",
+      "disposition": "pre-existing — out of scope"
+    },
+    {
+      "id": "N7",
+      "file": "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts",
+      "concern": "useGenerateAiSummary onSuccess invalidates ['jobApplication', id] and ['organizationAiCreditBalance'] but not ['aiJobApplicationSummary']. This is correct: the mutation fires immediately on 202 Accepted (generation queued). The ['aiJobApplicationSummary'] invalidation is handled by WebsocketGlobalChannelHandler when AI_SUMMARY_COMPLETE arrives (line 226 uses prefix invalidation which matches the ['aiJobApplicationSummary', id] query key).",
+      "disposition": "not a defect"
+    },
+    {
+      "id": "N8",
+      "file": "app/javascript/shared/types/aiJobApplicationSummary.ts",
+      "concern": "AiAssessment interface matches spec exactly. AiResumeStructuredData.assessment changed from 'any' to 'AiAssessment'. AiAssessment is exported. All spec requirements for section 7 are met.",
+      "disposition": "correct"
+    }
+  ],
+  "summary": "No HIGH findings. All five assigned files are correct for the spec sections under review (1, 4, 5, 7). The user-directed overrides (unconditional possiblePaths, unconditional Route) are confirmed implemented. The PlatoNavItem chevron prop handling via shouldForwardProp is correct and matches the NavItem.tsx analog. The AiAssessment type expansion is spec-compliant. The useAiJobApplicationSummary enabled guard is sound. The only undocumented addition is PlatoMark's 'color' prop, which is a harmless internal implementation detail required to achieve the always-dark glyph inside PlatoChip."
+}

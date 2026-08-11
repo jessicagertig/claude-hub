@@ -1,0 +1,19 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 2,
+  "focus_area": "Backend model changes — Job gating (SPEC §4.1), AiJobCriteria zero-criteria constants (§4.2), Job#zero_criteria_extraction_failure? (§4.3), and the three constant substitutions in extract_criteria.rb / score_job_application.rb",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §4.1 — Job#extract_job_criteria_immediately gating change + requesting_organization_user_id kwarg",
+      "SPEC §4.1 — Job#extract_job_criteria_if_needed keeps only the succeeded guard",
+      "SPEC §4.2 — AiJobCriteria ZERO_CRITERIA_* constants + ZERO_CRITERIA_ERROR_MESSAGES frozen array + zero_criteria_failure?",
+      "SPEC §4.2 — one-line constant substitutions in extract_criteria.rb:62/:122 and score_job_application.rb:43",
+      "SPEC §4.3 — Job#zero_criteria_extraction_failure?"
+    ],
+    "implemented": 5,
+    "missing": 0,
+    "notes": "All assigned backend model requirements match the spec exactly; no scope creep in the four assigned files. Detail: (1) §4.1 gating — job.rb:730-747: extract_job_criteria_immediately now takes `requesting_organization_user_id: nil`; the in_progress and retrying guards were moved INTO _immediately (after `return unless description.present?`), NO pending guard is present (matches the documented deliberate omission), and the enqueue is `ExtractJobCriteriaJob.perform_later(new_ai_job_criteria.id, requesting_organization_user_id)` as an optional POSITIONAL second arg (adjudicated flag 4). extract_job_criteria_if_needed (job.rb:743-747) now keeps ONLY `return if latest_ai_job_criteria&.status_succeeded?`; the duplicate in_progress/retrying guards were removed. auto_extract_job_criteria (700-715) and extract_job_criteria (717-728) are untouched, matching the §4.1 note that this change does not touch them. (2) §4.2 constants — ai_job_criteria.rb:7-19 defines the three messages ('No criteria sections found in job description', 'No criteria extracted from job description', 'Criteria array is empty'), the frozen ZERO_CRITERIA_ERROR_MESSAGES array of exactly those three, and `zero_criteria_failure?` = `status_failed? && ZERO_CRITERIA_ERROR_MESSAGES.include?(error_message)` — verbatim to spec. The constants/method are placed above the `enum status:` declaration; this is load-safe because `status_failed?` and the constant are resolved at call time, not at method-definition time — no behavior impact, not a finding. (3) Constant substitutions — extract_criteria.rb:62 uses AiJobCriteria::ZERO_CRITERIA_NO_SECTIONS_ERROR_MESSAGE, :122 uses ...NONE_EXTRACTED..., score_job_application.rb:43 uses ...EMPTY_ARRAY...; each is a single-line swap that preserves the exact original string and leaves all surrounding lines (status: :failed, return, the awaiting_job_criteria update, @job.extract_job_criteria) unchanged. (4) §4.3 — job.rb:696-698 defines `zero_criteria_extraction_failure?` as `latest_ai_job_criteria&.zero_criteria_failure?`. latest_ai_job_criteria (job.rb:688-690) is `ai_job_criteria.order(created_at: :desc).first` = the latest row of ANY status (not latest-terminal, not latest-succeeded), exactly the §4.3 semantics. Placed at 696, immediately below latest_ai_job_criteria/latest_succeeded_ai_job_criteria — 'next to latest_ai_job_criteria' per spec."
+  }
+}

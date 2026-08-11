@@ -1,0 +1,37 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 12,
+  "focus_area": "QueueBulkAiSummaryJobs zero-criteria guard + optional `job` context input (SPEC §6.2.3)",
+  "files_reviewed": [
+    "app/interactors/queue_bulk_ai_summary_jobs.rb",
+    "app/controllers/api/v1/bulk_ai_job_application_summaries_controller.rb",
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb"
+  ],
+  "signature_confirmed": "QueueBulkAiSummaryJobs.call(organization:, user:, job_application_ids:, job:, params:, kind:) — both controller actions pass job: @job; guard at line 19 is `context.fail!(...) if context.job&.zero_criteria_extraction_failure?`, placed after the credits fail (line 18).",
+  "method": "RAILS_ENV=test rails runner with ActiveJob::Base.queue_adapter=:test (no inline execution, no OpenAI). Seeded ai-org-with-candidates.json (org 'Acme Inc.', admin 'Rezu May', job 'Senior Engineer', 3 job_applications). Built AiJobCriteria states directly; attached a resume + created a textract_result (no textract_job_result_text -> queue_ai_summary_job early-returns, no side effects) on each JA so the working set is non-empty. Neutralized one unrelated precondition: the paid-subscription seed grants 0 AI credits (org.ai_credits_available? == false, total_ai_credits_remaining == 0), which would trip the credits guard (line 18) before the zero-criteria guard (line 19); stubbed ai_credits_available? => true on the in-memory org for scenarios 1-3, kept false for scenario 4. All AiJobCriteria, BulkAiSummaryJobApplication claim rows, textract rows, and resume attachments created were cleaned up (verified remaining counts = 0).",
+  "results": {
+    "scenario_1_job_passed_zero_criteria": {
+      "expected": "context.failure? true; error == zero-criteria message; NO BulkGenerateAiSummariesJob enqueued; NO claim rows",
+      "observed": "zero_criteria_predicate=true; failure=true; error=='No scoring criteria were found in the job description. Regenerate job criteria in Plato AI settings before running reviews.'; bulk_enqueued=0; claim_rows_created=0",
+      "verdict": "PASS"
+    },
+    "scenario_2_no_job_input_guard_skipped": {
+      "expected": "guard skipped via safe-nav; does NOT fail with the zero-criteria message; existing caller proceeds normally",
+      "observed": "zero-criteria row still present on job; job: omitted; success=true; error=nil; fired_zero_criteria_guard=false; BulkGenerateAiSummariesJob enqueued (1) for ja_ids [20281,20282,20283]; 3 claim rows created",
+      "verdict": "PASS"
+    },
+    "scenario_3_clean_job_normal_path": {
+      "expected": "context.success?; BulkGenerateAiSummariesJob enqueued; claim rows created",
+      "observed": "zero_criteria_predicate=nil (no criteria rows); success=true; queued_count=3; skipped_count=0; bulk_enqueued=1 for ja_ids [20281,20282,20283]; 3 claim rows created",
+      "verdict": "PASS"
+    },
+    "scenario_4_guard_ordering_credits_win": {
+      "expected": "with unavailable credits AND a zero-criteria job, the credits error wins (guard is after the credits check)",
+      "observed": "credits_available=false; zero_criteria_predicate=true; failure=true; error=='Your organization is out of AI credits. Purchase more credits to continue generating summaries.' (NOT the zero-criteria message); bulk_enqueued=0; claim_rows_created=0",
+      "verdict": "PASS"
+    }
+  },
+  "findings": []
+}

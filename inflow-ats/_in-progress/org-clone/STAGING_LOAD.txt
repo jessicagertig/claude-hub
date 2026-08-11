@@ -1,0 +1,48 @@
+============================================================================
+STAGING LOAD — org 8488 (Curious), jobs 37555 (SDR) + 33682 (Future Portfolio CEO)
+Run on the STAGING Heroku rails console.
+============================================================================
+
+PRE-STEPS (do these first, on staging):
+
+1. Disable Textract env-wide so app creation doesn't re-submit resumes to AWS:
+
+   Flipper.disable(:TEXTRACT_RESUME_PROCESSING)
+
+2. Confirm the owner exists on staging (raises if missing):
+
+   User.find_by!(email: 'jessica@polymer.co')
+
+3. Make sure Sidekiq workers are running (OrgSetupJob creates the Stripe customer).
+
+----------------------------------------------------------------------------
+STEP A: paste the ENTIRE file 3_load_LOCAL.rb into the console
+        (it defines clone_load_org_from_urls + helpers):
+        /Users/jessica/claude-hub/inflow-ats/_in-progress/org-clone/3_load_LOCAL.rb
+----------------------------------------------------------------------------
+
+STEP B: run this single call (URLs valid 7 days from 2026-06-17):
+
+clone_load_org_from_urls(
+  json_urls: [
+    "https://inflow-production.s3.amazonaws.com/exports/fb7bc1e3-ac90-4ef2-a3b2-48939d1fa026/clone_org_8488.json?response-content-disposition=attachment%3B%20filename%3D%22clone_org_8488.json%22%3B%20filename%2A%3DUTF-8%27%27clone_org_8488.json&response-content-type=application%2Fjson&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJHVSUE4JSPSCLQ2Q%2F20260617%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260617T230320Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=250d7ca4709c88fe64da9e68d89452653a5ce5ecb57585ae2ebcaba0b0553252",
+    "https://inflow-production.s3.amazonaws.com/exports/3aeb6d8b-0368-4118-bd37-0b324d84d33f/clone_org_8488.json?response-content-disposition=attachment%3B%20filename%3D%22clone_org_8488.json%22%3B%20filename%2A%3DUTF-8%27%27clone_org_8488.json&response-content-type=application%2Fjson&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJHVSUE4JSPSCLQ2Q%2F20260617%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260617T231337Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=7cefbd81d29d4508943f38ba5ccb8ea181848571717d6c682039f298335ba0eb"
+  ],
+  resume_zip_urls: [
+    "https://inflow-production.s3.amazonaws.com/exports/6ded58bd-2b29-49b7-85c6-5d7102901506/Sales-Development-Representative-resumes-20260617-222226.zip?response-content-disposition=attachment%3B%20filename%3D%22Sales-Development-Representative-resumes-20260617-222226.zip%22%3B%20filename%2A%3DUTF-8%27%27Sales-Development-Representative-resumes-20260617-222226.zip&response-content-type=application%2Fzip&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJHVSUE4JSPSCLQ2Q%2F20260617%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260617T222309Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=3b783cce875b2cfe99c6c2113ff48ed9692b6b662e47422b87d90d26e0d92f27",
+    "https://inflow-production.s3.amazonaws.com/exports/41390d92-cef8-43d3-a27f-bc4fa1f83400/Future-Portfolio-CEO-resumes-20260617-221956.zip?response-content-disposition=attachment%3B%20filename%3D%22Future-Portfolio-CEO-resumes-20260617-221956.zip%22%3B%20filename%2A%3DUTF-8%27%27Future-Portfolio-CEO-resumes-20260617-221956.zip&response-content-type=application%2Fzip&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJHVSUE4JSPSCLQ2Q%2F20260617%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260617T222226Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=206b6776e7ecc3314c890383319a604c1e5af705f09d03f9afeef41a66a27527"
+  ],
+  docx_url: "https://inflow-production.s3.amazonaws.com/exports/0d1f340b-5492-4a3d-9bc1-826d46b3e400/clone_org_8488_docx_pdfs.json?response-content-disposition=attachment%3B%20filename%3D%22clone_org_8488_docx_pdfs.json%22%3B%20filename%2A%3DUTF-8%27%27clone_org_8488_docx_pdfs.json&response-content-type=application%2Fjson&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJHVSUE4JSPSCLQ2Q%2F20260617%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260617T230419Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5d7b6fe3503f170948223b1bed84553abc2761b389d3fa1a0158bde55a6830a2",
+  textract_url: "https://inflow-production.s3.amazonaws.com/exports/2940b781-f932-4ab5-a3b7-7ea3051b905c/clone_org_8488_textract.json?response-content-disposition=attachment%3B%20filename%3D%22clone_org_8488_textract.json%22%3B%20filename%2A%3DUTF-8%27%27clone_org_8488_textract.json&response-content-type=application%2Fjson&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJHVSUE4JSPSCLQ2Q%2F20260617%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260617T231706Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=3bfc6a66f551c5deacede4d08b888d73980f11a2973d21b0065227589d7ebaa7",
+  owner_email: "jessica@polymer.co"
+)
+
+============================================================================
+Notes:
+- 37555 JSON has Textract inline (older dump); 33682 JSON is lean and gets its
+  Textract from textract_url. The loader uses inline when present, else the file.
+- Expected result: org "Curious", 2 jobs, ~955 candidates / apps, resumes +
+  docx attached, Textract rows copied (no AWS re-run).
+- If the staging dyno OOMs on the docx (24MB) or load, relaunch the console with
+  --size=performance-l.
+============================================================================

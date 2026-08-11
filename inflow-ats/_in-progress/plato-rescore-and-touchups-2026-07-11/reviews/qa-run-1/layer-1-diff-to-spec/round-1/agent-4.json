@@ -1,0 +1,32 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 4,
+  "focus": "SPEC 1.6 — BulkAllStagesAiSummaryResultMailer hiring-team recipients + greeting removal, plus polymer-mail .mjml greeting deletions",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "1.6a: complete — single-user `to:` replaced with `@job.organization_users.actives.includes(:user)` mapped to {name,email} entries in ONE email's `to:` array (analog-resolved, preference scope omitted per owner ruling)",
+      "1.6b: failed — same recipient replacement",
+      "1.6c: `return unless recipients.any?` bare return present in both complete and failed (core rule 8)",
+      "1.6d: greeting removed — `user_first_name` dropped from variables hash in both methods",
+      "1.6e: `@user = User.find(user_id)` load removed in both methods",
+      "1.6f: `user_id` argument retained in both method signatures (callers unchanged)",
+      "1.6g: BulkJobApplicationAiSummaryResultMailer (per-stage) NOT touched — absent from diff",
+      "1.6h: polymer-mail — `<p>Hi {{user_first_name}},</p>` deleted from user-bulk-all-stages-ai-summary-complete.mjml with no replacement greeting",
+      "1.6i: polymer-mail — same line deleted from user-bulk-all-stages-ai-summary-failed.mjml with no replacement greeting; nothing else changed in either template"
+    ],
+    "implemented": [
+      "1.6a: complete uses `recipients = @job.organization_users.actives.includes(:user)`; `to_recipients = recipients.map { |organization_user| { name: \"#{organization_user.user.first_name} #{organization_user.user.last_name}\".strip, email: organization_user.user.email } }`; `to: to_recipients`. Matches analog job_application_mailer.rb:28-32 structure (first+last .strip, email) minus the `.receives_new_job_application_emails` preference scope (owner-ruled omission — not flagged). Single SendTemplateEmail call with one `to:` array, not a per-recipient loop. Variable named `organization_user` per naming convention.",
+      "1.6b: failed uses the identical recipient resolution and single-array `to:`.",
+      "1.6c: `return unless recipients.any?` present as a bare return in both complete and failed.",
+      "1.6d: `user_first_name: @user.first_name` removed from the variables hash in both methods (diff shows the deletions).",
+      "1.6e: `@user = User.find(user_id)` removed from both methods (diff shows the deletions).",
+      "1.6f: signatures remain `complete(user_id, job_id, succeeded_count, failed_count, skipped_count, total)` and `failed(user_id, job_id, total_queued_count)` — `user_id` still present, simply no longer read.",
+      "1.6g: `BulkJobApplicationAiSummaryResultMailer` does not appear anywhere in feature-diff.patch.",
+      "1.6h: polymer-mail-diff.patch removes the `<p>Hi {{user_first_name}},</p>` line from user-bulk-all-stages-ai-summary-complete.mjml; no line added.",
+      "1.6i: polymer-mail-diff.patch removes the same line from user-bulk-all-stages-ai-summary-failed.mjml; total across both files is 2 deletions / 0 additions, and the per-stage templates (user-bulk-ai-summary-*.mjml) are untouched."
+    ],
+    "missing": []
+  }
+}

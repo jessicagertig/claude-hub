@@ -1,0 +1,39 @@
+{
+  "layer": "diff-to-spec",
+  "round": 3,
+  "agent_index": 5,
+  "focus_area": "Adversarial whole-diff sweep — trace EVERY hunk in all 33 files to SPEC/DECISIONS/adjudicated ruling; verify file inventory vs SPEC §13, auth commit 2-file scope, analog absence, no unlisted file modified.",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §13 file inventory (33 files: 10 new incl. conditional JobCriteriaSection.tsx + adjudicated jobCriteriaTiers.ts; 23 modified — all present, none extra)",
+      "SPEC §5.1 route (nested singleton resource :ai_job_criteria)",
+      "SPEC §5.2 controller (exists/authorize/flipper/blank-desc/extract_immediately/render_one)",
+      "SPEC §5.3 serializer (criteria/extracted_at/status/zero_criteria_failure)",
+      "SPEC §9 + DECISIONS auth (create → authorize job, :update?; show → authorize job, :show?)",
+      "SPEC §4.1 Job gating change + requesting_organization_user_id: kwarg",
+      "SPEC §4.2 AiJobCriteria constants + zero_criteria_failure? + 3 writer substitutions",
+      "SPEC §4.3 Job#zero_criteria_extraction_failure?",
+      "SPEC §6.2.1 ValidateAiSummaryGeneration guard",
+      "SPEC §6.2.2 ValidateAutoAiSummaryGeneration guard",
+      "SPEC §6.2.3 QueueBulkAiSummaryJobs job input + guard; bulk controller passes job: @job",
+      "SPEC §6.2.4 TextractResult funnel guard placement/order",
+      "SPEC §6.3 BulkGenerateAiSummariesJob claim-row :failed fix (+ conventions Rails.logger.error)",
+      "SPEC §7 ExtractJobCriteriaJob signature + broadcast_completion at 3 sites (+ qa-run-1 exhaustion-block send fix)",
+      "SPEC §8.1 useAiJobCriteria hook",
+      "SPEC §8.2/§8.3 JobCriteriaSection display states (+ conventions error state, qa-run-1 Link intro, adjudicated history prop)",
+      "SPEC §8.3 JobSetupAiSettings sidebar glossary + section extraction",
+      "SPEC §8.4 JobCriteriaViewModal",
+      "SPEC §8.5 RegenerateJobCriteriaConfirmModal (owns mutation, loading/disabled)",
+      "SPEC §8.6 WebsocketGlobalChannelHandler JOB_CRITERIA_EXTRACTION_COMPLETE case",
+      "SPEC §8.7 JobCriteriaExtractionCompletePayload type + header comment",
+      "SPEC §12 test plan (all 3 new specs + 8 modified specs)",
+      "Auth commit 859c85ead scope (exactly 2 files: controller + controller_spec, +21/-2)",
+      "Analog generate_ai_job_application_summary_job.rb absent from diff",
+      "jobCriteriaTiers.ts = adjudicated conventions-fix batch item 3 (shared tier constant)"
+    ],
+    "implemented": 25,
+    "missing": 0,
+    "notes": "ZERO findings. Read all 33 files of git diff develop...HEAD in full (backend, config, frontend, and every spec file). Every hunk traces to SPEC/DECISIONS/an adjudicated ruling. (a) File inventory matches SPEC §13 exactly: 10 new files (8 unconditional + conditional JobCriteriaSection.tsx + the one EXTRA jobCriteriaTiers.ts, which is the adjudicated conventions-pass fix batch item 3, a shared tier-metadata constant) + 23 modified files (15 app/config + 8 spec) — no unlisted file modified. Note: jobCriteriaTiers.ts is consumed by three files (JobSetupAiSettings, JobCriteriaSection, JobCriteriaViewModal); the adjudication text named two, but a third consumer of the same shared constant is the constant's intended purpose, not scope creep. (b) Auth commit 859c85ead touched EXACTLY 2 files (app/controllers/api/v1/ai_job_criteria_controller.rb and its spec), +21/-2, confirmed via git show --stat and --name-only. (c) The NOT-touched analog generate_ai_job_application_summary_job.rb is absent from the diff (grep confirmed). (d) Controller create calls authorize job, :update? (line 13) and show calls authorize job, :show? (line 6) — matches amended §9/DECISIONS. The auth spec genuinely exercises update? semantics: the hiring-team-member context sets hiring_team_ai_credits_control_enabled=false + a HiringTeamMembership and asserts create returns 200 (this discriminates update? from the old update_ai_settings? gate — under update_ai_settings? this member would be rejected), and the outsider context (org_user, no membership, no admin) asserts create returns 403 — not a ghost test. All adjudicated items (flags 1-7, conventions batch, qa-run-1 batch, develop-merge rescore_requested repair, vestigial history prop, textract_result_ai_trigger_spec before-block reload test-fixup which is test-only in an authorized file with an explanatory comment) are correctly excluded as non-findings. Whole diff traces to authority."
+  }
+}

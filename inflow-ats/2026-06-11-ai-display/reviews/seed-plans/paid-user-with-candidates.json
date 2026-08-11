@@ -1,0 +1,9 @@
+[
+  {"method": "POST", "path": "/cypress/users", "body": {"setActivePaidSubscription": true}},
+  {"method": "POST", "path": "/cypress/jobs", "body": {"published": true, "title": "Software Engineer"}},
+  {"method": "POST", "path": "/cypress/candidates", "body": {"amount": 3}},
+  {"method": "POST", "path": "/api/v1/flipper/features", "body": {"name": "AI_APPLICANT_SUMMARY"}},
+  {"method": "POST", "path": "/api/v1/flipper/features/AI_APPLICANT_SUMMARY/boolean"},
+  {"method": "POST", "path": "/api/v1/flipper/features", "body": {"name": "HIRING_STAGE_AUTOMATIONS"}},
+  {"method": "POST", "path": "/api/v1/flipper/features/HIRING_STAGE_AUTOMATIONS/boolean"}
+]

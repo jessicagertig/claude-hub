@@ -1,0 +1,139 @@
+<h2>Combined Page: Subscribed vs Not Subscribed</h2>
+<p class="subtitle">How does the billing section change based on subscription state?</p>
+
+<div class="split" style="gap: 24px; align-items: flex-start;">
+
+  <!-- Subscribed State -->
+  <div style="flex: 1;">
+    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.4; margin-bottom: 12px; text-align: center;">Has subscription</div>
+    <div class="mockup">
+      <div class="mockup-header">Subscribed state</div>
+      <div class="mockup-body" style="padding: 0;">
+
+        <!-- Credit Balance -->
+        <div style="padding: 20px 24px 16px;">
+          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.4; font-weight: 600; margin-bottom: 10px;">Credit Balance</div>
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <div style="flex: 1; background: rgba(128,128,128,0.05); border: 1px solid rgba(128,128,128,0.12); border-radius: 5px; padding: 10px; text-align: center;">
+              <div style="font-size: 9px; text-transform: uppercase; opacity: 0.45;">Monthly</div>
+              <div style="font-size: 20px; font-weight: 700;">42</div>
+              <div style="font-size: 9px; opacity: 0.35;">resets Jul 1</div>
+            </div>
+            <div style="flex: 1; background: rgba(128,128,128,0.05); border: 1px solid rgba(128,128,128,0.12); border-radius: 5px; padding: 10px; text-align: center;">
+              <div style="font-size: 9px; text-transform: uppercase; opacity: 0.45;">Purchased</div>
+              <div style="font-size: 20px; font-weight: 700;">10</div>
+              <div style="font-size: 9px; opacity: 0.35;">never expires</div>
+            </div>
+            <div style="flex: 1; background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.2); border-radius: 5px; padding: 10px; text-align: center;">
+              <div style="font-size: 9px; text-transform: uppercase; opacity: 0.45;">Total</div>
+              <div style="font-size: 20px; font-weight: 700; color: rgb(99,102,241);">52</div>
+            </div>
+          </div>
+          <!-- Usage bar -->
+          <div style="display: flex; justify-content: space-between; font-size: 10px; opacity: 0.4; margin-bottom: 3px;">
+            <span>Used this period</span><span>8 of 50</span>
+          </div>
+          <div style="height: 6px; background: rgba(128,128,128,0.1); border-radius: 3px; overflow: hidden;">
+            <div style="height: 100%; width: 16%; background: rgb(99,102,241); border-radius: 3px;"></div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(128,128,128,0.1);"></div>
+
+        <!-- Subscription info -->
+        <div style="padding: 16px 24px;">
+          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.4; font-weight: 600; margin-bottom: 10px;">Subscription</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.15); border-radius: 5px; margin-bottom: 10px;">
+            <div>
+              <div style="font-size: 12px; font-weight: 600;">Pro — 50 credits/mo</div>
+              <div style="font-size: 10px; opacity: 0.4;">Renews Jul 1</div>
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <button class="mock-button" style="font-size: 10px; padding: 3px 8px; opacity: 0.5;">Change</button>
+              <button class="mock-button" style="font-size: 10px; padding: 3px 8px; opacity: 0.3; color: rgb(239,68,68); border-color: rgba(239,68,68,0.3);">Cancel</button>
+            </div>
+          </div>
+
+          <!-- Top-up -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border: 1px solid rgba(128,128,128,0.1); border-radius: 5px;">
+            <div>
+              <div style="font-size: 12px; font-weight: 500;">Buy extra credits</div>
+              <div style="font-size: 10px; opacity: 0.4;">One-time, never expire</div>
+            </div>
+            <button class="mock-button" style="font-size: 10px; padding: 3px 8px;">Buy</button>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(128,128,128,0.1);"></div>
+
+        <div style="padding: 12px 24px; font-size: 10px; opacity: 0.3; text-align: center;">
+          Settings & permissions sections below ↓
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- NOT Subscribed State -->
+  <div style="flex: 1;">
+    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.4; margin-bottom: 12px; text-align: center;">No subscription</div>
+    <div class="mockup">
+      <div class="mockup-header">Unsubscribed state</div>
+      <div class="mockup-body" style="padding: 0;">
+
+        <!-- Credit Balance — empty/minimal -->
+        <div style="padding: 20px 24px 16px;">
+          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.4; font-weight: 600; margin-bottom: 10px;">Credit Balance</div>
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <div style="flex: 1; background: rgba(128,128,128,0.05); border: 1px solid rgba(128,128,128,0.12); border-radius: 5px; padding: 10px; text-align: center;">
+              <div style="font-size: 9px; text-transform: uppercase; opacity: 0.45;">Monthly</div>
+              <div style="font-size: 20px; font-weight: 700; opacity: 0.25;">—</div>
+              <div style="font-size: 9px; opacity: 0.35;">no plan</div>
+            </div>
+            <div style="flex: 1; background: rgba(128,128,128,0.05); border: 1px solid rgba(128,128,128,0.12); border-radius: 5px; padding: 10px; text-align: center;">
+              <div style="font-size: 9px; text-transform: uppercase; opacity: 0.45;">Purchased</div>
+              <div style="font-size: 20px; font-weight: 700;">0</div>
+              <div style="font-size: 9px; opacity: 0.35;">never expires</div>
+            </div>
+            <div style="flex: 1; background: rgba(128,128,128,0.05); border: 1px solid rgba(128,128,128,0.12); border-radius: 5px; padding: 10px; text-align: center;">
+              <div style="font-size: 9px; text-transform: uppercase; opacity: 0.45;">Total</div>
+              <div style="font-size: 20px; font-weight: 700; opacity: 0.3;">0</div>
+            </div>
+          </div>
+          <!-- No usage bar when nothing to show -->
+        </div>
+
+        <div style="border-top: 1px solid rgba(128,128,128,0.1);"></div>
+
+        <!-- Subscribe CTA — prominent -->
+        <div style="padding: 20px 24px;">
+          <div style="padding: 20px; background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.06)); border: 1px solid rgba(99,102,241,0.15); border-radius: 8px; text-align: center;">
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">Get AI-powered candidate summaries</div>
+            <div style="font-size: 12px; opacity: 0.5; margin-bottom: 16px;">Instantly analyze resumes with structured insights — skills, experience, gaps, and fit</div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+              <button class="mock-button" style="background: rgb(99,102,241); color: white; border: none; padding: 8px 20px; font-size: 12px; font-weight: 500;">Subscribe to a plan</button>
+              <button class="mock-button" style="font-size: 12px; padding: 8px 16px; opacity: 0.6;">Buy credits one-time</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(128,128,128,0.1);"></div>
+
+        <div style="padding: 12px 24px; font-size: 10px; opacity: 0.3; text-align: center;">
+          Settings & permissions sections below ↓
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top: 24px; padding: 16px; background: rgba(128,128,128,0.05); border-radius: 8px; font-size: 13px;">
+  <strong>Open questions:</strong>
+  <ul style="margin: 8px 0 0; padding-left: 20px;">
+    <li>Can you buy one-time credits without a subscription? (If yes, both buttons make sense in the unsubscribed state)</li>
+    <li>Does the credit balance section even show when there's nothing? Or does the CTA replace it entirely?</li>
+    <li>How prominent should the top-up option be for subscribed users?</li>
+  </ul>
+</div>

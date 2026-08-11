@@ -1,0 +1,116 @@
+{
+  "agent": "script-runner-2",
+  "layer": 3,
+  "round": 1,
+  "scenario": "broadcast_status_change callback behavior",
+  "timestamp": "2026-06-16T06:12:00Z",
+  "overall_result": "PASS",
+  "tests": [
+    {
+      "id": "test-1",
+      "name": "BROADCAST_STATUSES constant",
+      "description": "Verify the constant exists, contains exactly the expected 7 statuses, and is frozen",
+      "result": "PASS",
+      "details": {
+        "expected": ["textract_processing", "extracting", "summarizing", "scoring", "integrating", "succeeded", "failed"],
+        "actual": ["textract_processing", "extracting", "summarizing", "scoring", "integrating", "succeeded", "failed"],
+        "frozen": true
+      }
+    },
+    {
+      "id": "test-2",
+      "name": "Callback fires for broadcast statuses",
+      "description": "Create an AiJobApplicationSummary, update status to each broadcast status, verify callback runs (ap output printed) and update succeeds",
+      "result": "PASS",
+      "details": {
+        "statuses_tested": ["textract_processing", "extracting", "summarizing", "scoring", "integrating", "succeeded", "failed"],
+        "all_updates_succeeded": true,
+        "ap_output_observed": true,
+        "note": "Each transition from pending -> broadcast_status triggered the ap log lines confirming broadcast_status_change ran"
+      }
+    },
+    {
+      "id": "test-3",
+      "name": "Callback guard skips non-broadcast statuses",
+      "description": "Update to awaiting_job_criteria and retrying — these should NOT trigger the broadcast",
+      "result": "PASS",
+      "details": {
+        "statuses_tested": ["awaiting_job_criteria", "retrying"],
+        "all_updates_succeeded": true,
+        "no_ap_output_for_these": true,
+        "note": "No broadcast_status_change ap output for these statuses, confirming the guard clause returned early"
+      }
+    },
+    {
+      "id": "test-4",
+      "name": "Service files use update (not update_columns)",
+      "description": "Verify orchestrate.rb, score_job_application.rb, and integrate_analysis.rb use .update() not .update_columns()",
+      "result": "PASS",
+      "details": {
+        "orchestrate.rb": {
+          "has_update_columns": false,
+          "has_update": true,
+          "result": "PASS"
+        },
+        "score_job_application.rb": {
+          "has_update_columns": false,
+          "has_update": true,
+          "result": "PASS"
+        },
+        "integrate_analysis.rb": {
+          "has_update_columns": false,
+          "has_update": true,
+          "result": "PASS"
+        },
+        "observation": {
+          "generate.rb": {
+            "has_update_columns": true,
+            "locations": [
+              "Line 32: existing_ai_summary.update_columns(status: :extracting) — initial status set, broadcast not needed",
+              "Line 175: update_columns(status: :retrying, ...) — error handler rescue block",
+              "Line 180: update_columns(status: :failed, ...) — JSON parse error rescue block",
+              "Line 184: update_columns(status: :failed, ...) — general error rescue block"
+            ],
+            "note": "generate.rb was NOT one of the three specified files, but it uses update_columns in 4 places. The error-handler update_columns calls for :retrying and :failed bypass the broadcast_status_change callback. This means broadcast will NOT fire when generate.rb transitions to failed/retrying via its rescue blocks. Whether this is intentional (error statuses from generate shouldn't broadcast) or a bug depends on design intent."
+          }
+        }
+      }
+    },
+    {
+      "id": "test-5",
+      "name": "update_summary_status_record sets updated_at",
+      "description": "Transition a summary to succeeded, verify the status record's updated_at is set to approximately now and all denormalized columns are copied",
+      "result": "PASS",
+      "details": {
+        "status_record_updated_at_within_range": true,
+        "status_set_to_current": true,
+        "ai_job_application_summary_id_matches": true,
+        "score_percentage_copied": true,
+        "headline_copied": true,
+        "integrated_role_analysis_copied": true,
+        "note": "update_summary_status_record uses update_columns with explicit updated_at: Time.current, so the timestamp is set correctly despite update_columns normally not touching timestamps"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "severity": "INFO",
+      "description": "generate.rb uses update_columns for error-state transitions (retrying, failed), which bypasses the broadcast_status_change callback. This means the frontend will NOT receive ActionCable broadcasts when generate.rb encounters errors. The three specified service files (orchestrate.rb, score_job_application.rb, integrate_analysis.rb) all use .update(), so their status transitions DO trigger broadcasts."
+    },
+    {
+      "severity": "INFO",
+      "description": "The update_summary_status_record method also uses update_columns (in the model itself, line 68), but explicitly includes updated_at: Time.current. This is correct — update_columns skips callbacks and timestamp auto-updates, but the explicit Time.current value ensures updated_at is set."
+    },
+    {
+      "severity": "INFO",
+      "description": "The broadcast_status_change callback uses a rescue StandardError => e block that logs and swallows errors, preventing ActionCable failures from aborting the status update. This is a safe pattern."
+    }
+  ],
+  "files_examined": [
+    "app/models/ai_job_application_summary.rb",
+    "app/services/ai_job_application_action/orchestrate.rb",
+    "app/services/ai_job_application_action/scoring/score_job_application.rb",
+    "app/services/ai_job_application_action/scoring/integrate_analysis.rb",
+    "app/services/ai_job_application_action/summary/generate.rb"
+  ]
+}

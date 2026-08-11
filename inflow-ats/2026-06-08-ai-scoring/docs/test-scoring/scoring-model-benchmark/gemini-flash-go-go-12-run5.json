@@ -1,0 +1,153 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate has experience with Kubernetes (GKE), Terraform, and cloud environments (AWS, GCP), but there is no specific mention of working closely with an infrastructure team to integrate these tools."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume lacks experience regarding architectural responsibility for multi-cloud customer environments."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate mentions building tools for 'Conversation Designers' at Scotty AI, but no explicit mention of collaboration with dedicated UX or product teams."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Candidate has extensive experience building backend microservices and SDN controllers in Go at Scotty AI and IT - Instituto de Telecomunicações."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Candidate lists Kubernetes and GKE but does not detail experience with cluster design, autoscaling, or specific workload types."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Candidate explicitly lists Terraform as a technical skill."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Candidate lists AWS and GCP as technical skills."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "No evidence of direct experience with PaaS product development or infrastructure abstraction."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Candidate has extensive experience with CI/CD (GitLab, ArgoCD) and cloud provider integrations for text-to-speech services."
+    },
+    {
+      "criterion_text": "Excellent communication skills",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not provide evidence of communication skills beyond technical task descriptions."
+    },
+    {
+      "criterion_text": "Ability to work cross functionally",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Implied by the creation of tools for 'Conversation Designers', but not explicitly detailed as cross-functional work."
+    },
+    {
+      "criterion_text": "Thrive within a fast moving product engineering environment.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Candidate's work at Scotty AI (AI startup environment) demonstrates the ability to operate in fast-moving product settings."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No experience with cloud marketplaces found."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate lists both AWS and GCP, suggesting multi-cloud exposure, but does not explicitly detail a hybrid or customer-facing deployment strategy."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate lists 'System Design' and experience with 'Distributed Systems' and 'scalability', which provides a foundation for high-availability design."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Candidate explicitly lists 'Distributed Systems' as a technical skill and has experience with OpenTelemetry (an open source observability framework)."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Candidate lists Grafana, Prometheus, and OpenTelemetry, and has implemented monitoring/logging stacks."
+    },
+    {
+      "criterion_text": "Ability to design, build, and maintain backend services in Go that power our PaaS",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate has proven ability to design and build Go backend services, though not in the specific context of a PaaS."
+    },
+    {
+      "criterion_text": "Ability to develop APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling as part of backend services",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Candidate has experience with RESTful APIs, cloud integrations, and developing internal automation/orchestration tools using Go."
+    },
+    {
+      "criterion_text": "Ability to participate in code reviews for backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence provided regarding code review participation."
+    },
+    {
+      "criterion_text": "Ability to mentor others in backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence provided regarding mentorship."
+    },
+    {
+      "criterion_text": "Ability to help define best practices for backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate has experience automating and streamlining delivery pipelines (CI/CD) and redesigning observability stacks, which involves setting technical practices."
+    },
+    {
+      "criterion_text": "Ability to ensure high reliability, scalability, and security of the platform",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Candidate redesigned services to handle increased concurrent call volume and improved network latency, demonstrating focus on reliability and scalability."
+    },
+    {
+      "criterion_text": "Ability to implement monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies to support platform reliability, scalability, and security",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate has implemented monitoring, logging, tracing, and CI/CD pipelines (which support rollbacks), but no evidence of multi-cloud failover strategies."
+    }
+  ],
+  "computed_score": {
+    "points": 94.0,
+    "max": 164,
+    "percentage": 57.3
+  }
+}

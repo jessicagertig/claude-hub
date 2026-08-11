@@ -1,0 +1,132 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 5,
+  "agent_index": 9,
+  "assignment": "adversarial sweep + independent spot-check of priors",
+  "findings": [
+    {
+      "id": "A9-M1",
+      "severity": "MED",
+      "title": "ADDENDUM to the adjudicated A7-H1 (same defect, same severity, NOT a re-litigation): the escaping ActiveJob::SerializationError also skips organization_ai_credit_balance&.reset_ai_credits, not just the Discord enqueue",
+      "file": "app/models/organization.rb:1128-1134 (CreateSubscriptionEvent.call sits between Notification::FreeTrialStartedJob.perform_later(id) and organization_ai_credit_balance&.reset_ai_credits)",
+      "evidence": "Live, RAILS_ENV=test, queue_adapter :test, org 37146 owner 41123 balance 17366, script /tmp/qa5_agent9_adversarial_c.rb. CONTROL first: owner.utm_data = {'utm_term'=>'boots'}, balance.last_reset_at forced to 2026-05-27 15:08:39, then Organization.find(id).update!(stripe_subscription_status: 'trialing') -> no raise, enqueues [Notification::FreeTrialStartedJob, PosthogTrackJob, Discord::NotifyFreeTrialStartedJob], last_reset_at moved to 2026-07-27 15:08:39. POISON, identical except utm_data = {'_aj_globalid'=>'x','utm_term'=>'boots'}: update! raised ActiveJob::SerializationError (\"Can't serialize a Hash with reserved key \\\"_aj_globalid\\\"\"), the trial_started row was still written (1 row, sub_a9_c_poison), enqueues were ONLY [Notification::FreeTrialStartedJob], and last_reset_at stayed at 2026-05-27 15:08:39 -- reset_ai_credits never ran. The git diff against the merge-base confirms the new call took the exact line the removed Discord::NotifyFreeTrialStartedJob.perform_later(id) occupied, i.e. ahead of reset_ai_credits, so the feature introduced a raise source in front of a pre-existing effect that previously could not be skipped.",
+      "reachability": "Identical to A7-H1: requires an ActiveJob reserved key (_aj_globalid, _aj_serialized, _aj_symbol_keys, _aj_ruby2_keywords, _aj_hash_with_indifferent_access) inside the utm_data jsonb of the organization owner or the organization. Filed at MED to match the standing adjudication; recorded only because the consequence list Jessica is deciding on named the lost PostHog event and the lost Discord enqueue but not the skipped AI-credit monthly reset.",
+      "action": "None from this agent. Information for the existing A7-H1 decision."
+    },
+    {
+      "id": "A9-L1",
+      "severity": "LOW",
+      "title": "subscription_events.amount is a 4-byte integer; an amount_paid above 2147483647 raises inside the ledger block's own rescue and silently loses the conversion row",
+      "file": "db/schema.rb:1197 (t.integer \"amount\"); app/jobs/stripe_webhook_handler_job.rb ~309-329 (begin/rescue StandardError around the writer)",
+      "evidence": "Live, script /tmp/qa5_agent9_adversarial_a.rb T4 + /tmp/qa5_agent9_adversarial_b.rb R2. invoice.paid, amount_paid 2_147_483_648, subscription sub_a9_t4_overflow: handle_stripe_event returned without raising, ZERO rows written for that subscription id (total ledger delta 0), and every pre-existing effect ran (stripe_current_period_end_at advanced to 1814108652 = the stubbed current_period_end; R2 re-confirmed organization_ai_credit_balance.last_reset_at moved 2026-05-27 -> 2026-07-27 on the same overflow delivery). Boundary control T4b: amount_paid 2_147_483_647 persisted fine (row amount == 2147483647).",
+      "reachability": "NOT reachable in production. Requires a single Stripe invoice above $21,474,836.47 on the main plan. Polymer's largest main-plan invoice is orders of magnitude below this. Recorded because the downstream consequence would compound: with the conversion row lost, SPEC §4's first-cash semantics would classify the org's NEXT paid invoice as its conversion.",
+      "action": "None. Note only."
+    },
+    {
+      "id": "A9-L2",
+      "severity": "LOW",
+      "title": "The partial unique index does not constrain NULL stripe_subscription_id, and conversion_duplicate_exists? returns early on a blank id -- unlimited conversion rows per NULL are possible, but the webhook can never produce one",
+      "file": "db/schema.rb:1199 (idx_subscription_events_conversion_stripe_sub_id, unique, where event_type = ANY (ARRAY[2,8])); app/interactors/create_subscription_event.rb:58 (return unless context.stripe_subscription_id.present?)",
+      "evidence": "Live, script /tmp/qa5_agent9_adversarial_a.rb. T2b: two SubscriptionEvent.create! converted_to_paid rows with stripe_subscription_id nil BOTH persisted (no RecordNotUnique) and each fired its own PosthogTrackJob (2 enqueues) -- Postgres treats NULLs as distinct in a unique index. REACHABILITY PROVEN NEGATIVE for the webhook, live: Stripe::Subscription.retrieve(nil) raises LOCALLY, before any HTTP, with Stripe::InvalidRequestError \"Could not determine which URL to request: Stripe::Subscription instance has invalid ID: nil\" (stripe-9.4.0 api_resource.rb:69-78 resource_url, reached from retrieve -> new -> refresh). Delivering an invoice.paid whose object.subscription is nil WITHOUT stubbing Stripe::Subscription.retrieve: the handler's rescue Stripe::StripeError tier absorbed it, ZERO rows written, zero fan-out, no raise escaped. The main-plan branch (and therefore the writer) is entered only after that retrieve succeeds, so object.subscription is always a real subscription id at the writer.",
+      "reachability": "Not reachable from either sanctioned webhook insertion. Only reachable through the console/backfill row-creation path SPEC §11.3 already accepts. Every script in this round ran with allow_any_instance_of(Stripe::StripeClient).to receive(:execute_request).and_raise(...) as a loud guard; it never fired, so zero real Stripe HTTP was attempted anywhere in the round.",
+      "action": "None. Note only."
+    },
+    {
+      "id": "A9-L3",
+      "severity": "LOW",
+      "title": "conversion_duplicate_exists? queries SubscriptionEvent globally, not scoped to the organization -- a conversion row owned by organization A blocks a conversion row for organization B on the same stripe_subscription_id",
+      "file": "app/interactors/create_subscription_event.rb:60-62",
+      "evidence": "Live with two REAL seeded orgs, script /tmp/qa5_agent9_adversarial_c.rb T7/T7b. Organization A id 37146 (owner 41123), Organization B id 37147 (owner 41124), shared id sub_a9_c_shared. A's converted_to_paid succeeded (row 3438, organization_id 37146, amount 1000); B's identical call for the same subscription id FAILED with 'Conversion SubscriptionEvent already exists for stripe_subscription_id sub_a9_c_shared'; exactly one row exists and it belongs to A; exactly one PosthogTrackJob fired and its distinct_id was 41123 (A's owner), so B got no PostHog event. Reproduced through the REAL invoice.paid webhook for B's customer cus_a9_c_orgb: no second row, no raise, no PostHog -- and B's pre-existing branch behavior still ran (stripe_current_period_end_at written to 2026-08-27 15:08:39).",
+      "reachability": "Not reachable as a defect. Stripe subscription ids are globally unique within a Stripe account, so one subscription maps to one customer and Organization.find_by(stripe_customer_id:) resolves to one organization. When it does happen, the outcome (exactly one conversion row per subscription) is precisely SPEC §3's binding invariant, which the spec itself documents as 'strictly tighter than D7's organization + stripe_subscription_id wording'. Recorded so the global-scope behavior is on the record as observed rather than assumed.",
+      "action": "None. Note only."
+    },
+    {
+      "id": "A9-L4",
+      "severity": "LOW",
+      "title": "Repeat trial_started: a second nil -> 'trialing' flip past the 5-minute dedupe writes a second trial_started row with full fan-out, even on the SAME stripe_subscription_id",
+      "file": "app/models/organization.rb:1128-1134 writer + app/models/organization.rb:1188-1195 subscription_started_trial_after_commit?",
+      "evidence": "Live, scripts /tmp/qa5_agent9_adversarial_b.rb T5a/T5b and /tmp/qa5_agent9_adversarial_c.rb (T5a redo). Two nil->trialing flips on org 37146 with stripe_subscription_id held at sub_a9_c_trial1, the first row backdated 30 minutes to defeat the dedupe: 2 trial_started rows for the SAME subscription id, and each flip independently enqueued its own PosthogTrackJob + Discord::NotifyFreeTrialStartedJob (first flip [Notification::FreeTrialStartedJob, PosthogTrackJob, Discord::NotifyFreeTrialStartedJob], second flip identical). T5b: a re-trial on a NEW subscription id (sub_a9_b_trial2 / sub_a9_c_clean) also writes its own row -- that shape is spec-consistent per SPEC §5.1 (no uniqueness index on event_type 7).",
+      "reachability": "NOT reachable in production. Reaching a second flip requires stripe_subscription_status to return to nil. Traced every assignment: the only production code that sets it to nil is Organization#stripe_delete_customer (app/models/organization.rb:503), which raises StandardError when Variables::ServerEnv == 'production' (app/models/organization.rb:494); sync_with_stripe assigns stripe_subscription_status only inside `if current_subscription.present?` (app/models/organization.rb:568-571) and never nils it; Cypress::OrganizationsController:14 writes 'canceled', not nil. Both flips above required update_column to force the status back to nil.",
+      "action": "None. Note only."
+    },
+    {
+      "id": "A9-L5",
+      "severity": "LOW",
+      "title": "A delayed invoice.paid for a superseded subscription writes a row keyed on the event's subscription id but stamped with the organization's CURRENT plan, which may not be the plan that subscription was on",
+      "file": "app/jobs/stripe_webhook_handler_job.rb ~309-329 (to_plan: organization.plan, stripe_subscription_id: object.subscription)",
+      "evidence": "Live, script /tmp/qa5_agent9_adversarial_b.rb T10. Org 37145 with stripe_subscription_id column = sub_a9_b_current and plan = plan_ats_tier_starter received an invoice.paid for subscription sub_a9_b_old (amount_paid 1500, trial_end 60 days ago). Row 3434 written: stripe_subscription_id 'sub_a9_b_old', to_plan 'plan_ats_tier_starter' (the CURRENT plan, not necessarily the old subscription's), event_type trial_converted_to_paid, amount 1500. No raise, existing branch behavior intact.",
+      "reachability": "Reachable but narrow -- requires a retried or delayed invoice.paid for a subscription the org has already replaced, and only produces a wrong to_plan when the replacement changed plans. This is exactly what SPEC §5.2 specifies (to_plan: organization.plan, stripe_subscription_id: object.subscription), so it is spec-compliant, not a spec-implementation mismatch. Recorded as an accuracy property of the ledger, not a defect.",
+      "action": "None. Note only."
+    }
+  ],
+  "spot_checks": [
+    {
+      "prior_claim": "amount_paid 0 with trial_end present produces ZERO SubscriptionEvent rows and zero fan-out, while the existing branch behavior still runs",
+      "agent": 1,
+      "result": "reproduced",
+      "evidence": "Own seed (org 37143, owner 41120, plan plan_simple_ats_free), own script /tmp/qa5_agent9_spotchecks.rb SC1. invoice.paid, subscription sub_a9_sc1, amount_paid 0, trial_end 20.days.ago: SubscriptionEvent.count 0 -> 0, enqueued_jobs empty."
+    },
+    {
+      "prior_claim": "amount_paid positive + trial_end PRESENT -> exactly one trial_converted_to_paid row born complete; positive + trial_end ABSENT -> converted_to_paid; converted_to_paid has no Discord consumer",
+      "agent": 2,
+      "result": "reproduced",
+      "evidence": "SC2a: row 3420, event_type trial_converted_to_paid, amount 2900, stripe_subscription_id sub_a9_sc2a (the EVENT id, distinct from the org column sub_a9_org_column), to_plan plan_simple_ats_free == organization.plan, from_plan null; fan-out exactly [PosthogTrackJob(41120,'trial_converted_to_paid'), Discord::NotifyTrialConvertedToPaidJob(37143)]; stripe_current_period_end_at advanced to 1790521255. SC2b: row 3421, converted_to_paid, amount 4900, sub_a9_sc2b; fan-out exactly [PosthogTrackJob] and ZERO Discord jobs."
+    },
+    {
+      "prior_claim": "The uniqueness invariant holds because of conversion_duplicate_exists?, not the 5-minute dedupe -- backdating the conversion row past the window and redelivering still yields exactly one conversion row",
+      "agent": 3,
+      "result": "reproduced",
+      "evidence": "SC3, dedupe explicitly proven dead before the redelivery: row 3420 created_at forced to 2026-07-27 14:30:55 against a 14:55:55 cutoff, and the interactor's own dedupe query (organization.subscription_events.where(event_params).where('created_at >= ?', 5.minutes.ago).exists?) evaluated to FALSE. Redelivery of the identical invoice then completed without raising, the ledger still held exactly one row for sub_a9_sc2a, its id was still 3420 and its created_at still 14:30:55, no PosthogTrackJob fired, and the existing branch behavior ran again (stripe_current_period_end_at advanced 1790521255 -> 1801062055)."
+    },
+    {
+      "prior_claim": "A real organization.update!(stripe_subscription_status: 'trialing') from nil creates exactly one trial_started row and its fan-out, alongside the pre-existing Slack job",
+      "agent": 4,
+      "result": "reproduced",
+      "evidence": "SC4: status_before nil, one row 3422 (trial_started, stripe_subscription_id sub_a9_sc4_trial == the org column, amount nil, to_plan plan_simple_ats_free); enqueues exactly [Notification::FreeTrialStartedJob(37143), PosthogTrackJob(41120,'trial_started'), Discord::NotifyFreeTrialStartedJob(37143)]."
+    },
+    {
+      "prior_claim": "A canceled_subscription row created while organization.subscription_canceled_at is nil skips the Discord enqueue but still fires PostHog",
+      "agent": 5,
+      "result": "reproduced",
+      "evidence": "SC5: organization.subscription_canceled_at confirmed nil, CreateSubscriptionEvent.call succeeded (row 3423, canceled_subscription, sub_a9_sc5_cancel), enqueues were exactly one PosthogTrackJob(41120,'canceled_subscription') and ZERO Discord::NotifySubscriptionDeletedJob."
+    },
+    {
+      "prior_claim": "The fan-out matrix per event_type (converted_to_paid -> PostHog only; canceled_subscription nil-canceled_at -> PostHog only)",
+      "agent": 6,
+      "result": "reproduced",
+      "evidence": "Covered by SC2b (converted_to_paid -> exactly [PosthogTrackJob]) and SC5 (canceled_subscription with nil subscription_canceled_at -> exactly [PosthogTrackJob])."
+    },
+    {
+      "prior_claim": "A reserved ActiveJob key in utm_data makes PosthogTrackJob.perform_later raise ActiveJob::SerializationError out of Organization#update!, losing the PostHog event and the Discord enqueue",
+      "agent": 7,
+      "result": "reproduced",
+      "evidence": "Independently reproduced in /tmp/qa5_agent9_adversarial_c.rb T8 on org 37146: poisoned utm_data raised ActiveJob::SerializationError \"Can't serialize a Hash with reserved key \\\"_aj_globalid\\\"\" out of update!, the trial_started row was still written, and only Notification::FreeTrialStartedJob was enqueued. Clean-utm_data control on the SAME org did not raise and enqueued all three jobs. See finding A9-M1 for the additional consequence agent 7 did not report."
+    }
+  ],
+  "verified": [
+    "INTERACTOR RecordNotUnique RESCUE PATH DRIVEN (nobody had): with a real converted_to_paid row present for sub_a9_t1 and conversion_duplicate_exists? stubbed to return false (stub effectiveness asserted live), CreateSubscriptionEvent.call did NOT raise, returned context.failure? == true with message 'Conversion SubscriptionEvent already exists for stripe_subscription_id sub_a9_t1', wrote no row, and fired no fan-out. The DB partial unique index was the only thing that stopped the duplicate.",
+    "The DB connection survives the rescued RecordNotUnique -- SubscriptionEvent.count executed immediately afterwards returned 1 with no 'current transaction is aborted' error, so ActiveRecord rolled the failed save's transaction back cleanly.",
+    "Same race driven through a REAL invoice.paid delivery: the webhook completed without raising, the ledger still held exactly one row for sub_a9_t1, no fan-out fired from the blocked insert, and BOTH pre-existing effects ran -- stripe_current_period_end_at advanced to 1808838252 and (re-asserted in /tmp/qa5_agent9_adversarial_b.rb R3 with a falsifiable signal) organization_ai_credit_balance.last_reset_at moved 2026-05-27 -> 2026-07-27.",
+    "event_type accepted as a SYMBOL end to end: CreateSubscriptionEvent.call(event_type: :canceled_subscription) created the row with event_type 'canceled_subscription'; a second identical symbol call inside 5 minutes WAS caught by the dedupe (failure 'Duplicate SubscriptionEvent created within the last 5 minutes', still 1 row) -- so the Rails 6.1 enum HashWithIndifferentAccess mapping makes where(event_type: :symbol) match; and event_type: :converted_to_paid was blocked by conversion_duplicate_exists? via its context.event_type.to_s cast. No symbol/string divergence exists.",
+    "Cross-type conversion guard: with a converted_to_paid row present for sub_a9_t1, a trial_converted_to_paid call for the same subscription id was blocked ('Conversion SubscriptionEvent already exists'), leaving exactly one row. The guard covers both conversion types, not just the one being written.",
+    "organization.plan nil at the invoice.paid writer: the delivery did not raise, the row was written with to_plan NULL (no fabricated fallback), and the PostHog properties hash omitted to_plan entirely via .compact -- observed props {amount: 1900, stripe_subscription_id: 'sub_a9_t3', stripe_customer_id: 'cus_a9_adv'}.",
+    "Negative amount_paid (-500): the > 0 cash gate rejected it -- no row, no raise, no fan-out.",
+    "amount_paid at the 4-byte maximum (2_147_483_647) persists correctly; only 2_147_483_648 and above is lost (finding A9-L1).",
+    "ZERO real Stripe HTTP anywhere in this round: every script installed allow_any_instance_of(Stripe::StripeClient).to receive(:execute_request).and_raise('REAL STRIPE NETWORK CALL ATTEMPTED') as a loud guard and it never fired, including in the deliberately-unstubbed T2 delivery.",
+    "The interactor's ap organization.stripe_subscription_in_good_standing logging (create_subscription_event.rb:14) adds NO network calls at the three new writer sites. Traced: create_subscription_event.rb:14 -> app/models/organization.rb:678 stripe_subscription_in_good_standing -> app/services/stripe/subscription_status_checker.rb:90 in_good_standing? -> :100 test_subscription? (:137, reads stripe_subscription_id), :103 paid_plan? (:121, PAID_PLANS.include?(@organization.plan)), :103 free_plan_with_one_job? (:125, FREE_PLANS_WITH_ONE_JOB.include?(@organization.plan)), :104-110 (stripe_subscription_id, stripe_current_period_end_at, stripe_subscription_status) -- all DB-local attribute reads against frozen constants. Corroborated by the loud guard never firing.",
+    "SPEC §5.3's nil-organization concern re-confirmed structurally: the invoice.paid writer sits after `raise CustomStripeSubscriptionMissingError if organization.stripe_subscription_id.nil?`, and a seeded org with a nil stripe_subscription_id column caused that raise and produced zero rows in an early run of /tmp/qa5_agent9_spotchecks.rb.",
+    "ActiveJob queue adapter held at :test in every script; no Discord, Slack, or PostHog job was ever performed. POSTHOG_CLIENT was never invoked.",
+    "Database left clean: qa-harness cleanup run at the end, verified live -- SubscriptionEvent.count=0, Organization.count=0, User.count=0.",
+    "Source repo untouched: no file in /Users/jessica/wrk/wrk-corp/inflow-ats was written, and no git write command was run. The pre-existing unstaged db/schema.rb was not touched.",
+    "Check tally: 77 assertions across 4 scripts, 74 passed. The 3 non-passes were all bad assertions in my own harness, not defects: two used AiCreditBalanceTransaction count as the reset_ai_credits signal (ResetAiCredits writes a transaction only when monthly_credits_remaining.positive? or the new allocation is positive -- reset_ai_credits.rb:39,50 -- and the seeded plan_simple_ats_free org has a 0 allocation), re-asserted and PASSED against last_reset_at in adversarial_b R2/R3; one forgot to clear enqueued_jobs between two trial flips and saw the correct 2+2 tally against an expected 1+1, re-asserted and PASSED in adversarial_c T5a redo."
+  ],
+  "scripts": [
+    "/tmp/qa5_agent9_spotchecks.rb",
+    "/tmp/qa5_agent9_adversarial_a.rb",
+    "/tmp/qa5_agent9_adversarial_b.rb",
+    "/tmp/qa5_agent9_adversarial_c.rb",
+    "/tmp/qa5_agent9_seedplan_two_orgs.json"
+  ],
+  "raw_results": "/tmp/qa5_agent9_results.json"
+}

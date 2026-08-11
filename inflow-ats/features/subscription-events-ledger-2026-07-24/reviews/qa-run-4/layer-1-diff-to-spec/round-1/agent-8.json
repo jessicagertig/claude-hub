@@ -1,0 +1,26 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 4,
+  "agent_index": 8,
+  "slice": "webhook delicacy audit",
+  "findings": [],
+  "verified": [
+    "Full-file diff a0d59115d..549039a0c for app/jobs/stripe_webhook_handler_job.rb is EXACTLY two hunks; git diff --numstat independently counted 34 added / 0 removed / 0 modified — matches prior rounds' 34/0 claim",
+    "Hunk 1 (@@ -208,6 +208,20 @@, customer.subscription.deleted else-branch): 14 added lines (1 blank + 13 code), every line classified as sanctioned insertion 2 (SPEC.md §5.3) — no other classification needed",
+    "Hunk 2 (@@ -295,6 +309,26 @@, invoice.paid main-plan else-branch): 20 added lines (1 blank + 19 code), every line classified as sanctioned insertion 1 (SPEC.md §5.2) — no other classification needed",
+    "Fix commit 7574df408 --stat: touched ONLY spec/jobs/stripe_webhook_handler_subscription_events_spec.rb (3 insertions); webhook file untouched",
+    "Fix commit e850c74fe --stat: touched ONLY spec/jobs/stripe_webhook_handler_subscription_events_spec.rb (1 insertion); webhook file untouched",
+    "Fix commit 549039a0c --stat: touched ONLY spec/jobs/stripe_webhook_handler_subscription_events_spec.rb (7 insertions); webhook file untouched",
+    "git diff 89286fba8..549039a0c -- app/jobs/stripe_webhook_handler_job.rb is EMPTY — the entire webhook change lives in app commit 89286fba8; app diff unchanged since then, as briefed",
+    "Base-vs-head line-by-line comparison of the full subscription.deleted branch (base 169-215 region) and full invoice.paid branch (base 225-309 region): byte-identical outside the two inserted blocks — no reordering, no whitespace churn, no attribute-access changes, no comment edits",
+    "Placement §5.3 exact: block appended at END of the else-branch body, immediately after EngagementReport::GeneratorJob.perform_later(organization&.id, trigger: 'subscription_canceled'), before the branch's closing end; the branch's single rescue StandardError tier byte-identical",
+    "Placement §5.2 exact: block appended at END of the else-branch body, immediately after organization.organization_ai_credit_balance&.reset_ai_credits; the three-tier rescue (Stripe::StripeError / ActiveRecord::RecordInvalid+RecordNotFound / StandardError) byte-identical including all three log-message strings",
+    "Both insertions carry their OWN begin/rescue StandardError with contextual Rails.logger.error + ap e — ledger failure cannot reach the branches' pre-existing rescue tiers (§5.2/§5.3/§8 rescue-isolation requirement)",
+    "§5.2 internals match spec verbatim: predicate object.amount_paid.to_i > 0 (§4), discriminator stripe_subscription.trial_end.present? on the PRE-EXISTING stripe_subscription local (Stripe::Subscription.retrieve at base line ~283 — live retrieval, not payload snapshot, no status field), full if/else expression per D10, CreateSubscriptionEvent.call(organization:, event_type:, to_plan: organization.plan, stripe_subscription_id: object.subscription, amount: object.amount_paid), from_plan omitted per spec, no extras",
+    "§5.3 internals match spec verbatim: plain `if organization` conditional inside the rescue-wrapped block (nil-organization skip per spec), CreateSubscriptionEvent.call(organization:, event_type: 'canceled_subscription', to_plan: organization.plan, stripe_subscription_id: stripe_subscription_id) using the PRE-EXISTING stripe_subscription_id local (= object.id, base line ~173), no amount arg (correct — spec passes none for cancellation), no extras",
+    "House-safe access preserved: no metadata-access changes anywhere; insertion log lines use organization&.id / object&.id / object&.subscription mirroring the existing rescue tiers' exact log format; guard order untouched — insertion 1 sits after raise CustomStripeSubscriptionMissingError as §4 requires",
+    "§11.5 satisfied: exactly two additive, rescue-isolated blocks and nothing else in the file. §11.6 (rollout misclassification of pre-existing subscriptions) noted as disclosed OPEN QUESTION per briefing — not a finding",
+    "line-count accounting"
+  ]
+}

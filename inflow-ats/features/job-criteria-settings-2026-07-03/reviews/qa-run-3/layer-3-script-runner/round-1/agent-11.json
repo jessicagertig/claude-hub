@@ -1,0 +1,12 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 11,
+  "focus": "BulkGenerateAiSummariesJob#each_iteration claim-row fix (SPEC 6.3): on per-record ValidateAiSummaryGeneration failure the BulkAiSummaryJobApplication claim row is set to :failed (previously left :processing); plus the QueueBulkAiSummaryJobs re-claim consequence.",
+  "scenarios_run": [
+    "Scenario A (each_iteration fix, real): built an isolated org/job/candidate/job_application with NO resume (fails ValidateAiSummaryGeneration at the has_resume? guard, before credits/textract/AI). Created a BulkAiSummaryJobApplication claim row in :processing, called BulkGenerateAiSummariesJob.new.each_iteration(ja.id, payload). Verified: validation genuinely fails with 'No resume uploaded for this candidate.'; claim row started :processing and ended :failed; NO AiJobApplicationSummary created; Rails.logger.error logged the validation failure.",
+    "Scenario B (falsifiability control, real): a second job_application whose summary is already processed (succeeded summary created after the claim row) takes the summary_already_processed branch of the same each_iteration method and ends :deferred, NOT :failed. Proves the :failed outcome in Scenario A is specific to the validation-failure branch, not an unconditional write.",
+    "Scenario C (re-claim consequence): exercised the EXACT filter query from QueueBulkAiSummaryJobs lines 46-50 (already_claimed_ids = BulkAiSummaryJobApplication.where(job_application_id: ready_ids, status: :processing).pluck(:job_application_id); working_set = ready_ids - already_claimed_ids) against three claim rows (:processing, :failed, :done). Verified :processing BLOCKS re-claim (excluded from working_set) while :failed and :done do NOT block. Falsifiability: mutated the :processing row to :failed and re-ran the query -> candidate became re-claimable, proving the block is specifically driven by status == :processing. The full interactor was intentionally NOT run because the test env ActiveJob adapter is :inline, so QueueBulkAiSummaryJobs.perform_later of BulkGenerateAiSummariesJob (and SubmitResumeToTextractJob) would execute synchronously and could trigger real AI/Textract calls."
+  ],
+  "findings": []
+}

@@ -1,0 +1,19 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agent_index": 3,
+  "focus_area": "Review-blocking story: zero-criteria guard placement (3 validator interactors + funnel guard), bulk claim-row :failed fix (§6.3), and the three zero-criteria constant substitutions in ExtractCriteria/ScoreJobApplication.",
+  "files_reviewed": [
+    "app/interactors/validate_ai_summary_generation.rb",
+    "app/interactors/validate_auto_ai_summary_generation.rb",
+    "app/interactors/queue_bulk_ai_summary_jobs.rb",
+    "app/controllers/api/v1/bulk_ai_job_application_summaries_controller.rb",
+    "app/models/textract_result.rb",
+    "app/jobs/bulk_generate_ai_summaries_job.rb",
+    "app/services/ai_job_application_action/scoring/extract_criteria.rb",
+    "app/services/ai_job_application_action/scoring/score_job_application.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/models/job.rb"
+  ],
+  "findings": []
+}

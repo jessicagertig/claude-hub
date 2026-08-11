@@ -1,0 +1,26 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 3,
+  "focus": "Organization scoping and not-found behavior for the criteria endpoints (SPEC 5.2 / 9): current_organization.jobs.where lookup, the `exists` helper not-found branch, and JobPolicy show?/update? cross-org behavior.",
+  "scenarios_run": [
+    "Built two isolated orgs (orgA, orgB) each with a job (jobA, jobB), an org_owner, an org_admin (orgA), and plain org_users; reloaded users so current_organization_user (set by OrganizationUser after_create) is fresh; verified adminA.current_organization_user resolves to orgA and plainB to orgB.",
+    "Controller org-scoped relation: asserted orgA.jobs.where(id: jobA.id).exists? => true (same-org present, block would run) and orgA.jobs.where(id: jobB.id).exists? => false and orgB.jobs.where(id: jobA.id).exists? => false (cross-org empty).",
+    "Invoked the REAL ApplicationController#exists (via Api::V1::AiJobCriteriaController.new) with render_general_errors stubbed to capture: cross-org empty relation => render_general_errors called with ['no job found'] and the block did NOT run; same-org present relation => block ran with jobA.id and no additional render. Confirms not-found path renders general_errors (422 unprocessable_entity per render_general_errors) BEFORE authorize/serialize, so cross-org yields 'no job found', never 403 and never 500.",
+    "Policy cross-org: JobPolicy.new(adminA, jobB).update? and .show? => BOTH true (task premise expected false). Direct proof: JobPolicy.new(adminA, jobB).is_org_admin? => true (record-independent).",
+    "Policy same-org control: JobPolicy.new(adminA, jobA).update?/show? => true.",
+    "Policy non-admin, member of jobB's own org, not on hiring team: JobPolicy.new(plainB, jobB).update?/show? => false.",
+    "Policy user with membership only in a different org (plainA in orgA), non-admin, viewing jobB: JobPolicy.new(plainA, jobB).update?/show? => false."
+  ],
+  "findings": [
+    {
+      "id": "l3-r2-a3-001",
+      "severity": "MED",
+      "title": "Org isolation for the criteria endpoints rests ENTIRELY on the controller's current_organization.jobs.where scoping; JobPolicy#is_org_admin? is NOT record-org-scoped (report-only, spec-compliant, not a feature bug)",
+      "file": "app/policies/application_policy.rb (is_org_admin?, line 50-52) + app/policies/job_policy.rb (update?/show?/on_hiring_team?) + app/controllers/api/v1/ai_job_criteria_controller.rb (lines 5,12)",
+      "evidence": "Empirically: JobPolicy.new(adminA, jobB).update? => true and .show? => true even though jobB belongs to orgB and adminA is only an admin of orgA. Root cause: is_org_admin? reads user.current_organization_user&.org_admin? (the caller's OWN active-org membership) and ignores the record's org entirely -- proven by JobPolicy.new(adminA, jobB).is_org_admin? => true. The task premise ('confirm is_org_admin? is org-scoped / cross-org admin update? == false') is therefore FALSE at the policy layer -- the two 'expected: false' assertions were the premise being wrong, not a code defect. However, the feature IS secure: the controller scopes the lookup first via exists(current_organization.jobs.where(id: params[:job_id]), 'no job found'). For a cross-org request that relation is empty (orgA.jobs.where(id: jobB.id).exists? => false, verified), so the REAL exists helper renders general_errors ['no job found'] (422) and the block (authorize + serialize/regenerate) never runs. authorize is never reached with a cross-org job, so is_org_admin?'s record-independence is never exercised. SPEC 9 line 474 explicitly documents this: 'Organization scoping via current_organization.jobs lookup in both actions.' Implementation matches spec exactly. Non-admin cross-org and same-org-non-member cases correctly return false because they fall through to record.users.include?(user) and user.current_organization_user.jobs.where(id: record.id), which ARE record-scoped.",
+      "reproduction": "test_frr /tmp/qa-r2-a3-org-scoping.rb -- build orgA (admin adminA) + orgB (jobB); reload users; then: orgA.jobs.where(id: jobB.id).exists? => false (controller blocks, renders 'no job found' 422); JobPolicy.new(adminA, jobB).update?/show? => true (policy alone would authorize if ever reached). No cross-org data is exposed because the controller's exists() short-circuits before authorize.",
+      "recommendation": "No change required for this feature -- org isolation is correct and spec-compliant via the controller's current_organization.jobs scoping, consistent with every job-nested controller in the app (e.g. bulk_ai_job_application_summaries_controller.rb:9). Report-only: the single line current_organization.jobs.where(id: ...) is load-bearing for the ENTIRE org-isolation guarantee on these endpoints -- the JobPolicy provides only role-based (admin/hiring-team) access, not org isolation, because is_org_admin? is scoped to the caller's current org rather than the record's org. If any future refactor replaces the scoped lookup with a bare Job.find(params[:job_id]) (or drops the current_organization. prefix), any org-admin would gain cross-org read/regenerate access. Do NOT modify shared policy/controller infrastructure to 'fix' this now; flag for owner awareness only."
+    }
+  ]
+}

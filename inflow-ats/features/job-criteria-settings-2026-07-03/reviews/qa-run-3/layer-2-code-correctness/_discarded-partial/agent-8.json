@@ -1,0 +1,40 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 8,
+  "focus_area": "Test correctness (ghost/tautology hunt per pipeline rule 26) across all 11 feature spec files + adversarial second opinion on the authorization spec.",
+  "files_reviewed": [
+    "spec/controllers/api/v1/ai_job_criteria_controller_spec.rb",
+    "spec/interactors/validate_ai_summary_generation_spec.rb",
+    "spec/serializers/api/v1/job_ai_job_criteria_serializer_spec.rb",
+    "spec/models/job_criteria_lifecycle_spec.rb",
+    "spec/models/ai_job_criteria_spec.rb",
+    "spec/jobs/extract_job_criteria_job_spec.rb",
+    "spec/interactors/validate_auto_ai_summary_generation_spec.rb",
+    "spec/interactors/queue_bulk_ai_summary_jobs_spec.rb",
+    "spec/controllers/api/v1/bulk_ai_job_application_summaries_controller_spec.rb",
+    "spec/models/textract_result_ai_trigger_spec.rb",
+    "spec/jobs/bulk_generate_ai_summaries_job_spec.rb",
+    "app/controllers/api/v1/ai_job_criteria_controller.rb",
+    "app/policies/job_policy.rb",
+    "app/policies/ai_job_application_summary_policy.rb",
+    "app/policies/application_policy.rb",
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/interactors/validate_ai_summary_generation.rb",
+    "app/interactors/validate_auto_ai_summary_generation.rb",
+    "app/interactors/queue_bulk_ai_summary_jobs.rb",
+    "app/models/textract_result.rb",
+    "app/jobs/bulk_generate_ai_summaries_job.rb"
+  ],
+  "findings": [
+    {
+      "id": "l2-a8-001",
+      "severity": "LOW",
+      "title": "No negative-authorization test for AiJobCriteriaController#show — the show? gate is uncovered for denial",
+      "file": "spec/controllers/api/v1/ai_job_criteria_controller_spec.rb",
+      "line": 40,
+      "description": "The production code IS correctly gated (ai_job_criteria_controller.rb:6 calls `authorize job, :show?`), so this is a test-coverage weakness, not a code-authorization gap. Every `#show` example (spec lines 40-119) runs as the org owner/admin, and the only hiring-team `#show` example (lines 222-226) is positive (allows show). No example exercises a user who should be DENIED show. If `authorize job, :show?` were deleted from the controller, the entire suite would still pass. Per SPEC §9, show authorization is meaningful — `JobPolicy#show? = (is_org_user? && user.current_organization_user.jobs.where(id: record.id).any?) || is_org_admin?` (job_policy.rb:12-14) — so an org member who is NOT on the hiring team should not see a job's criteria. The `create` gate, by contrast, is well covered (outsider-403 at lines 247-251 is load-bearing: removing `authorize job, :update?` lets the outsider reach a 200; hiring-team-allowed at lines 228-232 is load-bearing AND distinguishes the new `update?` gate from the old `update_ai_settings?` gate because `hiring_team_ai_credits_control_enabled => false` (line 212) forces `can_use_ai_credits?` false for the org_user).",
+      "recommendation": "Add one `#show` example under a user who is neither on the hiring team nor an admin (mirror the outsider block at lines 235-251) asserting 403, so a future deletion of `authorize job, :show?` is caught by the suite. Does not affect convergence."
+    }
+  ]
+}

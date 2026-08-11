@@ -1,0 +1,24 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 4,
+  "focus_area": "Job#zero_criteria_extraction_failure? latest-row semantics (SPEC 4.3)",
+  "files_reviewed": [
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb"
+  ],
+  "scenario": "Seeded ai-org-published-job.json, drove real feature code (Job#zero_criteria_extraction_failure?, Job#latest_ai_job_criteria, AiJobCriteria#zero_criteria_failure?) via rails runner with ActiveJob queue_adapter=:test. Built AiJobCriteria rows directly (no OpenAI) with explicit created_at to make 'latest' unambiguous, then asserted the predicate against DB state across 9 latest-row scenarios plus building-block cross-checks. 21/21 assertions passed. All rows cleaned up afterward (0 remaining).",
+  "evidence": {
+    "S1_zero_rows": "predicate => nil (safe-nav, no NoMethodError); latest_ai_job_criteria => nil",
+    "S2_single_failed_zero": "predicate => true",
+    "S3_single_failed_nonzero_JobDescriptionBlank": "predicate => false",
+    "S4_single_succeeded": "predicate => false",
+    "S5_older_succeeded_newer_failed_zero": "predicate => true (latest wins; verified newer.created_at > older.created_at and latest_ai_job_criteria is the newer failed row)",
+    "S6_older_failed_zero_newer_pending": "predicate => false (in-flight latest suppresses; reviews may start & wait via awaiting_job_criteria)",
+    "S7_older_failed_zero_newer_in_progress": "predicate => false",
+    "S8_older_failed_zero_newer_retrying": "predicate => false",
+    "S9_older_failed_zero_newer_succeeded": "predicate => false (recovered)",
+    "cross_checks": "AiJobCriteria#zero_criteria_failure? => true for failed+zero, false for failed+'Job description is blank', false for succeeded, false for pending"
+  },
+  "findings": []
+}

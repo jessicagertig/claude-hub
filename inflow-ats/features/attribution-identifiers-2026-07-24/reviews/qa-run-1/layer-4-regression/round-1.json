@@ -1,0 +1,45 @@
+{
+  "layer": "regression",
+  "round": 1,
+  "suites_run": {
+    "rspec": {
+      "ran": true,
+      "files": [
+        "spec/controllers/api/v1/registrations_controller_spec.rb",
+        "spec/models/user_from_omniauth_spec.rb",
+        "spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb",
+        "spec/controllers/api/v1/organizations_controller_spec.rb",
+        "spec/models/organization_ai_credits_lifecycle_spec.rb"
+      ],
+      "file_selection_notes": "The four extended spec files were mandated. spec/models/organization_ai_credits_lifecycle_spec.rb was added as the only other pre-existing spec that creates User/Organization records through the models the diff touches (app/models/user.rb modified; new attribution columns added to users and organizations tables). spec/models/user_spec.rb does not exist (spec/models/user* contains only user_from_omniauth_spec.rb). Greps for adroll_click_id/utm_source/utm_/gclid/fbclid/attribution/oauth_tracking/from_omniauth and for OrganizationsController/RegistrationsController/OmniauthCallbacksController across spec/ --include=*_spec.rb matched no other files.",
+      "passed": false,
+      "summary": "23 examples, 1 failure",
+      "failures": [
+        "1) Organization#complete_setup_workers \u2014 AI credit state creation creates an organization_ai_credit_balance for the org\n     Failure/Error: expect(organization.organization_ai_credit_balance.monthly_credits_remaining).to eq PlanFeatureGate::MINIMUM_AI_CREDIT_ALLOCATION\n\n       expected: 25\n            got: 0\n\n       (compared using ==)\n     # ./spec/models/organization_ai_credits_lifecycle_spec.rb:37:in `block (3 levels) in <main>'\n\nFailed examples:\nrspec ./spec/models/organization_ai_credits_lifecycle_spec.rb:33 # Organization#complete_setup_workers \u2014 AI credit state creation creates an organization_ai_credit_balance for the org"
+      ]
+    },
+    "cypress": {
+      "ran": true,
+      "spec": "cypress/e2e/auth/registration.cy.js",
+      "passed": true,
+      "summary": "2 passing (11s) \u2014 Tests: 2, Passing: 2, Failing: 0, Pending: 0, Skipped: 0. All specs passed. Tests: 'Should register a new User, confirm email and create a new organization' (6035ms), 'Should register a new User via Magic Link, verify email and create a new organization' (3744ms). No screenshots, video: false.",
+      "failures": []
+    }
+  },
+  "findings": [
+    {
+      "id": "l4-001",
+      "severity": "HIGH",
+      "title": "Pre-existing RSpec failure: organization_ai_credits_lifecycle_spec.rb:33 expects monthly_credits_remaining 25, gets 0 (org without Stripe subscription resolves to plan_no_plan)",
+      "test_file": "spec/models/organization_ai_credits_lifecycle_spec.rb",
+      "error": "expected: 25, got: 0 \u2014 expect(organization.organization_ai_credit_balance.monthly_credits_remaining).to eq PlanFeatureGate::MINIMUM_AI_CREDIT_ALLOCATION at spec/models/organization_ai_credits_lifecycle_spec.rb:37",
+      "verification_method": "rspec",
+      "pre_existing": true,
+      "pre_existing_evidence": "Not caused by the attribution diff. (1) The b4cb4463a..a0d59115d diff contains zero changes to app/models/organization.rb, app/services/plan_feature_gate.rb, or spec/models/organization_ai_credits_lifecycle_spec.rb \u2014 `git diff b4cb4463a..a0d59115d --stat` on those three paths is empty, so the failing code and test are byte-identical on the base commit. (2) Failure is deterministic: reproduced across three runs/seeds (7682, 48910, 59957), including the single example in isolation. (3) Mechanism traced: PlanFeatureGate#initialize sets `@plan = organization.stripe_subscription_in_good_standing ? organization.plan : 'plan_no_plan'` (app/services/plan_feature_gate.rb:29). The spec's org has no Stripe subscription, so @plan = 'plan_no_plan', whose plan_rules entry has `monthly_ai_credit_allocation: 0`; `0 || MINIMUM_AI_CREDIT_ALLOCATION` returns 0 (0 is truthy in Ruby), so Organization#create_ai_credit_state_if_needed skips the update_columns guard (`allocation.positive?` false) and monthly_credits_remaining stays 0 while the spec expects 25. No exception was swallowed by the method's rescue (no `ap e` output). (4) The gating commit cd1217dd0 (introduced `stripe_subscription_in_good_standing ? organization.plan : 'plan_no_plan'`), 24852f3cc (last plan_feature_gate.rb change), and e77e5af42 (last spec-file change) are all ancestors of b4cb4463a per `git merge-base --is-ancestor`."
+    }
+  ],
+  "orchestrator_disposition": {
+    "l4-001": "Downgraded HIGH->MED per stock severity scale ('Pre-existing \u2014 existed before this feature was implemented'). Evidence: organization.rb, plan_feature_gate.rb, and the spec file are byte-identical on b4cb4463a; failure deterministic across seeds and in isolation; feature adds no model changes (SPEC \u00a73). Fixing AI-credits allocation logic is outside this feature's QA scope (pipeline rules 10/23). Reported in QA-MED-FINDINGS.md for Jessica."
+  },
+  "gate": "ADVANCE \u2014 0 feature-attributable failures; four extended files + Cypress registration.cy.js green"
+}

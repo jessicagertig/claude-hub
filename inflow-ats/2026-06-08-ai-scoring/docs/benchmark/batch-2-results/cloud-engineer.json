@@ -1,0 +1,253 @@
+{
+  "meta": {
+    "batch": 2,
+    "criteria_prompt_version": 10,
+    "job_id": 22983,
+    "title": "Cloud Engineer",
+    "organization": "PrecisePK",
+    "cost": 0.000643
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "We are looking for an experienced Cloud Engineer to build and operate secure systems that are highly scalable and fault tolerant, for a healthcare SaaS web application. Our office is located across from Westfield UTC and the working environment is laidback and flexible. We offer competitive salary with a full benefits package and you'll be working in a team of 10-12 UCSD graduates."
+      },
+      {
+        "heading": "Responsibilities",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "• Proactively identify and remediate security risks introduced by the cloud platforms, or as flagged by vulnerability scanning software\n• Implement solutions necessary to address security audits and compliance efforts on our cloud platforms. Knowledge of SOX, PCI DSS, HIPAA, and FedRAMP is highly desirable.\n• Ability to dive deep into software configurations and logs to recommend security-based improvements\n• Identify opportunities to leverage automation to improve security and build the tools necessary to execute improvements\n• Work closely with engineering teams to ensure we are considering security when architecting and building new features.\n• Ensure that solutions are engineered with operational efficiency and security in mind. Identify and develop tools to aid this process\n• Work with external security testing vendors to coordinate pen testing and monitoring of our platform and network. Coordinate any necessary fixes both with the operations and engineering teams\n• Build automation frameworks and systems to improve time to delivery using modern CI/CD systems\n• Participate in on-call for escalated support of production customer and systems\n• Perform and improve SRE & Operational functions, such as observability and maintenance of productions systems"
+      },
+      {
+        "heading": "Requirements",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "• Bachelor's Degree or higher in Computer Science or related field\n• 2+ years of Cloud Operations / Engineering experience with focus on security\n• Strong hands-on system administrator experience on public cloud platforms especially AWS is required\n• Node/JavaScript or Java\n• AWS (lambda, fargate, ecs)\n• Terraform\n• Docker\n• Gitlab CI\n• Roadmap - Securing Legacy API and Databases involved - Elastic Beanstalk - Integrating Security into Development Pipeline.\n• Experience with automated configuration management and deployment using tools such as Ansible, Puppet, Chef, and Python required\n• Strong system administrator experience with Linux and Windows operating systems required\n• Experience with vulnerability scanning software such as Nessus, Amazon Inspector, Azure Security Center, and Black Duck highly desirable\n• Experience with automated test and build systems such as Jenkins, Maven, Ant.\n• Experience with auditing and logging tools such as AuditD, NXLog, AWS CloudTrail\n• Experience with Monitoring and reporting tools such as DataDog and Graphite\n• Experience with managed Kubernetes in the cloud using AKS\n• Experience working with virtualization software such as VMWare and Openstack\n• Experience working in hybrid environment preferred"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Proactively identify and remediate security risks introduced by the cloud platforms, or as flagged by vulnerability scanning software",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Proactively identify and remediate security risks introduced by the cloud platforms, or as flagged by vulnerability scanning software"
+      },
+      {
+        "text": "Implement solutions necessary to address security audits and compliance efforts on our cloud platforms",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Implement solutions necessary to address security audits and compliance efforts on our cloud platforms. Knowledge of SOX, PCI DSS, HIPAA, and FedRAMP is highly desirable."
+      },
+      {
+        "text": "Knowledge of SOX, PCI DSS, HIPAA, and FedRAMP",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 — \"highly desirable\"",
+        "binary": false,
+        "source_text": "• Implement solutions necessary to address security audits and compliance efforts on our cloud platforms. Knowledge of SOX, PCI DSS, HIPAA, and FedRAMP is highly desirable."
+      },
+      {
+        "text": "Ability to dive deep into software configurations and logs to recommend security-based improvements",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"ability to\" is a tier_2 signal",
+        "binary": false,
+        "source_text": "• Ability to dive deep into software configurations and logs to recommend security-based improvements"
+      },
+      {
+        "text": "Identify opportunities to leverage automation to improve security and build the tools necessary to execute improvements",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Identify opportunities to leverage automation to improve security and build the tools necessary to execute improvements"
+      },
+      {
+        "text": "Work closely with engineering teams to ensure we are considering security when architecting and building new features",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Work closely with engineering teams to ensure we are considering security when architecting and building new features."
+      },
+      {
+        "text": "Ensure that solutions are engineered with operational efficiency and security in mind",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Ensure that solutions are engineered with operational efficiency and security in mind. Identify and develop tools to aid this process"
+      },
+      {
+        "text": "Identify and develop tools to aid operational efficiency and security",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Ensure that solutions are engineered with operational efficiency and security in mind. Identify and develop tools to aid this process"
+      },
+      {
+        "text": "Work with external security testing vendors to coordinate pen testing and monitoring of our platform and network",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Work with external security testing vendors to coordinate pen testing and monitoring of our platform and network. Coordinate any necessary fixes both with the operations and engineering teams"
+      },
+      {
+        "text": "Coordinate any necessary fixes with the operations and engineering teams",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Work with external security testing vendors to coordinate pen testing and monitoring of our platform and network. Coordinate any necessary fixes both with the operations and engineering teams"
+      },
+      {
+        "text": "Build automation frameworks and systems to improve time to delivery using modern CI/CD systems",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Build automation frameworks and systems to improve time to delivery using modern CI/CD systems"
+      },
+      {
+        "text": "Participate in on-call for escalated support of production customer and systems",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Participate in on-call for escalated support of production customer and systems"
+      },
+      {
+        "text": "Perform and improve SRE & Operational functions, such as observability and maintenance of productions systems",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Perform and improve SRE & Operational functions, such as observability and maintenance of productions systems"
+      },
+      {
+        "text": "Bachelor's Degree or higher in Computer Science or related field",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "• Bachelor's Degree or higher in Computer Science or related field"
+      },
+      {
+        "text": "2+ years of Cloud Operations / Engineering experience with focus on security",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• 2+ years of Cloud Operations / Engineering experience with focus on security"
+      },
+      {
+        "text": "Strong hands-on system administrator experience on public cloud platforms especially AWS is required",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"is required\"",
+        "binary": false,
+        "source_text": "• Strong hands-on system administrator experience on public cloud platforms especially AWS is required"
+      },
+      {
+        "text": "Node/JavaScript or Java",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Node/JavaScript or Java"
+      },
+      {
+        "text": "AWS (lambda, fargate, ecs)",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• AWS (lambda, fargate, ecs)"
+      },
+      {
+        "text": "Terraform",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Terraform"
+      },
+      {
+        "text": "Docker",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Docker"
+      },
+      {
+        "text": "Gitlab CI",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Gitlab CI"
+      },
+      {
+        "text": "Roadmap - Securing Legacy API and Databases involved - Elastic Beanstalk - Integrating Security into Development Pipeline",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Roadmap - Securing Legacy API and Databases involved - Elastic Beanstalk - Integrating Security into Development Pipeline."
+      },
+      {
+        "text": "Experience with automated configuration management and deployment using tools such as Ansible, Puppet, Chef, and Python required",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"required\"",
+        "binary": false,
+        "source_text": "• Experience with automated configuration management and deployment using tools such as Ansible, Puppet, Chef, and Python required"
+      },
+      {
+        "text": "Strong system administrator experience with Linux and Windows operating systems required",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"required\"",
+        "binary": false,
+        "source_text": "• Strong system administrator experience with Linux and Windows operating systems required"
+      },
+      {
+        "text": "Experience with vulnerability scanning software such as Nessus, Amazon Inspector, Azure Security Center, and Black Duck highly desirable",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 — \"highly desirable\"",
+        "binary": false,
+        "source_text": "• Experience with vulnerability scanning software such as Nessus, Amazon Inspector, Azure Security Center, and Black Duck highly desirable"
+      },
+      {
+        "text": "Experience with automated test and build systems such as Jenkins, Maven, Ant.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Experience with automated test and build systems such as Jenkins, Maven, Ant."
+      },
+      {
+        "text": "Experience with auditing and logging tools such as AuditD, NXLog, AWS CloudTrail",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Experience with auditing and logging tools such as AuditD, NXLog, AWS CloudTrail"
+      },
+      {
+        "text": "Experience with Monitoring and reporting tools such as DataDog and Graphite",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Experience with Monitoring and reporting tools such as DataDog and Graphite"
+      },
+      {
+        "text": "Experience with managed Kubernetes in the cloud using AKS",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Experience with managed Kubernetes in the cloud using AKS"
+      },
+      {
+        "text": "Experience working with virtualization software such as VMWare and Openstack",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "• Experience working with virtualization software such as VMWare and Openstack"
+      },
+      {
+        "text": "Experience working in hybrid environment preferred",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 — \"preferred\"",
+        "binary": false,
+        "source_text": "• Experience working in hybrid environment preferred"
+      }
+    ]
+  }
+}

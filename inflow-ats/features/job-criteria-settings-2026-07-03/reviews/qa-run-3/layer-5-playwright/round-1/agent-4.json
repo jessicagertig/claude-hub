@@ -1,0 +1,24 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 4,
+  "assignment": "OTHER (non-zero-criteria) FAILURE state — job 28057 'QA Other Failure', SPEC §8.2 state 3. Latest AiJobCriteria failed with error_message 'Job description is blank' (non-zero-criteria) → must render GENERIC failure EmptyState, NOT the zero-found one.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as Rezu May / Acme Inc., jobs list rendered with all 6 seeded QA jobs + Senior Engineer.",
+    "Clicked job title 'QA Other Failure' → landed on /jobs/28057/stages/196344/applicants (confirms job id 28057).",
+    "Clicked 'Job setup' left-nav link → /jobs/28057/setup/details.",
+    "Clicked 'Plato AI settings' setup-nav item → /jobs/28057/setup/ai. 'Plato AI settings' nav item is [active].",
+    "Snapshotted the Job criteria section (heading level 4 'Job criteria'). Intro paragraph present with inline 'job description' link → /jobs/28057/setup/description.",
+    "EmptyState rendered: icon (svg), title 'Criteria generation failed', message 'Something went wrong while extracting criteria from the job description. Regenerate to try again.'",
+    "Action row: ONLY a 'Regenerate criteria' button — no 'View criteria' button, no criteria card, no count rail.",
+    "Confirmed icon is alert-triangle via DOM: SVG path 'M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z' + vertical line + dot = lucide/feather alert-triangle.",
+    "CRUCIAL DISCRIMINATION verified: state shows GENERIC failure copy ('Criteria generation failed' / 'Something went wrong...'), NOT the zero-found copy ('No criteria found' / 'No scoring criteria were found...'). zeroCriteriaFailure flag correctly classifies this as a generic failure.",
+    "Right sidebar 'Criteria tiers' glossary present (Core/Preferred/Bonus).",
+    "Console (all, level error): 7 errors — 4 react-router history deprecation warnings, 2 'Store does not have a valid reducer' Redux warnings, 1 heap-api.com 404. All match the known pre-existing list; zero feature-referencing errors (no aiJobCriteria/JobCriteria/useAiJobCriteria/ai_job_criteria/React errors)."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-4/other-failure-full.png",
+    "/tmp/qa-run-3-l5/agent-4/emptystate.png"
+  ],
+  "findings": []
+}

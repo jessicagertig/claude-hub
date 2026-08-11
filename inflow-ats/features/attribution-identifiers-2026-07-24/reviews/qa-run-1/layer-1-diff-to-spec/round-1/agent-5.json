@@ -1,0 +1,27 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 5,
+  "focus": "fbc chain",
+  "findings": [],
+  "chain_verified": [
+    "1a cookie read (exact-name strict equality, value after FIRST '=', verbatim, empty=absent): PASS — getCookieEntries splits document.cookie on '; ', takes substring after first '=', skips zero-length values; getCookieValue matches name with === '_fbc'; value passed through sanitizeTrackingValue with only the 1024 cap (no parsing/hashing)",
+    "1b construction fallback (cookie absent AND genuine fbclid only): PASS — else-if branch requires typeof fbclidParamValue === 'string' && length > 0 on the first-occurrence param value (isArray ? [0] : value; query-string v6.1.0 builds repeated-param arrays in occurrence order); ?fbclid parses to null and ?fbclid= to '' — both fail the guard, no construction (§8.6 upheld); format 'fb.1.' + Date.now() + '.' + fbclid per §4",
+    "1c cap on FINAL value (construction uses uncapped fbclid): PASS — fbclidParamValue is taken raw from parsedParams.fbclid (not the capped trackingParams.fbclid); the constructed string is then passed to sanitizeTrackingValue(..., ATTRIBUTION_IDENTIFIER_MAX_LENGTH=1024) with the surrogate-safe trailing-lone-high-surrogate rule",
+    "1d absent when neither source: PASS — no else branch; trackingParams.fbc is never assigned null/''",
+    "1e cookie wins over construction: PASS — if (fbcCookieValue !== undefined) {...} else if — verbatim cookie stored even when fbclid is also present",
+    "2 AuthForm.tsx: PASS — fbc: trackingParams.fbc in the magicLink payload and fbc={trackingParams.fbc} passed to GoogleSSOButton",
+    "3 SignupForm.tsx: PASS — fbc: trackingParams.fbc in the register mutation payload",
+    "4 GoogleSSOButton.tsx: PASS — fbc?: string in Props, destructured, hidden input name=\"fbc\" under typeof fbc === 'string' && fbc.length > 0",
+    "5 useSession.ts: PASS — fbc destructured in BOTH register and magicLink, magicLink inline type fbc?: string | null, in both variables objects; lodash snakeCase('fbc') → 'fbc' (single lowercase word unchanged)",
+    "6 sign_up_params: PASS — :fbc plain scalar permit, before the trailing utm_data: {} which remains last",
+    "7 #magic_create: PASS — fbc: sign_up_params[:fbc] present in BOTH branches of the two-branch user_params conditional (verified in committed a0d59115d)",
+    "8 omniauth.rb allowed_keys: PASS — fbc in the %w[] list; existing value if value && !value.empty? loop unchanged",
+    "9 User.from_omniauth: PASS — fbc: nil keyword in the 16-keyword signature; omniauth_user.fbc = fbc assigned inside the first_or_create block only; post-block update touches only first_name/last_name",
+    "10 callbacks controller: PASS — fbc: merged_tracking['fbc'] (string key) in the from_omniauth call",
+    "11 OrganizationsController#create: PASS — @organization.fbc = current_user.fbc in the copy block; never read from request params",
+    "12 migrations/schema: PASS — add_column :users, :fbc, :string (20260724183710) and add_column :organizations, :fbc, :string (20260724183711), nullable, no default, no index; committed schema.rb (git show a0d59115d:db/schema.rb) has t.string \"fbc\" inside create_table \"organizations\" (line 1099) and create_table \"users\" (line 1302); the organizations migration correctly omits google_click_id/adroll_first_party_cookie (pre-existing per §3)",
+    "13 four spec files: PASS — registrations_controller_spec (fbc in magic_create/create POSTs + raw eq, nil case, both existing-user branches nil), user_from_omniauth_spec (fbc keyword eq, omitted→nil, existing user 'ShouldNotStick' not assigned), omniauth_callbacks_controller_spec (session seed 'fbc' + exhaustive have_received fbc: and fbc: nil), organizations_controller_spec (organization.fbc copied eq + nil case)"
+  ],
+  "notes": "Grep of committed tree for 'fbc' outside the diff files matched only ProfileForm.tsx line 41 — the substring in the unrelated AdRoll segment hash 'e455fbc5'. An empty-value _fbc cookie plus a genuine fbclid triggers construction; that is the composition of §5.1 (empty-value cookie = absent) and §4 (construct when cookie absent), spec-compliant. Date.now() at useState-initializer render time matches §14.4."
+}

@@ -1,0 +1,153 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume lacks evidence of work with Kubernetes or Terraform, and does not mention experience working in AWS, GCP, or Azure environments."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The candidate has experience with internal NAT test environments and local infrastructure, but there is no evidence of multi-cloud or customer-facing environment deployment."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume highlights technical development and documentation, but does not mention collaboration with product or UX teams."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has significant experience building production-grade systems in Go, including an ETL pipeline for real-world event data and a load balancer."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The resume does not mention Kubernetes."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with Ansible and Juju, which are infrastructure orchestration tools, but does not show experience with Terraform or infrastructure-as-code specifically for cloud providers."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The resume mentions using Google OAuth, but there is no evidence of managing services, network, compute, or storage within AWS, GCP, or Azure."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "There is no evidence of experience with PaaS architectures or abstraction layers."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with developer tooling (Debian packaging) and Git, but lacks evidence of CI/CD pipeline implementation or cloud marketplace integrations."
+    },
+    {
+      "criterion_text": "Excellent communication skills",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate authored deployment guides and technical blogs, which demonstrates some ability to communicate, though professional 'excellent' communication in a team setting is not fully evidenced."
+    },
+    {
+      "criterion_text": "Ability to work cross functionally",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "No evidence provided regarding cross-functional work."
+    },
+    {
+      "criterion_text": "Thrive within a fast moving product engineering environment.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate's experience at Udyansh shows consistent development work, but specific experience in a 'fast-moving product engineering' environment is not explicitly detailed."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No mention of cloud marketplaces."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "Infrastructure work described is on-premises/local/Debian-based."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has designed a load balancer and distributed ETL, which are related to high-availability and distributed system concepts."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume explicitly mentions contributing to open source projects and building a distributed Go-based ETL pipeline."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not list common observability tools."
+    },
+    {
+      "criterion_text": "Ability to design, build, and maintain backend services in Go that power our PaaS",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has proven experience building backend services in Go, but not specifically for a PaaS product."
+    },
+    {
+      "criterion_text": "Ability to develop APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling as part of backend services",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has built APIs, internal tooling, and distributed systems logic, but has not demonstrated cloud provider integration capabilities."
+    },
+    {
+      "criterion_text": "Ability to participate in code reviews for backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of code review experience."
+    },
+    {
+      "criterion_text": "Ability to mentor others in backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of mentorship experience."
+    },
+    {
+      "criterion_text": "Ability to help define best practices for backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate authored deployment guides, which suggests an ability to define practices, but not necessarily for infrastructure and cloud deployments."
+    },
+    {
+      "criterion_text": "Ability to ensure high reliability, scalability, and security of the platform",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate implemented RBAC and security middleware, and built a high-performance load balancer, which relates to reliability and security."
+    },
+    {
+      "criterion_text": "Ability to implement monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies to support platform reliability, scalability, and security",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of monitoring, logging, alerting, or failover strategy implementation."
+    }
+  ],
+  "computed_score": {
+    "points": 55.0,
+    "max": 164,
+    "percentage": 33.5
+  }
+}

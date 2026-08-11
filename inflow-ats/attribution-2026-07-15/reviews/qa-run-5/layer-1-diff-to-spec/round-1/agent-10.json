@@ -1,0 +1,40 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 10,
+  "focus_area": "useSession.ts (§5.4 — D2, D10) + SignupForm.tsx (§5.5 — D10, D14) + §5.2 AuthForm capture/payload second pass",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "§5.4 magicLink: utmSource/utmCampaign/utmData/internalRef added to destructure, inline TS type, and variables (posts to /magic_login); types consistent with referral?: string | null",
+      "§5.4 register: same four added to destructure and variables (posts to /sign_up)",
+      "§5.4: NO change to useMagicLink/useRegister hook wrappers",
+      "§5.5 capture: raw props.location.search through sanitizeTrackingParams, held in state via the referral useState analog",
+      "§5.5 payload: four fields in the register mutation call alongside firstName/lastName/email/password/inviteToken/referral",
+      "§5.5 event (D14): trackEvent(\"user_signed_up_client_side\") in register onSuccess, plain, no properties, before props.onComplete(); logger unchanged; import from @shared/lib/posthog",
+      "Parent fact: SignupForm rendered by Signup.tsx at /register; Signup.tsx NOT in the diff",
+      "§5.2 second pass: per-field name trace AuthForm state → mutation call → useSession destructure → variables → wire",
+      "Diff-to-spec: every changed line in useSession.ts and SignupForm.tsx traces to §5.4/§5.5"
+    ],
+    "verified": [
+      "§5.4 magicLink destructure: utmSource, utmCampaign, utmData, internalRef added after partner (useSession.ts at fc3f047f9, function magicLink)",
+      "§5.4 magicLink inline TS type: utmSource?: string | null; utmCampaign?: string | null; utmData?: Record<string, any> | null; internalRef?: string | null — optional+nullable, same shape as referral?: string | null",
+      "§5.4 magicLink variables: four added after partner; path is `/magic_login` (unchanged)",
+      "§5.4 magicLink window.logger object NOT modified (email, redirectTo, organizationSlug, loginIntent, recaptchaToken, partner only) — no spec requirement to change it, and it was not changed",
+      "§5.4 register destructure: four added after referral (register had and still has no inline TS type — spec requires the type addition only for magicLink); variables: four added after referral; path `/sign_up` unchanged",
+      "§5.4 wrappers: useRegister at HEAD still = useMutation(register) with onSuccess logger + queryClient.setQueryData(\"me\", data); useMagicLink still = useMutation(magicLink) with onSuccess logger + queryClient.invalidateQueries([\"me\"]). Zero diff hunks touch the HOOKS section; git diff for useSession.ts is exactly the 29 content lines in the two request functions (verified count matches the dump)",
+      "§5.5 capture: SignupForm.tsx line 26 `const [trackingParams] = React.useState(sanitizeTrackingParams(props.location.search));` — raw search string (not a parsed object), useState directly below the referral analog (line 25), no setter (per §5.2 'no setter is needed'); import from @shared/lib/utils where sanitizeTrackingParams is exported",
+      "§5.5 payload: register call carries firstName, lastName, email (toLower(trimmedEmail), pre-existing), password, inviteToken, referral + utmSource/utmCampaign/utmData/internalRef read from trackingParams",
+      "§5.5 event: onSuccess = window.logger(\"[SignupForm] register onScucess\", { data }) [pre-existing line incl. typo, unchanged] → trackEvent(\"user_signed_up_client_side\") [plain, no properties] → props.onComplete(). trackEvent imported from @shared/lib/posthog; posthog.ts line 59 exports trackEvent",
+      "Parent fact: Signup.tsx:5 imports SignupForm, Signup.tsx:25 renders <SignupForm onComplete={signupComplete} {...props} />; routes.rb:593 `get 'register', to: 'pages#register'`; git diff for Signup.tsx in 62dd55867..fc3f047f9 is empty",
+      "§5.2 second pass, capture: AuthForm.tsx `const [trackingParams] = React.useState(sanitizeTrackingParams(location.search));` — raw string, referral-state analog; onSuccess fires trackEvent(\"user_signed_up_client_side\") before onComplete({ email: cleanedEmail, ...data }); the four passed to GoogleSSOButton as props; AuthForm diff = exactly the 18 dump lines, all tracing to §5.2",
+      "§5.2 name trace utmSource: utils.js sets trackingParams.utmSource → AuthForm/SignupForm read trackingParams.utmSource → mutation-call key utmSource → useSession destructure utmSource → variables utmSource → allKeysToSnake (apiMutate: `data: skipKeysToSnake ? variables : allKeysToSnake(variables)`; neither register nor magicLink passes skipKeysToSnake) → lodash snakeCase('utmSource') = 'utm_source' (executed against the repo's lodash) → sign_up_params permits :utm_source. Same chain verified for utmCampaign → utm_campaign, internalRef → internal_ref, utmData → utm_data (permitted as `utm_data: {}`). No name mismatch at any hop",
+      "§5.2 name trace utmData inner keys: sanitizer keys utmData by raw param name; allKeysToSnake recurses but snakeCase leaves canonical utm_* names unchanged (executed: 'utm_medium'→'utm_medium', 'utm_term'→'utm_term'); non-canonical normalization (utm_content2→utm_content_2) is stated as accepted fact in SPEC §5/§11 note 3",
+      "Absence semantics at these hops: absent sanitizer fields are undefined → mutation-call keys carry undefined → JSON body drops them → wire param absent; no || fallbacks anywhere in the traced chain",
+      "§9 event-name grep: `git grep user_signed_up_client_side app/` at HEAD matches exactly AuthForm.tsx:91 and SignupForm.tsx:75",
+      "Diff-to-spec: useSession.ts changed lines = register destructure reflow+4 fields, register variables+4, magicLink destructure+4, inline type+4, variables+4 — all §5.4. SignupForm.tsx changed lines = 2 imports, trackingParams state, 4 payload fields, 1 trackEvent — all §5.5. No untraceable changes in either file; dump completeness verified against live git diff line counts (31 and 8)"
+    ],
+    "missing": []
+  },
+  "notes": "No findings. Both files conform to §5.4/§5.5 exactly, and the §5.2 second pass found no name mismatch at any hop of the four-field chain (state → call → destructure → variables → snake_case wire → sign_up_params permit; snakeCase outputs verified by executing the repo's lodash). Hook wrappers useRegister/useMagicLink confirmed byte-identical in behavior at HEAD with zero diff hunks in the HOOKS section. Prior finding l1-run4-001 verified resolved: SPEC §5.1 rule 2, §7 constraint 1, and §11 note 4 now describe the shipped sanitizeTrackingValue behavior accurately — .slice(0, 255) then drop a trailing code unit in 0xD800–0xDBFF (254 code units in the split-pair case), matching utils.js at fc3f047f9; the code was not changed. Settled rulings respected: nothing re-reported from M1–M4 or the 9 LOW findings; utils.test.js absence not flagged; Signup.tsx/Auth.tsx absence confirmed as correct baseline."
+}

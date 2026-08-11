@@ -1,0 +1,13 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 4,
+  "focus": "Defensive funnel guard in TextractResult#generate_ai_summary_with_credit_flow (shared entry point 7) — SPEC.md §6.2.4: `return if job_application.job.zero_criteria_extraction_failure?` placed AFTER the succeeded-summary early return and BEFORE extract_job_criteria_if_needed.",
+  "scenarios_run": [
+    "Code read: confirmed guard ordering in app/models/textract_result.rb — line 67-68 succeeded-summary early return; line 70 `return if job_application.job.zero_criteria_extraction_failure?`; line 72 `job_application.job.extract_job_criteria_if_needed`; line 78 generate_ai_summary (Orchestrate). Placement matches SPEC §6.2.4 exactly.",
+    "Scenario 1 (guard fires): built isolated org/job/candidate/job_application/textract_result; set latest AiJobCriteria = zero-criteria failure (ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE). Stubbed generate_ai_summary as a per-instance probe (blocks Orchestrate); stubbed ExtractJobCriteriaJob.perform_later globally (blocks any real extraction). Called generate_ai_summary_with_credit_flow. RESULT: predicate=true; AiJobCriteria.count unchanged (1->1, extract_job_criteria_if_needed NOT called, no new pending row); ai_job_application_summaries count unchanged (0->0); generate_ai_summary probe NOT called (Orchestrate not reached). Debug log showed 'entry' but no 'pipeline done' — returned early at the guard. PASS.",
+    "Scenario 2 (CONTROL, guard does not fire): latest AiJobCriteria = succeeded. Called method with same stubs. RESULT: predicate=false; generate_ai_summary probe WAS called (got past the guard line); AiJobCriteria.count unchanged (1->1) because extract_job_criteria_if_needed no-ops on a succeeded latest (its own succeeded guard). Debug log printed 'pipeline done'. PASS.",
+    "Scenario 3 (FALSIFICATION, guard does not fire, non-zero failure latest): latest AiJobCriteria = failed with error_message 'Job description is blank' (NOT a zero-criteria message). Called method. RESULT: predicate=false; generate_ai_summary probe called (past guard); AiJobCriteria.count 1->2 with new latest row status=pending — extract_job_criteria_if_needed DID create a new pending row. This proves scenario 1's 'count unchanged' assertion is falsifiable (non-ghost): when the guard does not return and latest is a failure, a row IS created; the zero-criteria case's unchanged count genuinely demonstrates the guard blocked re-extraction. PASS."
+  ],
+  "findings": []
+}

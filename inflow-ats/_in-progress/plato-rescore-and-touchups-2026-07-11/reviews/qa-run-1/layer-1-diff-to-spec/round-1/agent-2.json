@@ -1,0 +1,57 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 2,
+  "focus": "SPEC 1.3 overestimate info block + 1.4 Statement block in BulkGenerateAiSummariesConfirmModal.tsx; redundant re-check of SPEC 1.2 states 2-4 exact strings; known-failure #1 (t.text standalone) and #12 (no custom-prop forwarding)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "1.3 info block render condition (isProcessableCountExact === false && !rescore, directly beneath body copy)",
+      "1.3 info block structure (Tooltip from @ats/src/components/shared/Tooltip wrapping Styled.Info div with Icon name=alert-circle + span, per CustomQuestionModal:192-199)",
+      "1.3 visible message 'This count may be an overestimate.'",
+      "1.3 Tooltip label verbatim string",
+      "1.3 Styled.Info styles copied verbatim from CustomQuestionModal Styled.Info, emotion label BulkGenerateAiSummariesConfirmModal_Info",
+      "1.4 Statement block structure copied verbatim from RunPlatoReviewAllModal Styled.Statement (bordered flex box, Icon name=mail, t.text.sm), emotion label BulkGenerateAiSummariesConfirmModal_Statement",
+      "1.4 Statement copy verbatim (per-stage first sentence 'You will receive an email with the final count when it's done.' + skip-reasons sentence)",
+      "1.2 state 2 exact string (unchecked, processableCount === 0)",
+      "1.2 state 3 exact string (unchecked, processable, 'Up to ' prefix when inexact) + creditCopy",
+      "1.2 state 4 exact string (checked, leading 'The', no Up-to prefix, no info block) + creditCopy",
+      "known-failure #1: t.text.xs / t.text.sm used standalone, never inside font-size:",
+      "known-failure #12: no custom boolean prop forwarded to styled DOM element in the new blocks"
+    ],
+    "implemented": [
+      "1.3 info block render condition (isProcessableCountExact === false && !rescore, directly beneath body copy)",
+      "1.3 info block structure (Tooltip from @ats/src/components/shared/Tooltip wrapping Styled.Info div with Icon name=alert-circle + span, per CustomQuestionModal:192-199)",
+      "1.3 visible message 'This count may be an overestimate.'",
+      "1.3 Tooltip label verbatim string",
+      "1.3 Styled.Info styles copied verbatim from CustomQuestionModal Styled.Info, emotion label BulkGenerateAiSummariesConfirmModal_Info",
+      "1.4 Statement block structure copied verbatim from RunPlatoReviewAllModal Styled.Statement (bordered flex box, Icon name=mail, t.text.sm), emotion label BulkGenerateAiSummariesConfirmModal_Statement",
+      "1.4 Statement copy verbatim (per-stage first sentence 'You will receive an email with the final count when it's done.' + skip-reasons sentence)",
+      "1.2 state 2 exact string (unchecked, processableCount === 0)",
+      "1.2 state 3 exact string (unchecked, processable, 'Up to ' prefix when inexact) + creditCopy",
+      "1.2 state 4 exact string (checked, leading 'The', no Up-to prefix, no info block) + creditCopy",
+      "known-failure #1: t.text.xs / t.text.sm used standalone, never inside font-size:",
+      "known-failure #12: no custom boolean prop forwarded to styled DOM element in the new blocks"
+    ],
+    "missing": []
+  },
+  "verification_detail": {
+    "1_3_render_condition": "Modal lines 191-198 gate the block on `!isProcessableCountExact && !rescore` (logically identical to `isProcessableCountExact === false && !rescore`), placed immediately after `<Styled.Instructions>{bodyCopy}</Styled.Instructions>` (line 190). MATCH.",
+    "1_3_structure": "Tooltip imported at line 10 from @ats/src/components/shared/Tooltip; wraps Styled.Info div containing `<Icon name=\"alert-circle\" />` + `<span>`. Identical to CustomQuestionModal index.js:192-199. MATCH.",
+    "1_3_visible_message": "Line 195: 'This count may be an overestimate.' Exact. MATCH.",
+    "1_3_tooltip_label": "Line 192: 'This is not an exact count of candidates without a review. If fewer candidates than stated above are unreviewed, only those unreviewed candidates will be reviewed, and fewer credits will be consumed.' Exact. MATCH.",
+    "1_3_styled_info": "Modal Styled.Info (lines 265-284) is byte-for-byte identical to CustomQuestionModal Styled.Info (lines 254-273) except the emotion label: `${[t.text.xs, t.mt(-1), t.mb(5)]}`, color gray[400] dark / gray[600] light, display flex, align-items center, line-height 1.3, svg `${[t.h(6), t.w(4), t.mr(1)]}` + min-width 16px, &:hover cursor: text. Emotion label `BulkGenerateAiSummariesConfirmModal_Info` (line 268). MATCH.",
+    "1_4_structure": "Modal Styled.Statement (lines 286-306) is byte-for-byte identical to RunPlatoReviewAllModal Styled.Statement (lines 206-226) except the emotion label: `${[t.mt(4), t.p(3), t.rounded.md]}`, display flex, gap 0.625rem, border 1px solid gray[700]/gray[200], color gray[400]/gray[500], line-height 1.5, `${t.text.sm}`, svg flex-shrink 0 / margin-top 0.0625rem / 1rem square / color gray[500]/gray[400]. Emotion label `BulkGenerateAiSummariesConfirmModal_Statement` (line 289). Usage lines 209-216: `<Styled.Statement><Icon name=\"mail\" /><span>...</span></Styled.Statement>`. MATCH.",
+    "1_4_copy": "Lines 211-215 render 'You will receive an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' Per-stage first sentence per owner ruling (analog all-stages uses 'The hiring team gets an email...'); skip-reasons sentence identical to analog. Exact. MATCH.",
+    "1_2_state_2": "Lines 136-143, condition `!rescore && processableCount === 0`: '0 of the {candidatesCount} candidates selected from this hiring stage don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.' Numeric 0. Exact. MATCH.",
+    "1_2_state_3": "Lines 144-152, `else if (!rescore)` (reached only when processableCount > 0 since state 2 precedes): '{Up to }{processableCount} of the {candidatesCount} candidates selected from this hiring stage don't have a Plato review yet. {creditCopy}'. 'Up to ' prefix gated on `!isProcessableCountExact`. Trailing space in 'Up to ' supplies the separator (JSX collapses the inter-expression newline). Exact. MATCH.",
+    "1_2_state_4": "Lines 153-161, else branch (rescore true): 'The {candidatesCount} candidates selected from this hiring stage will be reviewed, including candidates that already have a review. {creditCopy}'. Leading 'The' per owner ruling. No 'Up to' prefix; info block does not render (its condition requires !rescore). Exact. MATCH.",
+    "creditCopy_shared": "Lines 108-124: 'Each successful review uses one AI credit' + shortfall variant '. You are short <b>{shortfall}</b> credit(s). The first {available} candidate(s) will get reviews generated; the rest will be skipped.' (shortfall > 0) or normal variant ', so running this uses up to <b>{candidatesToScoreCount}</b> credit(s) from your balance of <b>{available}</b> available.'. Plural interpolation present. Matches SPEC 1.2 credit copy exactly. MATCH.",
+    "known_failure_1": "grep confirms zero `font-size:` occurrences. `t.text.xs` used standalone inside array interpolation at line 269; `t.text.sm` used standalone at line 296. Neither is inside a `font-size:` property. PASS.",
+    "known_failure_12": "grep confirms no `shouldForwardProp` and no `$`-prefixed custom props. Styled.Info and Styled.Statement are plain `styled.div` receiving no custom props; JSX callsites pass no props. No custom boolean forwarded to a DOM element. PASS."
+  },
+  "observations_non_findings": [
+    "SPEC 1.4's parenthetical line-number citation for the RunPlatoReviewAllModal analog is stale relative to the current worktree: SPEC says ':145-151 usage, :186-206 styles' but the actual Styled.Statement usage is at RunPlatoReviewAllModal.tsx:164-171 and its styles at :206-226. This is a navigational-citation drift in the SPEC text, NOT an implementation mismatch — the descriptive pin (bordered flex box, Icon name=mail, t.text.sm) and the verbatim strings/styles are faithful and the impl matches them exactly. Recorded for the record; not raised as a HIGH finding because it is not a string/style/label/render-condition mismatch in the diff.",
+    "SPEC 1.3 cites CustomQuestionModal index.js:192-199 for the Tooltip/Styled.Info usage; that citation is accurate against the current worktree (usage at 192-199, style def at 254-273)."
+  ]
+}

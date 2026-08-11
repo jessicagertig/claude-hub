@@ -1,0 +1,123 @@
+{
+  "agent": "round-2-agent-3",
+  "focus": "Spec completeness — requirements not checked or only superficially verified by Round 1",
+  "findings": [
+    {
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/Plato/PlatoTabEmptyState.tsx",
+      "lines": "78-86",
+      "summary": "resolveStatus sets buttonLabel and buttonIcon to undefined when config values are falsy, violating CLAUDE.md Rule 9",
+      "detail": "Lines 82-83 in resolveStatus: `buttonLabel: config.buttonLabel || undefined` and `buttonIcon: config.buttonIcon || undefined`. CLAUDE.md Rule 9 (Never Deliberately Set undefined) prohibits explicitly setting values to undefined. These should use the falsy value directly (`buttonLabel: config.buttonLabel` or default to empty string `config.buttonLabel || ''`), or simply omit the properties conditionally. The `|| undefined` pattern is the exact anti-pattern the rule forbids.",
+      "spec_section": "PlatoTabEmptyState (via CLAUDE.md Rule 9)",
+      "checked_by_round_1": false
+    },
+    {
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "lines": "42-45",
+      "summary": "useAiJobApplicationSummary is gated on aiJobApplicationSummaryId existence, not firing unconditionally on render as spec states",
+      "detail": "Spec says: 'useAiJobApplicationSummary fires on render (no succeeded gate)'. The hook at line 42-45 passes `summaryStatus?.aiJobApplicationSummaryId` and the hook implementation (useAiJobApplicationSummary.ts:44) has `enabled: aiJobApplicationSummaryId != undefined`. This means the query does NOT fire when there is no summaryStatus or when aiJobApplicationSummaryId is null/undefined. For a brand new job application with no summary ever generated, fullSummary will be undefined. This is likely intentional (there is no summary record to fetch), but it contradicts the spec's literal statement 'fires on render (no succeeded gate)'. The actual gate is 'has an aiJobApplicationSummaryId' rather than 'no gate at all'. This should be verified as spec-conformant or the spec should be updated to reflect the actual gate.",
+      "spec_section": "PlatoTab.tsx - useAiJobApplicationSummary fires on render (no succeeded gate)",
+      "checked_by_round_1": false
+    },
+    {
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "lines": "118-163",
+      "summary": "renderBody has no explicit handling for the 'regenerating' status when fullSummary is not yet loaded",
+      "detail": "When statusValue is 'regenerating' but fullSummary has not loaded yet (e.g. useAiJobApplicationSummary query is still in flight), the code at line 122 `if (statusValue === 'regenerating' && fullSummary)` will be false, and execution falls through to isGeneratingPipeline (also false since fullSummary is falsy), then to the failed check (false), then to the noResume check (false since statusValue is 'regenerating', not 'none'), and finally to the default empty state with deriveEmptyStatus(). This means a 'regenerating' job application will momentarily flash the 'Ask Plato to review' or 'noCredits' empty state while the full summary query loads. The spec says 'regenerating' should render PlatoGeneratedReviewCallout (showing the existing summary data). The statusValue is 'regenerating' but no loading state is shown while fullSummary is fetched.",
+      "spec_section": "PlatoTab.tsx - renderBody() logic for regenerating state",
+      "checked_by_round_1": false
+    },
+    {
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "lines": "118-121",
+      "summary": "renderBody has no explicit handling for the 'current' status when fullSummary is not yet loaded",
+      "detail": "Same issue as regenerating: when statusValue is 'current' but fullSummary has not loaded yet (query in flight), line 119 `if (statusValue === 'current' && fullSummary)` is false. Execution falls through all checks and lands at the default empty state. A 'current' job application will briefly flash an empty state ('Ask Plato to review' or 'noCredits') while the useAiJobApplicationSummary query is loading. There should be a loading/spinner state for when statusValue is 'current' or 'regenerating' but fullSummary is still undefined.",
+      "spec_section": "PlatoTab.tsx - renderBody() logic for current state",
+      "checked_by_round_1": false
+    },
+    {
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/websockets/WebsocketJobChannelHandler.tsx",
+      "lines": "73-76",
+      "summary": "WebsocketJobChannelHandler invalidates ['jobApplication'] in addition to spec-required ['aiJobApplicationSummary']",
+      "detail": "Spec says: 'New case ai_summary_status_change -> queryClient.invalidateQueries([\"aiJobApplicationSummary\"])'. The implementation at line 74 also invalidates ['jobApplication'], which is not in the spec. While this is arguably useful (to re-fetch the denormalized aiJobApplicationSummaryStatus on the job application), it is an extra operation not specified. The invalidation of ['jobApplication'] will refetch ALL job application queries, which could cause unnecessary network traffic and re-renders. This should be confirmed as intentional or narrowed to invalidate only the specific job application whose summary changed (the payload has jobApplicationId but it is not used).",
+      "spec_section": "WebsocketJobChannelHandler.tsx - ai_summary_status_change handler",
+      "checked_by_round_1": false
+    }
+  ],
+  "spec_coverage_notes": [
+    {
+      "spec_requirement": "Delete AiJobApplicationSummaryFeedItem.tsx",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "File does not exist at app/javascript/ats/src/views/jobApplications/activities/AiJobApplicationSummaryFeedItem.tsx and no imports reference it anywhere in the codebase."
+    },
+    {
+      "spec_requirement": "PlatoTabEmptyState: All states use Plato chip icon (icon: 'plato') -- no more file-text or other icons",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "All PLATO_EMPTY_STATES entries use icon: 'plato'. The noResume branch also passes icon='plato'. No 'file-text' icon references exist in the Plato directory."
+    },
+    {
+      "spec_requirement": "PlatoTabEmptyState: noResume stops rendering DragAndDropResumeUploader",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "PlatoTabEmptyState renders a JobApplicationTabEmptyState with 'Go to resume tab' button and onClick={props.onClick} which navigates to the resume tab. DragAndDropResumeUploader is not imported or referenced anywhere in the Plato directory. It is only used in JobApplicationResume.tsx."
+    },
+    {
+      "spec_requirement": "PlatoTab: shimmer/generating animation completely gone, replaced by PlatoLoadingState",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "No shimmer, keyframes, or shimmer-related CSS exists in PlatoTab.tsx. PlatoLoadingState is imported and rendered for isGeneratingPipeline state."
+    },
+    {
+      "spec_requirement": "PlatoTab: stale reads from fullSummary?.stale not old summary",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "Line 107 passes stale: fullSummary?.stale in the summaryData object. Line 167 checks fullSummary?.stale in renderHeaderRight. No old summary reference used."
+    },
+    {
+      "spec_requirement": "PlatoTab: generatedAgo uses summaryStatus?.updatedAt not old createdAt",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "Line 98: generatedAgo: distanceInWords(summaryStatus?.updatedAt). No createdAt reference exists in PlatoTab.tsx."
+    },
+    {
+      "spec_requirement": "No credit balance hook in JobApplicationActivity or PlatoOverviewCallout",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "Neither file imports or references useOrganizationAiCreditBalance, creditBalance, or any credit-related hook."
+    },
+    {
+      "spec_requirement": "PlatoOverviewCallout: No processing, failed, or noCredits states",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "PlatoCalloutStatus type is 'ask' | 'noResume' only. deriveCalloutStatus returns null for 'current' and 'regenerating', 'ask' for none/no-status with resume, 'noResume' for none/no-status without resume. No processing/failed/noCredits states exist."
+    },
+    {
+      "spec_requirement": "JobApplicationActivity: switches on aiJobApplicationSummaryStatus.status instead of aiJobApplicationSummary?.status",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "Line 399 reads jobApplication.aiJobApplicationSummaryStatus?.status. No reference to old aiJobApplicationSummary on jobApplication exists."
+    },
+    {
+      "spec_requirement": "JobApplicationActivity: current or regenerating -> PlatoGeneratedReviewCallout, else PlatoOverviewCallout",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "Lines 399-413: ternary checks status === 'current' || status === 'regenerating', renders PlatoGeneratedReviewCallout with headline/roleFit/scorePct/generatedAgo from aiJobApplicationSummaryStatus. Else renders PlatoOverviewCallout."
+    },
+    {
+      "spec_requirement": "PlatoGeneratedReviewCallout reads from aiJobApplicationSummaryStatus, not full summary",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "In JobApplicationActivity.tsx lines 401-404, all props (headline, roleFit via integratedRoleAnalysis, scorePct via scorePercentage, generatedAgo via updatedAt) are sourced from jobApplication.aiJobApplicationSummaryStatus."
+    },
+    {
+      "spec_requirement": "Job application frontend type: removed aiJobApplicationSummary, added aiJobApplicationSummaryStatus",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "jobApplication.ts defines AiJobApplicationSummaryStatus interface with status/scorePercentage/headline/integratedRoleAnalysis/updatedAt. JobApplication interface has aiJobApplicationSummaryStatus: AiJobApplicationSummaryStatus | null. No aiJobApplicationSummary field (old embedded summary) exists on JobApplication."
+    },
+    {
+      "spec_requirement": "PlatoLoadingState: 4-step checklist, status-to-step mapping, monotonic advancement",
+      "status": "VERIFIED_COMPLETE",
+      "detail": "PlatoLoadingState.tsx has STEPS array with 4 labels matching spec, STATUS_TO_STEP maps textract_processing->0, extracting/summarizing->1, scoring->2, integrating->3. Math.max in useEffect ensures monotonic advancement. Unknown statuses leave active at its current value."
+    },
+    {
+      "spec_requirement": "WebsocketJobChannelHandler: ai_summary_status_change case invalidates aiJobApplicationSummary queries",
+      "status": "VERIFIED_WITH_DEVIATION",
+      "detail": "The case exists and invalidates ['aiJobApplicationSummary']. It also invalidates ['jobApplication'] which is not in the spec. See findings."
+    }
+  ]
+}

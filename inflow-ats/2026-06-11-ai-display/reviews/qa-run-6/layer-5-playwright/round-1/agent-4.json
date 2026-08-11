@@ -1,0 +1,89 @@
+{
+  "agent": 4,
+  "layer": 5,
+  "round": 1,
+  "scope": "Plato tab header, styling, and interactions",
+  "tested_url": "http://app.lvh.me:5007/jobs/17773/stages/124384/applicants/13501/ai",
+  "candidates_tested": [
+    { "name": "Alonso Parker", "applicant_id": 13501 },
+    { "name": "Filomena Hilll", "applicant_id": 13500 },
+    { "name": "Antonio Stoltenberg", "applicant_id": 13499 }
+  ],
+  "screenshots": [
+    ".playwright-mcp/qa-run6-layer5-agent4/01-plato-tab-full.png",
+    ".playwright-mcp/qa-run6-layer5-agent4/02-plato-header-bar.png",
+    ".playwright-mcp/qa-run6-layer5-agent4/03-plato-no-resume-state.png",
+    ".playwright-mcp/qa-run6-layer5-agent4/04-filomena-plato-tab.png",
+    ".playwright-mcp/qa-run6-layer5-agent4/05-antonio-plato-tab.png"
+  ],
+  "findings": [
+    {
+      "id": "A4-PASS-1",
+      "severity": "pass",
+      "area": "header - left side: gradient chip icon",
+      "description": "PlatoMark_Chip is present on the left side of the header. Computed background-image is 'linear-gradient(120deg, rgb(251, 215, 255) 10%, rgb(255, 222, 193) 90%)' — a pink-to-peach gradient. The chip contains an SVG icon (sparkle/AI icon, aria-hidden). The chip element class is PlatoMark_Styled-Chip / PlatoMark_Chip, sized 26x26px with border-radius 7px."
+    },
+    {
+      "id": "A4-PASS-2",
+      "severity": "pass",
+      "area": "header - left side: Plato text label",
+      "description": "A plain <span>Plato</span> text node appears immediately after the chip on the left side (PlatoTab_Styled-HeaderLeft container). Text is 'Plato'. Layout is flex row."
+    },
+    {
+      "id": "A4-PASS-3",
+      "severity": "pass",
+      "area": "header - right side: kebab/more-vertical button",
+      "description": "PlatoTab_KebabButton is present on the right side (PlatoTab_Styled-HeaderRight). Contains an SVG with three circles at y=5, y=12, y=19 — this is the standard more-vertical (vertical three-dot kebab) icon from Lucide. Positioned at x=1158-1184 (right edge of the 600px-wide panel). Header is flex with justify-content: space-between and align-items: center, confirming correct left/right placement."
+    },
+    {
+      "id": "A4-PASS-4",
+      "severity": "pass",
+      "area": "header - layout",
+      "description": "Header (PlatoTab_Styled-Header) is display:flex, justify-content:space-between, align-items:center. Header spans x=600-1200 (600px wide). Left side at x=616-686, right side (kebab) at x=1158-1184. Correct spatial separation confirmed."
+    },
+    {
+      "id": "A4-PASS-5",
+      "severity": "pass",
+      "area": "no-resume state content",
+      "description": "All three candidates show 'Plato needs a resume' state: icon, h2 heading 'Plato needs a resume', paragraph 'Plato reviews a candidate from their resume. Add one to this candidate to get started.' Consistent across all three candidates tested."
+    },
+    {
+      "id": "A4-PASS-6",
+      "severity": "pass",
+      "area": "candidate switching - tab state updates",
+      "description": "Switching between Alonso Parker (13501), Filomena Hilll (13500), and Antonio Stoltenberg (13499) via column 2 links correctly updates the Plato tab for each candidate. URL updates to the correct applicant ID. Header and body re-render with correct structure each time. No stale state observed."
+    },
+    {
+      "id": "A4-PASS-7",
+      "severity": "pass",
+      "area": "scroll area independence",
+      "description": "PlatoTab_Body (PlatoTab_Styled-Body) has overflow-y:auto, establishing an independent scroll container inside the tab. The outer JobApplicationContainer_Content also has overflow:auto, but the Plato tab has its own nested scroll area. Current no-resume content does not overflow (scrollHeight=clientHeight=676px), but the scroll infrastructure is correctly in place."
+    },
+    {
+      "id": "A4-PASS-8",
+      "severity": "pass",
+      "area": "console errors",
+      "description": "Zero console errors, zero console warnings across the entire session (183 total messages, all informational). No JS exceptions, no failed network requests surfaced to console."
+    },
+    {
+      "id": "A4-INFO-1",
+      "severity": "info",
+      "area": "header - kebab button accessibility",
+      "description": "The PlatoTab_KebabButton has no aria-label and no title attribute. Screen readers will announce this as an unlabeled button. Not a functional bug, but an accessibility gap. The SVG inside is aria-hidden (inherits from Icon component). Suggest adding aria-label='More options' or similar."
+    },
+    {
+      "id": "A4-INFO-2",
+      "severity": "info",
+      "area": "candidate switching - Plato tab not auto-active after switch",
+      "description": "When clicking a different candidate from column 2 while on the Plato tab, the URL routes to /ai for the new candidate, but the Plato nav link loses its [active] state until re-clicked. Functionally the Plato content still renders, but the nav item highlight resets. This may be a routing/active-state issue in the applicant nav tabs. Observed: switching to Filomena showed Plato content correctly but Plato nav link was not marked [active] until explicitly clicked."
+    }
+  ],
+  "summary": {
+    "pass_count": 8,
+    "info_count": 2,
+    "warn_count": 0,
+    "fail_count": 0,
+    "overall": "PASS",
+    "notes": "Header bar renders correctly: gradient chip icon (linear-gradient pink-to-peach, 26x26px, 7px radius) + 'Plato' text label on the left; more-vertical kebab icon button on the right in a flex space-between layout. No-resume state is consistent across all 3 candidates. Candidate switching updates the tab correctly. Tab has an independent scroll container. Zero console errors. Two informational items: missing aria-label on kebab button, and Plato nav link loses active state on candidate switch (content still renders correctly)."
+  }
+}

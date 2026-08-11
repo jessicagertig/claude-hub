@@ -1,0 +1,28 @@
+{
+  "layer": "regression",
+  "round": 1,
+  "commit": "299cf9465",
+  "branch": "attribution-work-qa",
+  "suites_run": {
+    "rspec": {
+      "ran": true,
+      "passed": true,
+      "summary": "17 examples, 0 failures",
+      "command": "RAILS_ENV=test bundle exec rspec spec/controllers/api/v1/registrations_controller_spec.rb spec/controllers/api/v1/organizations_controller_spec.rb spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb spec/controllers/hire/confirmations_controller_spec.rb spec/models/user_from_omniauth_spec.rb",
+      "seed": 29791,
+      "failures": []
+    },
+    "rspec_user_spec": {
+      "ran": false,
+      "reason": "spec/models/user_spec.rb does not exist in the repo (verified via ls at commit 299cf9465 on attribution-work-qa)"
+    },
+    "jest": {
+      "ran": true,
+      "passed": true,
+      "summary": "Test Suites: 1 passed, 1 total; Tests: 13 passed, 13 total",
+      "command": "npx jest app/javascript/shared/lib/utils.test.js (node v16.20.2 via nvm)",
+      "note": "Run against the working tree, which includes the uncommitted utils.js/utils.test.js QA fix awaiting a gated commit. All 13 tests pass, including the two surrogate-truncation fix tests."
+    }
+  },
+  "findings": []
+}

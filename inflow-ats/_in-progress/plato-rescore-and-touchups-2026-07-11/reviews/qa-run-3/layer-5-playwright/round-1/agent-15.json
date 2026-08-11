@@ -1,0 +1,57 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 15,
+  "assignment": "Final sweep: navigation integrity by clicks across the feature surface, console/network sweep, websocket sanity, spot re-verification of one state per modal type (display only, no submits).",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs (already logged in as rezu.may@wrkhq.com). Jobs list rendered: Design Lead (2 candidates), Senior Engineer (63). Screenshot 01.",
+    "Clicked Senior Engineer -> job page opened on Inbox (3 candidates: Agnes Sipes, Carl Dietrich 'Weak fit' chip, Emilee Hand 'Good fit' chip). No blank panes, no error boundaries. Screenshot 02. NOTED: Agnes Sipes row has NO fit chip (see finding 001).",
+    "Clicked Agnes Sipes -> Plato tab. Full organic re-scored review rendered: 'Poor fit' tag, headline 'Quality analyst with a focus on manual testing and defect management', scoring detail 5 criteria (0/0/5), relevant experience, open questions, skills, disclaimer, Regenerate button. Screenshot 03.",
+    "SPOT-CHECK 2a: Inbox select-all checkbox (3 selected) -> Bulk options -> Run Plato reviews. BulkGenerateAiSummariesConfirmModal zero-processable state verified BYTE-LEVEL: 'Review candidates' / '0 of the 3 candidates selected from this hiring stage don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.' Numeric 0, no credit sentence, 'Generate reviews' button disabled, re-review checkbox + 'Recommended if you've changed the candidate requirements in the job description.', Statement 'You will receive an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' All exact per SPEC 1.2 state 2 and 1.4. Cancelled; deselected all. Screenshot 04.",
+    "Clicked Screen stage: 5 candidates rendered (Yesenia Bernhard 'Good fit', Cornelius Jenkins 'Excellent fit', Brent Lubowitz/Refugio Ondricka/Wally Blanda bare) - matches navigation map. Screenshot 05.",
+    "Clicked Cornelius Jenkins -> Plato tab: seeded review 'Seeded review — solid mobile engineer', 'Excellent fit', scoring detail 3/1/1, Regenerate button present. Renders fully. Screenshot 06.",
+    "Clicked Interview stage: 50 of 55 rows rendered (first page), no blank pane. Screenshot 07.",
+    "SPOT-CHECK 2b: clicked 'Run Plato' on the Plato Reviews card. RunPlatoReviewAllModal unchecked state verified BYTE-LEVEL: 'Review all candidates' / '58 candidates in this job don't have a Plato review yet. Each successful review uses one AI credit. You are short 42 credits. The first 16 candidates will get reviews generated; the rest will be skipped.' Lead sentence exactly as assigned. Credit math consistent with LIVE balance 16 (map-predicted 20-1-3 after agents 11/12): shortfall 58-16=42. Statement: 'The hiring team gets an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' (SPEC 1.5). Buttons 'Review all' + 'Cancel'. Cancelled. Screenshot 08.",
+    "Clicked 'Navigate back to all jobs' -> jobs list rendered. Clicked Design Lead -> Inbox with Rowan Ellis 'Good fit' and Quinn Barrett 'Excellent fit'. Screenshot 09.",
+    "Clicked Rowan Ellis -> Plato tab: seeded review 'Seeded review — mid-level designer, growing to lead', Good fit, 1/4/0 criteria, Regenerate button. Renders fully. Screenshot 10.",
+    "SPOT-CHECK 2c: Design Lead 'Run Plato' -> RunPlatoReviewAllModal zero-state verified BYTE-LEVEL: '0 candidates in this job don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.' Numeric 0, no credit sentence, 'Review all' button disabled=true (checked via DOM), Cancel enabled. Exact per SPEC 1.5 zero-state. Cancelled. Screenshot 11.",
+    "Finding-001 verification: GET /api/v1/jobs/29092/job_applications?hiring_stage=203589&page=1 response inspected from the browser network log: Agnes (20977) ai_job_application_summary_status = {status: 'current', score_percentage: 0.0, headline present}; Carl (20976) 29.41; Emilee (20975) 88.24. Applied 'Poor fit' fit filter on Inbox: request role_fit[]=poor returned 200 and the list showed exactly 'Agnes Sipes' - backend classifies score 0.0 as poor - yet her row STILL renders no chip. Cleared filter, list restored to 3 rows with Carl/Emilee chips back and Agnes still chipless. Screenshot 12.",
+    "WEBSOCKET SANITY: zero websocket/ActionCable-related console messages or errors across both page-load sessions during the entire pass.",
+    "CONSOLE VERDICT (full session): known-noise only, plus one LOW-severity new observation. Known noise seen: 4x react-router history deprecation warnings, 2x 'Store does not have a valid reducer' Redux warnings, 1x heap-api.com sdk 404, Stripe.js over-HTTP warning, @reach/tooltip styles warning. New: 2x Emotion 'The pseudo class \":first-child\" is potentially unsafe when doing server-side rendering' errors fired exactly once at the FIRST PlatoTab mount (session-1 log L290-291) and never on any page in session 2 (which never opened a Plato tab) - correlates with PlatoTab route mount; cosmetic, vendor-chunk sourced, not feature-named (see finding 002, LOW).",
+    "NETWORK VERDICT: every request to ai_credits, ai_job_application_summaries, and job_applications endpoints during the pass returned 200 (including ai_job_application_summaries/2537, /2532, /2535 detail fetches, 6x ai_credits, all stage list fetches for both jobs, and the role_fit[]=poor filtered fetch). No bulk_ai_job_application_summaries POSTs made (display only). No 4xx/5xx on feature endpoints; only non-feature noise was the heap-api 404."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-15/01-jobs-list.png",
+    "/tmp/qa-run-3-l5/agent-15/02-senior-engineer-inbox.png",
+    "/tmp/qa-run-3-l5/agent-15/03-agnes-plato-tab.png",
+    "/tmp/qa-run-3-l5/agent-15/04-inbox-bulk-modal-zero-processable.png",
+    "/tmp/qa-run-3-l5/agent-15/05-senior-engineer-screen.png",
+    "/tmp/qa-run-3-l5/agent-15/06-cornelius-plato-tab.png",
+    "/tmp/qa-run-3-l5/agent-15/07-senior-engineer-interview.png",
+    "/tmp/qa-run-3-l5/agent-15/08-senior-engineer-all-stages-modal.png",
+    "/tmp/qa-run-3-l5/agent-15/09-design-lead-inbox.png",
+    "/tmp/qa-run-3-l5/agent-15/10-rowan-plato-tab.png",
+    "/tmp/qa-run-3-l5/agent-15/11-design-lead-all-stages-modal-zero-state.png",
+    "/tmp/qa-run-3-l5/agent-15/12-poor-fit-filter-agnes-no-chip.png"
+  ],
+  "findings": [
+    {
+      "id": "l5-r1-a15-001",
+      "severity": "HIGH",
+      "title": "Candidate-list fit chip not rendered for a legitimate 0.0 score_percentage (Agnes Sipes, re-scored Poor fit)",
+      "url": "http://app.lvh.me:5007/jobs/29092/stages/203589/applicants",
+      "expected": "A candidate whose ai_job_application_summary_status is status 'current' with score_percentage 0.0 shows a 'Poor fit' chip in the candidate list, consistent with her Overview activity entry and Plato tab (both display 'Poor fit') and with the fit filter (role_fit[]=poor returns her).",
+      "actual": "Agnes Sipes (job_application 20977) renders NO fit chip in the Inbox candidate list across three fresh renders, while Carl Dietrich (29.41 -> 'Weak fit') and Emilee Hand (88.24 -> 'Good fit') render chips. Her row is indistinguishable from a not-yet-scored candidate.",
+      "evidence": "API GET /api/v1/jobs/29092/job_applications?hiring_stage=203589&page=1 returns for 20977: ai_job_application_summary_status {id: 7238, ai_job_application_summary_id: 2537, status: 'current', score_percentage: 0.0, headline: 'Quality analyst with a focus on manual testing and defect management'}. Fit filter 'Poor fit' (role_fit[]=poor, 200) returns exactly her, so the backend classifies 0.0 correctly; the list-row chip component drops it - consistent with a truthiness check on the numeric score (0.0 falsy). Her re-score produced 0/0/5 criteria. Screenshots 02 (chipless among chipped rows) and 12 (Poor-fit-filtered list showing her chipless). State-dependent on prior agents' real runs: only a real re-score produces a 0.0 score, seeded fixtures are all non-zero."
+    },
+    {
+      "id": "l5-r1-a15-002",
+      "severity": "LOW",
+      "title": "Emotion ':first-child is potentially unsafe when doing server-side rendering' console errors (x2) fire once at first PlatoTab mount",
+      "url": "http://app.lvh.me:5007/jobs/29092/stages/203589/applicants/20977/ai",
+      "expected": "No new console errors when the Plato tab mounts.",
+      "actual": "Two console ERROR entries 'The pseudo class \":first-child\" is potentially unsafe when doing server-side rendering. Try changing it to \":first-of-type\".' fired exactly at the first PlatoTab render of the session and never again (Emotion warns once per stylesheet).",
+      "evidence": "Session-1 console log lines 290-291, timestamped at the Agnes Plato-tab navigation; absent from session 2, which loaded jobs list/job page/overview but never a Plato tab. Vendor-chunk (Emotion) sourced, not feature-named, cosmetic (app is client-rendered, no SSR). Report-only: indicates a ':first-child' selector in styles first mounted on the Plato tab route."
+    }
+  ]
+}

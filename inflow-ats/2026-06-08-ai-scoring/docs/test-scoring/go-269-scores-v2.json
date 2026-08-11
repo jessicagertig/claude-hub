@@ -1,0 +1,111 @@
+{
+  "scores": [
+    {
+      "criterion_text": "[tier_2] Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has over 6 years of experience building backend services in Go for various platforms, but the resume does not specifically mention working on a PaaS or building orchestrator/scheduler logic."
+    },
+    {
+      "criterion_text": "[tier_2] Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with Kubernetes and Terraform, but there is no specific evidence of collaborating with an infrastructure team for multi-cloud platform integrations."
+    },
+    {
+      "criterion_text": "[tier_2] Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no evidence in the resume of managing multi-cloud racks or environments inside customer accounts."
+    },
+    {
+      "criterion_text": "[tier_2] Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with CI/CD workflows, monitoring/observability tools like Grafana, and cross-functional team collaboration, but lacks specific mention of CLI development or marketplace integrations."
+    },
+    {
+      "criterion_text": "[tier_2] Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with monitoring, scalability, and high-availability design, but lacks evidence of implementing multi-cloud failover strategies."
+    },
+    {
+      "criterion_text": "[tier_2] Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists technical mentoring, team leadership, authoring RFC documents to drive engineering standards, and defining best practices in their experience."
+    },
+    {
+      "criterion_text": "[tier_1] Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has 6+ years of professional experience with Go and has worked on numerous production backend systems as listed in their professional experience."
+    },
+    {
+      "criterion_text": "[tier_1] Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate lists Kubernetes as a skill and mentions managing namespaces and deployments, but there is no explicit mention of cluster design, autoscaling, or service mesh experience."
+    },
+    {
+      "criterion_text": "[tier_2] Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Terraform as an Infrastructure as Code skill."
+    },
+    {
+      "criterion_text": "[tier_2] Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists AWS and Google Cloud Platform (GCP) in their technical skills and professional experience."
+    },
+    {
+      "criterion_text": "[tier_2] A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No specific experience with PaaS product development or infrastructure abstraction is described in the resume."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has strong CI/CD experience (GitHub Actions, GitLab CI) and integrated IoT/notification systems, but marketplace integration experience is not explicitly stated."
+    },
+    {
+      "criterion_text": "[tier_2] Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of cloud marketplace publishing or integration."
+    },
+    {
+      "criterion_text": "[tier_2] Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has worked with multiple clouds individually (AWS/GCP), but no explicit multi-cloud or hybrid environment deployment experience is mentioned."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with high-availability systems (notification services) and scalable architecture design, but multi-tenant architecture is not explicitly addressed."
+    },
+    {
+      "criterion_text": "[tier_2] Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has extensive experience with distributed systems (Kafka, RabbitMQ, microservices), but no specific mention of open source project contributions."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate specifically mentions Grafana and Sentry for monitoring and observability."
+    }
+  ],
+  "computed_score": {
+    "points": 41.0,
+    "max": 72,
+    "percentage": 56.9
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 15,
+  "focus_area": "END-TO-END capstone: zero-criteria review guard blocks real AI-summary create requests (SPEC §6 + §12)",
+  "method": "Authenticated ActionDispatch::Integration::Session in a RAILS_ENV=test rails runner (magic-link login as admin rezu.may@wrkhq.com). Credits made available via the real app path (GrantAiCredits interactor). AiJobCriteria latest-row states built directly. ActiveJob queue_adapter forced to :test so nothing ran inline (no OpenAI, no real jobs). Real HTTP-equivalent requests dispatched through the full routing/controller/Pundit/Devise stack against inflow_test.",
+  "files_reviewed": [
+    "app/controllers/api/v1/ai_job_application_summaries_controller.rb",
+    "app/controllers/api/v1/bulk_ai_job_application_summaries_controller.rb",
+    "app/interactors/validate_ai_summary_generation.rb",
+    "app/interactors/queue_bulk_ai_summary_jobs.rb",
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb"
+  ],
+  "evidence": {
+    "org": "Acme Inc. (id 32688)",
+    "job": "Senior Engineer (id 27621, published, description present)",
+    "candidate_job_application_ids": [20287, 20288, 20289],
+    "credits_made_available": "GrantAiCredits granted 25 addon credits so credits_available? == true; the ONLY remaining blocker was zero-criteria",
+    "s1_manual_blocked": {
+      "endpoint": "POST /api/v1/job_applications/20287/ai_job_application_summaries",
+      "job_zero_criteria_extraction_failure": true,
+      "status": 422,
+      "error_general": "No scoring criteria were found in the job description. Regenerate job criteria in Plato AI settings before running reviews.",
+      "message_matches_spec_exactly": true,
+      "no_ai_job_application_summary_created": true,
+      "credit_consumed": 0
+    },
+    "s2_bulk_blocked": {
+      "endpoint": "POST /api/v1/bulk_ai_job_application_summaries (rescore_requested=true, included_job_application_ids=[20287,20288,20289])",
+      "status": 422,
+      "error_general": "No scoring criteria were found in the job description. Regenerate job criteria in Plato AI settings before running reviews.",
+      "message_matches_spec_exactly": true,
+      "bulk_generate_ai_summaries_job_enqueued": false,
+      "enqueued_job_classes": [],
+      "bulk_ai_summary_job_application_claim_rows_persisted": 0,
+      "credit_consumed": 0
+    },
+    "s3_control_succeeded_criteria": {
+      "endpoint": "POST /api/v1/job_applications/20287/ai_job_application_summaries (latest AiJobCriteria set to succeeded with non-empty criteria)",
+      "job_zero_criteria_extraction_failure": false,
+      "status": 200,
+      "zero_criteria_message_returned": false,
+      "proceeded_past_guard": true,
+      "note": "Passed the zero-criteria guard and created an AiJobApplicationSummary (textract_processing) with no credit consumed — confirms the block is specifically the zero-criteria state, not a permanent wall."
+    },
+    "cleanup_verified": "Balance restored to 0 (grant txn destroyed, delta reversed); all created AiJobCriteria + AiJobApplicationSummary rows deleted; attached resume purged. Post-run verification: org credits_remaining=0, no leftover rows."
+  },
+  "findings": []
+}

@@ -1,0 +1,71 @@
+{
+  "meta": {
+    "batch": 27,
+    "criteria_prompt_version": 9,
+    "job_id": 30111,
+    "title": "General Applicant",
+    "organization": "Solidec",
+    "cost": 0.000368
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "About Solidec\nSolidec is chemical manufacturing, simplified. Using air, water, and electricity our autonomous generators produce the world’s most essential chemicals, on site and on demand.\nOur mission is to pioneer on-site chemical manufacturing technologies and processes that are economically and environmentally sustainable. Our flagship hydrogen peroxide generators provide significant cost control while reducing the carbon footprint of critical industries, from water and wastewater treatment, to semiconductor manufacturing, food and beverage, and mining."
+      },
+      {
+        "heading": "What We’re Looking For",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Individuals with enthusiasm and conviction for creating global impact\nInnovators to develop transformative solutions\nCollaborators who excel working with others\nProblem-solvers with a can-do mindset\nPeople with authentic character who value others"
+      },
+      {
+        "heading": "Interested?",
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "Please submit your application to join our talent pool! When a role that matches your profile becomes available, we will reach out to you. We look forward to seeing how we might be able to work together."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Individuals with enthusiasm and conviction for creating global impact",
+        "tier": "tier_2",
+        "tier_reasoning": "Default tier for 'What We're Looking For' heading, no signal word",
+        "binary": false,
+        "source_text": "Individuals with enthusiasm and conviction for creating global impact"
+      },
+      {
+        "text": "Innovators to develop transformative solutions",
+        "tier": "tier_2",
+        "tier_reasoning": "Default tier for 'What We're Looking For' heading, no signal word",
+        "binary": false,
+        "source_text": "Innovators to develop transformative solutions"
+      },
+      {
+        "text": "Collaborators who excel working with others",
+        "tier": "tier_1",
+        "tier_reasoning": "Tier 1 signal word: 'excel'",
+        "binary": false,
+        "source_text": "Collaborators who excel working with others"
+      },
+      {
+        "text": "Problem-solvers with a can-do mindset",
+        "tier": "tier_2",
+        "tier_reasoning": "Default tier for 'What We're Looking For' heading, no signal word",
+        "binary": false,
+        "source_text": "Problem-solvers with a can-do mindset"
+      },
+      {
+        "text": "People with authentic character who value others",
+        "tier": "tier_2",
+        "tier_reasoning": "Default tier for 'What We're Looking For' heading, no signal word",
+        "binary": false,
+        "source_text": "People with authentic character who value others"
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agent_index": 4,
+  "focus_area": "Frontend display-state derivation, button props, EmptyState/action-row structure, styled components, copy, and section integrity in JobCriteriaSection.tsx / jobCriteriaTiers.ts / JobSetupAiSettings.tsx",
+  "files_reviewed": [
+    "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/jobCriteriaTiers.ts",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAiSettings.tsx"
+  ],
+  "findings": [
+    {
+      "id": "l2r2-a4-001",
+      "severity": "LOW",
+      "title": "Unused `history` prop threaded into JobCriteriaSection",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+      "line": 22,
+      "description": "Props declares `history: any` (line 22) and JobSetupAiSettings.tsx:107 passes `history={props.history}`, but JobCriteriaSection destructures only `{ job }` (line 25) and never reads `history`. Navigation to the job description is done with a react-router `<Link>` (line 40, adjudicated-correct), so the `history` prop is dead. No runtime consequence; pure dead code.",
+      "recommendation": "Drop `history` from the Props interface and from the JSX usage at JobSetupAiSettings.tsx:107, or use it — no behavioral change either way."
+    },
+    {
+      "id": "l2r2-a4-002",
+      "severity": "LOW",
+      "title": "`isInFlight` includes raw `isFetching`, so any background refetch briefly disables the Regenerate button",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+      "line": 70,
+      "description": "`isInFlight = isPayloadStatusInFlight || isFetching` (line 70) drives `loading`/`disabled` on the Regenerate button (lines 160-161). `isFetching` is true during ANY query refetch, not only the post-regenerate refetch. `useAiJobCriteria` (useAiJobCriteria.ts:21-25) does not set `refetchOnWindowFocus: false` (unlike several sibling hooks, e.g. useOrganizationAiCreditPurchase.ts:11), so a window refocus refetch will momentarily put the button into loading+disabled with no extraction in flight. This is spec-compliant per SPEC 8.3 ('OR ... the query is refetching') and is purely cosmetic (no data loss / wrong result), but is the only behavior worth noting. `displayState` correctly uses `isPayloadStatusInFlight` (not `isFetching`), so card/empty-state content does not flicker during refetch.",
+      "recommendation": "Optional: gate the button on the mutation/payload status only (e.g. `isPayloadStatusInFlight`) or set `refetchOnWindowFocus: false` on the query, to avoid the transient disable on unrelated refetches. Non-blocking."
+    }
+  ]
+}

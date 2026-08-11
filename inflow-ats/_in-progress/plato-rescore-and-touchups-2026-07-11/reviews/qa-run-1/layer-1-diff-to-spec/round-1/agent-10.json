@@ -1,0 +1,45 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 10,
+  "focus": "Cross-cutting completeness (every hunk traces to a spec requirement, no EXTRA/unspecced changes, no MISSING implementations) + source-accuracy of every file:line the SPEC cites, across all 11 files",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8"],
+    "implemented": ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8"],
+    "missing": []
+  },
+  "notes": {
+    "hunk_to_spec_trace": [
+      "ai_job_application_summaries_controller.rb: set ai_summary_rescore_requested before CreateAiSummaryGeneration.call + private ai_job_application_summary_params (require(:ai_job_application_summary).require(:rescore_requested)) -> SPEC 2.2",
+      "create_ai_summary_generation.rb:36 gate '&& !job_application.ai_summary_rescore_requested' -> SPEC 2.1 (verbatim match to create_bulk_ai_summary_generation.rb:45)",
+      "AiSummaryState.tsx full deletion -> SPEC 2.6 (only deletion in diff; no other file deleted)",
+      "BulkGenerateAiSummariesConfirmModal.tsx: FormCheckbox/Tooltip imports, rescore state, rescoreRequested: rescore, candidatesToScoreCount/shortfall -> SPEC 1.1/1.2; creditCopy + 4 bodyCopy states + submit-disabled condition -> SPEC 1.2; Tooltip+Styled.Info overestimate block -> SPEC 1.3; Styled.Statement block -> SPEC 1.4; Caveat->removed, Callout->Statement rename -> SPEC 1.2/1.4",
+      "PlatoTab.tsx: handleGenerate(rescoreRequested) + 3 onClick=()=>handleGenerate(false) + Regenerate onConfirm handleGenerate(true) -> SPEC 2.4; :247 condition statusValue==='current' (dropped '&& fullSummary?.stale') -> SPEC 2.5",
+      "RunPlatoReviewAllModal.tsx: creditSentence fragment extraction (content byte-identical to prior inline credit copy, required to serve the checked/normal branches while zero-branch omits it) + rescore/zero/normal three-branch body -> SPEC 1.5; Statement 2nd sentence skip-reason change -> SPEC 1.5",
+      "useAiJobApplicationSummary.ts: GenerateParams gains 'rescoreRequested: boolean' (required, no optional marker) -> SPEC 2.3",
+      "bulk_all_stages_ai_summary_result_mailer.rb complete+failed: drop @user load, recipients=@job.organization_users.actives.includes(:user), return unless recipients.any?, to: to_recipients mapped {name,email}, remove user_first_name from variables, user_id arg kept -> SPEC 1.6",
+      "spec/controllers/api/v1/ai_job_application_summaries_controller_spec.rb (new): rejects without rescore_requested (ParameterMissing) + threads value onto record -> SPEC 2.8",
+      "spec/interactors/create_ai_summary_generation_spec.rb (new): rescore true builds new pending + enqueues job; false returns existing + enqueues nothing; validation_result double stubs textract_pending:false -> SPEC 2.8 (incl. the NOTE requiring textract_pending stub)",
+      "spec/mailers/bulk_all_stages_ai_summary_result_mailer_spec.rb: active included/inactive excluded both complete+failed, reconciled stale expectations (added total arg 8, tags ['polymer','user-facing'], corrected subjects, multi-recipient assertions, variables lacks user_first_name) -> SPEC 1.7",
+      "polymer-mail-diff.patch: both all-stages templates delete '<p>Hi {{user_first_name}},</p>' with no replacement greeting -> SPEC 1.6"
+    ],
+    "extra_unspecced_changes": "NONE. Every added/removed/changed line traces to a specific SPEC requirement. No new method, modified validation, changed constant, or import beyond spec. The RunPlatoReviewAllModal creditSentence extraction is a mechanical refactor whose content is byte-identical to the prior inline credit copy and is required by SPEC 1.5's three-branch restructure (checked/normal reuse it, zero omits it) - not a behavioral change. The mailer's .includes(:user) is part of the pinned analog chain (job_application_mailer.rb:19) and correctly retained (SPEC 1.6 drops only the .receives_new_job_application_emails preference scope).",
+    "file_count": "Exactly 11 files (git show --stat f9ec4a80d confirms 11 files, +333/-315). Matches the shared-context list by purpose. No more, no fewer.",
+    "shared_context_path_correction_not_a_finding": "The shared-context file list names item 9 as 'spec/requests/api/v1/ai_job_application_summaries_controller_spec.rb'. The diff creates it at 'spec/controllers/api/v1/ai_job_application_summaries_controller_spec.rb' with type: :controller. This is CORRECT, not a defect: the bulk analog (bulk_ai_job_application_summaries_controller_spec.rb) lives at spec/controllers/api/v1/ with type: :controller, and there are ZERO specs under spec/requests/api/v1/ (all 5 api/v1 specs are spec/controllers). The implementation follows the codebase convention and the analog. The shared-context 'spec/requests' label was a mislabel; SPEC.md 2.8 itself says only 'controller spec'.",
+    "source_accuracy_verifications": [
+      "create_bulk_ai_summary_generation.rb:45 = 'if active_ai_summary && !job_application.ai_summary_rescore_requested' -> ACCURATE (pinned gate condition)",
+      "bulk_ai_job_application_summaries_controller.rb:77-86 = bulk_ai_job_application_summary_params with params.require(:bulk_ai_job_application_summary) then .require(:rescore_requested) at :79 -> ACCURATE (param pattern analog)",
+      "organization_user.rb:48 = 'scope :actives, -> { where(is_active: true) }' -> ACCURATE",
+      "job_application_mailer.rb:19 = recipients chain '.organization_users.actives.receives_new_job_application_emails.includes(:user)'; :28-32 = to_recipients map building {name: first+last strip, email} -> ACCURATE (recipient analog)",
+      "job_application.rb:11 = 'attribute :ai_summary_rescore_requested, :boolean, default: false' -> ACCURATE",
+      "config/routes.rb:315 = 'resources :ai_job_application_summaries, only: [:show, :create]' -> ACCURATE",
+      "CustomQuestionModal/index.js:192-199 = file_upload Tooltip-wrapped Styled.Info (Icon alert-circle + span); Styled.Info def :254-273 (t.text.xs, t.mt(-1), t.mb(5), gray400/600, flex, align-items center, line-height 1.3, svg h6/w4/mr1 min-width 16px, hover cursor text) -> ACCURATE; diff copies verbatim (label differs only)",
+      "RunPlatoReviewAllModal.tsx RescoreCheckbox now :154-162, Statement usage :164-171, styles :198-224 (SPEC cited ~135-143/~186-206; lines shifted because this same feature diff added ~19 lines above - code present, per source-accuracy rule line-move is fine) -> ACCURATE",
+      "create_ai_summary_generation.rb:36 gate (post-change) and :41 'if validation_result.textract_pending' -> ACCURATE (confirms SPEC 2.8 double must stub textract_pending)",
+      "textract_result.rb:68 = 'return if latest_ai_summary&.status_succeeded? && !latest_ai_summary.stale?' -> ACCURATE (succeeded-and-not-stale self-resolving return)",
+      "PlatoTab.tsx:247 = '} else if (statusValue === \"current\") {' -> ACCURATE (post-change gating location)"
+    ],
+    "scope_guardrails_respected": "Did NOT diff CreateBulkAiSummaryGeneration wholesale against CreateAiSummaryGeneration (single-send correctly retains its own textract_pending branch and enqueue; only the one gate condition ported). Verified SPEC 1.8 untouched items are untouched (per-stage no-selection copy kept verbatim as state 1; BulkJobApplicationAiSummaryResultMailer not in diff; two-bulk-hook query-invalidation not in diff; posthog trackEvent unchanged; backend enqueue path unchanged). SPEC 2.7 requires no code and none present. Owner-sanctioned divergences (per-stage 'The' leading sentence; mailer omits receives_new_job_application_emails scope) present and NOT flagged."
+  }
+}

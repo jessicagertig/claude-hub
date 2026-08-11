@@ -1,0 +1,132 @@
+{
+  "agent": 2,
+  "focus": "PlatoTab state machine + non-succeeded states",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "HIGH",
+      "location": "PlatoTab.tsx lines 360-378 (header bar HeaderRight)",
+      "spec_ref": "Spec section 2 (Structure): 'either a Regenerate ghost button (when succeeded) or a kebab icon button (otherwise) on the right'; Button component compatibility section: 'For the header bar Regenerate button: <Button styleType=\"text\" onClick={handleRegenerate}><Icon name=\"refresh-cw\" /> Regenerate</Button>'",
+      "description": "The header bar renders a 'Buy credits' button instead of the spec-required 'Regenerate' button when status is 'succeeded' AND totalCreditsRemaining is 0. The spec defines exactly two states for the header right: 'Regenerate' (when succeeded) and kebab (otherwise). The spec's Button component compatibility section prescribes a single unconditional Regenerate button with no zero-credits conditional. The credit balance guard ('When credits are zero and a generate action would be shown, show the existing buy-credits pattern') applies to the zero states (Empty, Failed) where the primary action IS the generate button -- not to the header bar which the spec treats separately. The implementation introduces a third header state (Buy credits admin link or Buy credits modal button) that has no spec basis.",
+      "actual": "When succeeded AND totalCreditsRemaining == 0: header shows either <Button styleType=\"text\" type=\"internalLink\" link=\"/hire/settings/ai-billing\">Buy credits</Button> (admin) or <Button styleType=\"text\" onClick={handleBuyCredits}>Buy credits</Button> (non-admin)",
+      "expected": "When succeeded: header always shows <Button styleType=\"text\" onClick={handleGenerate}><Icon name=\"refresh-cw\" /> Regenerate</Button> regardless of credit balance"
+    }
+  ],
+  "verified_requirements": [
+    {
+      "req": "State machine row 1: status === 'succeeded' -> renderSucceeded()",
+      "result": "PASS",
+      "detail": "renderBody() checks summaryExists && status === 'succeeded' first. Correct."
+    },
+    {
+      "req": "State machine row 2: status is pending/in_progress/extracted -> renderGenerating()",
+      "result": "PASS",
+      "detail": "renderBody() second check: summaryExists && (status === 'pending' || status === 'in_progress' || status === 'extracted'). All three values included, correct order."
+    },
+    {
+      "req": "State machine row 3: status === 'textract_processing' -> renderProcessing()",
+      "result": "PASS",
+      "detail": "renderBody() third check: summaryExists && status === 'textract_processing'. Correct."
+    },
+    {
+      "req": "State machine row 4: status === 'failed' -> renderFailed()",
+      "result": "PASS",
+      "detail": "renderBody() fourth check: summaryExists && status === 'failed'. Correct."
+    },
+    {
+      "req": "State machine row 5: no summary AND hasResume truthy -> renderEmpty()",
+      "result": "PASS",
+      "detail": "renderBody() fifth check: !summaryExists && jobApplication.hasResume. Correct."
+    },
+    {
+      "req": "State machine row 6: no summary AND hasResume falsy -> renderNoResume()",
+      "result": "PASS",
+      "detail": "Final return renderNoResume() is correct fallback for the no-summary+no-resume case."
+    },
+    {
+      "req": "State machine evaluation order: first match wins, succeeded before pending/in_progress/extracted before textract_processing before failed before no-summary+has-resume before no-summary+no-resume",
+      "result": "PASS",
+      "detail": "The six if-blocks in renderBody() follow the exact ordering from spec table."
+    },
+    {
+      "req": "Generating skeleton: animated dots pill with 3 dots, 5px circles, gray[500], staggered 0.16s animation delays",
+      "result": "PASS",
+      "detail": "Styled.Dot: width/height 5px, border-radius 50%, background t.color.gray[500], animation dotPulse 1.1s. Delays: 0s, 0.16s, 0.32s (correct 0.16s stagger)."
+    },
+    {
+      "req": "Generating skeleton: dotPulse animation over 1.1s with opacity and Y translation",
+      "result": "PASS",
+      "detail": "dotPulse keyframes: 0%,60%,100% opacity 0.25 translateY(0); 30% opacity 1 translateY(-2px). Duration 1.1s."
+    },
+    {
+      "req": "Generating skeleton: shimmer bars with linear-gradient(90deg, gray[100], gray[200], gray[100]) sweep 1.4s",
+      "result": "PASS",
+      "detail": "Styled.ShimmerBar uses background-image linear-gradient(90deg, gray[100] 0px, gray[200] 60px, gray[100] 120px), background-size 600px 100%, animation shimmer 1.4s ease-in-out infinite."
+    },
+    {
+      "req": "Shimmer keyframes: 0% background-position: -600px 0; 100% background-position: 600px 0",
+      "result": "PASS",
+      "detail": "shimmer = keyframes: 0% { background-position: -600px 0; } 100% { background-position: 600px 0; }. Exact match."
+    },
+    {
+      "req": "Both animations must have @media (prefers-reduced-motion: reduce) { animation: none; }",
+      "result": "PASS",
+      "detail": "Styled.Dot, Styled.ShimmerBar, Styled.ShimmerBlock, and Styled.ShimmerChip all contain @media (prefers-reduced-motion: reduce) { animation: none; } inside their css blocks. All 4 animated components covered."
+    },
+    {
+      "req": "Empty/Failed action layout: credit hint stacked below button in column, 8px gap, centered",
+      "result": "PASS",
+      "detail": "Styled.ActionColumn: display flex, flex-direction column, align-items center, gap 8px. Credit hint rendered below Button inside ActionColumn."
+    },
+    {
+      "req": "Credit hint copy for empty state: 'Uses 1 credit · N remaining'",
+      "result": "PASS",
+      "detail": "renderCreditsAction: when buttonLabel === 'Generate summary', hint is `Uses 1 credit · ${totalRemaining} remaining`. Correct for empty state."
+    },
+    {
+      "req": "Credit hint copy for failed state: 'Uses 1 credit'",
+      "result": "PASS",
+      "detail": "renderCreditsAction: when buttonLabel !== 'Generate summary' (i.e., 'Try again'), hint is 'Uses 1 credit'. Correct for failed state."
+    },
+    {
+      "req": "Credit balance: uses useOrganizationAiCreditBalance(), displays totalCreditsRemaining",
+      "result": "PASS",
+      "detail": "useOrganizationAiCreditBalance() called at component top. totalRemaining = creditError ? 0 : creditData?.totalCreditsRemaining || 0. OrganizationAiCreditBalance type confirms totalCreditsRemaining field exists."
+    },
+    {
+      "req": "Generate/Regenerate/Try again: all trigger useGenerateAiSummary with { jobApplicationId: jobApplication.id }",
+      "result": "PASS",
+      "detail": "handleGenerate calls generate({ jobApplicationId: jobApplication.id }, ...). renderCreditsAction passes onClick={handleGenerate} for both 'Generate summary' and 'Try again'. Header Regenerate also uses handleGenerate."
+    },
+    {
+      "req": "Zero-credits guard: when totalRemaining is 0 in Empty/Failed states, show buy-credits pattern (admin link, non-admin modal)",
+      "result": "PASS",
+      "detail": "renderCreditsAction: when totalRemaining <= 0, admin gets Button type='internalLink' link='/hire/settings/ai-billing', non-admin gets Button onClick={handleBuyCredits} which opens CenterModal. Matches AiSummaryState.tsx pattern per spec."
+    },
+    {
+      "req": "useGenerateAiSummary mutation: success toast 'Summary generation queued', error toast with server error message",
+      "result": "PASS",
+      "detail": "handleGenerate: onSuccess addToast title 'Summary generation queued' kind 'success'. onError: addToast title from error?.data?.errors?.general?.[0] || fallback, kind 'warning'."
+    },
+    {
+      "req": "Header bar: PlatoChip (26px) + 'Plato' label on left",
+      "result": "PASS",
+      "detail": "Styled.HeaderLeft contains PlatoChip size={26} radius={7} and <span>Plato</span>. Matches spec."
+    },
+    {
+      "req": "Header bar: kebab icon button when not succeeded",
+      "result": "PASS",
+      "detail": "When status !== 'succeeded', Styled.KebabButton with Icon name='more-vertical' is rendered. Matches spec."
+    },
+    {
+      "req": "Container structure: flex column, height 100%, header bar with border-bottom, scrollable body",
+      "result": "PASS",
+      "detail": "Styled.Container: display flex, flex-direction column, height 100%. Styled.Header has border-bottom. Styled.Body: flex-grow 1, overflow-y auto. Matches tab container pattern from spec."
+    },
+    {
+      "req": "Body inner: 720px max-width centered, 22px 28px 56px padding",
+      "result": "PASS",
+      "detail": "Styled.BodyInner: max-width 720px, margin 0 auto, padding 22px 28px 56px. Exact match."
+    }
+  ]
+}

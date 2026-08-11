@@ -1,0 +1,130 @@
+{
+  "meta": {
+    "version": 5,
+    "call": 2,
+    "model": "gpt-4o-mini",
+    "job_id": 30828,
+    "title": "Housekeeper – Colorado Springs",
+    "organization": "Renjoy",
+    "input_tokens": 2498,
+    "output_tokens": 868,
+    "cost": 0.000896,
+    "criteria_count": 15,
+    "tier_counts": {
+      "tier_1": 2,
+      "tier_2": 13,
+      "tier_3": 0
+    },
+    "binary_count": 2,
+    "decomposed_count": 1
+  },
+  "result": {
+    "criteria": [
+      {
+        "text": "No resume required.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "✅ No resume required. Show up consistently, work hard, and communicate well. That's what matters."
+      },
+      {
+        "text": "Walk into vacation homes after guests check out — sometimes tidy, sometimes not — and reset them completely before the next guests arrive.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Walk into vacation homes after guests check out — sometimes tidy, sometimes not — and reset them completely before the next guests arrive."
+      },
+      {
+        "text": "You'll follow detailed checklists, deep clean kitchens and bathrooms, change all linens, make beds, restock supplies, and flag anything that needs maintenance through our app.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You'll follow detailed checklists, deep clean kitchens and bathrooms, change all linens, make beds, restock supplies, and flag anything that needs maintenance through our app."
+      },
+      {
+        "text": "Every home has to be guest-ready by 4:00 PM.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Every home has to be guest-ready by 4:00 PM."
+      },
+      {
+        "text": "Some stays get a small personal touch — a coloring book left out for a family with kids, a trail guide for an active couple.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Some stays get a small personal touch — a coloring book left out for a family with kids, a trail guide for an active couple."
+      },
+      {
+        "text": "You execute it.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You execute it."
+      },
+      {
+        "text": "You work hard and move with purpose.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You work hard and move with purpose."
+      },
+      {
+        "text": "You don't need someone standing over your shoulder — you own your checklist and your standard.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You don't need someone standing over your shoulder — you own your checklist and your standard."
+      },
+      {
+        "text": "When something looks off, you report it.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "When something looks off, you report it."
+      },
+      {
+        "text": "When a home is trashed, you reset it with the same energy as an easy turn.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "When a home is trashed, you reset it with the same energy as an easy turn."
+      },
+      {
+        "text": "Are physically up for the work — stairs, lifting, on your feet all shift.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Are physically up for the work — stairs, lifting, on your feet all shift."
+      },
+      {
+        "text": "Have your own reliable vehicle — properties span Colorado Springs and Woodland Park.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: 'own' (implying a requirement)",
+        "binary": true,
+        "source_text": "Have your own reliable vehicle — properties span Colorado Springs and Woodland Park."
+      },
+      {
+        "text": "Are comfortable using a smartphone app for tasks and communication.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Are comfortable using a smartphone app for tasks and communication."
+      },
+      {
+        "text": "Can commit to a consistent weekly schedule, Sundays required.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: 'required'",
+        "binary": true,
+        "source_text": "Can commit to a consistent weekly schedule, Sundays required."
+      },
+      {
+        "text": "Take pride in a clean that actually looks and feels clean.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Take pride in a clean that actually looks and feels clean."
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 5,
+  "assignment": "CROSS-STATE console + copy + rendering-integrity sweep across ALL six seeded state jobs (28054 never-ran, 28055 succeeded, 28056 zero-criteria, 28057 other-failure, 28058 in-flight, 28059 regenerating). Per state: browser_console_messages (error+warning, all:true) checked against known pre-existing errors AND specifically for React key/prop warnings and feature-referencing errors; copy sweep per SPEC 10 (no em dashes, static button labels, sentence case, extract vocabulary, count-most/less-toward-the-score, timestamps only in card description); high-level shape correctness (empty state vs card) with no visual breakage.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (org Acme Inc.). All 6 QA state jobs present in the list.",
+    "28054 QA Never Ran (state 5): full click path jobs list -> job heading -> Job setup -> Plato AI settings (/jobs/28054/setup/ai). EmptyState file-text icon, title 'No job criteria have been generated', message 'Plato extracts scoring criteria when you publish the job, or you can generate them now.' Action row: 'Generate criteria' ONLY, no View. Intro paragraph matches SPEC 8.3 verbatim with inline 'job description' link -> /jobs/28054/setup/description. Sidebar 'Criteria tiers' glossary: Core 'count most toward a candidate's score', Preferred 'count toward the score, less than core criteria', Bonus 'A small boost'. Console error(all)=7 known (1 heap-api 404, 4 history deprecations, 2 Redux reducer); warning(all)=3 known (Google Maps, Stripe HTTP, @reach/tooltip). No feature/key/prop warnings. Screenshot 01.",
+    "28055 QA Succeeded (state 4): clicked job -> Plato AI settings. Criteria CARD: Plato disc + 'Job criteria' + 'Plato extracted these from your job description about 1 hour ago.' + count rail Core 2 / Preferred 1 / Bonus 1. Action row: 'View criteria' + 'Regenerate criteria'. Console error(all)=7 known. Opened View criteria slide-over: header 'Job criteria' + Close(X), description matches SPEC 8.4 verbatim, tier-grouped bordered list Core(2): '5+ years Ruby on Rails experience','PostgreSQL and relational database design'; Preferred(1): 'REST API design'; Bonus(1): 'Experience mentoring engineers'. NO tier-hint sentences, read-only. Console after tier-list array render still 7 errors, NO 'unique key' warning, NO styled-components prop warning. Closed via X. Screenshots 02, 02b.",
+    "28056 QA Zero Criteria Failure (state 2): clicked into job -> Plato AI settings. EmptyState alert-triangle icon, title 'No criteria found', message 'No scoring criteria were found in the job description. Plato won't review candidates until it has criteria to score against.' Action row: 'Regenerate criteria' ONLY, no View. Console error(all)=7 known. Screenshot 03.",
+    "28057 QA Other Failure (state 3): clicked into job -> Plato AI settings. EmptyState alert-triangle icon, title 'Criteria generation failed', message 'Something went wrong while extracting criteria from the job description. Regenerate to try again.' Action row: 'Regenerate criteria' ONLY. Console error(all)=7 known. Screenshot 04.",
+    "28058 QA In Flight (state 1): clicked into job -> Plato AI settings. Underlying never-extracted EmptyState (file-text, 'No job criteria have been generated'). Action button 'Generate criteria' rendered [disabled] with loading spinner (dots replace label). NO View button. Console error(all)=7 known. Screenshot 05.",
+    "28059 QA Regenerating Over Success (state 4+1): clicked into job -> Plato AI settings. Criteria CARD still shows OLD criteria: Plato disc + 'Job criteria' + 'Plato extracted these from your job description about 1 hour ago.' + count rail Core 2 / Preferred 1 / Bonus 1. Action row: 'View criteria' ENABLED (still available) + 'Regenerate criteria' [disabled] with loading spinner. Console error(all)=7 known. Screenshot 06.",
+    "Copy-rule sweep across all states: NO em dashes anywhere (only hyphens in Nice-to-haves/Must-haves/Auto-generation). Button labels static ('Generate criteria','Regenerate criteria','View criteria') with no interpolated counts. Sentence case throughout. 'extract/extracts/extracted/extracting' vocabulary used (never 'read'). 'count most toward'/'count toward the score, less than core' used (never weight/heaviest). Timestamps appear only in the card description. No 'candidates will be rescored' phrasing seen.",
+    "Rendering integrity: every state rendered the correct high-level shape (EmptyState for 5/2/3/1, card for 4 and 4+1), no visual breakage, no overlapping or cut-off elements, loading spinners correct on 28058 and 28059. Did NOT click any Regenerate/Generate confirm button; did not open the confirm modal; no cleanup."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5-r2/agent-5/01-never-ran-28054.png",
+    "/tmp/qa-run-3-l5-r2/agent-5/02-succeeded-28055.png",
+    "/tmp/qa-run-3-l5-r2/agent-5/02b-succeeded-view-slideover-28055.png",
+    "/tmp/qa-run-3-l5-r2/agent-5/03-zero-criteria-28056.png",
+    "/tmp/qa-run-3-l5-r2/agent-5/04-other-failure-28057.png",
+    "/tmp/qa-run-3-l5-r2/agent-5/05-in-flight-28058.png",
+    "/tmp/qa-run-3-l5-r2/agent-5/06-regenerating-over-success-28059.png"
+  ],
+  "findings": []
+}

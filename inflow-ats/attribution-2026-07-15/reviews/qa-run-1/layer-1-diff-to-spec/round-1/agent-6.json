@@ -1,0 +1,28 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 6,
+  "focus_area": "organizations + confirmations (2nd pass)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "SPEC §4.4 (D5) — organizations#create copies four attribution values from current_user",
+      "SPEC §4.8 (D12) — confirmations#show success redirect gains id + URL-encoded email; failure branch untouched",
+      "SPEC §6 — no authorization changes anywhere in the diff",
+      "SPEC §9.4 — organizations controller spec scenarios present and falsifiable",
+      "SPEC §9.5 — confirmations controller spec scenarios present and falsifiable",
+      "SPEC §7 constraint 2 — nil user columns produce nil org columns, no fabricated fallbacks",
+      "SPEC §7 constraint 5 — organizations get values only at organizations#create"
+    ],
+    "verified": [
+      "SPEC §4.4 (D5): app/controllers/api/v1/organizations_controller.rb:32-35 adds exactly the four assignments (@organization.utm_source/utm_campaign/utm_data/internal_ref = current_user.<same>) directly after the existing created_via copy at line 31, matching the spec snippet verbatim; organization_params (lines 118-145) is NOT modified — no utm/internal_ref keys permitted; authorize @organization (line 37) unchanged; no other change in the file",
+      "SPEC §4.8 (D12): app/controllers/hire/confirmations_controller.rb:18 is now redirect_to \"/auth?email_confirmed=true&id=#{user.id}&email=#{CGI.escape(user.email)}\" — exact spec-proposed param names (id, email), exact order, CGI.escape as the spec proposes; failure branch line 21 redirect_to '/auth?email_confirmed=false' byte-identical; success-branch user guaranteed present via user.errors.blank? guard (User.confirm_by_token returns a persisted confirmed user); Devise confirmable verified on User (user.rb:24, confirmation_required? override lines 141-143 true for a plain-created user)",
+      "SPEC §6: grepped the full 62dd55867..8dcc2f06f diff for authorize/policy/before_action/skip_before_action/authenticate — the only matches are stubs inside new spec files and a comment; no policy files in the diff (--stat list verified), Pundit call in organizations#create unchanged, confirmations#show remains token-authenticated via User.confirm_by_token",
+      "SPEC §9.4: spec/controllers/api/v1/organizations_controller_spec.rb exists, type: :controller, stubs authenticate_api_v1_user!/current_user/authorize per the ai-credit analog (organization_ai_credit_purchases_purchase_top_up_spec.rb lines 40-43); scenario 1 (current_user with four values -> organization identical values, lines 40-51) is falsifiable — deleting any of controller lines 32-35 makes the corresponding eq assertion fail (nil vs 'SomeRawValue'/'Camp01'/hash/'ref-99'); utm_data asserted as a string-keyed hash round-trip; scenario 2 (nil user columns -> nil org columns, lines 77-88) reads the org back via Organization.find_by (fresh DB read), so a fabricated fallback or a jsonb column default would fail be_nil; bonus tamper test (lines 53-63) traces to §4.4's 'the values never come from the request' and fails if the copy line is removed (action_on_unpermitted_parameters unset -> Rails default :log in test, so the unpermitted body param cannot raise); set_sentry_context stub is valid under verify_partial_doubles (method exists at api/v1/base_controller.rb:33) and stubs nothing under test",
+      "SPEC §9.5: spec/controllers/hire/confirmations_controller_spec.rb exists; success test asserts the exact redirect URL including CGI.escape(user.email) with email 'confirm+test@example.com', whose '+' and '@' encode to %2B/%40 — an unencoded implementation produces a different Location string and fails (assert_redirected_to compares normalized strings without percent-decoding), and dropping id/email fails the exact match; failure test asserts the exact unchanged '/auth?email_confirmed=false' (hence no id/email); route verified (config/routes.rb:577, scope module: :hire); Hire::BaseController has no filters that interfere (only skip_before_action :track_ahoy_visit)",
+      "SPEC §7 constraint 2: the four copy lines are bare assignments with no || fallbacks; nil-through-to-nil covered by the org spec's nil scenario",
+      "SPEC §7 constraint 5: grepped every backend + write of utm_source/utm_campaign/utm_data/internal_ref in the full diff — organization columns are written only in organizations#create (lines 32-35); organizations#update's organization_params permits none of them; user-column writes are only registrations_controller (both magic_create branches + sign_up_params permit) and from_omniauth, outside my focus files"
+    ],
+    "missing": []
+  }
+}

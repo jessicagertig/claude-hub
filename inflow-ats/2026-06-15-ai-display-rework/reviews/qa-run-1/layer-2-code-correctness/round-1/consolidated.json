@@ -1,0 +1,68 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "total_agents": 6,
+  "findings_high": [
+    {
+      "id": "PT-1",
+      "severity": "HIGH",
+      "title": "structuredData is null during regenerating status",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 49,
+      "description": "The structuredData variable is gated on statusValue === 'current' only. When statusValue === 'regenerating' and renderSucceeded() is called (line 122-123), structuredData is null. The user sees a degraded summary view missing skills, domains, gaps, achievements, applicable experience, and other structured data sections during regeneration.",
+      "fix": "Change line 49 from: const structuredData = statusValue === \"current\" ? fullSummary?.structuredData : null; to: const structuredData = (statusValue === \"current\" || statusValue === \"regenerating\") ? fullSummary?.structuredData : null;"
+    }
+  ],
+  "findings_med": [
+    {
+      "id": "CC2-1",
+      "severity": "MED",
+      "title": "Controller show action missing eager load for ai_job_application_summary_status",
+      "file": "app/controllers/api/v1/job_applications_controller.rb",
+      "line": 52,
+      "description": "The show action includes :latest_ai_job_application_summary (no longer used by serializer) but not :ai_job_application_summary_status (now used). One extra lazy-load query per show request. Works correctly but suboptimal."
+    },
+    {
+      "id": "CC2-2",
+      "severity": "MED",
+      "title": "Dead eager load for :latest_ai_job_application_summary in show action",
+      "file": "app/controllers/api/v1/job_applications_controller.rb",
+      "line": 52,
+      "description": "The show action still includes :latest_ai_job_application_summary which the serializer no longer uses. Wasted query."
+    },
+    {
+      "id": "CC1-01",
+      "severity": "MED",
+      "title": "Inconsistent broadcast coverage between pipeline services",
+      "description": "score_job_application.rb and integrate_analysis.rb were switched to update (enabling broadcasts) but generate.rb was not. Per spec."
+    },
+    {
+      "id": "CC3-001",
+      "severity": "MED",
+      "title": "JobApplicationNavItem checks 'succeeded' instead of 'current'",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationNavItem.tsx",
+      "line": 26,
+      "description": "Pre-existing on base branch. Harvey dot never renders."
+    },
+    {
+      "id": "CC3-002",
+      "severity": "MED",
+      "title": "WebSocket handler doesn't invalidate jobApplicationsForStage",
+      "description": "The ai_summary_status_change handler invalidates jobApplication and aiJobApplicationSummary but not jobApplicationsForStage. GlobalChannel's AI_SUMMARY_COMPLETE handler covers this for final states."
+    },
+    {
+      "id": "4-1",
+      "severity": "MED",
+      "title": "PlatoLoadingState defaults to step 1, visually skipping step 0",
+      "description": "When status is undefined on first render, active defaults to 1. Step 0 'Processing the resume' is never shown as the active step."
+    },
+    {
+      "id": "R9-1",
+      "severity": "MED",
+      "title": "PlatoTabEmptyState uses || undefined (Rule 9 violation)",
+      "file": "app/javascript/ats/src/views/jobApplications/Plato/PlatoTabEmptyState.tsx",
+      "line": 82,
+      "description": "Pre-existing code. Lines 82-83 use config.buttonLabel || undefined."
+    }
+  ]
+}

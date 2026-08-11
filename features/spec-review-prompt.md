@@ -5,7 +5,7 @@ You are running iterative adversarial review on a feature spec. Goal: drive the 
 ## Ground rules
 
 - You are NOT writing code. You are reviewing spec text against the live source tree (path in `REPO-PATH` in the working directory). Read-only.
-- Apply amendments IN-LINE to the spec file as you find issues.
+- Apply amendments IN-LINE to the spec file as you find issues — by rewording the section that owns the issue. A finding means that section was worded imprecisely; the fix is more precise wording, never an appended justification. NEVER add a new section to record a finding. If a finding cannot be resolved by rewording an existing section, it is not a spec amendment: write it to `REVIEW-FINDINGS.md` instead. Open questions for the owner always go to `REVIEW-FINDINGS.md`, never into the spec. The amended spec must carry no trace of the review: no risk pointers, no round numbers, no commit hashes, no history of what changed.
 - Read the pipeline's CLAUDE.md for safety rules and conventions.
 - If a conventions sources exists (named in the pipeline CLAUDE.md), read the relevant files.
 - When dispatching sub-agents, keep scope narrow and file lists explicit.

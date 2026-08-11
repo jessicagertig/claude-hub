@@ -1,0 +1,152 @@
+{
+  "meta": {
+    "batch": 8,
+    "criteria_prompt_version": 10,
+    "job_id": 29759,
+    "title": "ASME Code Welder",
+    "organization": "Heater Specialists LLC",
+    "cost": 0.00053
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "HSI is a leading manufacturing company. We are committed to excellence, innovation, and the highest quality standards. We are looking for experienced ASME Code Welders to join our dynamic team, someone who shares our passion for delivering top-notch services that exceed expectations."
+      },
+      {
+        "heading": "Job Information:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "We are looking for experienced ASME Code Welders (X-ray quality) for full-time employment to perform high-quality welding work in accordance with ASME codes and standards. The successful candidate will be responsible for welding various materials, including carbon steel, stainless steel, and any other alloys, in all positions to meet the project specifications and industry standards. This position is vital in ensuring the structural integrity and safety of our projects. Must be able to pass an ASME code-compliant welding test (3g flux core). Mig and Stick welding experience is a plus. Pay is based on skill, performance, and shift worked."
+      },
+      {
+        "heading": "$2,000 sign-on bonus for qualified candidates, subject to eligibility requirements and company policy.",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": ""
+      },
+      {
+        "heading": "Candidate Requirements:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Candidate should have at least 3 years of previous ASME Code welding experience.\nProficiency in various welding techniques, including Flux-Core.\nRead and interpret engineering drawings, blueprints, and welding procedures.\nPerform welding operations in compliance with ASME codes and standards.\nConduct visual inspections of welds to ensure quality and compliance.\nMaintain a clean and safe work environment.\nAlways adhere to safety protocols and guidelines."
+      },
+      {
+        "heading": "What We Offer:",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "Competitive Salary\nProduction bonus - based on attendance and safety record\nHealth, Dental and Vision Insurance available for employee and your family\n401(k) Savings Plan\nPaid Holidays & Vacations"
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "legal",
+        "type": "non_criteria",
+        "content": "All employees are expected to be drug free and must pass a drug test before employment begins."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Experienced ASME Code Welders (X-ray quality)",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "We are looking for experienced ASME Code Welders (X-ray quality) for full-time employment to perform high-quality welding work in accordance with ASME codes and standards."
+      },
+      {
+        "text": "Perform high-quality welding work in accordance with ASME codes and standards",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "We are looking for experienced ASME Code Welders (X-ray quality) for full-time employment to perform high-quality welding work in accordance with ASME codes and standards."
+      },
+      {
+        "text": "Weld various materials, including carbon steel, stainless steel, and any other alloys",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "The successful candidate will be responsible for welding various materials, including carbon steel, stainless steel, and any other alloys, in all positions to meet the project specifications and industry standards."
+      },
+      {
+        "text": "Work in all positions to meet the project specifications and industry standards",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "The successful candidate will be responsible for welding various materials, including carbon steel, stainless steel, and any other alloys, in all positions to meet the project specifications and industry standards."
+      },
+      {
+        "text": "Pass an ASME code-compliant welding test (3g flux core)",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 signal: must be able to pass",
+        "binary": true,
+        "source_text": "Must be able to pass an ASME code-compliant welding test (3g flux core)."
+      },
+      {
+        "text": "Mig welding experience is a plus",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: is a plus",
+        "binary": false,
+        "source_text": "Mig and Stick welding experience is a plus."
+      },
+      {
+        "text": "Stick welding experience is a plus",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: is a plus",
+        "binary": false,
+        "source_text": "Mig and Stick welding experience is a plus."
+      },
+      {
+        "text": "At least 3 years of previous ASME Code welding experience",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 signal: at least",
+        "binary": false,
+        "source_text": "Candidate should have at least 3 years of previous ASME Code welding experience."
+      },
+      {
+        "text": "Proficiency in various welding techniques, including Flux-Core",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 signal: Proficiency",
+        "binary": false,
+        "source_text": "Proficiency in various welding techniques, including Flux-Core."
+      },
+      {
+        "text": "Read and interpret engineering drawings, blueprints, and welding procedures",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Read and interpret engineering drawings, blueprints, and welding procedures."
+      },
+      {
+        "text": "Perform welding operations in compliance with ASME codes and standards",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Perform welding operations in compliance with ASME codes and standards."
+      },
+      {
+        "text": "Conduct visual inspections of welds to ensure quality and compliance",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Conduct visual inspections of welds to ensure quality and compliance."
+      },
+      {
+        "text": "Maintain a clean and safe work environment",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Maintain a clean and safe work environment."
+      },
+      {
+        "text": "Always adhere to safety protocols and guidelines",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Always adhere to safety protocols and guidelines."
+      }
+    ]
+  }
+}

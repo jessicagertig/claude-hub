@@ -1,0 +1,111 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience designing and implementing Go-based services for PaaS-like tooling across their tenures at Webgate, Garwan, and LoopLabs."
+    },
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume details integration work with Kubernetes and Terraform across AWS, GCP, and Azure at Webgate and Garwan."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has experience deploying and maintaining multi-cloud infrastructure environments (AWS/GCP/Azure) and assisted in architectural discussions regarding multi-tenant architectures and multi-region strategies at LoopLabs."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly states they collaborated with product and UX teams at Webgate to refine CLI workflows and CI/CD integrations."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate implemented observability (Prometheus/Grafana), logging, and rollback capabilities at Webgate, and security hardening/alerting at Garwan."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate led code reviews and mentored junior engineers at Webgate while defining best practices for Go services."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive production Go experience across three roles spanning from 2017 to 2025."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has demonstrated extensive hands-on experience with K8s deployments, autoscaling, and cluster management since their time at LoopLabs."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate introduced and used Terraform across AWS and GCP (Webgate) and AWS and Azure (Garwan)."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists AWS, GCP, and Azure experience, managing networking, compute, and storage at Garwan."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate directly worked on 'PaaS like tooling' and explicitly mentions the trade-offs of abstracting infrastructure for developers in their LoopLabs experience."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience in CI/CD pipeline management and developer tool enhancement at Webgate and Garwan."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate lists these marketplaces in their skills section but does not explicitly detail specific publishing or integration projects in the experience descriptions."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience across AWS, GCP, and Azure in both Webgate and Garwan."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate notes experience with multi-tenant and multi-region strategies from their time at LoopLabs."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists experience with distributed systems and has extensive experience developing microservices across cloud-native platforms."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate implemented Prometheus, Grafana, and centralized logging at Webgate."
+    }
+  ],
+  "computed_score": {
+    "points": 70.0,
+    "max": 72,
+    "percentage": 97.2
+  }
+}

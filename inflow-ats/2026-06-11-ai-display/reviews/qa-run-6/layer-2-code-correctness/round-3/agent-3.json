@@ -1,0 +1,18 @@
+{
+  "reviewer": "code-correctness-3",
+  "round": 4,
+  "layer": "layer-2-code-correctness",
+  "assigned_files": [
+    "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx (second half: renderSucceeded and styled components)"
+  ],
+  "findings": [
+    {
+      "id": "H1",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 183,
+      "description": "PlatoMark icon color in FitCard header deviates from spec. Spec section 2 item 5 explicitly states: 'Header: 15px PlatoMark (in `colors.gray[700]`)' — a single fixed value with no dark-mode variant. Implementation passes `color={theme.dark ? theme.color.gray[400] : theme.color.gray[700]}`, adding a dark-mode branch not present in the spec. Per CLAUDE.md known failure pattern 12 (spec-implementation mismatch is never MED): 'If the spec says X and the implementation does Y, that is HIGH or BLOCKER — even if Y is functionally equivalent.' The spec says `colors.gray[700]`; the implementation does a dark-mode ternary. The user decides whether the deviation is acceptable.",
+      "fix": "Change line 183 to: `<PlatoMark size={15} color={theme.color.gray[700]} />`"
+    }
+  ]
+}

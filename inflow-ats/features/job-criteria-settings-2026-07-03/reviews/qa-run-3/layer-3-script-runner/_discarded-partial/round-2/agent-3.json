@@ -1,0 +1,23 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 3,
+  "focus_area": "Job#zero_criteria_extraction_failure? latest-row semantics (SPEC §4.3); Job#latest_ai_job_criteria created_at-desc ordering",
+  "files_reviewed": [
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb"
+  ],
+  "verification": {
+    "method": "rails runner against RAILS_ENV=test / inflow_test on the running server (port 5007), ActiveJob queue_adapter=:test, no real OpenAI; AiJobCriteria rows built with explicit created_at and deleted via delete_all after each case",
+    "scenarios": [
+      "0 rows -> nil via safe-nav, no NoMethodError (latest_ai_job_criteria nil; predicate nil; falsey) — PASS",
+      "latest failed+zero -> TRUE for all 3 ZERO_CRITERIA_ERROR_MESSAGES; latest failed+non-zero-message -> FALSE; latest failed+nil-message -> FALSE; latest succeeded -> FALSE — PASS",
+      "older succeeded + newer failed+zero -> TRUE (latest wins) — PASS",
+      "older failed+zero + newer pending/in_progress/retrying -> FALSE (in-flight suppresses) — PASS",
+      "older failed+zero + newer succeeded -> FALSE (recovered) — PASS",
+      "latest_ai_job_criteria returns newest by created_at desc, disambiguated by inserting newest-created_at row FIRST (lowest id) with a higher-id older row present — returns the lower-id newest-created_at row; predicate follows it — PASS"
+    ],
+    "result": "ALL CHECKS PASSED"
+  },
+  "findings": []
+}

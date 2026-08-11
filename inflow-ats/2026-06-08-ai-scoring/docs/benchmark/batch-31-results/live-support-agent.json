@@ -1,0 +1,170 @@
+{
+  "meta": {
+    "batch": 31,
+    "criteria_prompt_version": 7,
+    "job_id": 32339,
+    "title": "Live Support Agent",
+    "organization": "EmpireDrop",
+    "cost": 0.000795
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Job Title: Live Support Agent - EmpireDrop\nSalary: Competitive Starting Salary (Potential for Growth Based on Performance and Responsibility)"
+      },
+      {
+        "heading": "Description:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "As a Live Support Agent at EmpireDrop, you will be the first point of contact for our users, providing high-quality, real-time support. This role requires flexibility in availability, a calm and composed attitude, and a solid understanding of the online casino and mystery box industry. You’ll use tools like LiveChat and ChatGPT to deliver efficient, accurate assistance to our users. A deep understanding of EmpireDrop’s features and mechanics is essential for providing top-notch support."
+      },
+      {
+        "heading": "Responsibilities:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Provide Real-Time Support: Engage with users through live chat, answering questions and resolving issues related to EmpireDrop and our mystery box offerings.\nUtilize LiveChat & ChatGPT: Effectively use LiveChat software and leverage ChatGPT to enhance support quality and efficiency.\nProblem Solving: Handle user concerns with professionalism, troubleshoot issues, and escalate tickets when needed, while maintaining a calm demeanor.\nIn-Depth Knowledge: Acquire and maintain a thorough understanding of EmpireDrop’s features, promotions, and the mystery box ecosystem to provide accurate information.\nTeam Collaboration: Work closely with other team members to ensure a seamless user experience and share valuable insights from user interactions."
+      },
+      {
+        "heading": "Required Skills:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Fluent in English: Proficiency in English is essential, and additional languages like French are a plus.\nExperience in Casino or Mystery Box Support: Prior experience in online casino support or familiarity with mystery box platforms is highly preferred.\nLiveChat & ChatGPT Proficiency: Familiarity with LiveChat software and ChatGPT tools for fast and accurate support.\nCalm and Professional: Ability to manage stress and maintain professionalism in high-pressure situations.\nExcellent Communication: Strong skills to engage effectively with users and coordinate with the team."
+      },
+      {
+        "heading": "Conditions:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Flexible Availability: Must be available for various shifts, including evenings and weekends.\nCareer Growth: Opportunity for salary and responsibility growth based on performance and tenure."
+      },
+      {
+        "heading": "About Us:",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "EmpireDrop is a fast-growing platform in the online mystery box and gaming industry, focused on delivering unique and engaging experiences to our players. Our Live Support team plays a critical role in maintaining user satisfaction and upholding our brand’s reputation. As we grow, we’re looking for dedicated individuals who bring calmness, reliability, and teamwork to our support environment."
+      },
+      {
+        "heading": "Why Join EmpireDrop?",
+        "inferred_section_type": "culture",
+        "type": "non_criteria",
+        "content": "At EmpireDrop, we value hard work, calm under pressure, and a strong team spirit. We are looking for key players who want to grow with us and make a difference. If you’re experienced in live support and understand the online gaming and mystery box industries, we offer a rewarding environment with room for advancement."
+      },
+      {
+        "heading": "How to Apply:",
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "If you’re ready to join a dynamic team and help us create an exceptional experience for EmpireDrop users, please send us your resume. Let us know about your experience in live support, especially within the casino or mystery box sectors, and what makes you a great fit for this role."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "non_criteria",
+        "type": "non_criteria",
+        "content": "This version keeps it concise and highlights the essential skills and expectations for the role of a Live Support Agent. Let me know if there's anything more you'd like to adjust!"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Provide Real-Time Support: Engage with users through live chat, answering questions and resolving issues related to EmpireDrop and our mystery box offerings.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Provide Real-Time Support: Engage with users through live chat, answering questions and resolving issues related to EmpireDrop and our mystery box offerings."
+      },
+      {
+        "text": "Utilize LiveChat & ChatGPT: Effectively use LiveChat software and leverage ChatGPT to enhance support quality and efficiency.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Utilize LiveChat & ChatGPT: Effectively use LiveChat software and leverage ChatGPT to enhance support quality and efficiency."
+      },
+      {
+        "text": "Problem Solving: Handle user concerns with professionalism, troubleshoot issues, and escalate tickets when needed, while maintaining a calm demeanor.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Problem Solving: Handle user concerns with professionalism, troubleshoot issues, and escalate tickets when needed, while maintaining a calm demeanor."
+      },
+      {
+        "text": "In-Depth Knowledge: Acquire and maintain a thorough understanding of EmpireDrop’s features, promotions, and the mystery box ecosystem to provide accurate information.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"thorough understanding\"",
+        "binary": false,
+        "source_text": "In-Depth Knowledge: Acquire and maintain a thorough understanding of EmpireDrop’s features, promotions, and the mystery box ecosystem to provide accurate information."
+      },
+      {
+        "text": "Team Collaboration: Work closely with other team members to ensure a seamless user experience and share valuable insights from user interactions.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Team Collaboration: Work closely with other team members to ensure a seamless user experience and share valuable insights from user interactions."
+      },
+      {
+        "text": "Fluent in English: Proficiency in English is essential, and additional languages like French are a plus.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"essential\"",
+        "binary": true,
+        "source_text": "Fluent in English: Proficiency in English is essential, and additional languages like French are a plus."
+      },
+      {
+        "text": "Experience in Casino or Mystery Box Support: Prior experience in online casino support or familiarity with mystery box platforms is highly preferred.",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"highly preferred\"",
+        "binary": false,
+        "source_text": "Experience in Casino or Mystery Box Support: Prior experience in online casino support or familiarity with mystery box platforms is highly preferred."
+      },
+      {
+        "text": "LiveChat & ChatGPT Proficiency: Familiarity with LiveChat software and ChatGPT tools for fast and accurate support.",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"Familiarity with\"",
+        "binary": false,
+        "source_text": "LiveChat & ChatGPT Proficiency: Familiarity with LiveChat software and ChatGPT tools for fast and accurate support."
+      },
+      {
+        "text": "Calm and Professional: Ability to manage stress and maintain professionalism in high-pressure situations.",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"Ability to\"",
+        "binary": false,
+        "source_text": "Calm and Professional: Ability to manage stress and maintain professionalism in high-pressure situations."
+      },
+      {
+        "text": "Excellent Communication: Strong skills to engage effectively with users and coordinate with the team.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Strong skills\"",
+        "binary": false,
+        "source_text": "Excellent Communication: Strong skills to engage effectively with users and coordinate with the team."
+      },
+      {
+        "text": "Flexible Availability: Must be available for various shifts, including evenings and weekends.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Must be\"",
+        "binary": true,
+        "source_text": "Flexible Availability: Must be available for various shifts, including evenings and weekends."
+      },
+      {
+        "text": "A calm and composed attitude",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"solid understanding\"",
+        "binary": false,
+        "source_text": "A calm and composed attitude."
+      },
+      {
+        "text": "Solid understanding of the online casino and mystery box industry",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"solid understanding\"",
+        "binary": false,
+        "source_text": "Solid understanding of the online casino and mystery box industry."
+      },
+      {
+        "text": "Deep understanding of EmpireDrop’s features and mechanics is essential for providing top-notch support.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"essential\"",
+        "binary": false,
+        "source_text": "A deep understanding of EmpireDrop’s features and mechanics is essential for providing top-notch support."
+      }
+    ]
+  }
+}

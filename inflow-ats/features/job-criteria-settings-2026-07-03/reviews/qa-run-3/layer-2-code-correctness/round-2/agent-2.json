@@ -1,0 +1,29 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agent_index": 2,
+  "focus_area": "AiJobCriteriaController (show/create) authorization + guards, routes singleton resource, JobAiJobCriteriaSerializer six-state payload",
+  "files_reviewed": [
+    "app/controllers/api/v1/ai_job_criteria_controller.rb",
+    "config/routes.rb",
+    "app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+    "app/policies/job_policy.rb",
+    "app/policies/application_policy.rb",
+    "app/controllers/application_controller.rb",
+    "app/controllers/api/v1/base_controller.rb",
+    "app/controllers/api/v1/ai_job_application_summaries_controller.rb",
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb"
+  ],
+  "findings": [
+    {
+      "id": "l2r2-a2-001",
+      "severity": "LOW",
+      "title": "Serializer issues 4 unmemoized latest-row queries per render (non-actionable observation)",
+      "file": "app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+      "line": 6,
+      "description": "Each serialize runs the same two lookups twice with no memoization. `criteria` (line 7) and `extracted_at` (line 11) both call `object.latest_succeeded_ai_job_criteria` (job.rb:692-694, one query each). `status` (line 15) calls `object.latest_ai_job_criteria` (job.rb:688-690) and `zero_criteria_failure` (line 19) calls `object.zero_criteria_extraction_failure?` which itself calls `latest_ai_job_criteria` again (job.rb:697) -- two more identical queries. So a single GET/POST render fires 4 DB queries for 2 distinct rows. This is `render_one` (a single Job, not a collection), so it is NOT an N+1 across rows, and the computed-delegation pattern is exactly what SPEC 5.3 prescribes (serializers.md 7). Negligible for a settings-tab fetch; noted only for completeness.",
+      "recommendation": "None required. If desired, memoize `latest_succeeded_ai_job_criteria`/`latest_ai_job_criteria` on the Job instance, but this is not a defect and matches the surrounding pattern."
+    }
+  ]
+}

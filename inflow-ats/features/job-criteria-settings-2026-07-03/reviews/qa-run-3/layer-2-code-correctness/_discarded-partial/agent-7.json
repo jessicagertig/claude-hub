@@ -1,0 +1,25 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 7,
+  "focus_area": "Three ZERO_CRITERIA constant substitutions (extract_criteria.rb:62,122; score_job_application.rb:43), exactness/correct-mapping/resolvability, data integrity around zero-criteria status writes, textract_result.rb after_commit + generate_ai_summary_with_credit_flow guard, and consumption by zero_criteria_failure?.",
+  "files_reviewed": [
+    "app/services/ai_job_application_action/scoring/extract_criteria.rb",
+    "app/services/ai_job_application_action/scoring/score_job_application.rb",
+    "app/models/textract_result.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/models/job.rb"
+  ],
+  "findings": [],
+  "notes": [
+    "VERIFIED via git diff 639458b9d..HEAD that all three substitutions are byte-exact literal->constant swaps: extract_criteria.rb:62 '-No criteria sections found in job description' -> ZERO_CRITERIA_NO_SECTIONS_ERROR_MESSAGE (constant value = same string); extract_criteria.rb:122 '-No criteria extracted from job description' -> ZERO_CRITERIA_NONE_EXTRACTED_ERROR_MESSAGE (same); score_job_application.rb:43 '-Criteria array is empty' -> ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE (same). No character drift, no wrong-constant mapping.",
+    "Semantic site mapping is correct: :62 fires inside `if criteria_sections.empty?` (no sections) -> NO_SECTIONS; :122 fires inside `if non_duplicates.empty?` (nothing survived dedup) -> NONE_EXTRACTED; score_job_application:43 fires inside `if ai_job_criteria.criteria.blank?` (succeeded row with empty array) -> EMPTY_ARRAY. Each constant matches its semantic case; no NONE_EXTRACTED-where-NO_SECTIONS-belongs style crossover.",
+    "Constant resolvability confirmed: AiJobCriteria is a top-level model; both service classes are nested under AiJobApplicationAction::Scoring but no shadowing constant exists there, so ::AiJobCriteria resolves. extract_criteria.rb already references AiJobCriteria.find_by at line 14; score_job_application.rb references @job.latest_ai_job_criteria. Zeitwerk autoloads AiJobCriteria on the constant reference. No load-order risk.",
+    "Consumption confirmed: all three persisted error_message values are members of AiJobCriteria::ZERO_CRITERIA_ERROR_MESSAGES (ai_job_criteria.rb:11-15), so zero_criteria_failure? (status_failed? && messages.include?(error_message)) returns true for each state. Non-set failure ('Job description is blank' at extract_criteria.rb:32, JSON parse messages, StandardError messages) correctly yields false. nil error_message yields false via include?(nil).",
+    "grep of app/ and lib/ shows the three raw literals now appear ONLY as the constant definitions in ai_job_criteria.rb:7-9 (no stray writers bypassing the constants; no comparison sites using raw literals that could drift).",
+    "textract_result.rb guard placement matches SPEC 6.2.4: `return if job_application.job.zero_criteria_extraction_failure?` at line 70 sits after the succeeded-summary early return (line 68) and before extract_job_criteria_if_needed (line 72). Correct ordering so a blocked review does not re-trigger extraction. No new nil exposure introduced: line 67 already dereferences job_application and line 72 already dereferences job_application.job pre-change, so the guard's non-safe-nav job_application.job is consistent with the surrounding pre-existing code.",
+    "queue_ai_summary_job after_commit (line 118-150) is structurally unchanged by this feature and correctly routes both the manual-waiting branch (validate -> on failure destroy waiting summary + broadcast AI_SUMMARY_FAILED with result.error) and the auto branch (validate -> enqueue only on success) through ValidateAiSummaryGeneration, which now carries the zero-criteria guard. Behavior is correct.",
+    "Job model support methods verified: latest_ai_job_criteria (job.rb:688), latest_succeeded_ai_job_criteria (692), zero_criteria_extraction_failure? = latest_ai_job_criteria&.zero_criteria_failure? (696-698), extract_job_criteria_if_needed keeps only the succeeded guard (743-747). All consistent with the guard and serializer usage.",
+    "OBSERVATION (not a finding, out of assigned scope, pre-existing): score_job_application.rb:43 uses update_columns; the string swap did not alter this and the call predates the feature, so it is not a feature defect."
+  ]
+}

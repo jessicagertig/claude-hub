@@ -1,0 +1,86 @@
+{
+  "job": "go",
+  "runs": 10,
+  "criteria_range": "19-28",
+  "criteria_mean": 25.3,
+  "t1_range": "0-6",
+  "decomp_delta_range": "-4-8",
+  "always_present_count": 2,
+  "always_present": [
+    "familiarity with monitoring and logging tools and observability such as prometheus, grafana, or elk stack",
+    "familiarity with system design for high availability, multi region, and multi tenant architectures"
+  ],
+  "total_cost": 0.1405,
+  "per_run": [
+    {
+      "run": 1,
+      "count": 25,
+      "t1": 2,
+      "decomp": 5,
+      "cost": 0.01378
+    },
+    {
+      "run": 2,
+      "count": 25,
+      "t1": 6,
+      "decomp": 5,
+      "cost": 0.014083
+    },
+    {
+      "run": 3,
+      "count": 19,
+      "t1": 0,
+      "decomp": -1,
+      "cost": 0.013389
+    },
+    {
+      "run": 4,
+      "count": 20,
+      "t1": 4,
+      "decomp": -4,
+      "cost": 0.013218
+    },
+    {
+      "run": 5,
+      "count": 28,
+      "t1": 2,
+      "decomp": 8,
+      "cost": 0.01458
+    },
+    {
+      "run": 6,
+      "count": 28,
+      "t1": 6,
+      "decomp": 8,
+      "cost": 0.014652
+    },
+    {
+      "run": 7,
+      "count": 28,
+      "t1": 2,
+      "decomp": 8,
+      "cost": 0.014524
+    },
+    {
+      "run": 8,
+      "count": 26,
+      "t1": 2,
+      "decomp": 6,
+      "cost": 0.013974
+    },
+    {
+      "run": 9,
+      "count": 26,
+      "t1": 6,
+      "decomp": 6,
+      "cost": 0.014085
+    },
+    {
+      "run": 10,
+      "count": 28,
+      "t1": 2,
+      "decomp": 8,
+      "cost": 0.01423
+    }
+  ]
+}

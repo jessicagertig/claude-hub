@@ -1,0 +1,40 @@
+{
+  "agent": "agent-2",
+  "round": 2,
+  "qaRun": 3,
+  "layer": "diff-to-spec",
+  "scope": "independent adversarial verification of all 8 changed files against full spec",
+  "findings": [],
+  "adversarialVerification": {
+    "focusArea1_lazyFetchGuard": {
+      "verdict": "correct",
+      "analysis": "The guard `(status === \"succeeded\" && aiSummary?.id) || 0` at PlatoTab.tsx line 40 prevents fetching in all non-succeeded states. Traced all 6 status values plus null (no summary): pending/in_progress/extracted/textract_processing/failed all short-circuit `status === \"succeeded\"` to false, yielding `false || 0` = 0. The hook's `enabled: !!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0` rejects 0. Edge cases verified: ID of 0 produces 0 (defensive); ID of null/undefined produces 0 (defensive). Only succeeded with a positive ID fires the fetch."
+    },
+    "focusArea2_calloutStateMachine": {
+      "verdict": "correct",
+      "analysis": "PlatoOverviewCallout evaluates: succeeded (with stale sub-branch) -> failed -> generating (4 statuses combined) -> no summary + hasResume -> else. The spec's callout table (lines 105-112) lists the same order: succeeded rows, failed, generating, no-summary+resume, no-summary+no-resume. The spec says 'evaluate in the same order as PlatoTab' but the spec's own callout table puts failed before generating (rows 3-4), matching the implementation. Since all status conditions are mutually exclusive (a summary has exactly one status), evaluation order among status branches has no correctness impact. The critical constraint -- 'no summary AND no resume must NOT match when a summary exists with failed/generating status' -- is satisfied because summaryExists-gated branches fire first."
+    },
+    "focusArea3_onOpenUrlRegex": {
+      "verdict": "correct",
+      "analysis": "Inside JobApplicationActivity, match.url comes from the Route render callback for the /overview route, so it equals e.g. /jobs/1/stages/2/applicants/3/overview. The regex `/\\/[^/]+$/` matches the final `/` + one-or-more non-slash chars, i.e. `/overview`. Replacing with empty string yields /jobs/1/stages/2/applicants/3, then appending /ai gives the correct Plato tab URL. The spec literally says `history.push(${match.url}/ai)` but that would produce .../overview/ai (wrong). The implementation correctly compensates for the spec's oversight. Round 1 already documented this as a justified deviation."
+    },
+    "focusArea4_platoNavItemStyles": {
+      "verdict": "correct",
+      "analysis": "Compared platoNavLinkStyles (JobApplicationSidebar.tsx lines 429-469) against linkStyles (NavItem.tsx lines 56-95) line by line. Only difference is the added Emotion `label:` property (required by codebase convention). All other CSS properties are verbatim: height, border-radius, margins, padding (with chevron ternary), flex layout, text-decoration, transition, > svg rules, .active styles, breakpoint.sm hover gate with height override. PlatoNavLabel (lines 473-489) matches StyledLabel (NavItem.tsx lines 103-118) with the expected icon-slot adaptation: `> span:first-of-type` selector replaces `svg` selector because PlatoChip renders a span, not an SVG."
+    },
+    "focusArea5_darkMode": {
+      "verdict": "correct",
+      "analysis": "Verified all color values in both themes. Brand gradient (#FBD7FF -> #FFDEC1) is mode-invariant in PlatoMark.Chip, PlatoTab.FitBar, PlatoOverviewCallout.Bar. Chip glyph is always colors.gray[900]. Key skill chips use t.dark ternary (gray[700]/gray[100]). Shimmer bars use t.dark ternary (gray[800]/gray[100] and gray[700]/gray[200]). Connector tick matches Styled.Event ::after (gray[800]/gray[200]). Dots use gray[500] (mode-invariant, spec match). Footer icon uses gray[400] (spec match). Achievement icon uses t.dark ternary (gray[400]/gray[700]). All Poly DS tokens (loudText, secondaryText, placeholderText, primaryText, border, borderHover, wellCanvas, cardCanvas, chipBorder) auto-resolve per mode. No missing dark mode variants found."
+    }
+  },
+  "additionalVerification": {
+    "stateMachineCompleteness": "All 6 statuses from the AiJobApplicationSummary type union (pending, in_progress, extracted, succeeded, failed, textract_processing) are handled in both PlatoTab.renderBody() and PlatoOverviewCallout. The PlatoTab separates textract_processing from the other generating statuses (different UX). The callout groups all 4 generating statuses (same copy). Both have correct fallthrough to no-summary states.",
+    "accessibilitySpec": "PlatoMark.tsx SVG has aria-hidden=\"true\" (line 64). PlatoOverviewCallout.Card is a styled.button with full reset CSS (appearance, background, border, padding, text-align, width, cursor, font). All shimmer and dot animations have @media (prefers-reduced-motion: reduce) { animation: none; }. PlatoNavItem is a NavLink for keyboard/screen-reader nav.",
+    "timestampFunction": "PlatoTab uses distanceInWords (line 133), NOT timeAgoInWordsShort. Spec explicitly forbids timeAgoInWordsShort (expects Unix seconds, not ISO strings).",
+    "eyebrowPattern": "PlatoTab.Eyebrow (lines 668-679) uses ${[t.text.xs]} standalone in array spread, avoiding Known Failure Pattern #1 (double font-size). Includes text-transform: uppercase, letter-spacing: 0.05em, font-weight: 600, color: secondaryText.",
+    "typeChanges": "AiAssessment interface at aiJobApplicationSummary.ts matches spec exactly: primaryDomain/secondaryDomain/tertiaryDomain with { name: string; reasoning: string } | null, keySkills: string[], standoutAccomplishments: string[], optional careerNarrative and experienceClassifications. AiResumeStructuredData.assessment changed from any to AiAssessment.",
+    "featureFlagGating": "All three UI surfaces gated: sidebar nav wrapped in FeatureFlipper (JobApplicationSidebar line 99), callout wrapped in FeatureFlipper (JobApplicationActivity line 394), route gated by isAiEnabled conditional rendering (JobApplicationContainer line 278). possiblePaths conditionally includes 'ai' (line 155) preventing redirect loops.",
+    "backwardCompatibility": "AiJobApplicationSummaryFeedItem and AiSummaryState are no longer imported but not deleted, matching spec section on backward compatibility."
+  },
+  "convergenceStatement": "Independent adversarial review confirms 0 HIGH findings. All 5 focus areas pass verification. All 8 files match their spec sections. This is round 2 producing 0 findings, consistent with round 1's 0 findings, achieving convergence."
+}

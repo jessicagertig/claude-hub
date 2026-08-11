@@ -1,0 +1,19 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 4,
+  "focus": "Item 2 frontend — SPEC 2.3 (GenerateParams/hook), SPEC 2.4 (handleGenerate callsites), SPEC 2.5 (Regenerate gating :247), SPEC 2.6 (AiSummaryState.tsx deletion)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": ["SPEC 2.3", "SPEC 2.4", "SPEC 2.5", "SPEC 2.6"],
+    "implemented": ["SPEC 2.3", "SPEC 2.4", "SPEC 2.5", "SPEC 2.6"],
+    "missing": []
+  },
+  "verification_notes": {
+    "SPEC 2.3": "useAiJobApplicationSummary.ts diff is exactly one added line: 'rescoreRequested: boolean;' in GenerateParams — required, no optional marker. Patch hunk byte-identical to live 'git diff f8815555a..HEAD' for the file (HOOK-MATCH). No other hook changes: generateAiSummary still posts '{ aiJobApplicationSummary: params }' via apiPost. snake_case conversion traced end-to-end: apiPost -> apiMutate (skipKeysToSnake defaults false) -> allKeysToSnake (app/javascript/ats/src/lib/utils/structure.js:94, deep-recursive lodash snakeCase) => body arrives as ai_job_application_summary.rescore_requested, matching the controller's params.require(:ai_job_application_summary).require(:rescore_requested). Trace: PlatoTab.tsx -> useAiJobApplicationSummary.ts -> api.ts -> structure.js -> ai_job_application_summaries_controller.rb.",
+    "SPEC 2.4": "handleGenerate = (rescoreRequested: boolean) => — required param, no default (PlatoTab.tsx:73); passes generate({ jobApplicationId: jobApplication.id, rescoreRequested }, ...) (:74-75). Grep of worktree PlatoTab.tsx shows exactly 5 occurrences of handleGenerate: the definition plus exactly four callsites — :192 (bulkQueued), :203 (failed), :233 (deriveEmptyStatus ready/noCredits), all three arrow-wrapped 'onClick={() => handleGenerate(false)}', and :108 'handleGenerate(true)' inside the Regenerate ConfirmationModal onConfirm immediately after removeModal() (:107). Zero bare 'onClick={handleGenerate}' passes remain. Patch hunks byte-identical to live diff (PLATOTAB-MATCH).",
+    "SPEC 2.5": ":247 is '} else if (statusValue === \"current\") {' — the '&& fullSummary?.stale' clause removed, condition stands alone. Branch interior (lines 248-271) extracted from both f8815555a and HEAD and byte-compared: md5 62c4c0582c8e6710d3634d27b300d3b6 identical for both. Interior retains the credits check (isLoadingCredits || totalRemaining > 0), the Regenerate Button with loading={buttonLoading} disabled={buttonLoading} pairing (known-failure #11 satisfied), the admin PlatoHeaderNavButton billing nav, and the non-admin handleBuyCredits alert path. The ConfirmationModal copy in handleClickRegenerate is untouched (only the onConfirm argument change from SPEC 2.4 appears in that region).",
+    "SPEC 2.6": "AiSummaryState.tsx deleted: patch contains exactly one 'deleted file mode' marker (the 221-line file); the two 'new file mode' markers are the two new backend spec files. File absent from worktree. Independent grep for 'AiSummaryState' across app/ and cypress/ in the worktree: zero matches in both. No surviving incomplete generate() callsite: useGenerateAiSummary is imported/used only in PlatoTab.tsx (:14, :38), whose single generate() call includes rescoreRequested.",
+    "reverse_direction": "Every diff change in the assigned files traces to a spec requirement: hook +1 line -> 2.3; PlatoTab 5 hunks -> 2.4 (four callsite/signature hunks) + 2.5 (one condition hunk); AiSummaryState deletion -> 2.6. No EXTRA/unspecced changes in the assigned area."
+  }
+}

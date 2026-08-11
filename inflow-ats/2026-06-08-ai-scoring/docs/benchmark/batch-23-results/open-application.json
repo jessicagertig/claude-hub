@@ -1,0 +1,104 @@
+{
+  "meta": {
+    "batch": 23,
+    "criteria_prompt_version": 8,
+    "job_id": 28896,
+    "title": "Open Application",
+    "organization": "Cemvision",
+    "cost": 0.00079
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": "Join us on our journey of re-inventing cement.",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Cemvision is a growing company on a mission to decarbonize cement, one of the world’s most urgent climate challenges, accounting for 8% of global CO2 emissions. We’re a team of cement and electrification experts, researchers, supply-chain specialists, creatives, and innovators from the traditional industry, academia, and the hyper-growth tech world. We’re proud to be backed by Breakthrough Energy Fellows (founded by Bill Gates in 2015), Norrsken Foundation, EQT Foundation, Polar Structure, BackingMinds, and Zacua Ventures, as well as companies from the cement, construction, and real estate industries. We’re currently on a journey to grow bigger and faster, and are looking for talented, innovative, and mission-driven people that want to be part of our movement to advance the greening of the cement sector by significantly reducing carbon emissions."
+      },
+      {
+        "heading": "Why Cemvision?",
+        "inferred_section_type": "culture",
+        "type": "non_criteria",
+        "content": "If you are passionate about contributing to making a significant positive impact on the environment, we offer a unique opportunity to disrupt and help shape the future of the cement industry. You will be part of a dynamic and collaborative team of experts that is dedicated to, together as a team, creating a sustainable future for generations to come. We offer an exciting work environment where innovative ideas and sustainability are at the core of what we do and where your contributions will be a key component in our success."
+      },
+      {
+        "heading": "Who we are looking for",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "To thrive in our environment, you should possess a 'no-problem-too-big' attitude and be highly resourceful. This means a lot of drive, an analytical mindset, and being motivated by collaborating with others and getting things done. Specifically, we are seeking individuals who are:\n\nMission-driven: You deeply care about sustainability and are passionate about Cemvision’s mission to decarbonize cement.\nThriving in a dynamic start-up environment: You need to embrace the unique challenges and opportunities that come with a start-up, and enjoy being part of building the organisation around you. Our startup culture is fast-paced and ever-evolving. You should be comfortable wearing multiple hats, navigating ambiguity, and quickly adapting to changing priorities and strategies.\nHands-on: You enjoy working hands-on in an open, collaborative environment, and actively developing the tools and infrastructure you need in your day-to-day work.\nEntrepreneurial in spirit: As a startup, we value entrepreneurial spirit and initiative. You take ownership by identifying issues and actively contribute to finding solutions when things aren't working as they should, explore new ideas, and drive initiatives forward with creativity and determination.\nResilient and have grit: Building something revolutionary isn't easy, and setbacks are inevitable. Resilience and grit are essential qualities for navigating challenges, overcoming obstacles, and staying focused on our long-term vision despite adversity. We are focusing on expanding our team in Stockholm, where we have our HQ."
+      },
+      {
+        "heading": "Cemvision is proud to be an Equal Opportunity Employer",
+        "inferred_section_type": "legal",
+        "type": "non_criteria",
+        "content": "All qualified applicants will receive consideration for employment without regard to race, color, religion, sex, national origin, disability, or any other characteristic protected by law. We value radical open-mindedness. We take a people-first approach, and together we are on a continuous learning journey and value teamwork and collaboration. We are all responsible for shaping the company culture and seek candidates who identify with our culture."
+      },
+      {
+        "heading": "Excited about joining our team?",
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "We're eager to hear from you and excited to explore upcoming job opportunities that align with your skills and strengths."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "You deeply care about sustainability and are passionate about Cemvision’s mission to decarbonize cement.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Mission-driven: You deeply care about sustainability and are passionate about Cemvision’s mission to decarbonize cement."
+      },
+      {
+        "text": "You need to embrace the unique challenges and opportunities that come with a start-up, and enjoy being part of building the organisation around you.",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 — 'you need' is a required signal",
+        "binary": false,
+        "source_text": "Thriving in a dynamic start-up environment: You need to embrace the unique challenges and opportunities that come with a start-up, and enjoy being part of building the organisation around you. Our startup culture is fast-paced and ever-evolving. You should be comfortable wearing multiple hats, navigating ambiguity, and quickly adapting to changing priorities and strategies."
+      },
+      {
+        "text": "You should be comfortable wearing multiple hats, navigating ambiguity, and quickly adapting to changing priorities and strategies.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Thriving in a dynamic start-up environment: You need to embrace the unique challenges and opportunities that come with a start-up, and enjoy being part of building the organisation around you. Our startup culture is fast-paced and ever-evolving. You should be comfortable wearing multiple hats, navigating ambiguity, and quickly adapting to changing priorities and strategies."
+      },
+      {
+        "text": "You enjoy working hands-on in an open, collaborative environment, and actively developing the tools and infrastructure you need in your day-to-day work.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Hands-on: You enjoy working hands-on in an open, collaborative environment, and actively developing the tools and infrastructure you need in your day-to-day work."
+      },
+      {
+        "text": "You take ownership by identifying issues and actively contribute to finding solutions when things aren't working as they should.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Entrepreneurial in spirit: As a startup, we value entrepreneurial spirit and initiative. You take ownership by identifying issues and actively contribute to finding solutions when things aren't working as they should, explore new ideas, and drive initiatives forward with creativity and determination."
+      },
+      {
+        "text": "You explore new ideas, and drive initiatives forward with creativity and determination.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Entrepreneurial in spirit: As a startup, we value entrepreneurial spirit and initiative. You take ownership by identifying issues and actively contribute to finding solutions when things aren't working as they should, explore new ideas, and drive initiatives forward with creativity and determination."
+      },
+      {
+        "text": "Resilience and grit are essential qualities for navigating challenges, overcoming obstacles, and staying focused on our long-term vision despite adversity.",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 — 'essential' is a required signal",
+        "binary": false,
+        "source_text": "Resilient and have grit: Building something revolutionary isn't easy, and setbacks are inevitable. Resilience and grit are essential qualities for navigating challenges, overcoming obstacles, and staying focused on our long-term vision despite adversity."
+      },
+      {
+        "text": "We are focusing on expanding our team in Stockholm, where we have our HQ.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "We are focusing on expanding our team in Stockholm, where we have our HQ."
+      }
+    ]
+  }
+}

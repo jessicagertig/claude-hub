@@ -1,0 +1,90 @@
+{
+  "file": "app/javascript/ats/src/views/jobApplications/Plato/PlatoLoadingState.tsx",
+  "agent": "agent-4",
+  "layer": "layer-2-code-correctness",
+  "round": 1,
+  "findings": [
+    {
+      "id": "4-1",
+      "severity": "MED",
+      "category": "edge-case",
+      "title": "Initial state defaults to step 1 when status is undefined on first render",
+      "lines": [38],
+      "detail": "When status is undefined on first render (before any data loads), target is null, and useState initializes active to 1 via the fallback `target != null ? target : 1`. This means the loading state initially shows step 0 as 'done' (checkmark) and step 1 as 'active' (spinner), even though no pipeline work has started yet. When the first real status comes in (which could be textract_processing = step 0), the Math.max in the useEffect prevents regression, so the user never sees step 0 active. This is likely intentional UX (skip the first step visually to feel faster) but could be confusing if the pipeline is actually stuck at textract_processing for a while and the user sees 'Analyzing the candidate' spinning when the resume hasn't even been processed. If it's intentional, a comment would help. If not, the default should be 0.",
+      "suggestion": "Change fallback from 1 to 0: `target != null ? target : 0` -- or add a comment explaining the intentional skip."
+    },
+    {
+      "id": "4-2",
+      "severity": "LOW",
+      "category": "logic",
+      "title": "STATUS_TO_STEP maps both extracting and summarizing to the same step",
+      "lines": [24, 25],
+      "detail": "Both extracting and summarizing map to step 1. This matches the spec exactly ('extracting, summarizing -> step 1'). No bug -- just confirming the mapping is correct per spec. The 4-step UI collapses two backend statuses into one visible step.",
+      "suggestion": null
+    },
+    {
+      "id": "4-3",
+      "severity": "LOW",
+      "category": "edge-case",
+      "title": "Unknown status values silently hold position (correct per spec)",
+      "lines": [37],
+      "detail": "If status is 'retrying', 'awaiting_job_criteria', 'pending', or any other unmapped value, the `status in STATUS_TO_STEP` check returns false, target becomes null, and the useEffect early-returns. The checklist holds its last position. This matches the spec: 'Unknown/unmapped statuses (e.g. retrying, awaiting_job_criteria) are ignored -- checklist holds its last step.' Correct behavior.",
+      "suggestion": null
+    },
+    {
+      "id": "4-4",
+      "severity": "LOW",
+      "category": "react-correctness",
+      "title": "useEffect dependency array is correct -- only includes target",
+      "lines": [42],
+      "detail": "The useEffect depends on [target], which is derived from status. When status changes, target recalculates, and the effect fires. The setActive callback form (prev => Math.max(prev, target)) correctly captures the closure value of target. Not including active in the dependency array is correct because setActive uses the functional updater form. No stale closure issue.",
+      "suggestion": null
+    },
+    {
+      "id": "4-5",
+      "severity": "LOW",
+      "category": "react-correctness",
+      "title": "No React key collision risk on STEPS map",
+      "lines": [53, 56],
+      "detail": "STEPS uses label strings as keys ('Processing the resume', 'Analyzing the candidate', etc.). All four labels are unique strings, so there is no collision risk.",
+      "suggestion": null
+    },
+    {
+      "id": "4-6",
+      "severity": "LOW",
+      "category": "styling",
+      "title": "Container styling matches JobApplicationTabEmptyState family",
+      "lines": [78, 101],
+      "detail": "PlatoLoadingState.Container uses the same padding (t.px(6), t.py(10)), rounding (t.rounded.md), flex-column + center alignment, border (1px solid gray[200] in light, transparent in dark), background (rgba(255,255,255,0.07) in dark, transparent in light), h2 styling (t.text.h5, t.mt(1), t.mb(1)), and p styling (t.text.sm, max-width 24rem, gray[600] light / gray[400] dark) as JobApplicationTabEmptyState.Container with roomy=true. They read as one family. Correct per spec.",
+      "suggestion": null
+    },
+    {
+      "id": "4-7",
+      "severity": "LOW",
+      "category": "accessibility",
+      "title": "Spinner respects prefers-reduced-motion",
+      "lines": [188, 189],
+      "detail": "The Styled.Spinner component includes `@media (prefers-reduced-motion: reduce) { animation: none; }`. This disables the spinning animation for users who prefer reduced motion. Correct. When animation is disabled, the spinner renders as a static circle with a differently-colored top border, which still visually distinguishes it from the 'todo' circle. Acceptable fallback.",
+      "suggestion": null
+    },
+    {
+      "id": "4-8",
+      "severity": "LOW",
+      "category": "codebase-compliance",
+      "title": "No CLAUDE.md rule violations found",
+      "lines": [],
+      "detail": "Verified: no nullish coalescing (??) used (rule 11); all styled components use `const t: any = props.theme` or destructured `theme` cast to any (rule 12); no useMemo used (rule 13); no deliberately set undefined (rule 9). The Styled pattern (let Styled: any; Styled = {};) matches the existing codebase pattern in JobApplicationTabEmptyState.tsx.",
+      "suggestion": null
+    },
+    {
+      "id": "4-9",
+      "severity": "LOW",
+      "category": "styling",
+      "title": "PlatoLoadingState IconWrapper lacks color styling present in JobApplicationTabEmptyState",
+      "lines": [103, 110],
+      "detail": "JobApplicationTabEmptyState.IconWrapper sets `color: ${t.dark ? t.color.gray[400] : t.color.gray[500]}` and `svg { width: 24px; height: 24px; }`. PlatoLoadingState.IconWrapper only sets `t.mb(2)` and `display: inline-flex` -- no color override and no svg sizing. However, since PlatoLoadingState uses PlatoChip (which has its own internal gradient/color and accepts a `size` prop set to 40), the missing color and svg sizing are not bugs -- PlatoChip handles its own appearance. No action needed.",
+      "suggestion": null
+    }
+  ],
+  "summary": "PlatoLoadingState.tsx is well-implemented. The status-to-step mapping matches the spec exactly. Monotonic advancement via useState + useEffect with Math.max is correct. Unknown statuses are handled properly (hold position). Accessibility is addressed (prefers-reduced-motion). No CLAUDE.md rule violations. One MED finding: the default initial step is 1 (not 0) when status is undefined, meaning step 0 ('Processing the resume') is never shown as active on first render -- this may be intentional UX but should be confirmed or documented."
+}

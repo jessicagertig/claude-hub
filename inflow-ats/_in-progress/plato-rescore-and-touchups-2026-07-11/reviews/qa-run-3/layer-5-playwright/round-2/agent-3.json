@@ -1,0 +1,25 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 3,
+  "assignment": "Per-stage bulk modal (BulkGenerateAiSummariesConfirmModal), Screen stage of Senior Engineer: STATE 3 (unchecked, all 5 selected), STATE 4 (checked, count 3->5), STATE 2 (partial selection of the 2 reviewed candidates, unchecked). Display-only; no submits. Balance 16.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as Rezu May (Acme Inc.)",
+    "Clicked 'Senior Engineer' -> job candidates view (Inbox). Clicked 'Screen 5' stage — 5 candidates listed: Yesenia Bernhard (Good fit, seeded review), Cornelius Jenkins (Excellent fit, seeded review), Brent Lubowitz, Refugio Ondricka, Wally Blanda (bare), matching the stated fixture state",
+    "Clicked the Screen stage-name select-all checkbox — all 5 row checkboxes checked",
+    "Opened Bulk options three-dot menu -> clicked 'Run Plato reviews' -> 'Review candidates' modal opened",
+    "STATE 3 (unchecked) byte-assert via DOM textContent: '3 of the 5 candidates selected from this hiring stage don't have a Plato review yet. Each successful review uses one AI credit, so running this uses up to 3 credits from your balance of 16 available.' — EXACT match. innerHTML confirms bold counts <b>3</b> and <b>16</b>. No 'Up to ' prefix, no overestimate block ('overestimate' absent from page), no shortfall ('You are short' absent). 'Generate reviews' button disabled=false (ENABLED). Rescore checkbox present, unchecked, enabled",
+    "Checked 'Also re-review candidates that already have a review' -> STATE 4 byte-assert: 'The 5 candidates selected from this hiring stage will be reviewed, including candidates that already have a review. Each successful review uses one AI credit, so running this uses up to 5 credits from your balance of 16 available.' — EXACT match, bold <b>5</b> and <b>16</b>. No Up-to/overestimate/shortfall. 'Generate reviews' ENABLED",
+    "Clicked Cancel — modal closed, nothing submitted",
+    "Unchecked Brent Lubowitz, Refugio Ondricka, Wally Blanda — only the 2 reviewed candidates (20979 Yesenia Bernhard, 20978 Cornelius Jenkins) remained checked (verified via input.checked)",
+    "Bulk options -> 'Run Plato reviews' -> STATE 2 byte-assert: '0 of the 2 candidates selected from this hiring stage don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.' — EXACT match, numeric 0, no credit sentence ('Each successful review' absent). 'Generate reviews' [disabled] confirmed in both DOM (disabled=true) and a11y snapshot. Rescore checkbox unchecked and enabled (per SPEC 1.1 it is disabled only in the no-selection state)",
+    "Clicked Cancel — nothing submitted. Cleared the remaining 2 selections (all 5 checkboxes verified unchecked)",
+    "Console check: 187 messages, 7 [ERROR] lines all known pre-existing noise (react-router history deprecation x4, Redux 'Store does not have a valid reducer', heap-api 404); zero feature-referencing errors (no rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summaries failures)"
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-3/state-3-unchecked-all-5.png",
+    "/tmp/qa-run-3-l5/agent-3/state-4-checked-all-5.png",
+    "/tmp/qa-run-3-l5/agent-3/state-2-partial-2-reviewed.png"
+  ],
+  "findings": []
+}

@@ -1,0 +1,61 @@
+# AI-Credit Subscription-Change Flow — Analog Faithfulness Audit
+
+## Verdict
+
+CLEAN — structurally faithful to the billing analog except the 5 sanctioned deviations; all 8 logged divergences are low severity (forced-by-data, CLAUDE.md-rule-mandated, or established intra-controller convention) and none is an unsanctioned behavioral defect.
+
+## Unsanctioned deviations (findings)
+
+Eight not-in-allowlist divergences were surfaced across the four audits. Every one is low severity and explainable (forced-by-data, mandated by a repo rule, or an established intra-controller convention). None changes the flow's behavior. Listed for the record:
+
+| aspect | ours file:line | analog file:line | problem | severity |
+|---|---|---|---|---|
+| return_url default literal | organization_ai_credit_purchases_controller.rb:179 | billing_controller.rb:292 | Default fallback is `/hire/settings/billing` vs analog `/account`. The `params[:return_url] \|\| <default>` pattern is preserved; only the literal differs. Likely intentional for the AI-credit page; unconfirmed. | low |
+| PosthogTrackJob price_id arg source | organization_ai_credit_purchases_controller.rb:195 | billing_controller.rb:311 | Analog passes re-resolved `determine_price_id`; ours passes the `price_id` local read directly from params. Equivalent in effect (both resolve to params[:price_id]); resolution mechanism differs. | low |
+| dropped happy-path ap logs | organization_ai_credit_purchases_controller.rb:151-197 | billing_controller.rb:270,307-308 | Analog emits ap 'Change Subscription via Stripe Portal Session' (270) and ap 'Session Created to Change Subscription' + ap session (307-308). Ours emits none of these. Consistent with ours controller's style (ap only inside rescues). Stylistic, not a flow change. | low |
+| extra Stripe::StripeError rescue clause (customer_subscription) | organization_ai_credit_purchases_controller.rb:243-247 | billing_controller.rb:613-619 | Ours adds a first `rescue Stripe::StripeError => e` (logs + ap e + Sentry + render_general_errors) the analog lacks; analog has a single StandardError rescue rendering `{ errors: ['Unable to load subscription'] }`. Adds a code path + render shape (render_general_errors vs json:{errors:[...]}). Matches sibling AI-credit endpoints (checkout:61, purchase_top_up:144, cancel:229) — intra-controller convention. | low |
+| nil/blank guard predicate (.blank? vs .nil?) | organization_ai_credit_purchases_controller.rb:238 | billing_controller.rb:609 | Analog guards `current_organization.stripe_subscription_id.nil?`; ours `purchase.nil? \|\| purchase.stripe_subscription_id.blank?`. The `purchase.nil?` half is forced by sanctioned #4 (the separate purchase record can be absent); the `.blank?` (vs analog's `.nil?`) on the id is a harmless strengthening, a literal divergence. | low |
+| rescue placement (method-level vs inner begin/rescue) | organization_ai_credit_purchases_controller.rb:243-251 | billing_controller.rb:613-619 | Analog wraps only the retrieve in an inner begin/rescue (nil branch unrescued); ours uses a single method-level rescue covering the whole method. REQUIRED by CLAUDE.md Critical Rule #1 (Controllers: NO BEGIN BLOCKS — use method-level rescue), which overrides matching the analog's begin-block style. | low |
+| no-card-on-file payment-method branch omitted | AiCreditSubscription.tsx:60-82 | AccountBillingPlans.tsx:322-336 | Analog `handleChangeSubscriptionWithGate` branches on `currentOrganization.stripeDefaultPaymentMethodOnFile` (card → `handleChangeSubscriptionViaStripePortal` / change_subscription_portal_session; no card → `handleUpdateWithPaymentMethod` / update_payment_method_and_subscription_portal_session). Ours unconditionally calls `changeSubscription` (portal-session path); no `update_payment_method_and_subscription_portal_session` equivalent exists in useOrganizationAiCreditPurchase.ts. Likely forced-by-data (an AI-credit subscriber necessarily has an active Stripe subscription with a card; no free credit tier). NOTE: ours DOES use the stripeDefaultPaymentMethodOnFile branch for the top-up buy path at line 125, so the pattern exists in the same file and was deliberately omitted from the change path. | low |
+| useAiCreditCustomerSubscription hook arg shape | useOrganizationAiCreditPurchase.ts:124-128 | useBilling.ts:245-264 | Analog `useStripeCustomerSubscription` accepts `{ refetchOnWindowFocus }` and the caller passes `{ refetchOnWindowFocus: false }` (AccountBillingPlans.tsx:59-61). Ours takes no args and hardcodes `refetchOnWindowFocus: false` inside the hook (AiCreditSubscription.tsx:31 calls it with no args). Net runtime identical. Cosmetic. | low |
+
+## Sanctioned deviations — confirmed present
+
+All 5 sanctioned items are present and correctly implemented. None became a finding.
+
+- **#1 — flow_data.subscription_update_confirm.subscription = purchase.stripe_subscription_id** (credit-pack purchase row), not organization.stripe_subscription_id. Confirmed at organization_ai_credit_purchases_controller.rb:183 (purchase fetched at :154 via `current_organization.organization_ai_credit_purchases.subscription.find_by(subscription_status: [:active, :past_due])`). Analog uses `current_organization.stripe_subscription_id` at billing_controller.rb:296. Correctly implemented per forced separate-Stripe-subscription model.
+- **#2 — Operates on a separate OrganizationAiCreditPurchase record + its columns**, not main-plan columns on organizations. Confirmed at organization_ai_credit_purchases_controller.rb:154-163 (purchase resolved, guards on purchase nil + stripe_subscription_id blank); analog instead raises on org-level stripe_subscription_id blank at billing_controller.rb:273. Route on `resource :ai_credit_purchases` (config/routes.rb:190-199, get :customer_subscription at :197) vs analog `resources :billing` (routes.rb:177) — same verb/collection placement. Frontend params wrapped under `organizationAiCreditPurchase` (useOrganizationAiCreditPurchase.ts:54-57) and invalidates `['organizationAiCreditPurchase']` (:64) vs analog `['currentOrganization']`. Correctly implemented per forced data model.
+- **#3 — No ValidateSubscriptionChange / PlanFeatureGate / job-limit gate / PlanChangeBlockedModal**; uses lookup-key validation via `ai_credit_subscription_plan_lookup_key?`. Confirmed at organization_ai_credit_purchases_controller.rb:171-175 (resolves `lookup_key = Stripe::Price.retrieve(price_id).lookup_key`, validates against AI_CREDIT_AMOUNTS_BY_LOOKUP_KEY at model :63-64). Analog calls ValidateSubscriptionChange with action_type 'change' at billing_controller.rb:277-286. Frontend change branch calls `changeSubscription` directly with no usePlanLimitsGate/checkPlanLimitsGate, no PlanChangeBlockedModal, no trackEvent('plan_change_blocked_modal_shown') (AiCreditSubscription.tsx:60-82). Correctly implemented.
+- **#4 — Live-subscription endpoint retrieves by purchase.stripe_subscription_id.** Confirmed at organization_ai_credit_purchases_controller.rb:237 (lookup), :241 (purchase.stripe_subscription); model method organization_ai_credit_purchase.rb:166-170 byte-identical to analog organization.rb:474-478 (same nil guard on stripe_subscription_id, same `Stripe::Subscription.retrieve` with `expand: ['items.data.price.tiers']`). Same forced cause as #1. Correctly implemented.
+- **#5 — ai_credit_* descriptor naming; catalog AI_CREDIT_AMOUNTS_BY_LOOKUP_KEY** with plato_ai_credit_* production keys + old dev keys. Confirmed at organization_ai_credit_purchase.rb:4-72 (catalog at :4; 6 `plato_ai_credit_*` production keys under '# Production keys' lines 5-35; 4 old keys under '# Development keys' comment line 36). Helpers ai_credit_lookup_keys (:59), ai_credit_subscription_plan_lookup_key? (:63), ai_credit_top_up_lookup_key? (:67), ai_credit_allocation_for_lookup_key (:71) all carry the descriptor; used at controller :19,31,72,93,172,257 and stripe_webhook_handler_job.rb:125,137,268. All 6 old identifiers (CREDIT_PACKS_BY_LOOKUP_KEY, registered_keys, lookup_by_key, subscription_key?, one_off_key?, credit_amount_for_key) return ZERO matches in app/ and spec/; lookup_by_key fully deleted (no def, no calls). Correctly implemented.
+
+## Matched aspects
+
+Structure that mirrors the analog exactly:
+
+- `authorize :billing, :change_subscription?` as first line (ours:152 / analog:269)
+- `raise StandardError 'No Stripe customer found.'` unless stripe_customer_id present (ours:165 / analog:272)
+- `raise StandardError 'Subscription item ID is missing.'` unless subscription_item_id present (ours:166 / analog:274)
+- subscription_item_id read from the controller's single params method (ours:169 organization_ai_credit_purchase_params / analog:288 params)
+- `options.customer = current_organization.stripe_customer_id` (ours:178 / analog:291)
+- return_url = `Variables::AtsRootUrl + (params[:return_url] || default)` — pattern identical, only default literal differs (ours:179 / analog:292)
+- `flow_data.type = 'subscription_update_confirm'` (ours:181 / analog:294)
+- flow_data items = single-element array `{id: subscription_item_id, price: price_id, quantity: 1}` (ours:184-188 / analog:297-301)
+- `session = Stripe::BillingPortal::Session.create(options)` (ours:193 / analog:306)
+- `PosthogTrackJob.perform_later(current_user.id, 'change_subscription_stripe_portal_opened', { price_id: ... })` (ours:195 / analog:311)
+- `render json: { redirectUrl: session.url }` (ours:197 / analog:313)
+- rescue Pundit::NotAuthorizedError (Sentry.capture_exception, ap, Rails.logger.error, render_general_errors(['Only admins can change subscription settings.'])), Stripe::InvalidRequestError (Sentry + Rails.logger.error + render_general_errors([e.message])), StandardError (Rails.logger.error + render_general_errors([e.message])) — all three identical in shape (ours:198-210 / analog:314-326)
+- route: POST :change_subscription_portal_session in collection block (ours routes.rb:194 / analog routes.rb:169); GET :customer_subscription in collection block (ours routes.rb:197 / analog routes.rb:177)
+- single params method per controller (ours:268-270 organization_ai_credit_purchase_params / analog:670-672 billing_params)
+- customer_subscription render shapes `{ subscription: <stripe subscription> }` and `{ subscription: nil }` identical (ours:241,239 / analog:614,611)
+- model-method nil guard `return if stripe_subscription_id.nil?` and `Stripe::Subscription.retrieve` + `expand: ['items.data.price.tiers']` identical (ours organization_ai_credit_purchase.rb:167,169 / analog organization.rb:475,477)
+- customer_subscription StandardError rescue render `{ errors: ['Unable to load subscription'] }` + Sentry.capture_exception + Rails.logger.error identical (ours:248-251 / analog:615-618)
+- no authorize on customer_subscription — matches analog (ours:236 / analog:606)
+- frontend currentSubscription derivation `data ? data.subscription : null` (AiCreditSubscription.tsx:44-46 / AccountBillingPlans.tsx:62-64)
+- frontend currentSubscriptionItemId = `currentSubscription && currentSubscription.items.data[0].id` byte-for-byte (AiCreditSubscription.tsx:47 / AccountBillingPlans.tsx:136)
+- priceId sourced from the Stripe price object: tier.priceId (AiSubscriptionTierCard.tsx:12) flows from aiCreditPrices priceId: price.id (planHelpers.ts:98) ↔ analog plan.priceId
+- frontend POSTs same three keys `{ priceId, subscriptionItemId, returnUrl }` (AiCreditSubscription.tsx:63-66, hook forwards exactly those at useOrganizationAiCreditPurchase.ts:41-58 / useBilling.ts:46-59, AccountBillingPlans.tsx:290-295)
+- onSuccess `window.location.href = data.redirectUrl` (AiCreditSubscription.tsx:70 / AccountBillingPlans.tsx:303)
+- onError reads `error?.data?.errors?.general?.[0]` with fallback (AiCreditSubscription.tsx:73-77 / AccountBillingPlans.tsx:306-313; difference is addToast vs window.logger+addToast, behaviorally equivalent)
+- isCurrentPlan / button-text derivation occurs in the view (lookupKey comparison vs analog priceId comparison) — semantically equivalent
+- rename consistency: zero residual old identifiers; all new ai_credit_* identifiers defined and wired (constant referenced at organization_ai_credit_purchase.rb:60,64,68,72 + spec :139,141,145; helpers used at controller, model :87, and stripe_webhook_handler_job.rb)

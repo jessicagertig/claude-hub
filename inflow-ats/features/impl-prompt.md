@@ -4,7 +4,7 @@
 
 - Create and use `/tmp` directories for throwaway work.
 - Use `~/claude-hub/inflow-ats/` for **reference files only**: reusable context that helps future agents understand the codebase, conventions, or prior decisions.
-- If you want to persist a per-task summary or patch note to disk, write it to a **dated subdirectory** like `~/claude-hub/inflow-ats/YYYY-MM-DD-short-description/` so the root stays clean for reference material.
+- If you want to persist a per-task summary or patch note to disk, write it to a **dated subdirectory** like `~/claude-hub/inflow-ats/short-description-YYYY-MM-DD/` so the root stays clean for reference material.
 - Do not leave any Claude-generated files in the inflow-ats repo tree, and do not modify `.gitignore` to accommodate them.
 
 ## Git Rules

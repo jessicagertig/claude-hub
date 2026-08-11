@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "batch": 13,
+    "criteria_prompt_version": 8,
+    "job_id": 23674,
+    "title": "Software Engineer",
+    "organization": "Valar Labs",
+    "cost": 0.000387
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": "About us:",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Founded by Stanford AI researchers Anirudh Joshi, Damir Vrabac, Viswesh Krishna and Harvard Professor Pranav Rajpurkar\nPartnering with the world’s leading oncologists\n20+ publications in AI+medicine and backgrounds from tech companies and health tech startups!\nRedefining cancer treatment using AI\nBuilding AI diagnostics for the most pressing problems in oncology\nBacked by Andreessen Horowitz and Pear VC"
+      },
+      {
+        "heading": "About the Role:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Developing commercial systems to be used by thousands of oncologists\nDesigning data visualization systems for internal ML models\nBuilding production platform for scalable ML inference"
+      },
+      {
+        "heading": "What we're looking for:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Front-end development experience in React, JS/TS\nBack-end development experience in Python, Rust, C/C++  \n(Optional) Experience with GIS / Map systems, Data Visualization\n(Optional) Previously deployed HIPAA compliant systems"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Developing commercial systems to be used by thousands of oncologists",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Developing commercial systems to be used by thousands of oncologists"
+      },
+      {
+        "text": "Designing data visualization systems for internal ML models",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Designing data visualization systems for internal ML models"
+      },
+      {
+        "text": "Building production platform for scalable ML inference",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Building production platform for scalable ML inference"
+      },
+      {
+        "text": "Front-end development experience in React, JS/TS",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"experience in\" is a neutral signal",
+        "binary": false,
+        "source_text": "Front-end development experience in React, JS/TS"
+      },
+      {
+        "text": "Back-end development experience in Python, Rust, C/C++",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"experience in\" is a neutral signal",
+        "binary": false,
+        "source_text": "Back-end development experience in Python, Rust, C/C++"
+      },
+      {
+        "text": "Experience with GIS / Map systems, Data Visualization",
+        "tier": "tier_3",
+        "tier_reasoning": "signal: \"Optional\" is a bonus signal",
+        "binary": false,
+        "source_text": "(Optional) Experience with GIS / Map systems, Data Visualization"
+      },
+      {
+        "text": "Previously deployed HIPAA compliant systems",
+        "tier": "tier_3",
+        "tier_reasoning": "signal: \"Optional\" is a bonus signal",
+        "binary": false,
+        "source_text": "(Optional) Previously deployed HIPAA compliant systems"
+      }
+    ]
+  }
+}

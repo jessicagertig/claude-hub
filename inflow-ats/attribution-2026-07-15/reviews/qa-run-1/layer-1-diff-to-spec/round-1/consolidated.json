@@ -1,0 +1,37 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agents": 15,
+  "agents_clean": 13,
+  "findings": [
+    {
+      "id": "l1-r1-F1",
+      "type": "VIOLATION",
+      "severity": "HIGH",
+      "source_agents": [9, 10],
+      "duplicate_of": ["l1-a9-1", "l1-a10-1"],
+      "title": "sanitizeTrackingParams silently drops utm_* params whose key contains malformed percent-encoding: the occurrence-scan key decoder (native decodeURIComponent with raw fallback) diverges from queryString.parse's key decoder (decode-uri-component, lenient)",
+      "spec_requirement": "SPEC §5.1 (D4): utmData holds \"every other param whose name starts with utm_\"; contract \"order comes from the raw string, values from the parse\". No rule permits dropping a utm_* param that queryString.parse captured. Not listed in REVIEW-ANGLES.md as an approved deviation.",
+      "evidence": "app/javascript/shared/lib/utils.js key scan (~lines 41-50) decodes scanned keys with decodeURIComponent (raw-key fallback on throw); query-string v6.1.0 parse() decodes keys with decode-uri-component 0.2.0 (best-effort, U+FFFD replacement). On mixed valid/malformed percent sequences the scan key never matches any parse key, the membership filter parsedParams[key] !== undefined fails, and the param is dropped from utmData entirely (not captured, not counted toward the 10-key cap). Empirically reproduced by two independent agents against the installed libraries: '?utm_x%C2=1&utm_medium=m' → utmData {utm_medium} only; also 'utm_%C3%A9%', 'utm_a%FE%FF', 'utm_%E2%98%83%E2', 'utm_100%25%E2'. Top-level utm_source/utm_campaign/internal_ref literal-name reads unaffected; params are dropped, never mis-valued.",
+      "recommendation": "Make the scan's key decoding identical to queryString.parse's for all inputs — use the same decode-uri-component decoder (already in node_modules as query-string 6.1.0's direct dependency) or otherwise guarantee scan-key/parse-key identity. Add a Jest regression case with a mixed-validity encoded utm_* key pinning that it lands in utmData."
+    },
+    {
+      "id": "l1-r1-F2",
+      "type": "VIOLATION",
+      "severity": "HIGH",
+      "source_agents": [10],
+      "duplicate_of": ["l1-a10-2"],
+      "title": "Jest coverage gap (§9.6): no test asserts the per-value sanitization rules (255-char truncation, first-of-repeated-array) for values INSIDE utmData",
+      "spec_requirement": "SPEC §9.6 requires Jest coverage of the §5.1 sanitization contract; §5.1 (D4) applies the rules per value (\"each value sanitized\"), including utmData values. Ghost-test discipline (pipeline rule 26): every contract rule must be falsified by an implementation that omits it.",
+      "evidence": "app/javascript/shared/lib/utils.test.js: truncation and repeated-param tests exercise only top-level utm_source. An implementation assigning utmData[key] = parsedParams[key] without sanitizeTrackingValue would pass all 8 tests. The current implementation is correct; the rule is unpinned.",
+      "recommendation": "Add assertions: (1) sanitizeTrackingParams('?utm_medium=' + 'b'.repeat(300)) → utmData.utm_medium.length === 255; (2) sanitizeTrackingParams('?utm_medium=first&utm_medium=second') → utmData.utm_medium === 'first'."
+    }
+  ],
+  "spec_coverage": {
+    "total_requirement_areas": 8,
+    "all_areas_double_covered": true,
+    "areas_clean": ["§3 data layer", "§4.1-4.3 registrations", "§4.4/§4.8 organizations+confirmations", "§4.5-4.7 omniauth chain", "§5.3/§5.6-5.9 frontend SSO+events", "§6/§7/§10 cross-cutting constraints", "full-diff traceability"],
+    "areas_with_findings": ["§5.1/§9.6 frontend capture + sanitization"]
+  },
+  "gate": "FAIL — 2 HIGH findings → fix loop, restart from Layer 1 in qa-run-2"
+}

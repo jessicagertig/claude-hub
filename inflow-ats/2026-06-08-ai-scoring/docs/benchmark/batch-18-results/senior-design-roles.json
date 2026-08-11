@@ -1,0 +1,187 @@
+{
+  "meta": {
+    "batch": 18,
+    "criteria_prompt_version": 9,
+    "job_id": 27331,
+    "title": "Senior Design Roles ",
+    "organization": "KidSuper Studios",
+    "cost": 0.000606
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "It’s been a long journey with a very small core team for a while and over the last year we started to slowly expand the KidSuper Studios Team. Being that we are creatives & designers at core, of our now multi-disciplinary global enterprise haha, we are finally opening to public ability to join team in what capacity we see fits. We are looking for all types of designers, and hiring multiple, the compensation will be based on your experience and how good at soccer & funny you are."
+      },
+      {
+        "heading": "some general requirements we look for",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Amazing taste level\nmust be able take a joke\nmust know about obscure art & fashion history to inspire Colm\nmust be a self starter, do not expect a lot of infrastructure or support."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Though we love generalists & multi-disciplinary creatives this is list based on priority:\n\nTechnical Clothing Designer\nwe are all self-taught, someone with immense technical skills & extensive experience working on many various clothing projects at once.\nfamiliar with things like CLO3D, and technical clothing design programs.\n\nDesign Manager / Director\nBeyond amazing taste, ability to open up and design if need be.\nAbility to organize many design projects at once, across all mediums\nGood leadership abilities, nice to have strong past network of contracted creatives.\n\nGeneral Fashion Designer\nAlso building out Womenswear team.\n\nMultidisciplinary Designer/Creatives\nGraphic Designer"
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "criteria",
+        "type": "non_criteria",
+        "content": "Though its cool you can be with us in Brooklyn, any remote location is cool.\nCompensation based on experience.\nfull-time, part-time, contract based roles all possible.\nKeep in mind, do to our small team, work can get intense sometime, long hrs, annoying problems to solve. If not ready for a scrappy startup environment this may not be a job for you."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Thanks!\nKidSuper Studios"
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "intern/jr. type positions coming later.\n\n**Website URL: could be portfolio, instagram or your favorite link.\nyou can enter 2 more links below if need be.\nyour resume/cv upload can be a portfolio or project you love."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Amazing taste level",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Amazing taste level"
+      },
+      {
+        "text": "must be able take a joke",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"must be\"",
+        "binary": true,
+        "source_text": "must be able take a joke"
+      },
+      {
+        "text": "must know about obscure art & fashion history to inspire Colm",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"must know\"",
+        "binary": false,
+        "source_text": "must know about obscure art & fashion history to inspire Colm"
+      },
+      {
+        "text": "must be a self starter",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"must be\"",
+        "binary": true,
+        "source_text": "must be a self starter, do not expect a lot of infrastructure or support."
+      },
+      {
+        "text": "do not expect a lot of infrastructure or support",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "must be a self starter, do not expect a lot of infrastructure or support."
+      },
+      {
+        "text": "Technical Clothing Designer",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "Technical Clothing Designer"
+      },
+      {
+        "text": "immense technical skills",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"immense\" (implicitly \"extensive\", from \"extensive experience\")",
+        "binary": false,
+        "source_text": "we are all self-taught, someone with immense technical skills & extensive experience working on many various clothing projects at once."
+      },
+      {
+        "text": "extensive experience working on many various clothing projects at once",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"extensive experience\"",
+        "binary": false,
+        "source_text": "we are all self-taught, someone with immense technical skills & extensive experience working on many various clothing projects at once."
+      },
+      {
+        "text": "familiar with things like CLO3D, and technical clothing design programs",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"familiar with\"",
+        "binary": true,
+        "source_text": "familiar with things like CLO3D, and technical clothing design programs."
+      },
+      {
+        "text": "Design Manager / Director",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "Design Manager / Director"
+      },
+      {
+        "text": "Beyond amazing taste",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Beyond amazing taste, ability to open up and design if need be."
+      },
+      {
+        "text": "ability to open up and design if need be",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"ability to\"",
+        "binary": false,
+        "source_text": "Beyond amazing taste, ability to open up and design if need be."
+      },
+      {
+        "text": "Ability to organize many design projects at once, across all mediums",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"ability to\"",
+        "binary": false,
+        "source_text": "Ability to organize many design projects at once, across all mediums"
+      },
+      {
+        "text": "Good leadership abilities",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"abilities\" (implicitly \"ability to\")",
+        "binary": false,
+        "source_text": "Good leadership abilities, nice to have strong past network of contracted creatives."
+      },
+      {
+        "text": "strong past network of contracted creatives",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"nice to have\"",
+        "binary": false,
+        "source_text": "Good leadership abilities, nice to have strong past network of contracted creatives."
+      },
+      {
+        "text": "General Fashion Designer",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "General Fashion Designer"
+      },
+      {
+        "text": "building out Womenswear team",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "Also building out Womenswear team."
+      },
+      {
+        "text": "Multidisciplinary Designer/Creatives",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "Multidisciplinary Designer/Creatives"
+      },
+      {
+        "text": "Graphic Designer",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "Graphic Designer"
+      }
+    ]
+  }
+}

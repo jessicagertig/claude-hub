@@ -1,0 +1,111 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has direct experience at Civo as a Backend Developer where they developed and maintained a Go-based internal API handling 100k+ RPM, built Kubernetes custom controllers, and integrated CLI with platform services."
+    },
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume lists experience with Kubernetes, Terraform, AWS, GCP, and Azure. At Civo, the candidate built Kubernetes custom controllers and IaC providers in collaboration with the backend/infrastructure team."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience deploying Kubernetes-based stacks and services (KFaaS) and mentions managing GPU node pools, but there is no explicit evidence of managing multi-cloud 'racks' within customer accounts."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate integrated CLI with platform services, built CI/CD pipelines, and implemented platform features like LoadBalancer as a Service and Database as a Service."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate managed high-traffic systems (100k+ RPM), implemented automated backups, and worked on runtime security visibility for Kubernetes via KubeArmor."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate was the second highest contributor to the Civo project and completed a Linux Foundation Mentorship at CNCF, demonstrating experience in open-source collaboration and mentorship contexts."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Go as a language and describes significant experience building production systems (APIs, custom controllers) in Go."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate's experience includes building custom controllers, managing pod autoscaling, and implementing Kubernetes security visibility tools."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume lists Terraform under technical skills and describes building IaC providers as part of their backend developer role at Civo."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists AWS, GCP, and Azure as platforms and has experience building S3-compatible Object Storage and DBaaS."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate worked directly on the Civo PaaS project, including implementing features with 90-second launch times and serverless environments."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has hands-on experience building CI/CD pipelines and developer tools (CLI integrations)."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "While the candidate launched services on a platform (Civo), there is no specific mention of publishing to external AWS/GCP/Azure Marketplaces."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate onboarded 2000+ customers at Civo and has worked with various cloud platforms."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate built LoadBalancer as a Service with zero downtime and high-traffic (100k RPM) backend APIs."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate is a CNCF mentee, a major contributor to the Civo open-source project, and has experience with distributed systems like Kafka and Ceph."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Prometheus, OpenTelemetry, and Grafana as part of their technical skill set."
+    }
+  ],
+  "computed_score": {
+    "points": 66.0,
+    "max": 72,
+    "percentage": 91.7
+  }
+}

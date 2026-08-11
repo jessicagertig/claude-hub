@@ -1,0 +1,99 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has demonstrated experience architecting and deploying applications across multiple cloud platforms (AWS, Azure, GCP) and has deployed applications on managed environments like OpenShift. Their work on the Enterprise Patching Management Platform shows experience maintaining complex multi-server environments."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience enhancing CI/CD workflows (Jenkins, Harness, Tekton), improving observability and logging (Splunk, Prometheus, Grafana), and has worked on developer-facing features like REST APIs and automation platforms. However, there's no specific evidence of collaborating with product and UX teams or improving CLI usage."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has implemented monitoring and logging (Splunk, Prometheus, Grafana), designed scalable applications using Golang's concurrency features, and deployed on resilient platforms like OpenShift. However, there's no specific evidence of implementing alerting, rollback capabilities, or multi-cloud failover strategies."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has 7+ years of experience and is described as a 'Senior Software Engineer' and 'Sr Software Development Specialist', suggesting senior-level responsibilities. They have contributed to system stability and maintainability, but there's no explicit evidence of mentoring or participating in code reviews."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Golang as a primary skill and has extensive production experience building backend systems with Golang, including REST APIs using Mux, Gin, and Chi frameworks in enterprise environments at NTT Data."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists Kubernetes and OpenShift (which is built on Kubernetes) in their skills and has deployed applications on OpenShift, demonstrating practical Kubernetes experience with deployments and containerized environments."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with infrastructure automation using Ansible and has worked across multiple cloud providers (AWS, Azure, GCP), but there's no specific mention of Terraform or other IaC tools like CloudFormation or Pulumi."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has hands-on experience with AWS (ECS, S3, Lambda), Azure, and GCP. They've used various cloud services including compute, storage (S3, IBM S3), and have deployed applications on cloud platforms, demonstrating practical cloud platform experience."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has deployed applications on OpenShift (a PaaS platform) and has built developer-facing automation platforms that abstract infrastructure complexity while providing APIs for control. Their work on the Enterprise Patching Management Platform demonstrates understanding of abstracting infrastructure operations."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has extensive experience with CI/CD pipelines using Jenkins, Harness, and Tekton. They have developer tooling experience (Git, Bitbucket, Jira). However, there's no specific evidence of marketplace or cloud provider integrations."
+    },
+    {
+      "criterion_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has worked in enterprise environments and has led cross-functional projects involving different teams and technologies. Their ability to architect and deliver complex solutions suggests strong collaboration skills, but there's no explicit evidence of communication skills or thriving in fast-moving environments."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no evidence in the resume of experience with cloud marketplaces like AWS Marketplace, GCP Marketplace, or Azure Marketplace."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience designing scalable systems that handle high-volume requests, deployed applications for resilience on OpenShift, and worked on enterprise-scale systems. However, there's no specific evidence of multi-region or multi-tenant architecture design."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with distributed systems components like Kafka for messaging, microservices architecture, and has used many open source technologies (Kubernetes, OpenShift, various frameworks). However, there's no evidence of contributing to or maintaining open source projects."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Prometheus and Grafana in their skills and has implemented Splunk logging for system observability and troubleshooting in production environments, demonstrating hands-on experience with monitoring and logging tools."
+    }
+  ],
+  "computed_score": {
+    "points": 66.0,
+    "max": 92,
+    "percentage": 71.7
+  }
+}

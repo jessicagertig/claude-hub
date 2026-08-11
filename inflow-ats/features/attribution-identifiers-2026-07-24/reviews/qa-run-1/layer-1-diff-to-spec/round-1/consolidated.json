@@ -1,0 +1,29 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agents": 11,
+  "findings_filed": 1,
+  "findings_valid": 0,
+  "dispositions": [
+    {
+      "id": "l1-a3-001",
+      "agent": 3,
+      "title": "fbclid capture guard is parsedParams.fbclid !== undefined; degenerate ?fbclid / ?fbclid= store null/\"\" instead of leaving the field absent",
+      "disposition": "INVALIDATED",
+      "reasoning": [
+        "SPEC §4 fbclid row explicitly mandates 'the same handling adct gets from sanitizeTrackingValue, at the 1024 cap instead of 255'; the implementation is byte-identical to the adct analog (impl-round-1 per-identifier-capture-contract.md line 9: 'Verified NOT a deviation').",
+        "SPEC §4 Notes scope the non-empty-string 'present' test to the three conditional rules only (fbc construction, li_fat_id/google_click_id URL-first fallbacks) — agents 5/6/7 verified all three use the house guard, so no fbc fabrication and no fallback suppression occurs.",
+        "This exact question was raised and resolved at spec review: spec-round-1 nil-absence-semantics F1 (MED) amended §4 to scope the guard to the conditional rules; F2 (LOW) scoped empty-value-absent to COOKIES only, explicitly accepting the URL-param empty divergence as 'the same degenerate divergence the prior SPEC §5.3 accepted for URL params'.",
+        "Agent 11 (reverse direction) independently assessed the same code and recorded it as a neutral note, not a finding."
+      ],
+      "surfaced_to_user": "Listed in QA-COMPLETE.md for Jessica's awareness; a one-line guard change reusing fbclidParamValue would drop null/\"\" if she rules otherwise."
+    }
+  ],
+  "spec_coverage": {
+    "identifier_chains": "8/8 PASS (agents 1-8, 13-14 links each)",
+    "collection_point_removal": "PASS (agent 9, 14 checks)",
+    "tests_vs_spec": "PASS (agent 10, §10 items 1-4 + ghost-test reasoning)",
+    "reverse_direction": "PASS (agent 11, all 18 files, every hunk traced)"
+  },
+  "verdict": "CLEAN — 0 valid HIGH+; terminal per harness-profile one-clean-round rule"
+}

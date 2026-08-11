@@ -1,0 +1,20 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 4,
+  "focus": "Item 2 frontend — SPEC 2.3 (useAiJobApplicationSummary.ts hook param), SPEC 2.4 (PlatoTab.tsx callsite wiring), SPEC 2.5 (Regenerate button gating), SPEC 2.6 (AiSummaryState.tsx deletion)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": ["2.3", "2.4", "2.5", "2.6"],
+    "implemented": ["2.3", "2.4", "2.5", "2.6"],
+    "missing": []
+  },
+  "verification_notes": {
+    "patch_freshness": "feature-diff-run3.patch is byte-identical to a fresh `git diff f8815555a..HEAD` in the worktree (diff of the two files: no output). Working tree clean for all three assigned files (git status --short empty); reviewing committed code per known-failure #15.",
+    "spec_2_3": "GenerateParams gains `rescoreRequested: boolean` at useAiJobApplicationSummary.ts:6 — required, no `?`. The diff hunk for this file is exactly one added line; full-file read confirms the POST body is unchanged (`variables: { aiJobApplicationSummary: params }` at :12) and no other hook change exists (useGenerateAiSummary onSuccess invalidations, getAiJobApplicationSummary, useAiJobApplicationSummary all untouched). Snake_case trace: useAiJobApplicationSummary.ts → api.ts (apiPost → apiMutate, skipKeysToSnake defaults false and is not passed, so `allKeysToSnake(variables)` at api.ts:52) → structure.js:94 allKeysToSnake (deep, lodash snakeCase per key). Produces `{ ai_job_application_summary: { job_application_id, rescore_requested } }`, matching the controller's `params.require(:ai_job_application_summary).require(:rescore_requested)`.",
+    "spec_2_4": "handleGenerate signature at PlatoTab.tsx:73 is `(rescoreRequested: boolean)` — required, no default value — and passes `{ jobApplicationId: jobApplication.id, rescoreRequested }` to generate at :75. Exactly four callsites (grep -n handleGenerate): :108 `handleGenerate(true)` inside ConfirmationModal onConfirm, immediately after the existing `removeModal()` at :107; :192 (bulkQueued), :203 (failed), :233 (deriveEmptyStatus ready/noCredits) all `onClick={() => handleGenerate(false)}` arrow-wrapped. Zero bare `onClick={handleGenerate}` passes remain.",
+    "spec_2_5": "The :247 condition changed from `statusValue === \"current\" && fullSummary?.stale` to `statusValue === \"current\"` alone. Compared `git show f8815555a:PlatoTab.tsx` lines 240-271 against current HEAD lines 240-271: branch interior byte-identical — credits check `isLoadingCredits || totalRemaining > 0`, Regenerate Button with `loading={buttonLoading} disabled={buttonLoading}` pairing intact (known-failure #11 satisfied), admin PlatoHeaderNavButton history.push to /hire/settings/plato-ai/billing, non-admin handleBuyCredits fallback, and the ConfirmationModal copy at :93-114 all unchanged. Mechanical check: `git diff f8815555a..HEAD -- PlatoTab.tsx` changed lines are exactly the 7 +/- pairs pinned by SPEC 2.4/2.5 — no extra/unspecced change in the file.",
+    "spec_2_6": "app/javascript/ats/src/views/jobApplications/AiSummaryState.tsx deleted (absent from worktree; patch shows `deleted file mode 100644`). Independent grep of app/ and cypress/ in the worktree for `AiSummaryState`: zero hits. Patch contains exactly one `deleted file` entry — no other deletions. Consumer sweep: grep for `useGenerateAiSummary|generateAiSummary` across app/javascript/ and cypress/ finds only PlatoTab.tsx (:14 import, :38 destructure) besides the hook file itself — no surviving generate() callsite missing rescoreRequested.",
+    "trace_chain": "feature-diff-run3.patch → useAiJobApplicationSummary.ts → api.ts → structure.js (allKeysToSnake) → ai_job_application_summaries_controller.rb; PlatoTab.tsx (HEAD) vs git show f8815555a:PlatoTab.tsx"
+  }
+}

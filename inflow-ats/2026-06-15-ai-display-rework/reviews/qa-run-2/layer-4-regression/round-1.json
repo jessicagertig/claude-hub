@@ -1,0 +1,52 @@
+{
+  "layer": "regression",
+  "round": 1,
+  "suites_run": {
+    "rspec": {
+      "ran": true,
+      "passed": false,
+      "summary": "4 spec files run. 41 examples total, 5 failures (4 known pre-existing in score_job_application_spec, 1 new). ai_job_application_summary_spec: 13 examples, 0 failures. orchestrate_spec: 6 examples, 0 failures. integrate_analysis_spec: 10 examples, 0 failures. score_job_application_spec: 12 examples, 5 failures (4 known pre-existing + 1 new).",
+      "failures": [
+        {
+          "file": "spec/services/ai_job_application_action/scoring/score_job_application_spec.rb:174",
+          "test": "populates criteria_results with merged data",
+          "error": "expected results.first['summary'] to eq 'Strong Ruby background with 5+ years of professional experience.' but got nil",
+          "known_preexisting": false,
+          "analysis": "The display_response stub returns a 'summary' field per criterion, but after score() runs, criteria_results does not contain the 'summary' key. The merge of display summaries into criteria_results appears broken or the display call output is not being integrated into the persisted criteria_results. Either the implementation changed and the test was not updated, or the merge logic in score_job_application.rb is not merging the display response data correctly."
+        },
+        {
+          "file": "spec/services/ai_job_application_action/scoring/score_job_application_spec.rb:94",
+          "test": "sets status to awaiting_job_criteria when no AiJobCriteria exists",
+          "error": "NoMethodError: undefined method 'extract_job_criteria' for #<Job>",
+          "known_preexisting": true
+        },
+        {
+          "file": "spec/services/ai_job_application_action/scoring/score_job_application_spec.rb:210",
+          "test": "sets retrying status and re-raises on CustomErrorAiSummary",
+          "error": "expected error_message to include 'AI provider error' but got 'Scoring call failed'",
+          "known_preexisting": true
+        },
+        {
+          "file": "spec/services/ai_job_application_action/scoring/score_job_application_spec.rb:225",
+          "test": "sets failed status on JSON::ParserError without re-raising",
+          "error": "expected no Exception, got CustomErrorAiSummary: Scoring call failed",
+          "known_preexisting": true
+        },
+        {
+          "file": "spec/services/ai_job_application_action/scoring/score_job_application_spec.rb:241",
+          "test": "sets failed status on StandardError without re-raising",
+          "error": "expected no Exception, got CustomErrorAiSummary: Scoring call failed",
+          "known_preexisting": true
+        }
+      ]
+    }
+  },
+  "findings": [
+    {
+      "severity": "MEDIUM",
+      "location": "spec/services/ai_job_application_action/scoring/score_job_application_spec.rb:186",
+      "description": "New test failure: 'populates criteria_results with merged data' expects results.first['summary'] to contain the display response summary text but gets nil. The display_response data (second AI call) is not being merged into criteria_results. Either the merge logic in score_job_application.rb changed without updating the test, or the integration of display summaries is broken.",
+      "recommendation": "Investigate score_job_application.rb to verify whether the display summary merge into criteria_results was intentionally removed or restructured. If the merge was moved elsewhere (e.g., integrate_analysis.rb), update the test accordingly. If the merge is missing, restore it."
+    }
+  ]
+}

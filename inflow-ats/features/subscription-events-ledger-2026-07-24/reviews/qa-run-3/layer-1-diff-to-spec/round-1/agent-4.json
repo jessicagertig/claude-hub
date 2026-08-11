@@ -1,0 +1,32 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 3,
+  "agent_index": 4,
+  "slice": "migration + enum + uniqueness invariant",
+  "findings": [
+    {
+      "id": "r3-l1-a4-001",
+      "severity": "HIGH",
+      "file": "spec/jobs/stripe_webhook_handler_subscription_events_spec.rb",
+      "location": "example 'creates exactly one row across duplicate deliveries and does not raise' (lines 111-118)",
+      "title": "Duplicate-delivery test is vacuous with respect to the uniqueness invariant: it still passes with the conversion guard AND the partial unique index both deleted, because the pre-existing 5-minute dedupe blocks the second delivery",
+      "detail": "The test performs the two invoice.paid deliveries back-to-back within the same example, so the second CreateSubscriptionEvent.call carries byte-identical event_params (event_type 'trial_converted_to_paid', from_plan nil, to_plan 'plan_ats_tier_starter_v2', stripe_subscription_id, amount 4900) and lands inside the pre-existing recent_duplicate window (create_subscription_event.rb: organization.subscription_events.where(event_params).where('created_at >= ?', 5.minutes.ago)). Delete conversion_duplicate_exists?, its call site, AND idx_subscription_events_conversion_stripe_sub_id: the 5-minute dedupe still context.fail!s the second call, Interactor .call swallows the failure, the webhook's begin/rescue sees no raise, count changes by exactly 1, and every assertion passes. The test therefore verifies pre-existing within-window redelivery behavior, not the new invariant; the invariant's distinct value is precisely the beyond-5-minute duplicate (renewal invoice a month later, redelivery hours later), which no webhook-level test exercises. Violates SPEC §9.3's no-ghost-tests clause / pipeline rule 26 for the named uniqueness assertion. Note: the interactor-level tests ARE non-vacuous (the cross-type guard examples use differing event_types that dodge the dedupe; the RecordNotUnique backstop stubs conversion_duplicate_exists? false and dies with the index deleted), so the invariant machinery is falsifiably tested in isolation — but the end-to-end duplicate-delivery test named by §9.1 cannot detect deletion of the feature.",
+      "suggested_fix": "Between the two deliveries, push the first conversion row out of the dedupe window (e.g., SubscriptionEvent.last.update_column(:created_at, 6.minutes.ago), or travel 6.minutes around the second delivery). Then the second delivery is blocked only by the conversion guard/index, and the change-by-1 assertion fails if the invariant is deleted."
+    }
+  ],
+  "verified": [
+    "Migration db/migrate/20260725033136_add_stripe_subscription_id_and_amount_to_subscription_events.rb: exactly two add_column calls — stripe_subscription_id :string, amount :integer — nullable, no defaults, no backfill, no currency column; shape matches analog 20260723222212_add_adroll_click_id_to_users.rb (frozen_string_literal, Migration[6.1], def change) plus the spec-sanctioned add_index",
+    "Partial unique index is SINGLE-COLUMN on stripe_subscription_id with where: 'event_type IN (2, 8)', unique: true; name idx_subscription_events_conversion_stripe_sub_id is SPEC-PROPOSED free choice",
+    "Committed db/schema.rb diff contains exactly two hunks: version bump 2026_07_24_183711 -> 2026_07_25_033136, and the subscription_events block gaining t.string stripe_subscription_id, t.integer amount, and the partial unique index (Postgres-normalized where '(event_type = ANY (ARRAY[2, 8]))' — equivalent predicate); no other schema changes committed",
+    "Enum in app/models/subscription_event.rb: trial_started: 7 and trial_converted_to_paid: 8 added; converted_to_paid: 2 unchanged; 0/1/3/4/5/6 byte-untouched (only trailing comma on downgraded_plan: 6); grep of the full a0d59115d..e850c74fe diff shows zero writers for downgraded_to_free/upgraded_plan/downgraded_plan (only comment and enum-definition lines)",
+    "Stale comment block corrected and now accurately matches the enum mapping 0-8; D2 main-plan-only comment present (MAIN subscription events only; AI-credit events -> OrganizationAiCreditPurchase / AiCreditBalanceTransaction)",
+    "CONVERSION_EVENT_TYPES = %w[converted_to_paid trial_converted_to_paid].freeze — maps exactly to enum values {2, 8}, matching the index predicate",
+    "Interactor guard conversion_duplicate_exists? queries SubscriptionEvent.where(event_type: CONVERSION_EVENT_TYPES).where(stripe_subscription_id: ...) — by stripe_subscription_id alone (no organization scoping), row-set congruent with the single-column partial index; check-first BEFORE build; D10 style (return unless ... .present? bail-outs)",
+    "Raced ActiveRecord::RecordNotUnique rescued at CreateSubscriptionEvent#call level and converted to the same graceful context.fail! — never raised to callers",
+    "Guard-order fix: return unless organization now precedes the two ap logging lines; nil organization is a graceful no-op (interactor spec covers it without raising)",
+    "Index-path backstop test (interactor spec 'RecordNotUnique backstop') is NON-VACUOUS against index deletion: conversion_duplicate_exists? stubbed false, prior row has a different event_type so the 5-minute dedupe cannot mask it, save hits the DB index; with the index deleted the create succeeds and the failure?/count assertions fail",
+    "Cross-type guard tests (interactor spec) are NON-VACUOUS against guard+index deletion: pre-existing row created via create! with a different event_type dodges the dedupe, so deleting guard+index yields a second row and result.failure? fails",
+    "D11 spot-check (outside slice): app/jobs/stripe_webhook_handler_job.rb diff is exactly the two sanctioned additive, individually begin/rescue StandardError-isolated blocks appended at the END of the invoice.paid main-plan else-branch (after reset_ai_credits) and the subscription.deleted main else-branch (after EngagementReport::GeneratorJob); no reordering, no other lines touched — nothing to flag"
+  ]
+}

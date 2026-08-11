@@ -1,0 +1,19 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 4,
+  "files_reviewed": [
+    "/Users/jessica/wrk/wrk-corp/inflow-ats.ai-display/app/javascript/ats/src/views/jobApplications/PlatoOverviewCallout.tsx",
+    "/Users/jessica/wrk/wrk-corp/inflow-ats.ai-display/app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx"
+  ],
+  "findings": [
+    {
+      "id": "H1",
+      "severity": "HIGH",
+      "file": "/Users/jessica/wrk/wrk-corp/inflow-ats.ai-display/app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+      "line": 397,
+      "what": "onOpen navigation formula deviates from spec",
+      "why": "The spec (section 6, line 164) explicitly states the formula: `history.push(\\`${match.url}/ai\\`)`. The implementation uses `history.push(\\`${match.url.replace(/\\/[^\\/]+$/, \"\")}/ai\\`)`, which strips the last path segment before appending `/ai`. The deviation is functionally motivated: `match` in JobApplicationActivity is the renderProps match for the `/overview` route (match.url = `.../overview`), so the spec formula would produce `.../overview/ai` which has no matching route. The implementation strips `/overview` to get `.../ai` which is correct. However, this is a spec-implementation mismatch. The spec's stated formula is wrong for the actual match.url value that arrives in this component, but the spec did not intend the renderProps match — it appears the spec assumed `match.url` would be the container-level URL (`.../candidates/456`), not the sub-route URL (`.../candidates/456/overview`). Per the spec-implementation mismatch rule, the deviation must be surfaced for Jessica to decide: either accept the implementation's regex as the correct fix, or align the spec."
+    }
+  ]
+}

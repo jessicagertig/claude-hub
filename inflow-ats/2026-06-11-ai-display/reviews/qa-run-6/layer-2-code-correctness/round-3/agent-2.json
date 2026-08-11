@@ -1,0 +1,65 @@
+{
+  "reviewer": "code-correctness-2",
+  "round": 3,
+  "layer": "layer-2-code-correctness",
+  "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+  "scope": "first half: imports, props, hooks, state machine, header bar, non-succeeded states, renderCreditsAction",
+  "hooks_read": [
+    "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts",
+    "app/javascript/shared/queryHooks/useOrganizationAiCreditBalance.ts"
+  ],
+  "findings": [
+    {
+      "id": "A2-R3-H1",
+      "severity": "HIGH",
+      "location": "PlatoTab.tsx:361-374 (header bar, succeeded branch)",
+      "title": "Header bar adds undocumented buy-credits state when succeeded + zero credits",
+      "description": "The spec (section 2, Structure paragraph) says the header right side shows 'a Regenerate ghost button (when succeeded) or a kebab icon button (otherwise)'. This is a two-state condition with no exceptions. The implementation adds a third state: when status is succeeded AND totalCreditsRemaining is zero, it renders a 'Buy credits' button instead of the Regenerate button. The spec makes no provision for this in the header — the buy-credits pattern is described in the context of zero-state action areas, not the header bar. This is a spec-implementation mismatch in the header's rendered output.",
+      "spec_reference": "Section 2, Structure: 'The top is a header bar ... with ... either a Regenerate ghost button (when succeeded) or a kebab icon button (otherwise) on the right.'",
+      "fix": "The header succeeded branch should always show the Regenerate button when status is succeeded. The credit guard (buy-credits fallback) belongs only in the renderCreditsAction helper used by zero-states, not in the header. Remove the `isLoadingCredits || totalRemaining > 0` ternary from the header succeeded branch and unconditionally render the Regenerate Button. If you want to disable Regenerate when loading, use `loading={buttonLoading} disabled={buttonLoading}` on the button itself without switching to a buy-credits fallback."
+    },
+    {
+      "id": "A2-R3-H2",
+      "severity": "HIGH",
+      "location": "PlatoTab.tsx:183",
+      "title": "PlatoMark color in FitCard header deviates from spec",
+      "description": "The spec says the PlatoMark in the FitCard header uses 'colors.gray[700]' with no dark mode variant specified. The implementation passes `color={theme.dark ? theme.color.gray[400] : theme.color.gray[700]}`, adding a dark mode branch that the spec did not include. Per the known failure pattern 'Spec-implementation mismatch is never MED', and the spec's explicit `colors.gray[700]` with no qualification, this is a spec deviation. The spec's intent was a single color value for both modes. The dark-mode substitution to gray[400] (a significantly lighter tone) is an implementation decision that was not reviewed or approved.",
+      "spec_reference": "Section 2, Succeeded layout item 5: '15px PlatoMark (in colors.gray[700])'",
+      "fix": "Change line 183 to `<PlatoMark size={15} color={theme.color.gray[700]} />` to match the spec's explicit color. If dark mode handling is desired for this icon, it must be specced first."
+    }
+  ],
+  "non_issues_confirmed": [
+    {
+      "item": "|| 0 on aiJobApplicationSummaryId (line ~41)",
+      "reason": "Pre-evaluated as known non-issue. useAiJobApplicationSummary has `enabled: !!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0` guard, preventing any request when the value is 0."
+    },
+    {
+      "item": "State machine order (lines 331-351)",
+      "reason": "Matches spec exactly: succeeded, then pending/in_progress/extracted, then textract_processing, then failed, then no-summary+hasResume, then no-resume fallback."
+    },
+    {
+      "item": "Hook call order (lines 25-43)",
+      "reason": "All hooks called unconditionally at component top level. No hooks inside conditionals or loops. No React hooks order violations."
+    },
+    {
+      "item": "useGenerateAiSummary import path",
+      "reason": "Imported from @shared/queryHooks/useAiJobApplicationSummary — correct, the export lives in that file (confirmed by reading the file)."
+    },
+    {
+      "item": "creditData?.totalCreditsRemaining || 0 (line 46)",
+      "reason": "Matches the analog pattern exactly (AiSummaryState.tsx). The creditError guard handles the error fallback before the || 0 fallback."
+    },
+    {
+      "item": "renderCreditsAction differentiation by buttonLabel string (lines 88-91)",
+      "reason": "Fragile but internally contained. The function is only called with two known strings in this file. Not a correctness bug."
+    },
+    {
+      "item": "buttonLoading covers both isLoadingCredits and isGenerating (line 47)",
+      "reason": "Matches spec pattern from AiSummaryState.tsx analog. Disabling button during credit load prevents showing stale balance in hint."
+    },
+    {
+      "item": "StaleAction as={Link} to='/hire/settings/ai-billing' (line 154)",
+      "reason": "Valid React Router polymorphism. `to` is the correct prop for Link. The button element base + as={Link} override is a standard Emotion styled component pattern."
+    }
+  ]
+}

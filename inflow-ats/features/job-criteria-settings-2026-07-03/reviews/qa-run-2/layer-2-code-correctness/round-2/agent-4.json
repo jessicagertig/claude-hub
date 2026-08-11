@@ -1,0 +1,61 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agent_index": 4,
+  "focus_area": "Full frontend UI: JobCriteriaSection, JobSetupAiSettings, JobCriteriaViewModal, RegenerateJobCriteriaConfirmModal (section + sidebar + both modals as one interaction)",
+  "files_reviewed": [
+    "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAiSettings.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/JobCriteriaViewModal.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/RegenerateJobCriteriaConfirmModal.tsx",
+    "app/javascript/shared/queryHooks/useAiJobCriteria.ts",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/jobCriteriaTiers.ts",
+    "app/javascript/ats/src/components/shared/Button/index.js",
+    "app/javascript/ats/src/components/shared/EmptyState.tsx",
+    "app/javascript/ats/src/components/shared/LoadingIndicator/index.js",
+    "app/javascript/ats/src/components/shared/Icon/index.js",
+    "app/javascript/ats/src/components/forms/FormSection/index.js",
+    "app/javascript/shared/context/ModalContext.tsx",
+    "app/javascript/ats/src/components/modals/FullModal.tsx",
+    "app/javascript/ats/src/components/modals/CenterModal.tsx",
+    "app/javascript/ats/src/views/jobApplications/BulkGenerateAiSummariesConfirmModal.tsx"
+  ],
+  "findings": [
+    {
+      "id": "l2-a4-001",
+      "severity": "MED",
+      "title": "isError gate hides a populated criteria card (and its View/Regenerate buttons) when a background refetch errors over already-cached data",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+      "line": 52,
+      "description": "The component returns the 'Could not load job criteria' EmptyState purely on `isError` (line 52), before it ever reads the payload. react-query is pinned at 3.13.10 (package.json), where `data` is retained on a failed refetch while `status` transitions to 'error' (so `isError === true` AND stale `data` present simultaneously). Default v3 behavior refetches on window focus / reconnect, and the feature also refetches after the regenerate POST (useAiJobCriteria invalidation) and after the WS completion event. If any of those background refetches transiently fails after a prior success, a fully populated criteria card is replaced by the load-error EmptyState and the View/Regenerate action row disappears (the ActionRow only renders inside the success return path). The user cannot view or regenerate criteria until a later successful refetch or a full page reload. The brief blesses `isError -> error state, no action buttons` for a FRESH error (no cached data), and that fresh-error rendering here is correct; this finding is only the un-adjudicated cached-data case. Self-healing and no data loss, hence MED — but it is a real user-facing consequence that needs a product decision (e.g. gate on `isError && !aiJobCriteriaPayload`).",
+      "recommendation": "Only short-circuit to the load-error EmptyState when there is no usable payload to fall back on (e.g. `if (isError && !aiJobCriteriaPayload) { ... }`), so a transient background-refetch failure over cached data keeps the card and its actions visible. Confirm with the owner whether hiding stale criteria on refetch error is intended."
+    },
+    {
+      "id": "l2-a4-002",
+      "severity": "LOW",
+      "title": "isInFlight folds in react-query isFetching, so the Generate/Regenerate button flickers to disabled+loading on any incidental background refetch",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+      "line": 70,
+      "description": "`isInFlight = isPayloadStatusInFlight || isFetching` (line 70). `isFetching` is true for ANY background refetch under react-query 3.13.10 defaults (refetchOnWindowFocus/refetchOnReconnect are on), not just the post-regenerate refetch. So the single Generate/Regenerate button (lines 157-167) momentarily enters disabled+loading whenever the criteria query refetches in the background (e.g. the user tabs away and back), even though no extraction is in flight. This is the spec-designed derivation (SPEC 8.3 defines isInFlight as in-flight status OR the POST-triggered refetch) and is harmless flicker, not a correctness defect.",
+      "recommendation": "Acceptable as designed. If the flicker is undesirable, scope the refetch component to the mutation (e.g. track the mutation's isLoading) rather than the query's global isFetching."
+    },
+    {
+      "id": "l2-a4-003",
+      "severity": "LOW",
+      "title": "JobCriteriaViewModal keys criterion rows by array index",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/JobCriteriaViewModal.tsx",
+      "line": 43,
+      "description": "Inner criterion rows are keyed by `index` (`<Styled.Row key={index}>`, line 43) rather than a stable identifier. The list is read-only and never reorders or mutates while mounted (criteria is a frozen prop captured at openModal time), so this cannot cause a reconciliation bug in practice. Noted only for convention; the outer tier map correctly uses `key={tier.key}` and the section's count rail uses `key={tier.key}`.",
+      "recommendation": "Optionally key by `criterion.text` (unique per tier in practice) instead of index. No functional impact given the static, non-reordering list."
+    },
+    {
+      "id": "l2-a4-004",
+      "severity": "LOW",
+      "title": "Unused `history` prop threaded into JobCriteriaSection",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+      "line": 22,
+      "description": "JobSetupAiSettings passes `history={props.history}` (JobSetupAiSettings.tsx:107) and the Props interface declares `history: any` (line 22), but the component destructures only `{ job }` (line 25) and never uses history. Navigation to the job description is done with a react-router `<Link>` (line 40), which the round-1 adjudication explicitly blesses as correct/focusable. The `history` prop is therefore dead. Harmless observation.",
+      "recommendation": "Drop the unused `history` prop from the Props interface and the JobSetupAiSettings call site, or leave as-is; no behavioral impact."
+    }
+  ]
+}

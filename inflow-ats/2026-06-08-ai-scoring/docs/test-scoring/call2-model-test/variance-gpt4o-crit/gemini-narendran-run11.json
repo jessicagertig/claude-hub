@@ -1,0 +1,99 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience in multi-cloud environments (AWS, Civo) and architecting Kubernetes-based infrastructure as a consultant for various companies."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has significant experience enhancing CI/CD workflows and observability platforms. However, the resume does not explicitly mention collaboration with UX/Product teams or specific CLI development for internal developer tools."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has a proven track record of improving uptime (99.9%), implementing monitoring/observability (Prometheus, Grafana, Thanos), and managing GitOps pipelines for automated rollbacks."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate's experience in consulting and architecture roles implies participation in code reviews and best practices; however, the resume lacks specific language about formal mentoring."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists Go as a programming language and explicitly states they developed custom Golang controllers for multi-region Kubernetes clusters."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate holds multiple CNCF certifications (CKA, CKAD, CKS) and has practical experience designing and managing Kubernetes across multiple cloud environments."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists Terraform as a core skill and references using it to streamline multi-tenant infrastructure and conceptualize multi-region Kubernetes clusters."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive hands-on experience managing AWS EKS, RDS, and various storage layers, and lists Azure in their skills."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate's work at Civo involved optimizing infrastructure for DBaaS, Managed K3s, and MLOps platforms (Kubeflow), demonstrating an understanding of PaaS/managed infrastructure."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience with CI/CD tools like ArgoCD, GitHub Actions, and Jenkins-X, as well as optimizing container build workflows."
+    },
+    {
+      "criterion_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate describes themselves as 'highly collaborative' and has worked in various high-paced remote consultant roles, though specific examples of cross-functional communication are limited."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not mention specific experience publishing to or integrating with public cloud marketplaces."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate specifically mentions conceptualizing multi-region Kubernetes clusters and working on multi-tenant AWS EKS platforms."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists work with various cloud-native open-source tools (Kubeflow, ArgoCD, Linkerd, Istio) and architecting distributed LLM infrastructure."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience implementing Prometheus, Grafana, Thanos, and other observability tools."
+    }
+  ],
+  "computed_score": {
+    "points": 78.0,
+    "max": 92,
+    "percentage": 84.8
+  }
+}

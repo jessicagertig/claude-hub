@@ -1,0 +1,37 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 3,
+  "agents": 10,
+  "findings": [
+    {
+      "id": "r3-l1-a4-001",
+      "severity": "HIGH",
+      "agent": 4,
+      "validated_by": [9],
+      "title": "Webhook duplicate-delivery example is vacuous w.r.t. the uniqueness invariant (5-minute dedupe masks guard+index deletion)",
+      "spec_requirement": "SPEC §9.1 duplicate delivery -> exactly one row; rule 26 falsifiability; §3 invariant is the production mechanism for redeliveries >5 min apart",
+      "evidence": "spec/jobs/stripe_webhook_handler_subscription_events_spec.rb:~111 — both deliveries run inside the interactor's 5-minute dedupe window with byte-identical event_params; with conversion_duplicate_exists? and the partial index both deleted, the dedupe still blocks row 2 and every assertion passes.",
+      "recommendation": "Backdate the first row's created_at past 5 minutes (update_column) or travel between deliveries so the uniqueness invariant is the enforcing mechanism."
+    },
+    {
+      "id": "r3-l1-a9-001",
+      "severity": "HIGH",
+      "agent": 9,
+      "title": "Ledger-failure isolation example cannot distinguish the insertion's own rescue from the branch's outer swallow tier, and its raising stub is never asserted",
+      "spec_requirement": "SPEC §5.2 (own begin/rescue, never reaches existing tiers) + §9.1 (a ledger failure does not break them); rule 26",
+      "evidence": "stripe_webhook_handler_subscription_events_spec.rb ledger-failure example — not_to raise_error is satisfied by the pre-existing outer rescue StandardError tier (stripe_webhook_handler_job.rb ~336-346) even if the insertion's own rescue is deleted; the three existing-behavior assertions precede the insertion point so they pass regardless; deleting the ENTIRE insertion also passes because the raising CreateSubscriptionEvent stub has no have_received(:call) assertion.",
+      "recommendation": "Add expect(CreateSubscriptionEvent).to have_received(:call) plus a Rails.logger spy asserting the insertion's ledger-specific error message (proving the own rescue handled it, not the outer tier)."
+    }
+  ],
+  "prior_finding_review": {
+    "l1-a2-001": "fix 7574df408 re-verified clean (agents 2, 8, 10)",
+    "r2-l1-a3-001": "fix e850c74fe re-verified clean incl. fixture-condition trace and live run (agents 2, 3, 8, 9, 10)"
+  },
+  "spec_coverage": {
+    "total_slices": 10,
+    "clean_slices": 8,
+    "slices_with_findings": [4, 9],
+    "notes": "App code clean across all slices for the third consecutive run; both HIGHs are test-falsifiability defects in the same webhook spec file. Delicacy audit: 34/0, two sanctioned hunks. Reverse traceability: all 17 hunks traced, both fix commits exactly as described."
+  }
+}

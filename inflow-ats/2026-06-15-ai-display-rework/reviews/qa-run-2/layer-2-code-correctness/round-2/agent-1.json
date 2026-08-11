@@ -1,0 +1,76 @@
+{
+  "agent": "code-correctness-reviewer-1",
+  "round": 2,
+  "layer": 2,
+  "focus": "Analog structural matching",
+  "findings": [
+    {
+      "id": "R2-CC1-001",
+      "severity": "LOW",
+      "category": "broadcast-callback-analog",
+      "title": "broadcast_status_change uses before_update while WWR analog uses explicit calls from methods",
+      "description": "BoardWwrListing.broadcast_event is a regular method called explicitly from publish_on_wwr (line 193) and update_on_wwr (line 222) after update_columns writes. AiJobApplicationSummary.broadcast_status_change is a before_update callback (line 32). These are structurally different patterns, but both are valid. The callback approach is actually better suited here because AiJobApplicationSummary status changes from many call sites (Generate, ScoreJobApplication, IntegrateAnalysis, Orchestrate), so a callback avoids needing to add broadcast_event calls at every call site. The before_update hook correctly uses status_changed? (in-memory dirty tracking), while the after_commit hooks correctly use saved_change_to_status? (post-persist tracking). No correctness issue.",
+      "files": [
+        "app/models/ai_job_application_summary.rb:32",
+        "app/models/ai_job_application_summary.rb:78-89",
+        "app/models/board_wwr_listing.rb:267-268"
+      ],
+      "actionRequired": false
+    },
+    {
+      "id": "R2-CC1-002",
+      "severity": "LOW",
+      "category": "websocket-handler-analog",
+      "title": "ai_summary_status_change case follows same structural pattern as existing cases",
+      "description": "The new ai_summary_status_change case (lines 73-76) follows the same pattern as the what_jobs_listing_* cases (lines 61-68): receive event, invalidateQueries on matching query keys, return. The wwr_listing cases additionally call refetchJob() and invalidate [\"jobs\", jobId], but that is because WWR listing data is embedded in the job serializer. The ai_summary case invalidates [\"jobApplication\"] and [\"aiJobApplicationSummary\"] which are the correct query keys (confirmed in useJobApplication.ts line 355 and useAiJobApplicationSummary.ts line 42). Structurally correct.",
+      "files": [
+        "app/javascript/ats/src/websockets/WebsocketJobChannelHandler.tsx:73-76",
+        "app/javascript/ats/src/websockets/WebsocketJobChannelHandler.tsx:55-68"
+      ],
+      "actionRequired": false
+    },
+    {
+      "id": "R2-CC1-003",
+      "severity": "MED",
+      "category": "update-vs-update_columns-inconsistency",
+      "title": "ScoreJobApplication and IntegrateAnalysis use .update in rescue blocks; Generate uses .update_columns",
+      "description": "In Generate.rb, rescue blocks use update_columns (lines 175, 180, 184) to set status to :retrying or :failed. This bypasses callbacks and validations, which is intentional: the rescue path should not trigger broadcast_status_change again (which is a before_update callback) to avoid potential re-raising inside the rescue. In ScoreJobApplication.rb (lines 115, 120, 124) and IntegrateAnalysis.rb (lines 59, 64, 68), the rescue blocks use .update instead of .update_columns. This means rescue-path status changes to :retrying/:failed WILL trigger the before_update broadcast_status_change callback, which will broadcast to the websocket. This is not a bug per se -- 'failed' is in BROADCAST_STATUSES so broadcasting it is actually useful for the frontend to show the failure state. However, 'retrying' is NOT in BROADCAST_STATUSES so those .update calls will still run the callback but the callback will return early. The inconsistency between Generate (update_columns) and ScoreJobApplication/IntegrateAnalysis (update) is worth noting. If broadcast_status_change ever raises despite the rescue StandardError wrapper, the .update calls in ScoreJobApplication/IntegrateAnalysis rescue blocks could theoretically interfere with the rescue flow. Currently safe because broadcast_status_change has its own rescue StandardError.",
+      "files": [
+        "app/services/ai_job_application_action/summary/generate.rb:175,180,184",
+        "app/services/ai_job_application_action/scoring/score_job_application.rb:115,120,124",
+        "app/services/ai_job_application_action/scoring/integrate_analysis.rb:59,64,68"
+      ],
+      "actionRequired": false,
+      "note": "The inconsistency is deliberate or at least harmless: Generate was written first with update_columns; later scoring services used .update which additionally broadcasts 'failed' status to the frontend (a useful side effect). Both approaches are safe given the rescue block in broadcast_status_change."
+    },
+    {
+      "id": "R2-CC1-004",
+      "severity": "LOW",
+      "category": "broadcast-payload-difference",
+      "title": "ai_summary broadcast payload is minimal compared to WWR analog",
+      "description": "BoardWwrListing.broadcast_event sends { jobId, boardWwrListingId, wwrSlug, publishedAt } in its payload. AiJobApplicationSummary.broadcast_status_change sends only { jobApplicationId }. The frontend handler for ai_summary_status_change does not use the payload at all -- it just invalidates queries. This is fine because the frontend refetches the data through react-query rather than updating state from the payload directly. No issue.",
+      "files": [
+        "app/models/ai_job_application_summary.rb:85",
+        "app/models/board_wwr_listing.rb:268"
+      ],
+      "actionRequired": false
+    },
+    {
+      "id": "R2-CC1-005",
+      "severity": "LOW",
+      "category": "invalidation-scope",
+      "title": "ai_summary websocket handler invalidates all jobApplication queries, not scoped to specific ID",
+      "description": "The ai_summary_status_change handler invalidates [\"jobApplication\"] (all jobApplication queries) rather than [\"jobApplication\", specificId] (scoped). The broadcast payload includes jobApplicationId but it is unused. Existing patterns in the codebase show both approaches: wwr_listing uses queryClient.invalidateQueries([\"jobs\", jobId]) (scoped) while some mutation onSuccess handlers in useJobApplication.ts line 269 use queryClient.invalidateQueries(\"jobApplication\") (unscoped). The unscoped approach is broader than necessary but consistent with some existing patterns and not a correctness issue -- it will just cause extra refetches for other job applications that happen to be loaded.",
+      "files": [
+        "app/javascript/ats/src/websockets/WebsocketJobChannelHandler.tsx:74-75"
+      ],
+      "actionRequired": false,
+      "note": "Could be optimized to invalidateQueries([\"jobApplication\", data.payload.jobApplicationId]) for precision, but this is a performance nit, not a correctness issue."
+    }
+  ],
+  "summary": "All three analog comparisons pass structural review. The broadcast callback in AiJobApplicationSummary correctly uses before_update with status_changed? while after_commit callbacks use saved_change_to_status?. The websocket handler case follows the same pattern as existing what_jobs_listing cases. The only notable inconsistency is that Generate.rb rescue blocks use update_columns (bypassing callbacks) while ScoreJobApplication and IntegrateAnalysis rescue blocks use .update (triggering callbacks), but this is harmless because broadcast_status_change has its own rescue guard. No BLOCKER or HIGH findings.",
+  "blockerCount": 0,
+  "highCount": 0,
+  "medCount": 1,
+  "lowCount": 4
+}

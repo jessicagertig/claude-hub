@@ -1,0 +1,111 @@
+{
+  "scores": [
+    {
+      "criterion_text": "[tier_2] Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has built generation queues and pipelines in Go using a producer-consumer model for high-compute workloads at Rendernet. This demonstrates experience designing, building, and maintaining Go-based backend systems."
+    },
+    {
+      "criterion_text": "[tier_2] Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has used Terraform on GCP at Defy and managed AWS/on-premise infrastructure. While there is no explicit mention of Kubernetes in the resume, the experience with infrastructure management, load balancing, and deployment pipelines demonstrates relevant capabilities."
+    },
+    {
+      "criterion_text": "[tier_2] Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate managed a 150-machine GPU infrastructure (on-premise and cloud) and handled AWS infrastructure management, showing experience in managing distributed environments, though direct 'customer-side' deployment architecture is not explicitly detailed."
+    },
+    {
+      "criterion_text": "[tier_2] Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience as a lead engineer collaborating with product teams and translating feature requests into technical implementations, though specific mentions of UX collaboration or CLI development are absent."
+    },
+    {
+      "criterion_text": "[tier_2] Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate implemented a distributed fault-tolerance system for rerouting traffic, improved API latency, and maintained 100% visibility into GPU compute infrastructure at Rendernet."
+    },
+    {
+      "criterion_text": "[tier_2] Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly mentions mentoring 7 engineers, reviewing critical code paths, and defining architecture and design standards at SuperMoney."
+    },
+    {
+      "criterion_text": "[tier_1] Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists Go as a primary skill and utilized it for production-grade systems at Rendernet (generation queues) and RoverX (account abstraction backend)."
+    },
+    {
+      "criterion_text": "[tier_1] Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The resume does not mention Kubernetes or container orchestration frameworks. It focuses on VM/GPU infrastructure management."
+    },
+    {
+      "criterion_text": "[tier_2] Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly states they set up infrastructure on GCP using Terraform at Defy."
+    },
+    {
+      "criterion_text": "[tier_2] Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience with GCP (managing VMs, SQL, Pub/Sub) and AWS (hosting backend VMs, Postgres, SQS, load balancers)."
+    },
+    {
+      "criterion_text": "[tier_2] A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate built generation queues and deployment pipelines for GPU infrastructure, which is analogous to abstracting away complex hardware management for users, but does not explicitly detail PaaS product development experience."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate built deployment pipelines in Go for 150 machines at Rendernet and has integrated various payment and exchange partners."
+    },
+    {
+      "criterion_text": "[tier_2] Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No specific evidence of publishing to or integrating with cloud marketplaces found in the resume."
+    },
+    {
+      "criterion_text": "[tier_2] Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate managed a 150 GPU infrastructure with a hybrid setup (on-premise and cloud) and has extensive cloud management experience."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate implemented Hystrix-style fault-tolerance and optimized latency/throughput for high-traffic generation systems, demonstrating knowledge of distributed system design."
+    },
+    {
+      "criterion_text": "[tier_2] Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate worked with various open source libraries (Stable Diffusion implementations) and built distributed producer-consumer systems."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate managed 100% visibility into GPU performance and implemented error handling/logging systems, though specific tools like Prometheus/Grafana/ELK are not explicitly mentioned."
+    }
+  ],
+  "computed_score": {
+    "points": 52.0,
+    "max": 72,
+    "percentage": 72.2
+  }
+}

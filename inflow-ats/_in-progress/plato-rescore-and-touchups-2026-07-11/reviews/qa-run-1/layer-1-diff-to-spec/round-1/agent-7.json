@@ -1,0 +1,46 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 7,
+  "focus": "SPEC 2.2 (controller param boundary), 2.3 (hook param), and the NEW controller spec (part of 2.8)",
+  "findings": [
+    {
+      "id": "l1-7-001",
+      "severity": "HIGH",
+      "title": "Controller spec's rejection test is not falsifiable for the rescore_requested requirement (rule 26)",
+      "spec_requirement": "SPEC 2.8: 'Create the controller spec ... request without rescore_requested is rejected'. Task instruction: assertions must be falsifiable (core rule 26); the feature-under-test is the boundary requiredness added by SPEC 2.2 (`params.require(:ai_job_application_summary).require(:rescore_requested)`).",
+      "file": "spec/controllers/api/v1/ai_job_application_summaries_controller_spec.rb",
+      "evidence": "Test 1 ('rejects a request without rescore_requested', lines 773-781) posts `params: { job_application_id: ..., ai_job_application_summary: {} }` and expects `ActionController::ParameterMissing`. The empty (blank/absent) `ai_job_application_summary` payload makes the OUTER `params.require(:ai_job_application_summary)` (controller line 44) raise before `.require(:rescore_requested)` is ever evaluated. Mentally deleting the inner `.require(:rescore_requested)` from the controller (the exact declaration this test claims to guard) leaves `params.require(:ai_job_application_summary)` in place, which still raises ParameterMissing on the empty hash, so the test still passes. The assertion therefore provides zero coverage that `rescore_requested` specifically is required; it only proves the top-level key is required. This is the rule-26 tautology pattern. (Confirmed against Rails `require`: blank/absent value raises; `attribute :ai_summary_rescore_requested, :boolean` in job_application.rb:11 is irrelevant here because line 17 is never reached.)",
+      "recommendation": "Post a NON-EMPTY `ai_job_application_summary` payload that is missing only `rescore_requested` (e.g. `ai_job_application_summary: { job_application_id: job_application.id }` or any sibling key) so the outer `require(:ai_job_application_summary)` passes and ONLY `.require(:rescore_requested)` can raise ParameterMissing. Then removing the inner require fails the test, making it falsifiable for the actual feature. Test 2 (threading) is correct and falsifiable and needs no change."
+    }
+  ],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "2.2 controller param boundary: single method ai_job_application_summary_params (core rule 5, no create_/update_ split)",
+      "2.2 params.require(:ai_job_application_summary) then .require(:rescore_requested) on the result",
+      "2.2 set job_application.ai_summary_rescore_requested = required value BEFORE CreateAiSummaryGeneration.call, same placement as bulk path",
+      "2.2 no begin-block (core rule 1)",
+      "2.3 GenerateParams gains rescoreRequested: boolean, REQUIRED (no ? optional marker)",
+      "2.3 rides into existing POST body { aiJobApplicationSummary: params }, no other hook changes",
+      "2.3 camelCase/snake_case boundary (core rule 7): frontend rescoreRequested <-> backend rescore_requested",
+      "2.8 controller spec: request WITHOUT rescore_requested is rejected",
+      "2.8 controller spec: WITH it, the value threads onto the record",
+      "2.8 controller spec: assertions falsifiable (core rule 26), no stub masks a type/param mismatch (known-failure #7)"
+    ],
+    "implemented": [
+      "2.2 single method ai_job_application_summary_params, only private method in controller (lines 43-45) — no create_/update_ split; verified",
+      "2.2 params.require(:ai_job_application_summary).require(:rescore_requested) — exact chain 'require then .require on the result' (line 44); returns the required boolean value",
+      "2.2 line 17 sets job_application.ai_summary_rescore_requested = ai_job_application_summary_params BEFORE the interactor call on line 19 — matches bulk path placement (attribute set just before interactor)",
+      "2.2 no begin-block anywhere in create",
+      "2.2 relies on Rails require special-casing false as present (same as bulk controller line 79), so rescore_requested:false threads without ParameterMissing",
+      "2.3 useAiJobApplicationSummary.ts line 6 adds exactly `rescoreRequested: boolean;` to GenerateParams — required, no ? marker; diff shows this single line and nothing else in the hook",
+      "2.3 params ride into { aiJobApplicationSummary: params } (line 12) unchanged; no other hook changes",
+      "2.3 boundary confirmed: apiPost -> apiMutate calls allKeysToSnake(variables) (api.ts:52), converting rescoreRequested -> rescore_requested and aiJobApplicationSummary -> ai_job_application_summary; controller reads params.require(:ai_job_application_summary).require(:rescore_requested)",
+      "2.8 controller spec Test 2 correctly and falsifiably threads rescore_requested:true onto the record: stubs CreateAiSummaryGeneration.call capturing args[:job_application] and asserts ai_summary_rescore_requested is true; boolean typecast (job_application.rb:11) makes the assertion valid; stub keyword->hash capture matches production keyword call — no known-failure #7 type mismatch",
+      "2.8 controller spec Test 1 does send a request that omits rescore_requested and asserts rejection (satisfies the literal spec sentence)"
+    ],
+    "missing": [
+      "2.8 controller spec: the rejection assertion is not falsifiable for the rescore_requested-specific requiredness (see finding l1-7-001)"
+    ]
+  }
+}

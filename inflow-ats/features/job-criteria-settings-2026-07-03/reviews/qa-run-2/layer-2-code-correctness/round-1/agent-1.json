@@ -1,0 +1,32 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 1,
+  "focus_area": "Backend API surface — controller authorization, params, routing, serializer response contract, N+1",
+  "files_reviewed": [
+    "app/controllers/api/v1/ai_job_criteria_controller.rb",
+    "app/controllers/api/v1/bulk_ai_job_application_summaries_controller.rb",
+    "app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+    "config/routes.rb"
+  ],
+  "findings": [
+    {
+      "id": "l2-a1-001",
+      "severity": "MED",
+      "title": "Regenerate (POST) is authorized more permissively than read (GET) — a non-hiring-team org member can trigger a paid criteria regeneration on a job they cannot read",
+      "file": "app/controllers/api/v1/ai_job_criteria_controller.rb",
+      "line": 13,
+      "description": "GET #show authorizes with `JobPolicy#show?` (job_policy.rb:12-14), which requires hiring-team membership on THIS job (`user.current_organization_user.jobs.where(id: record.id).any?`) or org admin. POST #create authorizes with `JobPolicy#update_ai_settings?` (job_policy.rb:24-26), which delegates to `AiJobApplicationSummaryPolicy#can_use_ai_credits?` (ai_job_application_summary_policy.rb:16-18) = `is_org_admin? || (is_org_user? && hiring_team_ai_credits_control_enabled?)` — this has NO per-job hiring-team check. Concrete asymmetry: in an org with `hiring_team_ai_credits_control_enabled = true`, a plain org_user who is NOT on Job X's hiring team gets 403 on GET /jobs/X/ai_job_criteria (cannot read) but passes authorization on POST /jobs/X/ai_job_criteria and triggers `extract_job_criteria_immediately` — a paid OpenAI extraction that changes what all future reviews on Job X score against. This is genuine mutate-what-you-cannot-read behavior. Marked MED (do-not-fix): it exactly mirrors the AI-summary analog, whose create is gated by the same org-wide `can_use_ai_credits?` (ai_job_application_summaries_controller.rb:6 `authorize :ai_job_application_summary, :create?`; bulk_ai_job_application_summaries_controller.rb:7,33 `:bulk_create?`) while its read is gated by hiring-team/interviewer (ai_job_application_summary_policy.rb:8-9), and SPEC §9 explicitly chose `update_ai_settings?` citing the exact existing precedent (jobs_controller.rb:163). It is a pre-existing systemic property, not introduced by this feature. Surfaced as a product-awareness item, not a convergence blocker.",
+      "recommendation": "No code change required for spec/analog compliance. If the read/write asymmetry is not intended, the product owner would need to decide whether regenerate should additionally require `authorize job, :show?` (or `:update?`) so write is not broader than read — but that is a policy decision affecting the whole AI domain, not a scoped fix here."
+    },
+    {
+      "id": "l2-a1-002",
+      "severity": "LOW",
+      "title": "Serializer issues redundant, non-memoized latest-row queries (4 queries where 2 suffice); also a negligible torn-read window between status and zero_criteria_failure",
+      "file": "app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+      "line": 6,
+      "description": "`criteria` (line 7) and `extracted_at` (line 11) each call `object.latest_succeeded_ai_job_criteria` (job.rb:692, an ordered LIMIT 1 query) — the same query runs twice, unmemoized. `status` (line 15) calls `object.latest_ai_job_criteria` (job.rb:688) and `zero_criteria_failure` (line 19) calls `object.zero_criteria_extraction_failure?` (job.rb:696) which itself calls `latest_ai_job_criteria` — again the same query twice, unmemoized. So one GET serializes a single Job with 4 DB round-trips where 2 distinct queries would do. This is NOT an N+1 (the serializer is only used via `render_one` for a single Job — confirmed no `each_serializer`/collection usage), and the endpoint backs a single settings tab, so the real-world cost is negligible. Secondary consequence: because `status` and `zero_criteria_failure` read `latest_ai_job_criteria` through two independent queries rather than one shared row, there is a theoretical torn read if a new `ai_job_criteria` row commits mid-request (status from row A, zero_criteria_failure from row B). The window is microseconds and requires a concurrent commit, so it does not produce a wrong payload in practice — noted only because memoizing the two lookups closes it. The payload is otherwise correct across all six display states (verified against the SPEC §5.3 table: never-ran → all null; in-flight → null criteria + in-flight status + false; succeeded → criteria/ts/succeeded/false; regenerating-over-success → old criteria + in-flight status; zero-failure → true; other-failure → false).",
+      "recommendation": "Optionally memoize the two lookups (e.g. `@latest_succeeded ||= object.latest_succeeded_ai_job_criteria`, `@latest ||= object.latest_ai_job_criteria` and derive `zero_criteria_failure` from `@latest&.zero_criteria_failure?`) to cut 4 queries to 2 and give status/zero_criteria_failure a single consistent row. Not required for correctness."
+    }
+  ]
+}

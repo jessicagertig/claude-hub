@@ -1,0 +1,111 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 6,
+  "focus_area": "JobApplicationContainer.tsx and JobApplicationActivity.tsx modifications",
+  "findings": [
+    {
+      "id": "H1",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+      "lines": "278-287",
+      "summary": "The /ai Route is not wrapped in <FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\"> -- the tab is accessible via direct URL even when the flag is off",
+      "spec_requirement": "Spec section 4 (line 128): 'Wrap the new route in <FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">.' Spec constraint (line 204): 'the /ai route must redirect to /overview' when the feature is disabled.",
+      "actual_behavior": "The <Route path={`${match.path}/ai`}> at lines 278-287 renders PlatoTab unconditionally. Inside the <Switch>, React Router matches the first child Route whose path matches, so a direct visit to /ai will match this Route and render PlatoTab before {redirector()} is evaluated. The conditional possiblePaths array (line 155) prevents the redirector from navigating TO /ai, but does not prevent the Route from matching when the user is already ON /ai. Any user who types or bookmarks the /ai URL can view PlatoTab with the flag off.",
+      "fix": "Wrap the Route in <FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">: `<FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\"><Route path={...} render={...} /></FeatureFlipper>`. This also requires importing the FeatureFlipper component (see H2)."
+    },
+    {
+      "id": "H2",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+      "lines": "18",
+      "summary": "FeatureFlipper component not imported -- spec requires all three named imports",
+      "spec_requirement": "Spec section 4 (line 126): 'Import FeatureFlipper, useFeatureFlipper, and Features from @ats/src/components/shared/FeatureFlipper'.",
+      "actual_behavior": "Line 18 imports only `{ useFeatureFlipper, Features }`. The `FeatureFlipper` component (the JSX wrapper used as `<FeatureFlipper feature=\"...\">`) is not imported. This is a direct consequence of H1 -- the import was omitted because the wrapper was omitted.",
+      "fix": "Change the import to `import { FeatureFlipper, useFeatureFlipper, Features } from \"@ats/src/components/shared/FeatureFlipper\";`."
+    }
+  ],
+  "spec_coverage": {
+    "JobApplicationContainer": {
+      "total_requirements": 6,
+      "implemented": 4,
+      "missing": 2,
+      "deviating": 0,
+      "details": [
+        {
+          "requirement": "Import PlatoTab component",
+          "status": "implemented",
+          "location": "line 17"
+        },
+        {
+          "requirement": "Import FeatureFlipper, useFeatureFlipper, and Features from FeatureFlipper",
+          "status": "missing",
+          "location": "line 18 -- imports useFeatureFlipper and Features but omits FeatureFlipper component. See H2."
+        },
+        {
+          "requirement": "Add Route for ${match.path}/ai rendering PlatoTab, after /notes route, before {redirector()}",
+          "status": "implemented",
+          "location": "lines 278-287 -- correctly placed after /notes Route (line 265-276) and before {redirector()} (line 289)"
+        },
+        {
+          "requirement": "Wrap new route in <FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">",
+          "status": "missing",
+          "location": "lines 278-287 -- Route is bare, no FeatureFlipper wrapper. See H1."
+        },
+        {
+          "requirement": "Add 'ai' to possiblePaths conditionally using useFeatureFlipper with Features enum at component top level",
+          "status": "implemented",
+          "location": "lines 45-46 (isFeatureEnabled/isAiEnabled at top level using Features.AI_APPLICANT_SUMMARY enum), line 155 (conditional spread in possiblePaths), line 162 (isAiEnabled in useEffect deps)"
+        },
+        {
+          "requirement": "Use Features enum (not string literal) for hook usage",
+          "status": "implemented",
+          "location": "line 46 -- Features.AI_APPLICANT_SUMMARY"
+        }
+      ]
+    },
+    "JobApplicationActivity": {
+      "total_requirements": 7,
+      "implemented": 7,
+      "missing": 0,
+      "deviating": 0,
+      "details": [
+        {
+          "requirement": "Remove import of AiJobApplicationSummaryFeedItem",
+          "status": "implemented",
+          "location": "diff removes line 10 (old import)"
+        },
+        {
+          "requirement": "Remove import of AiSummaryState",
+          "status": "implemented",
+          "location": "diff removes line 11 (old import)"
+        },
+        {
+          "requirement": "Add import of PlatoOverviewCallout",
+          "status": "implemented",
+          "location": "line 10 (new import)"
+        },
+        {
+          "requirement": "Replace FeatureFlipper block (old lines 395-404) with PlatoOverviewCallout",
+          "status": "implemented",
+          "location": "lines 394-399 -- old conditional AiJobApplicationSummaryFeedItem/AiSummaryState block replaced with PlatoOverviewCallout inside FeatureFlipper"
+        },
+        {
+          "requirement": "Add match: any to Props type",
+          "status": "implemented",
+          "location": "line 37"
+        },
+        {
+          "requirement": "Add match to function parameter destructuring",
+          "status": "implemented",
+          "location": "line 39"
+        },
+        {
+          "requirement": "onOpen callback uses match.url.replace(/\\/[^/]+$/, '')/ai pattern (plan review amendment)",
+          "status": "implemented",
+          "location": "line 397 -- history.push(`${match.url.replace(/\\/[^/]+$/, \"\")}/ai`)"
+        }
+      ]
+    }
+  }
+}

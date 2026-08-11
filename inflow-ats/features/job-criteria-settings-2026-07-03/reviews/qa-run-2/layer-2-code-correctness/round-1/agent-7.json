@@ -1,0 +1,30 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 7,
+  "focus_area": "The two modals — JobCriteriaViewModal (read-only view) and RegenerateJobCriteriaConfirmModal (mutation-owning confirm). Mutation ownership, double-click protection, ModalContext frozen-prop hazard, focus handling.",
+  "files_reviewed": [
+    "app/javascript/ats/src/views/jobApplications/jobSetup/JobCriteriaViewModal.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/RegenerateJobCriteriaConfirmModal.tsx"
+  ],
+  "findings": [
+    {
+      "id": "l2-a7-001",
+      "severity": "LOW",
+      "title": "Criterion rows keyed by array index",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/JobCriteriaViewModal.tsx",
+      "line": 43,
+      "description": "Inside the tier map, criterion rows use `key={index}` (`<Styled.Row key={index}>`). Array-index keys are a code smell React docs warn against. Here it is inconsequential: `criteria` is a frozen prop captured at openModal() time (ModalContext.tsx:31 setModal), the modal is read-only with no reordering/filtering/insertion after render, and each tier group re-derives its slice deterministically. So the keys are stable for the lifetime of the modal and cannot cause the reconciliation bugs index keys normally cause. Noting for completeness against the 'keys on mapped lists' check — keys ARE present and functionally correct.",
+      "recommendation": "Optional: key on a stable field (e.g. `criterion.text` or `${tier.key}-${index}`) for clarity. No behavioral change; safe to leave as-is."
+    },
+    {
+      "id": "l2-a7-002",
+      "severity": "LOW",
+      "title": "View modal calls criteria.filter with no defensive null guard (relies on caller gating)",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/JobCriteriaViewModal.tsx",
+      "line": 33,
+      "description": "`criteria.filter(...)` (line 33) has no nil guard. This is safe as written: the prop type is non-null (`criteria: AiJobCriterion[]`, line 13), and the only caller opens the modal exclusively in the card display state where criteria is present — JobCriteriaSection.tsx:146 gates the View button with `{displayState === \"card\" && criteria && (...)}` before passing `criteria={criteria}` into `openModal(<JobCriteriaViewModal .../>)` (line 151). Per spec §8.4 the modal is display-only and does no fetching, so there is no runtime path in the current app that reaches it with null. An empty array would render an empty ListBox without crashing (all tiers filter to length 0 -> return null). Flagged only as an observation; NOT a real defect given the caller contract and the no-fabricated-fallback rule (adding `criteria || []` would violate pipeline rule 13, so leaving it unguarded is the correct choice).",
+      "recommendation": "No change required. The correct posture per pipeline rule 13 is to rely on the non-null prop contract rather than fabricate a `|| []` fallback. Leave as-is."
+    }
+  ]
+}

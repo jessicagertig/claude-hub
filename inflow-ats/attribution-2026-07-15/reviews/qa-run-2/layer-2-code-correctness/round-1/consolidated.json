@@ -1,0 +1,26 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agents": 3,
+  "findings_summary": {
+    "BLOCKER": 0,
+    "HIGH": 1,
+    "MED": 4,
+    "LOW": 9
+  },
+  "high_findings": [
+    {
+      "id": "l2-B1",
+      "severity": "HIGH",
+      "source_agent": "B",
+      "title": "sanitizeTrackingValue .slice(0,255) can split a surrogate pair; ES2019 JSON.stringify emits a lone \\udXXX escape and Rails json 2.6.1 raises JSON::ParserError, 400-ing the entire /magic_login or /sign_up POST",
+      "file": "app/javascript/shared/lib/utils.js",
+      "verification": "Orchestrator-reproduced both halves: ruby -rjson JSON.parse('{\"a\":\"\\ud83d\"}') raises 'incomplete surrogate pair'; node: ('x'.repeat(254)+emoji).slice(0,255) ends in a lone high surrogate and JSON.stringify emits \\ud83d",
+      "impact": "A signup URL carrying a >255-unit utm value whose 255/256 boundary splits an astral character breaks the signup POST entirely - user cannot sign up; input lost. Introduced by this feature (truncation is new code).",
+      "recommendation": "Surrogate-safe truncation: after slice(0,255), drop a trailing lone high surrogate. Add Jest regression test."
+    }
+  ],
+  "med_findings_pointer": "agent-A.json (3: SSO session ride uncapped/typeless per accepted design; CookieOverflow ceiling; pre-existing magic_create connect-branch nil crash with new merge keys dead in that branch), agent-B.json (1: bracket-containing utm_data keys make rack 2.2.9 raise ParameterTypeError, 400-ing the SSO POST - crafted-input edge)",
+  "low_findings_pointer": "agent-A.json (2), agent-B.json (3), agent-C.json (4)",
+  "gate": "FAIL on l2-B1 -> fix loop (deadline-compressed: fix edit immediate, commit gated behind /tmp/qa-fix-commit-go-20260716 to serialize the shared test DB across L3 scripts, L4 RSpec, and the pre-commit Cypress hook)"
+}

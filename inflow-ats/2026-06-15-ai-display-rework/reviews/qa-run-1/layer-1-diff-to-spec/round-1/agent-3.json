@@ -1,0 +1,14 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 3,
+  "focus_area": "Backend services — update_columns to update",
+  "assigned_requirements": ["S3"],
+  "findings": [],
+  "spec_coverage": {
+    "S3": {
+      "status": "implemented",
+      "evidence": "All update_columns calls in the three specified files have been converted to update. Verified by reading the full current source of each file and confirming zero remaining update_columns calls via grep. Counts match the spec exactly: orchestrate.rb had 1 call converted (line 72), score_job_application.rb had 5 calls converted (lines 23, 32, 109, 115, 120, 124 — the diff shows lines 23, 32, 115, 120, 124 as the original locations, and line 109 is a pre-existing update that was already using update, so effectively 5 update_columns calls were converted), integrate_analysis.rb had 3 calls converted (lines 53, 59, 64, 68 — line 53 is a pre-existing update, so 3 update_columns calls were converted at lines 59, 64, 68). summary/generate.rb was correctly excluded from scope — it still contains 4 update_columns calls (1 at line ~33 and 3 in rescue blocks), untouched as specified. Note: summary/generate.rb does appear in the branch diff as a new file, but this is unrelated to S3 — the file was added in a prior commit and its update_columns calls were intentionally left as-is per spec."
+    }
+  }
+}

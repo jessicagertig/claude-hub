@@ -1,0 +1,184 @@
+{
+  "layer": "regression",
+  "round": 1,
+  "run": 5,
+  "verdict": "PASS — zero feature-caused failures",
+  "scope_note": "Ran the ENTIRE RSpec suite (all 73 spec files, in 5 batches). Rationale: the feature diff touches app/models/organization.rb, a model instantiated by nearly every spec, so a targeted subset could not bound the regression surface. Batches were chosen so one crash could not cost the whole result set.",
+  "suites_run": {
+    "rspec": {
+      "ran": true,
+      "passed": false,
+      "summary": "724 examples, 148 failures, 1 pending (all 148 proven pre-existing; 0 feature-caused)",
+      "batch_summaries": {
+        "batch-a (4 new feature specs)": "34 examples, 0 failures",
+        "batch-b (webhook + org AI-credit)": "39 examples, 18 failures",
+        "batch-c (org/registration/plan-gate)": "50 examples, 4 failures",
+        "batch-d (AI-credit interactors/models)": "103 examples, 64 failures",
+        "batch-e (remaining 49 spec files)": "498 examples, 62 failures, 1 pending"
+      },
+      "files": [
+        "spec/jobs/stripe_webhook_handler_subscription_events_spec.rb",
+        "spec/interactors/create_subscription_event_spec.rb",
+        "spec/models/subscription_event_fanout_spec.rb",
+        "spec/models/organization_subscription_events_spec.rb",
+        "spec/jobs/stripe_webhook_handler_ai_credits_spec.rb",
+        "spec/models/organization_ai_credits_lifecycle_spec.rb",
+        "spec/models/organization_ai_credits_spec.rb",
+        "spec/models/organization_ai_credit_balance_spec.rb",
+        "spec/controllers/api/v1/registrations_controller_spec.rb",
+        "spec/controllers/api/v1/organizations_controller_spec.rb",
+        "spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb",
+        "spec/services/plan_feature_gate_spec.rb",
+        "spec/services/plan_feature_gate_ai_credits_spec.rb",
+        "spec/models/user_from_omniauth_spec.rb",
+        "spec/controllers/hire/confirmations_controller_spec.rb",
+        "spec/interactors/apply_ai_credit_subscription_spec.rb",
+        "spec/interactors/apply_ai_credit_upgrade_spec.rb",
+        "spec/interactors/apply_ai_credit_refund_spec.rb",
+        "spec/interactors/cancel_ai_credit_subscription_spec.rb",
+        "spec/interactors/reset_ai_credits_spec.rb",
+        "spec/models/organization_ai_credit_purchase_spec.rb",
+        "spec/models/organization_ai_credit_purchase_charge_spec.rb",
+        "spec/models/ai_credit_balance_transaction_spec.rb",
+        "spec/services/stripe/cancel_credit_pack_subscription_spec.rb",
+        "PLUS the remaining 49 spec files (full suite) — see /tmp/qa-run-5-layer-4/remaining.txt"
+      ],
+      "failures_by_file": {
+        "spec/controllers/api/v1/organization_ai_credit_purchases_subscription_change_spec.rb": 20,
+        "spec/interactors/apply_ai_credit_subscription_spec.rb": 18,
+        "spec/models/organization_ai_credit_purchase_spec.rb": 17,
+        "spec/jobs/stripe_webhook_handler_ai_credits_spec.rb": 17,
+        "spec/controllers/api/v1/organization_ai_credit_purchases_purchase_top_up_spec.rb": 17,
+        "spec/interactors/apply_ai_credit_upgrade_spec.rb": 13,
+        "spec/jobs/bulk_generate_ai_summaries_job_spec.rb": 10,
+        "spec/interactors/cancel_ai_credit_subscription_spec.rb": 5,
+        "spec/interactors/apply_ai_credit_refund_spec.rb": 5,
+        "spec/services/plan_feature_gate_ai_credits_spec.rb": 4,
+        "spec/models/organization_ai_credit_purchase_charge_spec.rb": 4,
+        "spec/controllers/api/v1/bulk_ai_job_application_summaries_controller_spec.rb": 4,
+        "spec/models/textract_result_ai_trigger_spec.rb": 2,
+        "spec/models/ai_credit_balance_transaction_spec.rb": 2,
+        "spec/mailers/bulk_all_stages_ai_summary_result_mailer_spec.rb": 2,
+        "spec/mailers/ai_credit_notification_mailer_spec.rb": 2,
+        "spec/services/submit_resume_to_textract_spec.rb": 1,
+        "spec/services/ai_job_application_action/scoring/score_job_application_spec.rb": 1,
+        "spec/models/organization_ai_credits_lifecycle_spec.rb": 1,
+        "spec/jobs/generate_ai_job_application_summary_job_spec.rb": 1,
+        "spec/interactors/find_or_create_ai_job_application_summary_status_spec.rb": 1,
+        "spec/interactors/credit_consumption_with_notifications_spec.rb": 1
+      },
+      "feature_spec_files_result": "All four new feature spec files: 34 examples, 0 failures. Per-file example counts verified by --dry-run: stripe_webhook_handler_subscription_events_spec.rb 13, create_subscription_event_spec.rb 7, subscription_event_fanout_spec.rb 12, organization_subscription_events_spec.rb 2 (13+7+12+2=34, confirming all four files loaded)."
+    },
+    "cypress": {
+      "ran": false,
+      "reason": "full suite passed at all five commit pre-commit hooks on this branch (a0d59115d..33dffbe3e: 89286fba8, 7574df408, e850c74fe, 549039a0c, 33dffbe3e); not re-run per orchestrator instruction"
+    }
+  },
+  "findings": [
+    {
+      "id": "r5-l4-001",
+      "severity": "MED",
+      "title": "stripe_webhook_handler_ai_credits_spec.rb fails 17/17 on stale column name amount_cents_paid (KNOWN)",
+      "test_file": "spec/jobs/stripe_webhook_handler_ai_credits_spec.rb",
+      "error": "ActiveModel::UnknownAttributeError: unknown attribute 'amount_cents_paid' for OrganizationAiCreditPurchase",
+      "pre_existing": true,
+      "evidence": "All 17 failures share this one signature (verified: 17/17 occurrences in /tmp/qa-run-5-layer-4/batch-b.txt) and fire in spec setup at OrganizationAiCreditPurchase.create! before any feature code runs. Root cause verified at the schema level via `rails runner`: OrganizationAiCreditPurchase.column_names includes 'stripe_amount' (true) and NOT 'amount_cents_paid' (false). The renaming commit c2f69130d (migration 20260611120002) is an ancestor of the branch BASE a0d59115d — confirmed with `git merge-base --is-ancestor c2f69130d a0d59115d` (exit 0). The spec file is byte-identical across a0d59115d..33dffbe3e (`git diff --name-only` returns empty). Matches the documented known-pre-existing entry exactly."
+    },
+    {
+      "id": "r5-l4-002",
+      "severity": "MED",
+      "title": "organization_ai_credits_lifecycle_spec.rb:33 credit allocation mismatch (KNOWN, mode UNCHANGED)",
+      "test_file": "spec/models/organization_ai_credits_lifecycle_spec.rb:33",
+      "error": "Failure/Error: expect(organization.organization_ai_credit_balance.monthly_credits_remaining).to eq PlanFeatureGate::MINIMUM_AI_CREDIT_ALLOCATION — expected: 25, got: 0 (at spec line 37)",
+      "pre_existing": true,
+      "evidence": "Failure MODE is identical to the documented one. IMPL-REVIEW-COMPLETE.md:22 records it as 'known pre-existing failure, mode unchanged' and impl-round-1/test-coverage-and-ghost-tests.md:11 pins it as '3 examples, 1 failure at :33 ... value comparison at line 37' — this run reproduces exactly that: a value comparison at line 37, expected 25 got 0. Traced chain: spec:37 -> Organization#create_ai_credit_state_if_needed (app/models/organization.rb:192-207) -> PlanFeatureGate#monthly_ai_credit_allocation (app/services/plan_feature_gate.rb:133-135) -> plan_rules 'plan_no_plan' monthly_ai_credit_allocation: 0 (plan_feature_gate.rb:149). Because 0 is truthy in Ruby, the `|| MINIMUM_AI_CREDIT_ALLOCATION` fallback never fires. The org is not stripe_subscription_in_good_standing, so @plan collapses to 'plan_no_plan' (plan_feature_gate.rb:27). NOT feature-caused: the feature's only organization.rb hunks are at lines 1131 and 1139 (`git diff -U0` hunk headers), ~930 lines away from create_ai_credit_state_if_needed; plan_feature_gate.rb and organization_ai_credit_balance.rb are absent from the feature diff."
+    },
+    {
+      "id": "r5-l4-003",
+      "severity": "MED",
+      "title": "plan_feature_gate_ai_credits_spec.rb — 4 failures from plan_rules/Variables drift (NOT on the known list; proven pre-existing)",
+      "test_file": "spec/services/plan_feature_gate_ai_credits_spec.rb",
+      "error": "4 failures: 'returns 25 credits for plan_no_plan' expected 25 got 0; 'returns 25 credits for plan_simple_ats_free' expected 25 got 0; 'returns 250 credits for plan_ats_tier_scale' expected 250 got 150; 'returns 250 credits for plan_ats_tier_scale_v2' expected 250 got 150",
+      "pre_existing": true,
+      "evidence": "Two independent drifts, neither touching feature code. (1) plan_rules hardcodes monthly_ai_credit_allocation: 0 for 'plan_no_plan' (plan_feature_gate.rb:149) and 'plan_simple_ats_free' (:157); 0 is truthy in Ruby so `plan_rules[@plan]&.dig(...) || MINIMUM_AI_CREDIT_ALLOCATION` (:134) returns 0, never the 25 the spec expects. (2) SCALE_AI_CREDIT_ALLOCATION = Variables::AI_MONTHLY_CREDIT_SCALE resolves to 150 (verified via `rails runner`: MINIMUM=25 STARTER=50 GROWTH=100 SCALE=150, sourced from config/initializers/01_variables.rb:125-128), while the spec's table expects 250. DECISIVE non-causation proof: the spec's `gate_for` helper builds an OpenStruct, not an Organization — no DB record, no ActiveRecord callbacks, so Organization#handle_after_commit and therefore CreateSubscriptionEvent cannot execute in any of these examples. Both spec/services/plan_feature_gate_ai_credits_spec.rb and app/services/plan_feature_gate.rb are absent from the feature diff file list."
+    },
+    {
+      "id": "r5-l4-004",
+      "severity": "MED",
+      "title": "amount_cents_paid schema drift accounts for 90 of the 148 failures across 7 spec files",
+      "test_file": "spec/jobs/stripe_webhook_handler_ai_credits_spec.rb (17), spec/interactors/apply_ai_credit_subscription_spec.rb (18), spec/interactors/apply_ai_credit_upgrade_spec.rb (13), spec/models/organization_ai_credit_purchase_spec.rb (12 of its 17), spec/interactors/cancel_ai_credit_subscription_spec.rb (5), spec/interactors/apply_ai_credit_refund_spec.rb (5), spec/controllers/api/v1/organization_ai_credit_purchases_subscription_change_spec.rb (20)",
+      "error": "ActiveModel::UnknownAttributeError: unknown attribute 'amount_cents_paid' for OrganizationAiCreditPurchase",
+      "pre_existing": true,
+      "evidence": "Counted exactly: 17 (batch-b) + 53 (batch-d) + 20 (batch-e) = 90 occurrences of this one message, all in spec setup. Same verified root cause as r5-l4-001 (rename commit c2f69130d is an ancestor of BASE a0d59115d). The known-pre-existing list already named organization_ai_credit_purchase_spec.rb and cancel_ai_credit_subscription_spec.rb as carrying the same stale name; this run shows the blast radius is 7 files, not 3. Every one of these spec files and every subject class (OrganizationAiCreditPurchase, ApplyAiCreditSubscription, ApplyAiCreditUpgrade, ApplyAiCreditRefund, CancelAiCreditSubscription) is absent from the feature diff; last-touched commits run 2026-06-05 to 2026-07-04, all ancestors of the base."
+    },
+    {
+      "id": "r5-l4-005",
+      "severity": "MED",
+      "title": "Missing routes for charge_top_up / create_top_up_checkout_session — 17 failures",
+      "test_file": "spec/controllers/api/v1/organization_ai_credit_purchases_purchase_top_up_spec.rb",
+      "error": "ActionController::UrlGenerationError: No route matches {:action=>\"charge_top_up\", :controller=>\"api/v1/organization_ai_credit_purchases\", ...}",
+      "pre_existing": true,
+      "evidence": "Route-definition drift: config/routes.rb does not define these member actions on this branch. config/routes.rb is absent from the feature diff (full diff file list is 11 files, all subscription-event related). The spec file was last touched by c2f69130d, an ancestor of the base."
+    },
+    {
+      "id": "r5-l4-006",
+      "severity": "MED",
+      "title": "Constant/stub/readonly drift in OrganizationAiCreditPurchase and AiCreditBalanceTransaction — 11 failures",
+      "test_file": "spec/models/organization_ai_credit_purchase_spec.rb (5), spec/models/organization_ai_credit_purchase_charge_spec.rb (4), spec/models/ai_credit_balance_transaction_spec.rb (2)",
+      "error": "subscription_status enum collection mismatch (1); AI_CREDIT_AMOUNTS_BY_LOOKUP_KEY size/content mismatch (4); Stripe::Invoice / Stripe::InvoiceItem have_received stub-argument mismatch + 1 NoMethodError (4); 'expected ActiveRecord::ReadOnlyRecord but nothing was raised' (2)",
+      "pre_existing": true,
+      "evidence": "None of these spec files nor their subjects (app/models/organization_ai_credit_purchase.rb last touched 269ddf2ca 2026-06-29; app/models/ai_credit_balance_transaction.rb last touched 28fa827a3 2026-07-04) appear in the feature diff; all last-touched commits are ancestors of BASE a0d59115d. No failure message in the batch references SubscriptionEvent, CreateSubscriptionEvent, PosthogTrackJob, or any Discord job."
+    },
+    {
+      "id": "r5-l4-007",
+      "severity": "MED",
+      "title": "Assorted pre-existing failures across AI-summary, mailer, textract and bulk-job suites — 25 failures",
+      "test_file": "spec/jobs/bulk_generate_ai_summaries_job_spec.rb (10), spec/controllers/api/v1/bulk_ai_job_application_summaries_controller_spec.rb (4), spec/models/textract_result_ai_trigger_spec.rb (2), spec/mailers/bulk_all_stages_ai_summary_result_mailer_spec.rb (2), spec/mailers/ai_credit_notification_mailer_spec.rb (2), spec/services/submit_resume_to_textract_spec.rb (1), spec/services/ai_job_application_action/scoring/score_job_application_spec.rb (1), spec/jobs/generate_ai_job_application_summary_job_spec.rb (1), spec/interactors/find_or_create_ai_job_application_summary_status_spec.rb (1), spec/interactors/credit_consumption_with_notifications_spec.rb (1)",
+      "error": "Mixed: 8 NoMethodError, 1 ArgumentError, remainder are expectation mismatches (mailer subject/template drift, 'expected to enqueue exactly 1 jobs, but enqueued 0', ActionController::ParameterMissing on rescore_requested, stub-argument mismatches)",
+      "pre_existing": true,
+      "evidence": "Zero of the 62 batch-e failure messages mention SubscriptionEvent, CreateSubscriptionEvent, PosthogTrackJob, subscription_events, or Discord::Notify (grep -c returned 0). Every failing spec file in batch-e was verified PRE-BASE: each file's last-touch commit passes `git merge-base --is-ancestor <commit> a0d59115d`, and `git diff --name-only a0d59115d..33dffbe3e -- <file>` is empty for all of them. Subject areas (bulk AI summaries, textract, scoring, mailers) have no code path through the feature's five changed app files."
+    },
+    {
+      "id": "r5-l4-008",
+      "severity": "LOW",
+      "title": "The only plausible feature regression vector — removed Discord enqueues in organization.rb — is asserted by no non-feature spec",
+      "test_file": "n/a (verification note)",
+      "error": "n/a",
+      "pre_existing": false,
+      "evidence": "The feature deletes Discord::NotifyFreeTrialStartedJob.perform_later(id) and Discord::NotifyTrialConvertedToPaidJob.perform_later(id) from Organization#handle_after_commit (organization.rb:1131, :1139), relocating them into SubscriptionEvent#handle_after_commit_on_create. A grep of the whole spec/ tree for NotifyFreeTrialStartedJob|NotifyTrialConvertedToPaidJob|NotifySubscriptionDeletedJob returns hits ONLY inside the feature's own three specs (subscription_event_fanout_spec.rb, organization_subscription_events_spec.rb, stripe_webhook_handler_subscription_events_spec.rb). No pre-existing spec asserted those enqueues, so their relocation cannot have broken anything. The org-creating controller specs that would exercise this path (registrations, organizations, omniauth_callbacks, confirmations) all passed in batch-c."
+    },
+    {
+      "id": "r5-l4-009",
+      "severity": "LOW",
+      "title": "Feature spec example count grew 28 -> 34 since the impl review, from the four spec-only fix commits",
+      "test_file": "the four new feature spec files",
+      "error": "n/a",
+      "pre_existing": false,
+      "evidence": "IMPL-REVIEW-COMPLETE.md records 'Four new spec files: 28 examples, 0 failures' against app commit 89286fba8. This run measures 34 examples, 0 failures at 33dffbe3e. The delta is the four spec-only fix commits (7574df408, e850c74fe, 549039a0c, 33dffbe3e), which added falsifiability assertions per QA rounds 2-4 findings. Expected and benign; noted so the count change is not mistaken for drift."
+    },
+    {
+      "id": "r5-l4-010",
+      "severity": "LOW",
+      "title": "Feature migration is correctly applied in the test database",
+      "test_file": "n/a (verification note)",
+      "error": "n/a",
+      "pre_existing": false,
+      "evidence": "Verified via `rails runner` under RAILS_ENV=test: subscription_events has stripe_subscription_id (true), has amount (true), and the partial unique index idx_subscription_events_conversion_stripe_sub_id is present (true). Migration 20260725033136 is live. Separately, the sibling-worktree schema drift was left strictly untouched: db/schema.rb remained the only unstaged file for the entire run, and no schema/migration command of any kind was executed."
+    }
+  ],
+  "safety_compliance": {
+    "database": "No db:drop / db:reset / db:setup / db:schema:load / db:test:prepare / db:migrate / db:migrate:status executed. No migration command of any kind was needed — RSpec never complained about pending migrations. No psql. DATABASE_URL never set. No .env read or written.",
+    "git": "Read-only git only (status, log, diff, merge-base, show-free). No stash, checkout, worktree, commit, add, or clean. db/schema.rb left unstaged and unmodified throughout.",
+    "source_repo": "No file written into /Users/jessica/wrk/wrk-corp/inflow-ats. All scratch output in /tmp/qa-run-5-layer-4/.",
+    "server": "The qa-harness test server on port 5007 was not started, stopped, or contacted. No processes killed.",
+    "d11_delicacy": "app/jobs/stripe_webhook_handler_job.rb was read only. No source or spec file was edited by this agent."
+  },
+  "raw_output": [
+    "/tmp/qa-run-5-layer-4/batch-a.txt",
+    "/tmp/qa-run-5-layer-4/batch-b.txt",
+    "/tmp/qa-run-5-layer-4/batch-c.txt",
+    "/tmp/qa-run-5-layer-4/batch-d.txt",
+    "/tmp/qa-run-5-layer-4/batch-e.txt",
+    "/tmp/qa-run-5-layer-4/remaining.txt"
+  ]
+}

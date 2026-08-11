@@ -1,0 +1,99 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume shows experience with local NAT test environments and Juju for PostgreSQL clustering, but lacks evidence of managing multi-cloud or customer-facing production cloud environments."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has built a CLI tool (DebForge), but there is no evidence of cross-functional collaboration with UX teams or building developer-facing observability/logging experiences."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate demonstrates backend scaling (load balancer project) and security (RBAC), but lacks experience in professional platform-level monitoring, alerting, and multi-cloud failover."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate authored deployment guides, which suggests defining best practices, but there is no evidence of mentoring or formal code review participation."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience in Go for backend systems, including a production ETL pipeline and a load balancer project."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "There is no mention of Kubernetes, service mesh, or container orchestration beyond general infrastructure tools like Docker and Juju."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The candidate mentions Ansible, but not Terraform or similar infrastructure-as-code tools for cloud provisioning."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The resume focuses on local Linux-based infrastructure, virtualization (VirtualBox), and on-premise networking (iptables, dnsmasq). No experience with AWS, GCP, or Azure is listed."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The candidate has not worked with PaaS products or platform abstraction layers."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has built a CLI tool (developer tooling), but lacks clear evidence of working with modern CI/CD pipelines or cloud marketplace integrations."
+    },
+    {
+      "criterion_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate notes they authored deployment guides to accelerate onboarding, which indicates good technical communication, but lacks evidence of working in a large cross-functional product environment."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No experience with cloud marketplaces is mentioned."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate demonstrates understanding of system design through the load balancer project, but lacks experience with multi-region/multi-tenant architectural patterns."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly mentions contributing to open-source tools and building a distributed Go-based ETL pipeline."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The candidate has experience with basic Linux diagnostics and firewall logging, but does not list standard observability tools like Prometheus or ELK."
+    }
+  ],
+  "computed_score": {
+    "points": 39.0,
+    "max": 92,
+    "percentage": 42.4
+  }
+}

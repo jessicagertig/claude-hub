@@ -1,0 +1,33 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 5,
+  "focus": "SPEC 1.7 — extended spec/mailers/bulk_all_stages_ai_summary_result_mailer_spec.rb reconciled against real BulkAllStagesAiSummaryResultMailer",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "1.7(a) #complete arity: 5-arg call fixed to 6 args adding the missing `total`",
+      "1.7(b) #complete subject + tags updated to match real mailer",
+      "1.7(c) #failed subject updated to match real mailer",
+      "1.7(d) single-recipient assertion replaced with FALSIFIABLE multi-recipient assertions (active present, inactive absent) in both #complete and #failed",
+      "1.7(e) assert variables has no :user_first_name in both methods"
+    ],
+    "implemented": [
+      "1.7(a) #complete arity: 5-arg call fixed to 6 args adding the missing `total`",
+      "1.7(b) #complete subject + tags updated to match real mailer",
+      "1.7(c) #failed subject updated to match real mailer",
+      "1.7(d) single-recipient assertion replaced with FALSIFIABLE multi-recipient assertions (active present, inactive absent) in both #complete and #failed",
+      "1.7(e) assert variables has no :user_first_name in both methods"
+    ],
+    "missing": []
+  },
+  "verification_detail": {
+    "committed_vs_working_tree": "feature-diff.patch (git show f9ec4a80d) for this spec file is byte-identical to the working-tree file at /Users/jessica/wrk/wrk-corp/inflow-ats.job-criteria-settings/spec/mailers/bulk_all_stages_ai_summary_result_mailer_spec.rb — reviewing committed code (known-failure #15 satisfied).",
+    "a_arity": "spec line 24 now calls complete(user.id, job.id, 5, 1, 2, 8) — 6 args matching signature complete(user_id, job_id, succeeded_count, failed_count, skipped_count, total) (mailer:4). No ArgumentError. spec line 37 asserts total_count == 8 which equals the mailer's variables[:total_count] = total (mailer:26). RECONCILED.",
+    "b_complete_subject_tags": "spec:30 asserts subject 'Your Plato reviews for #{job.title} are ready' == mailer:20 exactly. spec:29 asserts tags ['polymer','user-facing'] == mailer:23 exactly. OLD stale 'Your AI summaries for …' and ['polymer','user-facing','ai-summaries'] removed. RECONCILED.",
+    "c_failed_subject": "spec:55 asserts \"We couldn't complete your Plato reviews for #{job.title}\" == mailer:53 exactly. OLD stale \"We couldn't generate AI summaries for …\" removed. RECONCILED.",
+    "d_multirecipient_falsifiable": "Both examples build emails = params[:to].map { |r| r[:email] } and assert include(active_member.user.email) + not_to include(inactive_member.user.email). Setup: job.organization_users << active_member (is_active default true per schema.rb:1020 → in .actives scope organization_user.rb:48) and << inactive_member then inactive_member.update!(is_active:false) (excluded from .actives). Mailer resolves @job.organization_users.actives.includes(:user) (mailer:9,42) so active_member IS in to:, inactive_member is NOT — both assertions PASS against the real mailer. FALSIFIABILITY: mentally reverting the recipient change to a single triggering-user to: yields emails=[owner.email]; owner (organization.owner) is a DISTINCT user from active_member (create_credit_test_organization_user creates a fresh unique-email user, helpers:85-92/11-19), so include(active_member.user.email) FAILS. The absence assertion independently catches a dropped .actives filter. NOT a ghost test (core rule 26).",
+    "e_no_user_first_name": "spec:36 and spec:61 assert params[:variables].not_to have_key(:user_first_name). Real mailer has no user_first_name / @user / User.find in either method (greeting fully removed per 1.6). Falsifiable: re-adding the greeting variable would fail. RECONCILED.",
+    "run_sanity": "hiring_team_memberships association exists (job.rb:46) so `job.organization_users << member` creates the join. recipients.any? guard (mailer:10,43) is satisfied because active_member is active, so the mailer body executes. Test helpers create distinct unique-email users."
+  }
+}

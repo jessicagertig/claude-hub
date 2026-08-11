@@ -1,0 +1,173 @@
+{
+  "meta": {
+    "batch": 28,
+    "criteria_prompt_version": 9,
+    "job_id": 30455,
+    "title": "Senior Backend Engineer",
+    "organization": "Rep.ai",
+    "cost": 0.00063
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Rep.ai is building the next generation of live chat — powered by human-level AI avatars.\nTired of clunky, frustrating chatbot popups? So are we. Rep.ai reimagines online communication by replacing outdated bots with AI-powered video avatars that feel like talking to a real human — but available 24/7, infinitely scalable, and trained to convert. See it in action at rep.ai."
+      },
+      {
+        "heading": "Job Description",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "We’re hiring a Senior Software Engineer to join our core team and help build the infrastructure behind AI Live Chat. You’ll work on systems that power real-time interactions, intelligent agent behaviors, and seamless integrations across the web — all at scale.\nThis is a high-impact role for someone who thrives in fast-moving environments, loves clean code, and wants to help shape the future of AI-powered customer experience."
+      },
+      {
+        "heading": "What You’ll Do",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Build core systems using Python, Postgres, and AWS.\nDesign and maintain APIs that support real-time video chat and AI agent behavior.\nOptimize performance and scalability, ensuring our AI avatars feel fast and natural.\nHarden security, especially in cloud environments, and proactively mitigate vulnerabilities.\nWrite clean, testable code, and help maintain high engineering standards through code review and documentation.\nSolve hard problems, debug complex issues, and help evolve our system architecture as we scale."
+      },
+      {
+        "heading": "What We’re Looking For",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "8+ years of experience in software development with strong fluency in Python\nDeep knowledge of Postgres and SQL\nProduction experience with AWS services\nFamiliarity with front-end technologies and frameworks (e.g., React)\nStrong grasp of RESTful API design\nGit proficiency and comfort with version control workflows\nA track record of writing clean, maintainable, and efficient code\nExcellent problem-solving and communication skills\nExperience in agile teams and working asynchronously\nBonus: leadership or mentoring experience"
+      },
+      {
+        "heading": "Why Join Us",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "Competitive compensation\nFully remote / async team\nA chance to shape the future of how humans and AI interact online"
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "If you’re an experienced engineer ready to build ambitious, intelligent systems with real-world impact — we’d love to hear from you.\n👉 Check out what we’re building at rep.ai and apply now."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Build core systems using Python, Postgres, and AWS.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Build core systems using Python, Postgres, and AWS."
+      },
+      {
+        "text": "Design and maintain APIs that support real-time video chat and AI agent behavior.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Design and maintain APIs that support real-time video chat and AI agent behavior."
+      },
+      {
+        "text": "Optimize performance and scalability, ensuring our AI avatars feel fast and natural.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Optimize performance and scalability, ensuring our AI avatars feel fast and natural."
+      },
+      {
+        "text": "Harden security, especially in cloud environments, and proactively mitigate vulnerabilities.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Harden security, especially in cloud environments, and proactively mitigate vulnerabilities."
+      },
+      {
+        "text": "Write clean, testable code, and help maintain high engineering standards through code review and documentation.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Write clean, testable code, and help maintain high engineering standards through code review and documentation."
+      },
+      {
+        "text": "Solve hard problems, debug complex issues, and help evolve our system architecture as we scale.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Solve hard problems, debug complex issues, and help evolve our system architecture as we scale."
+      },
+      {
+        "text": "8+ years of experience in software development",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"experience in\" is a tier_2 signal",
+        "binary": false,
+        "source_text": "8+ years of experience in software development with strong fluency in Python"
+      },
+      {
+        "text": "Strong fluency in Python",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Strong\"",
+        "binary": false,
+        "source_text": "8+ years of experience in software development with strong fluency in Python"
+      },
+      {
+        "text": "Deep knowledge of Postgres and SQL",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Deep knowledge\"",
+        "binary": false,
+        "source_text": "Deep knowledge of Postgres and SQL"
+      },
+      {
+        "text": "Production experience with AWS services",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"experience with\" is a tier_2 signal",
+        "binary": false,
+        "source_text": "Production experience with AWS services"
+      },
+      {
+        "text": "Familiarity with front-end technologies and frameworks (e.g., React)",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"Familiarity with\" is a tier_2 signal",
+        "binary": false,
+        "source_text": "Familiarity with front-end technologies and frameworks (e.g., React)"
+      },
+      {
+        "text": "Strong grasp of RESTful API design",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Strong grasp\"",
+        "binary": false,
+        "source_text": "Strong grasp of RESTful API design"
+      },
+      {
+        "text": "Git proficiency and comfort with version control workflows",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"proficiency\"",
+        "binary": false,
+        "source_text": "Git proficiency and comfort with version control workflows"
+      },
+      {
+        "text": "A track record of writing clean, maintainable, and efficient code",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"track record\"",
+        "binary": false,
+        "source_text": "A track record of writing clean, maintainable, and efficient code"
+      },
+      {
+        "text": "Excellent problem-solving and communication skills",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Excellent\"",
+        "binary": false,
+        "source_text": "Excellent problem-solving and communication skills"
+      },
+      {
+        "text": "Experience in agile teams and working asynchronously",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"Experience in\" is a tier_2 signal",
+        "binary": false,
+        "source_text": "Experience in agile teams and working asynchronously"
+      },
+      {
+        "text": "Bonus: leadership or mentoring experience",
+        "tier": "tier_3",
+        "tier_reasoning": "signal: \"Bonus\"",
+        "binary": false,
+        "source_text": "Bonus: leadership or mentoring experience"
+      }
+    ]
+  }
+}

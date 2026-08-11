@@ -1,0 +1,15 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 7,
+  "focus": "Re-verify the two zero-criteria predicate methods with full truth tables: AiJobCriteria#zero_criteria_failure? (SPEC §4.2) and Job#zero_criteria_extraction_failure? (SPEC §4.3), plus whitespace/case sensitivity of the message match and ZERO_CRITERIA_ERROR_MESSAGES frozen-ness.",
+  "scenarios_run": [
+    "PART A grid: AiJobCriteria#zero_criteria_failure? across all 5 statuses x 3 zero-criteria messages (15 cases) -- only status=failed returns true; pending/in_progress/succeeded/retrying all false.",
+    "PART A edges: failed + non-zero msg 'Job description is blank' => false; failed + 'boom' => false; failed + nil => false; failed + '' => false.",
+    "PART B whitespace/case sensitivity (exact Array#include? match): failed + ' Criteria array is empty' (leading space), trailing space, all-lowercase, all-uppercase, double internal space, trailing newline, inner-case 'Empty' -- all false; exact base string anchor => true (falsifiability anchor).",
+    "PART C: AiJobCriteria::ZERO_CRITERIA_ERROR_MESSAGES.frozen? == true; array length == 3.",
+    "PART D Job#zero_criteria_extraction_failure? (reads LATEST via ai_job_criteria.order(created_at: :desc).first, created_at controlled explicitly, latest row id asserted each time): D0 no rows => nil; D1 latest zero-criteria failed over older succeeded => true; D2 latest succeeded over older zero-criteria failed => false; D3 latest pending over failed => false; D4 latest in_progress over failed => false; D5 latest retrying over failed => false; D6 latest non-zero failure => false; D7 single zero-criteria failed row for each of the 3 messages => true.",
+    "Built own isolated org/job in-script (SecureRandom suffixes); rows created DIRECTLY via job.ai_job_criteria.create! then update_column(:created_at, ...); queue_adapter=:test; extractor never invoked. Total 45 assertions, all PASS."
+  ],
+  "findings": []
+}

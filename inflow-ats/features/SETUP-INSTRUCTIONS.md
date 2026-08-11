@@ -9,13 +9,13 @@
 
 ```bash
 # 1. Create the working directory
-mkdir -p ~/claude-hub/inflow-ats/YYYY-MM-DD-feature-name/
+mkdir -p ~/claude-hub/inflow-ats/feature-name-YYYY-MM-DD/
 
 # 2. Copy the spec
-cp /path/to/your/spec ~/claude-hub/inflow-ats/YYYY-MM-DD-feature-name/SPEC.md
+cp /path/to/your/spec ~/claude-hub/inflow-ats/feature-name-YYYY-MM-DD/SPEC.md
 
 # 3. Write the repo path (the worktree this feature lives in)
-echo '~/wrk/wrk-corp/inflow-ats.your-worktree/' > ~/claude-hub/inflow-ats/YYYY-MM-DD-feature-name/REPO-PATH
+echo '~/wrk/wrk-corp/inflow-ats.your-worktree/' > ~/claude-hub/inflow-ats/feature-name-YYYY-MM-DD/REPO-PATH
 ```
 
 ## Then run the flow

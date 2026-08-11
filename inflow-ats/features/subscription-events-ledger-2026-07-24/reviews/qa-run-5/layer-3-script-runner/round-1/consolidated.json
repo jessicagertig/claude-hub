@@ -1,0 +1,66 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 5,
+  "agents": 9,
+  "verdict": "CLEAN — terminal (one clean round per harness-profile; zero HIGH+, both MEDs deliberately left with reasoning)",
+  "findings": [],
+  "med_findings": [
+    {
+      "id": "A7-H1",
+      "filed_severity": "HIGH (agent 7)",
+      "adjudicated_severity": "MED (report-only, disclosed in QA-MED-FINDINGS.md for Jessica's ruling)",
+      "title": "An ActiveJob reserved key inside the utm_data jsonb makes PosthogTrackJob.perform_later raise ActiveJob::SerializationError inside the fan-out",
+      "confirmed_by": ["agent 7 (trial_started writer)", "agent 8 (both webhook writers, plus the organization.utm_data column)", "agent 9 (independent reproduction on a different org)"],
+      "consequences_observed": [
+        "trial_started path: the raise escapes Organization#update! to its caller; the ledger row persists; Discord::NotifyFreeTrialStartedJob is lost; PostHog event is lost",
+        "trial_started path: organization_ai_credit_balance&.reset_ai_credits is SKIPPED (A9-M1 — the writer call occupies the line the removed Discord enqueue held, ahead of reset_ai_credits)",
+        "both webhook writers: the insertion's own rescue swallows it — ledger row persists while the PostHog event and the Discord cash notification are silently lost; nothing escapes handle_stripe_event",
+        "reachable via either side of the owner-first fallback (users.utm_data or organizations.utm_data)"
+      ],
+      "orchestrator_reasoning": "MED on reachability, not on fix cost. The QA HIGH bar is wrong behavior 'during any reasonable workflow'; the app's own frontend cannot produce the trigger (app/javascript/shared/lib/utils.js:192-208 filters utm_data keys to the utm_ prefix, and all five ActiveJob reserved keys begin with _aj_, so they cannot survive that filter). It takes a hand-crafted POST to the public signup endpoint (registrations_controller.rb:328 permits utm_data: {} with no key restriction) carrying a deliberately chosen ActiveJob-reserved key — adversarial input, not an accidental workflow. The code is also exactly spec-compliant: D9 and SPEC §7 name utm_data in the 13 attribution fields, owner-first via attribution_value, .compact. This is a defect in the approved design, not a deviation from it, so 'spec-implementation mismatch is never MED' does not apply; two MED criteria apply squarely (spec-compliant-but-imperfect, requires a design decision).",
+      "verified_not_a_pre_existing_pattern": "All 11 other PosthogTrackJob callers pass hand-built scalar hashes (magic_links_controller.rb:24, auth/invites_controller.rb:50,80, billing_controller.rb:115,213,311, sessions_controller.rb:11, registrations_controller.rb:52,208, omniauth_callbacks_controller.rb:47, email_processor.rb:83). subscription_event.rb:59 is the only site in the codebase passing user-controlled data to perform_later, so the 'consistent with existing patterns' MED criterion does NOT apply and the exposure is feature-introduced.",
+      "blast_radius_pinned_by_orchestrator": "The nil -> 'trialing' flip happens inside Organization#sync_with_stripe, called from stripe_webhook_handler_job.rb:161,205,237 and billing_controller.rb:171,211,260,624. An unrescued raise on the controller path could 500 a user's checkout-return request.",
+      "fix_options_for_owner": [
+        "rescue around enqueue_posthog_track in subscription_event.rb — feature-local, no spec deviation, but makes PostHog failures silent (agent 7's proposal)",
+        "drop utm_data from the payload — contradicts D9's explicit field list",
+        "JSON-stringify utm_data — changes the wire shape D9 approved",
+        "restrict the utm_data: {} permit at registrations_controller.rb:328 — edits a file SPEC §2 lists as explicitly untouched, and is a pre-existing permissiveness",
+        "do nothing — accept it as adversarial-input-only"
+      ],
+      "action_taken": "None. No fix agent dispatched: selecting among these is Jessica's design decision, and a unilateral pick is the failure pattern pipeline rules 10, 20 and 23 exist to prevent."
+    },
+    {
+      "id": "A9-M1",
+      "severity": "MED",
+      "title": "Addendum to A7-H1: the escaping SerializationError also skips organization_ai_credit_balance&.reset_ai_credits",
+      "note": "Folded into the A7-H1 disclosure above rather than tracked separately — same defect, same trigger, same decision. Recorded because the consequence list was incomplete without it.",
+      "evidence": "Control/poison pair on org 37146: last_reset_at moved 2026-05-27 -> 2026-07-27 clean, stayed at 2026-05-27 poisoned."
+    }
+  ],
+  "low_findings": [
+    {"id": "A7-L1", "title": "PosthogTrackJob#perform's pre-existing deep_symbolize_keys also symbolizes nested utm_data keys — wire bytes verified identical via JSON.generate. No action."},
+    {"id": "A9-L1", "title": "subscription_events.amount is a 4-byte integer; an amount_paid above 2147483647 loses the conversion row inside the ledger block's own rescue. Requires a >$21.4M single invoice — not reachable."},
+    {"id": "A9-L2", "title": "The partial unique index does not constrain NULL stripe_subscription_id. Proven unreachable from both webhook insertions: Stripe::Subscription.retrieve(nil) raises locally before HTTP, so the main-plan branch is never entered."},
+    {"id": "A9-L3", "title": "conversion_duplicate_exists? queries globally rather than org-scoped; verified live with two real orgs. Outcome is SPEC §3's stated invariant (Stripe subscription ids are globally unique)."},
+    {"id": "A9-L4", "title": "Repeat trial_started is possible beyond the 5-minute dedupe, but no production path returns stripe_subscription_status to nil."},
+    {"id": "A9-L5", "title": "A late invoice for a superseded subscription stamps the org's current plan — exactly what SPEC §5.2 specifies."}
+  ],
+  "coverage": {
+    "agent_1": "D5 predicate zero-cash cells (amount 0 and nil × trial_end present/absent) — 0 rows, existing branch behavior intact",
+    "agent_2": "D5 cash cells + row completeness + fan-out — trial_converted_to_paid / converted_to_paid classified correctly, rows born complete",
+    "agent_3": "uniqueness invariant + redelivery live, index backstop, non-conversion types unblocked, renewal semantics",
+    "agent_4": "trial_started via a real nil -> 'trialing' organization.update! flip, non-trigger transitions, dedupe",
+    "agent_5": "subscription.deleted branch live, nil-organization delivery, stale-subscription, repeat cancellation",
+    "agent_6": "fan-out matrix per event_type, assigned_free_plan* zero enqueues, deferred types, no-owner, update/destroy",
+    "agent_7": "PostHog payload: full 13-field × 6-cell owner-first fallback matrix, payload composition, enqueue shape, end-to-end into capture",
+    "agent_8": "rescue isolation at both insertions under three forced error classes, AI-credit paths write nothing, CustomStripeSubscriptionMissingError guard",
+    "agent_9": "adversarial sweep + independent spot-check of 7 prior claims (7/7 reproduced), interactor RecordNotUnique rescue path, symbol event_type, cross-org duplicate query"
+  },
+  "safety": {
+    "real_stripe_http": "zero — agent 9 installed a loud Stripe::StripeClient#execute_request raise guard that never fired",
+    "posthog": "POSTHOG_CLIENT is NOT nil in the test env (live client, real API key). Queue adapter held at :test throughout; every capture stubbed via stub_const with an assertion the stub took effect. No real sends.",
+    "database": "left clean by agent 9 (SubscriptionEvent.count=0, Organization.count=0, User.count=0)",
+    "repo": "untouched; HEAD still 33dffbe3e; the pre-existing unstaged db/schema.rb never touched; no git write commands"
+  }
+}

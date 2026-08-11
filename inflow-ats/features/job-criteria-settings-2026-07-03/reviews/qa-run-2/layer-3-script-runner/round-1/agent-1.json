@@ -1,0 +1,19 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 1,
+  "focus": "Job#extract_job_criteria_immediately runtime behavior (row creation, enqueue args, no-op guards, draft parity, auto-path nil threading)",
+  "scenarios_run": [
+    "ai-org-published-job.json (paid org, AI_APPLICANT_SUMMARY on, 1 published 'Senior Engineer' job, 0 criteria rows) -- exercised extract_job_criteria_immediately with org-admin OrganizationUser id (step 1), the in_progress/retrying/succeeded/failed no-op guards (step 2), and the auto path via no-arg call + extract_job_criteria_if_needed (step 4). Ran via test_frr rails runner with ActiveJob::Base.queue_adapter=:test set IN-PROCESS so perform_later recorded to the in-memory test adapter and never pushed to real Sidekiq/Redis (no real OpenAI extraction possible).",
+    "ai-org-unpublished-job.json (same org, draft 'Senior Engineer' job) -- repeated step 1 plus an in_progress guard check to confirm identical draft behavior (regenerate-any-state)."
+  ],
+  "findings": [],
+  "verifications_passed": [
+    "STEP 1 (published, never-extracted): a single call to job.extract_job_criteria_immediately(requesting_organization_user_id: <org-admin OU id>) creates EXACTLY ONE new AiJobCriteria row with status 'pending' belonging to the job (job_id matches), and enqueues EXACTLY ONE ExtractJobCriteriaJob with args == [new_row.id, ou_id]. The requesting id is threaded as the positional 2nd arg (arg[1] == ou_id).",
+    "STEP 2 NO-OP GUARDS: latest row = in_progress -> NO new row and NO enqueue; latest = retrying -> NO new row and NO enqueue. The guard blocks ONLY in_progress/retrying.",
+    "STEP 2 GUARD PASSTHROUGH: latest row = succeeded -> a NEW pending row IS created and enqueued (guard passes); latest = failed -> a NEW pending row IS created and enqueued. Both new rows are status 'pending' and carry [new_row.id, ou_id] args.",
+    "STEP 3 (draft/unpublished job): behaves identically -- one call creates one pending AiJobCriteria row belonging to the draft job and enqueues ExtractJobCriteriaJob with [row.id, ou_id]; the in_progress no-op guard still fires on a draft. Confirms the regenerate-any-state requirement (works on draft jobs, not just published).",
+    "STEP 4 AUTO PATH: extract_job_criteria_immediately called with NO requesting id enqueues [row.id, nil] (2nd arg nil). The auto caller extract_job_criteria_if_needed also enqueues [row.id, nil] when latest is non-succeeded, and is correctly a NO-OP (no new row, no enqueue) when the latest row is succeeded.",
+    "Confirmed the seeded jobs always have a present description (satisfies the `return unless description.present?` guard) and that a never-extracted job starts with 0 AiJobCriteria rows."
+  ]
+}

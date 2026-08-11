@@ -1,0 +1,44 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 12,
+  "focus_area": "Independent second pass on SPEC §5.6-5.9 + D19 verification + §10 absences + §9 event-name grep + eslint baseline",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "§5.6 OnboardingProfile.tsx (D18) mount-effect events + D19 Auth.tsx not modified",
+      "§5.7 OrganizationForm.tsx organization_created event, no identify added",
+      "§5.8 ProfileForm.tsx isNewOwner-keyed name-submitted events",
+      "§5.9 posthog.ts identifyUser window.logger fire+skip, no further edit",
+      "D19: Auth.tsx not in diff, no tracking code at HEAD, byte-identical to base",
+      "D19: hire/confirmations_controller.rb not in diff, bare redirects at HEAD",
+      "D19: no identify callsite added anywhere in the diff; AppAuthRouter's existing effect sole browser identify surface",
+      "§10: no /auth-register page-view event",
+      "§10: no browser user_logged_in",
+      "§10: serializers + app/jobs diffs empty",
+      "§10: no server identify at confirmation",
+      "§10: no marketing-site files",
+      "§9: user_signed_up_client_side at exactly two frontend callsites; server user_signed_up untouched",
+      "eslint baseline: no [emailConfirmed]-dep effect at HEAD; only exhaustive-deps disable in diff is §5.6's"
+    ],
+    "verified": [
+      "§5.6 D18 effect: diff lines 92-99 add to OnboardingProfile.tsx a React.useEffect with empty dep array firing exactly one of trackEvent(\"organization_owner_email_verified\") when isNewOwner / trackEvent(\"invited_user_email_verified\") otherwise, plain calls with no properties; trackEvent imported from @shared/lib/posthog (diff line 84); eslint-disable-next-line react-hooks/exhaustive-deps comment placed inside the effect body immediately before '}, []);' — byte-for-byte the house pattern at AuthRegister.tsx (HEAD: comment then '}, []);', verified against AuthRegister.tsx's showEmailConfirmationBannerIfApplicable effect). isNewOwner/wasInvited are the pre-existing computations at OnboardingProfile.tsx HEAD lines 17-18 (unchanged by the diff). OnboardingProfile is rendered inside AppAuthRouter (AppAuthRouter.tsx HEAD line 328), satisfying the D18 'every population reaches it' placement.",
+      "§5.6 D19 half: Auth.tsx absent from git diff --name-only 62dd55867..fc3f047f9 (23 files, list matches the pre-dumped diff exactly); blob hash identical at base and HEAD (2aa4cbc83ffcdb0b79f6cab826a65f7f5586af0a both) — byte-identical; full read of Auth.tsx at HEAD shows only the pre-existing showEmailConfirmationBannerIfApplicable + emailConfirmed banner state, its sole effect is []-dep, zero trackEvent/identifyUser/posthog references.",
+      "§5.7: diff adds trackEvent import and a single trackEvent(\"organization_created\") (no properties) in createOrganization onSuccess before onComplete(data) — exact spec order. No identify call added. Stated re-fire mechanism confirmed live at HEAD: useOrganization.ts lines 95-98 invalidateQueries(\"currentOrganization\") + setQueryData + invalidateQueries(\"me\") in useCreateOrganization onSuccess, feeding the AppAuthRouter.tsx lines 166-177 identify effect (deps [currentUser, organizationId, currentPlan, organizationName]).",
+      "§5.8: diff adds to ProfileForm.tsx updateMe onSuccess, before props.onComplete(), exactly one of trackEvent(\"organization_owner_user_name_submitted\") when props.isNewOwner / trackEvent(\"invited_user_name_submitted\") otherwise — plain calls, no properties; trackEvent imported from @shared/lib/posthog. isNewOwner/wasInvited props passed by OnboardingProfile.tsx (HEAD lines 57-58, pre-existing). The else-branch correctly absorbs the wasInvited case and the neither-true edge per D16.",
+      "§5.9: the posthog.ts hunk is exactly the identifyUser fire-path window.logger (line 31 at HEAD) and skip-path window.logger inside the '!ph' guard (line 27) — nothing else in the file changed; trackEvent/resetUser untouched. Spec's 'already in the working tree (uncommitted)' is now committed in-range, consistent with 'it is part of this feature'.",
+      "D19 confirmations controller: hire/confirmations_controller.rb absent from the diff; blob hash identical base vs HEAD (f4ff037bda8627640ec5f59eacca889af4a7a177); at HEAD the success redirect is bare redirect_to '/auth?email_confirmed=true' and the failure redirect '/auth?email_confirmed=false' — no id/email params. New spec/controllers/hire/confirmations_controller_spec.rb pins both bare redirects (§9 item 5).",
+      "D19 identify surface: git grep identifyUser at HEAD across app/ — callsites are only AppAuthRouter.tsx:168 (import :44), the PostHogContext.tsx re-export, and the posthog.ts definition. The diff's only identifyUser lines are the two window.logger additions inside the definition body (§5.9), not a callsite. .identify( grep: only ph.identify inside posthog.ts identifyUser plus pre-existing window.heap.identify (Heap, not PostHog, untouched). AppAuthRouter.tsx has an empty diff in range — its existing effect remains the sole browser identify surface.",
+      "§10 no /auth-register page-view event: AuthRegister.tsx empty diff in range; the diff's seven trackEvent additions (dump lines 94, 96, 139, 228, 249, 251, 289) contain no page-view event; first captured funnel step remains user_signed_up_client_side.",
+      "§10 no browser user_logged_in: 'user_logged_in' appears nowhere in the diff dump; at HEAD all four user_logged_in references are server-side (sessions_controller.rb:11, omniauth_callbacks_controller.rb:35, invites_controller.rb:50, magic_links_controller.rb:24), none in app/javascript.",
+      "§10 serializers + jobs: git diff --stat 62dd55867..fc3f047f9 -- app/serializers app/jobs is empty.",
+      "§10 no server identify at confirmation: confirmations_controller.rb byte-identical; zero PosthogIdentifyJob/PosthogTrackJob occurrences in the diff dump (also satisfies §7 constraint 7: no server tracking job call added, removed, or modified).",
+      "§10 no marketing-site files: all 23 changed files are inflow-ats app/, config/, db/, spec/ paths; no *.polymer.co / marketing assets.",
+      "§9 event-name grep: git grep user_signed_up_client_side at HEAD (app/) matches exactly AuthForm.tsx:91 and SignupForm.tsx:75 — the two callsites the diff adds. Server 'user_signed_up' strings (registrations_controller.rb:52 and :190, omniauth_callbacks_controller.rb:35, auth/invites_controller.rb:80) all outside the diff hunks; 'user_signed_up' appears nowhere in the diff dump. Bonus check: no bare \"email_verified\" event string anywhere at HEAD (void D12 fully gone).",
+      "eslint baseline: git grep '[emailConfirmed]' at HEAD in app/javascript returns nothing — no [emailConfirmed]-dep effect exists; grep of the diff dump for eslint/exhaustive-deps hits only line 98, the §5.6 OnboardingProfile disable — the only disable in the entire diff.",
+      "Event-name set check (§7 constraint 8): the diff's trackEvent additions are exactly the six fixed names — organization_owner_email_verified, invited_user_email_verified, user_signed_up_client_side (x2), organization_created, organization_owner_user_name_submitted, invited_user_name_submitted — all with no properties."
+    ],
+    "missing": []
+  },
+  "notes": "Round-2 independent re-verification from scratch; no round-1 outputs read. Repo checks run read-only at /Users/jessica/wrk/wrk-corp/inflow-ats, branch attribution-work-qa, HEAD fc3f047f960cc7eda5bdee8141ad7443bfebefef; git diff --name-only for the range reproduces the pre-dumped diff's 23-file list exactly. Byte-identity for the two D19 files established via git rev-parse blob hashes at base and HEAD (Auth.tsx: 2aa4cbc83 both; confirmations_controller.rb: f4ff037bd both). Spec line references (§5.6 'lines 16-17', §5.8 'lines 47-48') describe the pre-diff file; at HEAD they sit at 17-18 and 57-58 because the diff's import insertions shift them — the referenced code is unchanged, not a deviation. Prior finding l1-run4-001 (§5.1/§7.1/§11 truncation wording): not in my assigned area; not re-examined per brief scope. Settled rulings M1-M4 and the 9 LOWs: nothing in my area re-raises them. Zero findings."
+}

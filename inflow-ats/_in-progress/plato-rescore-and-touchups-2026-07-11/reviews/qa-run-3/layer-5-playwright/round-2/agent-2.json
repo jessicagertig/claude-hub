@@ -1,0 +1,26 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 2,
+  "assignment": "Inbox STATE 2 (zero-processable) + STATE 4 (checked) at balance 16, display only. Convergence round: independent re-verification of round-1 clean pass.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc.)",
+    "Clicked 'Senior Engineer' job card → landed on Inbox stage (3 candidates: Agnes Sipes, Carl Dietrich, Emilee Hand — all with organic current reviews; Agnes' Overview shows real Plato copy 'Quality analyst with a focus on manual testing...', Poor fit)",
+    "Clicked Inbox stage-name select-all checkbox (#toggleAllCheckbox) → all 3 candidate checkboxes checked",
+    "Opened Bulk options three-dot menu (JobStageMenu dropdown trigger in candidate-list header) → clicked 'Run Plato reviews' → 'Review candidates' modal opened",
+    "STATE 2 byte-assert via DOM textContent: body paragraph is exactly '0 of the 3 candidates selected from this hiring stage don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.' — numeric 0, ASCII-only (no non-ASCII codepoints), NO credit sentence ('Each successful review' absent), NO 'Up to', NO overestimate block",
+    "STATE 2 controls: 'Generate reviews' button disabled=true; Cancel enabled; checkbox name='rescore' disabled=false checked=false (enabled) — matches SPEC 1.2 state 2",
+    "Checked the 'Also re-review candidates that already have a review' checkbox",
+    "STATE 4 byte-assert via DOM innerHTML: 'The 3 candidates selected from this hiring stage will be reviewed, including candidates that already have a review. Each successful review uses one AI credit, so running this uses up to <b>3</b> credits from your balance of <b>16</b> available.' — counts 3 and 16 both bold (<b>), balance displayed 16 exactly as briefed (no recompute needed), NO 'Up to' prefix, NO overestimate block",
+    "STATE 4 controls: 'Generate reviews' enabled (disabled=false); checkbox checked=true",
+    "Toggled the checkbox back off: state 2 body returned byte-identical, credit sentence gone, 'Generate reviews' disabled=true again",
+    "Clicked Cancel — modal closed, NO submit ever clicked (no Plato run triggered, network shows no bulk POST)",
+    "Console check (level=error, all): 7 total error-level entries, all known pre-existing noise (4x react-router history deprecation, 2x 'Store does not have a valid reducer', 1x heap-api.com 404). Zero feature-referencing errors (no rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summaries errors)",
+    "Unchecked the select-all checkbox to restore clean list state"
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-2/agent-2-state-2-unchecked-zero-processable.png",
+    "/tmp/qa-run-3-l5/agent-2/agent-2-state-4-checked.png"
+  ],
+  "findings": []
+}

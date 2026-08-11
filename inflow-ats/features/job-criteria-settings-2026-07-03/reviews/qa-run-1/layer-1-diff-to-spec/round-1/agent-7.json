@@ -1,0 +1,39 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 7,
+  "focus_area": "Job criteria section UI — SPEC §8.2 (display-state derivation) and §8.3 (JobSetupAiSettings.tsx / JobCriteriaSection.tsx / jobCriteriaTiers.ts)",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §8.2 row 0 (isLoading → LoadingIndicator)",
+      "SPEC §8.2 conventions-pass isError state (after isLoading, before payload states; no action buttons)",
+      "SPEC §8.2 row 1 (in-flight: card-or-never-extracted underneath + loading button)",
+      "SPEC §8.2 row 2 (failed + zeroCriteriaFailure → zero-found EmptyState, exact copy)",
+      "SPEC §8.2 row 3 (failed other → failure EmptyState, exact copy)",
+      "SPEC §8.2 row 4 (criteria present → card + View + Regenerate)",
+      "SPEC §8.2 row 5 (status null → never-extracted EmptyState, Generate only, exact copy)",
+      "SPEC §8.2 exact precedence order in code",
+      "SPEC §8.2 button label rules (Generate only in state 5 and state 1 over 5)",
+      "SPEC §8.2 EmptyState standard variant (no roomy, no borderless)",
+      "SPEC §8.2 action rows OUTSIDE EmptyState",
+      "SPEC §8.3 useAiJobCriteria + useModalContext (in JobCriteriaSection per plan D-1)",
+      "SPEC §8.3 Job criteria FormSection below Plato reviews with intro prop",
+      "SPEC §8.3 exact intro copy + job-description inline link via history.push to /jobs/${id}/setup/description",
+      "SPEC §8.3 criteria card (560px max-width, radius token, PlatoChip size 36 radius 18, title, distanceInWords timestamp, 12.5px/1.3 meta, tabular figures)",
+      "SPEC §8.3 count rail (186px, Core/Preferred/Bonus icons, Bonus only when present, count weight via t.text.medium)",
+      "SPEC §8.3 tier metadata in shared jobCriteriaTiers.ts (conventions-pass item 3, consumed by JobSetupAiSettings, JobCriteriaSection, and JobCriteriaViewModal)",
+      "SPEC §8.3 action row: View criteria in card state only; Generate/Regenerate with loading={isInFlight} AND disabled={isInFlight} (rule 11)",
+      "SPEC §8.3 isInFlight derivation (payload in-flight OR isFetching, per plan D-5/R-3)",
+      "SPEC §8.3 sidebar tier glossary via SettingsContainer sidebar prop, AccountTeam aside register, 13px entry-heading icons, DECISIONS-verbatim leads",
+      "SPEC §8.3 styled components: one per variant, no boolean variant props, no fabricated fallbacks, no ??, double quotes",
+      "SPEC §8.3 / plan D-1 extraction into components/JobCriteriaSection.tsx",
+      "SPEC §8.3 existing JobSetupAiSettings content untouched",
+      "Conventions-pass items 4, 5, 6, 7, 8 as applied to these files",
+      "DECISIONS copy rules sweep over all new strings in these files"
+    ],
+    "implemented": 25,
+    "missing": 0,
+    "notes": "All assigned requirements verified in the worktree at HEAD 9ed954142. Precedence order in JobCriteriaSection.tsx:43-82 matches SPEC §8.2 exactly: isLoading early return (43) → isError early return (51, conventions item 4: 'Could not load job criteria' / 'Something went wrong while loading job criteria. Refresh the page to try again.', alert-triangle, no action row) → isPayloadStatusInFlight → failed+zeroCriteriaFailure → failed → criteria present → else never-extracted. All EmptyState copy strings byte-match the spec (titles, messages, icons); all four EmptyStates are standard variant (only icon/title/message passed; EmptyState.tsx props verified). Action rows are section-level (Styled.ActionRow, line 144) outside EmptyState. Button label rule verified: regenerateButtonLabel keys off displayState === 'neverExtracted', which the in-flight branch resolves to when criteria is absent (state 1 over 5 → 'Generate criteria'). isInFlight = isPayloadStatusInFlight || isFetching traces to plan D-5 with the broader-than-post-POST cost documented in plan R-3 (accepted). loading AND disabled both present (lines 159-160). Intro copy byte-matches after JSX whitespace collapse; link uses history.push('/jobs/${job.id}/setup/description') threaded from props.history (JobSetupContainer.tsx:487 spreads route props; OrganizationAiUsage.tsx:18 pattern). Card: 560px, ${t.rounded.md} (conventions item 5), PlatoChip size 36 radius 18, 15px/600 title, 12.5px/1.3 desc with tabular-nums, distanceInWords adds 'ago' (time.ts:89). Count rail 186px, .n uses ${t.text.medium} (conventions item 7), Bonus row skipped when tier_3 count is 0 (line 104). jobCriteriaTiers.ts matches conventions item 3 (key/label/icon/glossaryLead/glossaryRest), consumed by all three components; copy strings byte-match plan F.2.2.2 and DECISIONS leads. Sidebar matches the AccountTeam register (Styled.Sidebar/TierContent parallel AccountTeam.tsx:515-552 with the conventions-item-6 token substitutions t.text.base/t.text.sm and the planned 13px icon wrapper CSS). Focus ring on SectionIntro a present (conventions item 8). JobSetupAiSettings.tsx diff is additions-only (no pre-existing line modified or deleted): imports, SidebarContent, sidebar prop, JobCriteriaSection mount below the Plato reviews FormSection, appended styled block. poly.color tokens (cardCanvas/cardBorder/loudText/secondaryText) exist in shared/styles/lightTheme.ts and are an established usage pattern (FormSection, NavItem, JobApplicationSidebar). Two observations, judged not findings: (1) The View criteria button renders whenever displayState resolves to 'card', which includes SPEC §8.2 row 1 in-flight over an older success; §8.3 says View is 'rendered only in state 4' while row 1 says the underlying content is 'row 4's card'. I read the implementation as correct because §8.4's frozen-prop staleness note ('if a regeneration completes while the slide-over is open') presupposes the slide-over is reachable while an extraction is in flight; flagging here as a note in case the spec author intended View hidden during in-flight. (2) The intro's <a> has onClick but no href/tabIndex, so the conventions-item-8 focus ring is unreachable by keyboard; the adjudicated fix text (add the &:focus CSS) is implemented literally and no spec text requires focusability, so this is recorded as an observation only."
+  }
+}

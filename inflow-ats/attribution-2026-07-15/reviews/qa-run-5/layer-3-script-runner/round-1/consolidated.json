@@ -1,0 +1,34 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 5,
+  "head": "fc3f047f9",
+  "agents_dispatched": 15,
+  "agents_reporting": 15,
+  "execution": "sequential (shared test DB; each agent ran qa_harness cleanup then seed, then test_frr scripts and/or live HTTP POSTs against the RAILS_ENV=test server on port 5007)",
+  "high_plus_count": 0,
+  "findings": [],
+  "scenario_coverage": {
+    "from_omniauth_new_user_raw": "agent-1 PASS (utm raw, partner_source downcased, utm_data string-keyed Hash)",
+    "from_omniauth_existing_user_not_modified": "agent-2 PASS (nil-seeded and original-seeded both unchanged; count stable)",
+    "from_omniauth_nil_omitted_and_required_kw": "agent-3 PASS (utm_data genuine nil not {}; ArgumentError on missing auth/created_via)",
+    "create_http_persist_raw": "agent-4 PASS (POST /api/v1/sign_up 200; four values persisted raw; jsonb intact)",
+    "create_http_no_params_nil": "agent-5 PASS (all four nil; utm_data nil not {})",
+    "create_utm_data_jsonb_variations": "agent-6 PASS (multi-key/single/special-char round-trip; non-hash scalar dropped to nil, no crash)",
+    "magic_create_new_user_hire": "agent-7 PASS (POST /api/v1/magic_login login_intent:hire 200; persisted raw; jsonb intact)",
+    "magic_create_existing_confirmed_not_modified": "agent-8 PASS (original + nil users unchanged; no duplicate)",
+    "magic_create_existing_unconfirmed_and_no_params": "agent-9 PASS (unconfirmed unchanged; no-params new user nil)",
+    "org_create_copy_from_user": "agent-10 PASS (four copied incl. jsonb; organization_params permits only name-set, no utm)",
+    "org_create_nil_user_and_body_tamper": "agent-11 PASS (nil user -> org nil not {}; body utm_* stripped by permit)",
+    "jsonb_integrity_cross_path_raw_sql": "agent-12 PASS (raw SQL confirms clean JSON object on create/magic_create/from_omniauth; no stringified Parameters/wrapper; nil for absent)",
+    "raw_storage_no_mapping_no_server_cap": "agent-13 PASS (case preserved, no enum mapping, 300-char stored uncapped per D3)",
+    "sso_tracking_integration": "agent-14 PASS (string-keyed merged_tracking -> from_omniauth persists all four; partner_source downcased; string-key read resolves)",
+    "cross_cutting_absence_and_user_to_org_e2e": "agent-15 PASS (partial submissions: omitted -> nil never {}, no cross-contamination; end-to-end user->org copy field-by-field match)"
+  },
+  "pre_existing_out_of_scope_observations": [
+    "agent-13: POST /api/v1/sign_up 500s when a `name` JSON key is sent (User has no name= setter; sign_up_params permits :name). Reproduced with zero utm params -> pre-existing, unrelated to attribution. Matches the known pre-existing sign_up_params permit issue.",
+    "agent-14: new SSO user has previously_new_record? false (from_omniauth's post-block user.update), so controller fires user_logged_in for a fresh SSO signup. Pre-existing (commit 9d3f2c98a7, 2026-02-12); SPEC note 7/311 leaves SSO server events untouched.",
+    "agent-15: pre-existing Clearbit after-save callback raised Nestful::UnauthorizedAccess 401 (test-env invalid API key) but did NOT block the org save. Out of scope external service."
+  ],
+  "gate": "CLEAN ROUND (0 HIGH+, 0 findings at any severity). First clean Layer 3 round. One more consecutive clean round (round-2) required to converge."
+}

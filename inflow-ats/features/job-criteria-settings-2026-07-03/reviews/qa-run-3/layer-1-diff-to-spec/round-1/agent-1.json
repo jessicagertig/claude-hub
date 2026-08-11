@@ -1,0 +1,22 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 1,
+  "focus_area": "Authorization change (SPEC §9, SPEC §5.2): controller authorize lines, JobPolicy semantics, controller spec auth contexts, auth-commit scope",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §9 (POST create authorize job, :update?)",
+      "SPEC §9 (GET show authorize job, :show?)",
+      "SPEC §9 (update? = on_hiring_team? = is_org_admin? || record.users.include?(user))",
+      "SPEC §9 (show? = hiring-team member OR org admin)",
+      "SPEC §5.2 (controller authorize-after-find lines)",
+      "SPEC §12 test plan (auth contexts genuinely exercise update?)",
+      "DECISIONS.md 'Regenerate authorization = JobPolicy#update?' bullet",
+      "Auth-commit scope (859c85ead touches only the two auth files)"
+    ],
+    "implemented": 8,
+    "missing": 0,
+    "notes": "Traced: ai_job_criteria_controller.rb -> job_policy.rb -> job.rb (users assoc) -> hiring_team_membership.rb -> ai_job_application_summary_policy.rb -> ai_job_criteria_controller_spec.rb. (1) Controller: create calls `authorize job, :update?` (line 13, was `update_ai_settings?`); show calls `authorize job, :show?` (line 6). Both match SPEC §5.2/§9 exactly. (2) JobPolicy: update? = on_hiring_team? (line 20-22) = is_org_admin? || record.users.include?(user) (line 58-60); show? (line 12-14) = (is_org_user? && current_organization_user.jobs include record) || is_org_admin?. Both match SPEC §9 stated semantics (hiring-team member OR admin can regenerate; read stays show?). (3) Auth spec contexts genuinely exercise update? and are NOT ghost tests: the policy is NOT stubbed (only auth/session helpers are stubbed). Hiring-team-member context creates a real HiringTeamMembership(organization_user, job_record) so Job#users (has_many :users through :organization_users through :hiring_team_memberships) includes the user -> record.users.include?(user) true; the org_user is role: :org_user and the org setting hiring_team_ai_credits_control_enabled is set to false, so can_use_ai_credits? (is_org_admin? || (is_org_user? && hiring_team_ai_credits_control_enabled?)) = false -> under the OLD update_ai_settings? gate this user would 403, so the 'allows create'=>200 assertion is falsifiable by the gate and is a genuine regression guard, not tautological. The user is also allowed show (200). Outsider context is a non-admin org_user with NO HiringTeamMembership -> update? false -> 'rejects create'=>403 (falsifiable; removing the authorize would make it 200). The pair pins down update? semantics. (4) Scope: git diff --stat 3e5aaf7c5..HEAD and git show 859c85ead confirm the auth commit changed EXACTLY app/controllers/api/v1/ai_job_criteria_controller.rb (+1/-1) and spec/controllers/api/v1/ai_job_criteria_controller_spec.rb (+21/-2, incl. two describe rename + new outsider context) -- no scope creep. No findings."
+  }
+}

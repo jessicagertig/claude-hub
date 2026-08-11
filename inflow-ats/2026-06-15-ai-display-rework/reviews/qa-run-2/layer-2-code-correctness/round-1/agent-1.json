@@ -1,0 +1,50 @@
+{
+  "reviewer": "code-correctness-1",
+  "round": 1,
+  "layer": "L2-code-correctness",
+  "qaRun": 2,
+  "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+  "findings": [
+    {
+      "id": "PT-1-FIX",
+      "severity": "VERIFIED",
+      "title": "PT-1 fix is correct: structuredData available during regenerating",
+      "detail": "Line 49: `const structuredData = (statusValue === \"current\" || statusValue === \"regenerating\") ? fullSummary?.structuredData : null;` correctly includes \"regenerating\". Traced through renderBody (line 122-124): when statusValue is \"regenerating\" and fullSummary is truthy, renderSucceeded() is called. renderSucceeded (line 91-111) reads structuredData.assessment, structuredData.roleAnalysis, structuredData.applicableExperience, structuredData.gaps, structuredData.skills -- all via optional chaining or with || [] fallbacks. During regenerating, the status table's ai_job_application_summary_id still points to the OLD succeeded summary (update_summary_status_record callback in ai_job_application_summary.rb only updates the FK on succeeded transition), so useAiJobApplicationSummary fetches the old summary with its structuredData intact. Fix is correct."
+    },
+    {
+      "id": "PT-CC-1",
+      "severity": "LOW",
+      "title": "distanceInWords(summaryStatus?.updatedAt) produces garbage when updatedAt is null",
+      "location": "PlatoTab.tsx:98",
+      "detail": "summaryStatus?.updatedAt is typed as string | null. When null, distanceInWords(null) calls formatDistanceToNow(new Date(null)) which is new Date(0) (epoch), producing 'over 56 years ago'. This won't crash but displays nonsensical text. In practice, updatedAt should always be set when statusValue is 'current' or 'regenerating' (the backend sets updated_at: Time.current in update_summary_status_record), so this is a defensive gap rather than a runtime bug. Severity LOW because the null path is theoretically reachable but unlikely in production.",
+      "suggestion": "Guard: `distanceInWords(summaryStatus?.updatedAt || new Date().toISOString())`  or show a fallback like 'recently' when updatedAt is null."
+    },
+    {
+      "id": "PT-CC-2",
+      "severity": "MED",
+      "title": "renderHeaderRight does not handle statusValue === 'regenerating' -- no stale banner or regenerate button shown during regeneration",
+      "location": "PlatoTab.tsx:167",
+      "detail": "renderHeaderRight (line 167) only checks `statusValue === \"current\" && fullSummary?.stale`. When statusValue is \"regenerating\", this condition is false, so the header returns null -- no regenerate button, no buy-credits link. This is likely intentional (you wouldn't want to regenerate while already regenerating), but there is no visual indicator in the header that regeneration is in progress. The renderBody shows the old content via renderSucceeded, so the user sees the stale summary without any 'Regenerating...' indicator in the header. The stale banner inside PlatoSummary (line 40 of PlatoSummary.tsx) only shows when fullSummary.stale is true, which it should be during regeneration -- so there IS a stale indicator in the body. However, the spec line 73 says 'regenerating -> render PlatoGeneratedReviewCallout with refreshing indicator' (for the overview callout, not the tab). The tab itself has no spec requirement for a regenerating header indicator, so this may be intentional. Flagging as MED because it creates a slightly confusing UX: stale banner says 'Regenerate to update' but there's no regenerate button visible during regeneration.",
+      "suggestion": "Consider showing a disabled 'Regenerating...' button or a spinner in renderHeaderRight when statusValue is 'regenerating'. Or update the stale banner text to say 'Plato is regenerating this review' when statusValue is 'regenerating'."
+    },
+    {
+      "id": "PT-CC-3",
+      "severity": "INFO",
+      "title": "renderBody state machine analysis: no unreachable branches, correct ordering",
+      "detail": "Traced all paths: (1) current+fullSummary -> renderSucceeded. (2) regenerating+fullSummary -> renderSucceeded. (3) isGeneratingPipeline (fullSummary loaded, status not succeeded/failed) -> PlatoLoadingState. (4) fullSummary+failed -> PlatoTabEmptyState(failed). (5) no status + no resume -> PlatoTabEmptyState(noResume). (6) default -> PlatoTabEmptyState(ready or noCredits). All branches are reachable. Ordering is correct: current/regenerating checked before isGeneratingPipeline, which is checked before failed. The default fallthrough handles both 'no summary exists' and 'status is none'. No issues found."
+    },
+    {
+      "id": "PT-CC-4",
+      "severity": "INFO",
+      "title": "React hook rules: all hooks called unconditionally",
+      "detail": "All hooks (useToastContext, useCurrentSession, useModalContext, useGenerateAiSummary, useOrganizationAiCreditBalance, useAiJobApplicationSummary) are called at the top of the component before any conditional logic. useAiJobApplicationSummary uses enabled: aiJobApplicationSummaryId != undefined to conditionally fetch, which is the correct React Query pattern (not a conditional hook call). No dependency array issues -- useState/useEffect are only in child components (PlatoLoadingState). No violations."
+    },
+    {
+      "id": "PT-CC-5",
+      "severity": "INFO",
+      "title": "Null safety audit: all property accesses are safe",
+      "detail": "Checked: (1) summaryStatus?.headline || '' -- safe, optional chaining handles null summaryStatus. (2) summaryStatus?.scorePercentage || 0 -- safe (known pre-existing rule 10 item, not flagged). (3) fullSummary?.structuredData -- safe via optional chaining. (4) structuredData?.assessment -- safe. (5) fullSummary?.criteriaResults || [] -- safe. (6) fullSummary?.stale -- safe, passed as optional boolean to PlatoSummaryData. (7) currentOrganizationUser.isAdmin -- currentOrganizationUser comes from useCurrentSession which is a required context provider, so it will exist. (8) summaryStatus?.updatedAt -- see PT-CC-1 for the null case. All accesses are protected."
+    }
+  ],
+  "summary": "PT-1 fix verified correct. Two new findings: (1) LOW -- distanceInWords produces 'over 56 years ago' if updatedAt is null (unlikely in practice). (2) MED -- during 'regenerating' status, the stale banner says 'Regenerate to update' but no regenerate button is visible in the header, creating a slightly misleading CTA. No blockers or high-severity issues found. Hook rules, null safety, and state machine ordering are all correct."
+}

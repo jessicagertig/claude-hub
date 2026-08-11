@@ -1,0 +1,16 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "run": 5,
+  "head": "fc3f047f9",
+  "agents_dispatched": 15,
+  "agents_reporting": 15,
+  "execution": "sequential (shared test DB; each agent ran qa_harness cleanup then seed, then test_frr / live HTTP against RAILS_ENV=test server on port 5007)",
+  "high_plus_count": 0,
+  "findings": [],
+  "scenario_coverage": "Same 15 scenarios as round 1, fresh independent agents. All PASS: from_omniauth (new raw / existing-not-modified / nil+required-kw), #create (persist raw / no-params nil / jsonb variations), #magic_create (new hire / existing-confirmed / unconfirmed+no-params), org#create (copy / nil+body-tamper), jsonb integrity cross-path via raw SQL, raw storage no-mapping + 300-char uncapped, SSO string-key integration, cross-cutting absence + user->org e2e.",
+  "pre_existing_out_of_scope_observations": [
+    "Clearbit after-save 401 (test-env invalid API key) during org save — pre-existing, non-blocking, save succeeds (agents 10, 11)."
+  ],
+  "gate": "CLEAN ROUND (0 HIGH+, 0 findings at any severity). Second consecutive clean Layer 3 round. LAYER 3 CONVERGED."
+}

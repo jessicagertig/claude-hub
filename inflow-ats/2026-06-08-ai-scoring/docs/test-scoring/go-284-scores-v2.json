@@ -1,0 +1,111 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience building backend services and APIs in Go (e.g., NetBird contract, Dcup project). However, there is no direct experience listed in building a PaaS or specific orchestrator/scheduler logic."
+    },
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate has experience with Kubernetes (via KubeVirt project) and cloud providers (AWS, Azure), but lacks specific documented experience with Terraform or working in a cross-cloud integration capacity."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of experience architecting or maintaining multi-cloud racks or environments in customer accounts."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate has experience with CLI tools and CI/CD, and has worked in agile environments with frontend/backend components, but lacks direct experience in cross-functional collaboration on developer-facing platform features."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate's projects (Cloud Cup, Dcup) mention scalability and performance, but they lack explicit experience implementing monitoring, alerting, or multi-cloud failover strategies."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Mentions contributing to open source via Git workflows and code review processes, which implies some experience, but not explicitly defining best practices for backend infra."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Candidate lists 3+ years of experience in Go and has used it in production-level work (NetBird contract) and significant side projects (Dcup, Cloud Cup)."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Contributed to KubeVirt, which is a K8s add-on, demonstrating a good technical understanding, but does not specify experience with autoscaling, service mesh, or complex cluster design."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No mention of Terraform or similar IaC tools like Pulumi or CloudFormation in the resume."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Lists AWS and Azure in technical skills, but the depth of managing services, network, compute, etc., is not clearly defined in the work experience."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The 'Dcup' project, a self-hostable RAG-as-a-Service platform, demonstrates a clear understanding of abstracting infrastructure for developer use cases."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Explicitly lists CI/CD and developer tooling, and the 'Dcup' project includes integrations with cloud data providers like AWS."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of experience publishing to cloud marketplaces."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No mention of working in multi-cloud or customer-facing deployment roles."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The Cloud Cup project (reverse proxy) focuses on high-concurrency and fault tolerance, but does not explicitly mention multi-region or multi-tenant architectures."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Extensive experience listed with open source projects including KubeVirt, smallstep, and self-hosted platforms."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No mention of monitoring or logging tools like Prometheus, Grafana, or ELK stack."
+    }
+  ],
+  "computed_score": {
+    "points": 33.0,
+    "max": 72,
+    "percentage": 45.8
+  }
+}

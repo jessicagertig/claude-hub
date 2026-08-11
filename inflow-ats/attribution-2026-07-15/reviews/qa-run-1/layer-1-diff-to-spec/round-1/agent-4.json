@@ -1,0 +1,34 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 4,
+  "focus_area": "registrations controller (2nd pass)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "SPEC 4.1 sign_up_params permits :utm_source/:utm_campaign/:internal_ref as plain params and utm_data: {} as trailing hash-permit",
+      "SPEC 4.2 magic_create merges the four keys into user_params in BOTH branches of the two-branch conditional",
+      "SPEC 4.2 raw storage (no downcase, no get_created_via-style mapping)",
+      "SPEC 4.2 nil for absent params (utm_data nil, never {})",
+      "SPEC 4.2 no response-shape/identify/track/redirect changes in magic_create",
+      "SPEC 4.2 existing-user branches behaviorally unaffected (read only user_params[:email])",
+      "SPEC 4.3 create path unchanged beyond the permit (assigned via expanded_params = sign_up_params.merge)",
+      "SPEC 9.1 six enumerated registrations spec scenarios present and falsifiable (no ghost tests)",
+      "SPEC 9.1 every magic_create POST includes login_intent: 'hire'",
+      "SPEC 9.1 @request.env['devise.mapping'] = Devise.mappings[:api_v1_user] set AND Devise::Test::ControllerHelpers included in the describe block",
+      "SPEC 7 constraint 2 (nil for absent - no || \"\" / || {} fallbacks)",
+      "SPEC 7 constraint 4 (raw storage - no mapping/downcasing)",
+      "SPEC 7 constraint 5 (creation-time only - existing users never updated)"
+    ],
+    "verified": [
+      "SPEC 4.1: app/controllers/api/v1/registrations_controller.rb:310 permit adds :utm_source, :utm_campaign, :internal_ref as plain single-value params and utm_data: {} as the trailing argument, matching the questions_controller options: {} form; all pre-existing permitted params retained unchanged",
+      "SPEC 4.2: connect branch (lines 96-100) and default branch (lines 110-113) both merge utm_source/utm_campaign/utm_data/internal_ref from sign_up_params, in the spec's declared key order; the connect_login_intent_organization_id comment retained; sign_up_params[<key>] is nil for absent params so nil-for-absent holds; ActionController::Parameters as_json is delegated to @parameters (actionpack 6.1.7.7 strong_parameters.rb:247) so the permitted utm_data hash serializes to plain-JSON on the jsonb column and round-trips string-keyed",
+      "SPEC 4.2: diff contains zero changes to magic_create's render/redirect lines, MagicLink.generate call, sign_in/sign_up calls, or PosthogIdentifyJob/PosthogTrackJob calls - JSON responses byte-identical; existing-confirmed (lines 119-145) and existing-unconfirmed (lines 146-157) branches use user_params only via user_params[:email], so the added keys are inert there",
+      "SPEC 4.3: create action (lines 10-71) has zero diff; the four values flow through expanded_params = sign_up_params.merge(...) at lines 13-16 automatically",
+      "SPEC 9.1: spec/controllers/api/v1/registrations_controller_spec.rb (new, 163 lines) contains all six scenarios: (1) magic_create new-user with utm_source 'SomeRawValue', utm_campaign 'Camp01', internal_ref 'ref-99', multi-key utm_data - asserts verbatim storage (mixed-case values falsify any downcase/mapping) and string-keyed hash round-trip; (2) magic_create with none of the four - asserts be_nil on all four including utm_data (falsifies a jsonb {} default); (3) existing-confirmed-user branch with all four params - reload asserts columns unmodified (would fail if the branch assigned them); (4) existing-UNCONFIRMED-user resend-confirmation branch with all four params - reload asserts unmodified (branch calls sign_in, warden provided by Devise::Test::ControllerHelpers); (5) create with the four params - asserts verbatim persistence; (6) create without them - asserts all nil. Each assertion fails if the corresponding permit/merge/column is deleted - no ghost tests",
+      "SPEC 9.1: all four magic_create POSTs include login_intent: 'hire' (routing around the pre-existing connect-branch organization.id-on-nil NoMethodError, per spec, without fixing it); @request.env['devise.mapping'] = Devise.mappings[:api_v1_user] set in a before block inside the describe; include Devise::Test::ControllerHelpers at the top of the describe block, matching the cited precedent spec/controllers/api/v1/bulk_ai_job_application_summaries_controller_spec.rb (which also uses the identical around ActiveJob :test queue-adapter block, so that block traces to the named suite precedent); rails_helper confirms no global Devise controller helpers (only type: :request includes at lines 19-21); Recaptcha::Verifier#verify returns success in test env unstubbed (app/services/recaptcha/verifier.rb:16), consistent with the spec's no-stubbing note; route POST /magic_login -> registrations#magic_create confirmed under devise_scope :api_v1_user (config/routes.rb:81-82)",
+      "SPEC 7.2/7.4/7.5: no || fallbacks anywhere in the controller diff; values stored raw (deliberate contrast with the adjacent partner_source&.downcase and get_created_via mapping, both untouched); assignment reaches a User row only via build_resource in the new-user paths (magic_create else-branch line 166, create line 20); schema.rb confirms users.utm_source/utm_campaign/utm_data/internal_ref with no defaults (lines 1285-1288)"
+    ],
+    "missing": []
+  }
+}

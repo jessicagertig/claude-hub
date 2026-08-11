@@ -1,0 +1,22 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 5,
+  "agent_index": 1,
+  "assignment": "D5 predicate zero-cash cells",
+  "findings": [],
+  "verified": [
+    "amount_paid=0, trial_end PRESENT: 0 SubscriptionEvent rows created; org stripe_current_period_end_at updated to the stubbed subscription's current_period_end (epoch 1790460262 observed = expected); no Discord/Notification/PosthogTrackJob enqueues",
+    "amount_paid=0, trial_end ABSENT: 0 rows; period-end updated (1790546662 observed = expected); no notification enqueues",
+    "amount_paid=nil, trial_end PRESENT: no crash (nil.to_i cash gate), 0 rows; period-end updated (1790633062 observed = expected)",
+    "amount_paid=nil, trial_end ABSENT: no crash, 0 rows; period-end updated (1790719462 observed = expected)",
+    "Existing branch behavior ran in every cell: organization.update persisted the new period end; stripe_update_default_payment_method executed (observed its Stripe::Subscription.retrieve({id:, expand: ['items.data.price.tiers']}) call, bailed on nil default_payment_method, no Stripe::PaymentMethod.list); organization_ai_credit_balance.reset_ai_credits ran (last_reset_at refreshed, monthly grant of 50 posted per delivery)",
+    "Total SubscriptionEvent rows in DB after all 4 deliveries: 0 (live query, seeded Acme Inc. org id 37128, stripe_subscription_id test_subscription_e6465a2e9e5c5bab)",
+    "No real Stripe traffic: Stripe::Subscription.retrieve / Stripe::PaymentMethod / Stripe::Customer.update stubbed in-script; only the two expected retrieve calls recorded per cell",
+    "ActiveJob queue adapter :test throughout; enqueued_jobs empty in every cell"
+  ],
+  "scripts": [
+    "/tmp/qa5_l3_a1_probe.rb",
+    "/tmp/qa5_l3_a1_zero_cash.rb"
+  ]
+}

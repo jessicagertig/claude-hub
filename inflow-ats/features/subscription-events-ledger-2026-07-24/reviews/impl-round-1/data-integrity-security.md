@@ -1,0 +1,11 @@
+# Always-on — Data integrity & security — impl round 1
+
+## Findings: 0 BLOCKER / 0 HIGH / 0 MED / 0 LOW
+
+- **Uniqueness invariant is real, layered, and live:** (1) check-first interactor guard (by `stripe_subscription_id` alone, matching the index scope); (2) partial unique index `idx_subscription_events_conversion_stripe_sub_id` (`event_type IN (2, 8)`) — applied to BOTH dev and test DBs (`db:migrate:status` up in both); (3) `rescue ActiveRecord::RecordNotUnique` backstop → graceful `context.fail!`. The backstop spec example hits the live index (check-first stubbed out) and passes — the index demonstrably raises. NULL `stripe_subscription_id` rows are index-exempt (Postgres NULL-distinct), matching the guard's `present?` gate.
+- **No mass-assignment surface:** zero controller/params/serializer/route changes; writers are internal callers passing explicit keyword context. The new columns are reachable only via the interactor and console.
+- **No destructive data operations:** migration is additive (two nullable columns + index); no backfill, no data migration, no update/delete of existing rows. Enum values 0/1 (live production rows) byte-identical.
+- **Transaction safety:** no `update_columns` inside transactions added (pipeline rule 25 — the diff adds none; the webhook's pre-existing `update_column(:subscription_canceled_at, …)` is untouched and outside any transaction). The fan-out runs `after_commit` — enqueues never fire for rolled-back rows.
+- **Billing-path containment:** both webhook writers are rescue-isolated so no ledger/DB failure can reach the existing rescue tiers or alter billing behavior (which completes before each insertion); interactor failures are non-raising by construction (`.call` non-bang).
+- **PII in payloads:** PostHog properties carry attribution identifiers + `stripe_customer_id`/`stripe_subscription_id`/`to_plan`/`amount` — same class of data the existing `Posthog::Track` defaults (email, org name) already send to PostHog; no new category of secret (no card data, no tokens). Log lines carry ids and messages only.
+- **Idempotency under webhook redelivery:** conversions — guard + index; cancellations — 5-minute same-params dedupe (spec §5.3's stated mechanism; no index coverage by design since re-subscribed orgs cancel again under new subscription ids).

@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "version": 1,
+    "call": 2,
+    "model": "gpt-4o-mini",
+    "job_id": 13033,
+    "title": "Elixir Developer",
+    "organization": "Select",
+    "input_tokens": 1311,
+    "output_tokens": 433,
+    "cost": 0.000456,
+    "criteria_count": 7,
+    "tier_counts": {
+      "tier_1": 3,
+      "tier_2": 2,
+      "tier_3": 2
+    },
+    "binary_count": 0,
+    "decomposed_count": 3
+  },
+  "result": {
+    "criteria": [
+      {
+        "text": "Knowledge of Elixir and OTP at the level that allows you to write working, high-quality code",
+        "tier": "tier_1",
+        "tier_reasoning": "The content indicates this is critical or required with the phrase 'at the level that allows you to write working, high-quality code'",
+        "binary": false,
+        "source_text": "Knowledge of Elixir and OTP at the level that allows you to write working, high-quality code"
+      },
+      {
+        "text": "Able to fine-tune Postgres queries with Ecto or SQL",
+        "tier": "tier_1",
+        "tier_reasoning": "The content uses 'Able to', which signals a strong expectation of capability and is a requirement for the role",
+        "binary": false,
+        "source_text": "Able to fine-tune Postgres queries with Ecto or SQL"
+      },
+      {
+        "text": "Ability to write clear and maintainable tests",
+        "tier": "tier_1",
+        "tier_reasoning": "The content uses 'Ability to', signaling this is critical",
+        "binary": false,
+        "source_text": "Ability to write clear and maintainable tests"
+      },
+      {
+        "text": "Good understanding of common architectural patterns and design principles",
+        "tier": "tier_2",
+        "tier_reasoning": "Default tier as it is not explicitly marked as required but is framed as an expectation",
+        "binary": false,
+        "source_text": "Good understanding of common architectural patterns and design principles"
+      },
+      {
+        "text": "Solid understanding of modern web applications and API design",
+        "tier": "tier_2",
+        "tier_reasoning": "Default tier as it is not explicitly marked as required but indicates a good understanding is expected",
+        "binary": false,
+        "source_text": "Solid understanding of modern web applications and API deisgn"
+      },
+      {
+        "text": "Experience with mentoring or pair programming",
+        "tier": "tier_3",
+        "tier_reasoning": "Labeled as a 'bonus' which indicates it is optional",
+        "binary": false,
+        "source_text": "(bonus) Experience with mentoring or pair programming"
+      },
+      {
+        "text": "DevOps understanding and ability to set up CI pipeline and deployment",
+        "tier": "tier_3",
+        "tier_reasoning": "Labeled as a 'bonus' which indicates it is optional",
+        "binary": false,
+        "source_text": "(bonus) DevOps understanding and ability to set up CI pipeline and deployment"
+      }
+    ]
+  }
+}

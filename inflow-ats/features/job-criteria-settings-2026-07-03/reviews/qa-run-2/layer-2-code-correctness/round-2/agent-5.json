@@ -1,0 +1,23 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agent_index": 5,
+  "focus_area": "Frontend data layer + full websocket round-trip contract (backend broadcast <-> payload type <-> handler invalidation/toast) + jobCriteriaTiers",
+  "files_reviewed": [
+    "app/javascript/shared/queryHooks/useAiJobCriteria.ts",
+    "app/javascript/shared/types/aiSummaryWebsocketPayloads.ts",
+    "app/javascript/ats/src/websockets/WebsocketGlobalChannelHandler.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/jobCriteriaTiers.ts",
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/services/ai_job_application_action/scoring/extract_criteria.rb",
+    "app/services/ai_job_application_action/scoring/prompts/job_description_criteria_extraction.rb",
+    "app/javascript/shared/queryHooks/api.ts",
+    "app/javascript/ats/src/lib/utils/structure.js",
+    "app/models/job.rb",
+    "app/channels/global_channel.rb",
+    "config/routes.rb"
+  ],
+  "findings": []
+}

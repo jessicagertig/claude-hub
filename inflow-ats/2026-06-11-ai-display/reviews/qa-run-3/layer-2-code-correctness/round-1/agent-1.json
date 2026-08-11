@@ -1,0 +1,64 @@
+{
+  "agent": "agent-1",
+  "assignedFiles": [
+    "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx"
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 349,
+      "severity": "HIGH",
+      "category": "logic-error",
+      "title": "Header Regenerate button shown when status is succeeded but totalRemaining is 0 -- no buy-credits fallback",
+      "description": "When status is 'succeeded', the header bar always shows the Regenerate button (line 349-352) which calls handleGenerate directly. When the organization has zero credits remaining, the user clicks Regenerate, the backend rejects it, and they see a generic error toast. There is no way for the user to discover they need to buy credits or navigate to the billing page from this state. By contrast, the empty and failed states both route through renderCreditsAction which shows the admin buy-credits link or non-admin modal when credits are zero. The succeeded+zero-credits case has no equivalent UX path to purchase credits.",
+      "evidence": "Line 349: `{status === \"succeeded\" ? (` renders Button with onClick={handleGenerate}. No totalRemaining check. Compare with renderCreditsAction (lines 80-109) which has the zero-credits branch.",
+      "suggestedFix": "When status is succeeded and totalRemaining is 0, either (a) disable the Regenerate button and show a credit hint/link, or (b) show the buy-credits pattern instead of the Regenerate button. The stale banner (line 144) has the same issue -- it calls handleGenerate with no credit check. Both surfaces should degrade gracefully to the buy-credits UX when credits are exhausted."
+    },
+    {
+      "id": "F2",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 144,
+      "severity": "HIGH",
+      "category": "logic-error",
+      "title": "Stale banner Regenerate action has no zero-credits guard",
+      "description": "The stale banner's Regenerate action (line 144) calls handleGenerate directly with no check on totalRemaining. When credits are zero, clicking this silently fires a mutation that the backend will reject. The user gets an error toast but no path to purchase credits. The stale banner is the primary CTA when a summary is stale -- a user encountering this with zero credits has no actionable next step visible in the UI.",
+      "evidence": "Line 144: `<Styled.StaleAction onClick={handleGenerate} disabled={buttonLoading}>`. No conditional on totalRemaining. Compare renderCreditsAction lines 92-108 for the zero-credits pattern.",
+      "suggestedFix": "When totalRemaining is 0, replace the stale banner's Regenerate action with the buy-credits pattern (admin link or non-admin modal), or at minimum change the label to indicate credits are needed and show a link."
+    },
+    {
+      "id": "F3",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 86,
+      "severity": "MED",
+      "category": "edge-case",
+      "title": "Credit hint copy determined by fragile string comparison on button label",
+      "description": "The renderCreditsAction function (line 86) uses `buttonLabel === \"Generate summary\"` to decide between two credit hint variants. This couples display copy to branching logic -- if a future change renames the button label without updating this check, the credit hint silently shows the wrong copy. The spec defines distinct hint copy per state (empty vs. failed), not per button label string.",
+      "evidence": "Line 86-88: `{buttonLabel === \"Generate summary\" ? \\`Uses 1 credit \\u00b7 ${totalRemaining} remaining\\` : \"Uses 1 credit\"}`",
+      "suggestedFix": "Pass an explicit boolean or enum (e.g., showRemaining: boolean) to renderCreditsAction instead of comparing button label strings. Or accept both buttonLabel and creditHint as separate parameters."
+    },
+    {
+      "id": "F4",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 354,
+      "severity": "MED",
+      "category": "edge-case",
+      "title": "Kebab menu button shown for non-succeeded states but has no functionality",
+      "description": "When status is not 'succeeded', the header shows a kebab button (lines 354-356) that renders an Icon but has no onClick handler, no dropdown, and no aria label. Clicking it does nothing. The spec says 'a kebab icon button (otherwise)' but does not define what the kebab menu should contain. This is a non-functional interactive element.",
+      "evidence": "Lines 354-356: `<Styled.KebabButton><Icon name=\"more-vertical\" /></Styled.KebabButton>` -- no onClick, no menu, no aria-label.",
+      "suggestedFix": "Either (a) add a comment documenting that the kebab menu actions are planned for a follow-up, (b) hide the button entirely until actions are defined, or (c) at minimum add aria-label='Options' for accessibility. A button with no action is a UX dead-end."
+    },
+    {
+      "id": "F5",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 40,
+      "severity": "MED",
+      "category": "edge-case",
+      "title": "useAiJobApplicationSummary called with aiJobApplicationSummaryId of 0 when status is not succeeded -- relies on hook's enabled guard",
+      "description": "Line 40 computes `(status === \"succeeded\" && aiSummary?.id) || 0`, passing 0 as the summary ID when the status is not succeeded. The hook disables itself when the ID is 0 (verified in the hook source: `enabled: !!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0`). This works but is implicit -- the correctness of skipping the fetch depends on an implementation detail of the hook. If the hook's enabled guard were ever removed, this would fire a request to /ai_job_application_summaries/0 which would 404.",
+      "evidence": "Line 40: `aiJobApplicationSummaryId: (status === \"succeeded\" && aiSummary?.id) || 0` -- relies on hook internal `enabled` check. The analog AiJobApplicationSummaryFeedItem.tsx passes the actual ID unconditionally and lets the hook's own conditions handle it.",
+      "suggestedFix": "This is spec-compliant and matches the lazy-fetch pattern described in the spec. The hook's enabled guard is the documented contract. No fix required -- noting for awareness only."
+    }
+  ],
+  "summary": "PlatoTab.tsx has 2 HIGH findings related to missing zero-credits guards on the header Regenerate button and stale banner action. When an organization has exhausted credits, both surfaces fire a mutation the backend rejects and show an error toast with no path to purchase credits -- unlike the empty/failed states which properly show the buy-credits pattern. There are 3 MED findings: fragile string comparison for credit hint copy, a non-functional kebab button, and an implicit dependency on the query hook's enabled guard."
+}

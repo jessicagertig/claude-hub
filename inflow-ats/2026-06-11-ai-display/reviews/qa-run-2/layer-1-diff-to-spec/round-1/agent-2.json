@@ -1,0 +1,356 @@
+{
+  "agent": "agent-2",
+  "focus": "Complete spec coverage verification across all changed files",
+  "round": 1,
+  "findings": [
+    {
+      "id": "H1",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "lines": "38-41",
+      "spec_section": "AI summary data fetching (line 308)",
+      "title": "useAiJobApplicationSummary fires for all statuses, not just succeeded",
+      "description": "The spec states: 'fetch the full data only when status is succeeded and the rich layout needs rendering.' The implementation calls useAiJobApplicationSummary unconditionally with aiSummary?.id || 0. The hook's enabled condition (aiJobApplicationSummaryId > 0) prevents firing when no summary exists, but it does fire when a summary exists with any status (pending, in_progress, extracted, textract_processing, failed). This means unnecessary network requests occur for non-succeeded statuses. The fix is to pass 0 as the ID unless status is succeeded: aiJobApplicationSummaryId: status === 'succeeded' ? aiSummary?.id : 0.",
+      "spec_quote": "use the shallow aiJobApplicationSummary from the jobApplication object for status checks, then fetch the full data only when status is succeeded and the rich layout needs rendering",
+      "code_actual": "const { data: fullSummary } = useAiJobApplicationSummary({\n    jobApplicationId: jobApplication.id,\n    aiJobApplicationSummaryId: aiSummary?.id || 0,\n  });",
+      "fix": "Change line 40 to: aiJobApplicationSummaryId: (status === 'succeeded' && aiSummary?.id) || 0,"
+    },
+    {
+      "id": "H2",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "lines": "80-91",
+      "spec_section": "Credit balance and out-of-credits handling (line 314-316) + Empty / Failed action layout (line 81)",
+      "title": "renderCreditsAction uses string comparison for credit hint copy instead of following spec copy pattern for failed state",
+      "description": "The spec defines distinct credit hint copy: 'Uses 1 credit . N remaining' for the empty/generate state and 'Uses 1 credit' for the failed/try-again state. The implementation dispatches on buttonLabel === 'Generate summary' to select between these. This works for the current two callers (renderEmpty passes 'Generate summary', renderFailed passes 'Try again'), but it encodes the copy logic via string comparison against button labels rather than an explicit parameter. If the button label ever changes, the credit hint breaks silently. However, this is a code quality concern rather than a spec mismatch, since the actual rendered copy matches the spec for both states today. Downgrading from initial assessment -- no user-visible deviation.",
+      "spec_quote": "The credit hint copy ('Uses 1 credit . N remaining' for empty, 'Uses 1 credit' for failed)",
+      "disposition": "RETRACTED -- rendered output matches spec; code quality concern only"
+    },
+    {
+      "id": "H3",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+      "lines": "397",
+      "spec_section": "JobApplicationActivity.tsx -- replace inline AI display (line 162-165)",
+      "title": "onOpen URL construction deviates from spec but is functionally correct given route context",
+      "description": "The spec says: 'Use history.push(`${match.url}/ai`)'. The implementation uses: history.push(`${match.url.replace(/\\/[^/]+$/, '')}/ai`). The deviation is necessary because inside JobApplicationActivity, the match prop comes from the overview route's renderProps, so match.url ends in '/overview'. Appending '/ai' directly would produce '.../overview/ai' (wrong). The regex strips the trailing segment first. The spec's instruction is technically wrong for this context (it assumes the parent match, not the route-specific match). The implementation's approach is correct. The spec should have said: 'Strip the current sub-path from match.url before appending /ai'.",
+      "spec_quote": "Use history.push(`${match.url}/ai`). The history prop is already typed and destructured (line 40), but match is not",
+      "disposition": "RETRACTED -- spec instruction would produce an incorrect URL; implementation correctly handles the route context"
+    },
+    {
+      "id": "H4",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "lines": "349-357",
+      "spec_section": "PlatoTab structure / header bar (line 51)",
+      "title": "Header kebab button renders for all non-succeeded states including no-summary states",
+      "description": "The spec says the header has 'either a Regenerate ghost button (when succeeded) or a kebab icon button (otherwise) on the right.' The implementation renders the kebab button for all non-succeeded states, including the no-summary states (empty and no-resume). In those states, there is no summary to take action on -- the kebab button is functionless (no onClick handler, no dropdown menu). This is a spec-implementation question: the spec says 'otherwise' which technically means all non-succeeded states, but a functionless kebab button in zero-states seems unintentional. The spec may have intended the kebab only when a summary exists. The implementation follows the spec literally but the kebab does nothing.",
+      "spec_quote": "a 'Regenerate' ghost button (when succeeded) or a kebab icon button (otherwise) on the right",
+      "code_actual": "The kebab button at line 354-356 has no onClick handler and no dropdown menu attached"
+    },
+    {
+      "id": "H5",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoOverviewCallout.tsx",
+      "lines": "104-113",
+      "spec_section": "Activity feed event connectors (lines 300-304)",
+      "title": "Connector tick uses t.spacing[6] for height instead of explicit 24px; left position differs from analog",
+      "description": "The spec says the connector is '24px-tall' and should match the Styled.Event ::after pattern at JobApplicationActivity.tsx lines 671-681. The implementation uses height: ${t.spacing[6]} which maps to 1.5rem = 24px at default font size, matching the spec. The left positioning uses left: 28px (derived from 28px = gap to align with chip center), while the Styled.Event analog uses left: ${t.spacing[6]}. The visual positioning is adapted for the callout's different layout (chip-aligned vs icon-aligned), so this difference is intentional and correct. No issue -- retracted after full analysis.",
+      "disposition": "RETRACTED -- spacing value matches 24px and left positioning is correctly adapted for the callout layout"
+    },
+    {
+      "id": "H6",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+      "lines": "278-289",
+      "spec_section": "JobApplicationContainer.tsx -- add Plato tab route (lines 127-128)",
+      "title": "Route gated via isAiEnabled conditional render instead of FeatureFlipper component wrapper",
+      "description": "The spec says 'Wrap the new route in <FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">' (line 128). The implementation uses {isAiEnabled && (<Route ...>)} instead. Both achieve identical behavior: the route only renders when the flag is on. The spec itself recommends using useFeatureFlipper + isAiEnabled for the possiblePaths logic (line 129), making the FeatureFlipper component wrapper redundant since the same boolean already gates the route. The implementation is arguably cleaner (one mechanism, not two). However, the spec explicitly says to use the component wrapper, and the implementation does not import FeatureFlipper at all in this file.",
+      "spec_quote": "Wrap the new route in <FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">",
+      "code_actual": "{isAiEnabled && (\n  <Route\n    path={`${match.path}/ai`}\n    ...\n  />\n)}",
+      "disposition": "RETRACTED -- functionally identical; the spec's own isAiEnabled example makes the FeatureFlipper wrapper redundant, and the implementation chose the cleaner single-mechanism approach"
+    }
+  ],
+  "verified_spec_requirements": [
+    {
+      "requirement": "PlatoMark: 3 SVG variants (sparkle, sparkles, wand)",
+      "status": "PASS",
+      "location": "PlatoMark.tsx lines 29-59"
+    },
+    {
+      "requirement": "PlatoMark: aria-hidden='true' on SVG element",
+      "status": "PASS",
+      "location": "PlatoMark.tsx line 64"
+    },
+    {
+      "requirement": "PlatoMark: default size=16, uses currentColor",
+      "status": "PASS",
+      "location": "PlatoMark.tsx line 13"
+    },
+    {
+      "requirement": "PlatoChip: gradient, hairline shadow, star size ratio",
+      "status": "PASS",
+      "location": "PlatoMark.tsx lines 77-83, 98-106. Gradient matches spec (120deg, #FBD7FF 10%, #FFDEC1 90%), hairline inset 0 0 0 1px rgba(0,0,0,0.07), star size Math.round(size * 0.62)"
+    },
+    {
+      "requirement": "PlatoChip: glyph color always colors.gray[900]",
+      "status": "PASS",
+      "location": "PlatoMark.tsx line 80"
+    },
+    {
+      "requirement": "PlatoMark: Emotion styled components with labels",
+      "status": "PASS",
+      "location": "PlatoMark.tsx lines 92-106. Both Styled.Wrapper and Styled.Chip have labels"
+    },
+    {
+      "requirement": "PlatoTab: 6-state state machine in correct evaluation order",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 319-339. Order: succeeded, generating (pending/in_progress/extracted), textract_processing, failed, empty (no summary + hasResume), no resume"
+    },
+    {
+      "requirement": "PlatoTab: container structure (flex column, header, scrollable body)",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 341-364, styled components at 385-458"
+    },
+    {
+      "requirement": "PlatoTab: header bar with PlatoChip + 'Plato' label + Regenerate/kebab",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 343-358. PlatoChip(26,7), Regenerate uses Button styleType='text'"
+    },
+    {
+      "requirement": "PlatoTab: body max-width 720px, padding 22px 28px 56px",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 453-458 (Styled.BodyInner)"
+    },
+    {
+      "requirement": "PlatoTab succeeded: provenance line with distanceInWords (not timeAgoInWordsShort)",
+      "status": "PASS",
+      "location": "PlatoTab.tsx line 133, import at line 16"
+    },
+    {
+      "requirement": "PlatoTab succeeded: stale banner with alert-triangle icon and Regenerate button",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 136-151"
+    },
+    {
+      "requirement": "PlatoTab succeeded: headline h1, 23px/1.28/600/-0.02em, text-wrap: pretty",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 554-566 (Styled.Headline)"
+    },
+    {
+      "requirement": "PlatoTab succeeded: domain labels with 3px filled circle separator",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 155-165, styled at 568-597 (DomainDot: 3px/3px circle, gray[500])"
+    },
+    {
+      "requirement": "PlatoTab succeeded: 'Fit for this role' card with gradient bar and PlatoMark 15px",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 167-178, styled at 609-661. 3px gradient bar, 1px border, 9px radius, 16px 20px 20px padding, PlatoMark(15, gray[700]), 13.5px/600 label"
+    },
+    {
+      "requirement": "PlatoTab succeeded: role analysis falls back to summaryText",
+      "status": "PASS",
+      "location": "PlatoTab.tsx line 175"
+    },
+    {
+      "requirement": "PlatoTab succeeded: notable achievements with award icon 15px",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 180-193, styled at 681-718. 15px icon, 9px gap, 14px/21px text"
+    },
+    {
+      "requirement": "PlatoTab succeeded: relevant experience and gaps sections with eyebrow",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 196-208, styled at 720-731 (Prose: 14.5px/23px, max-width 66ch)"
+    },
+    {
+      "requirement": "PlatoTab succeeded: skills chip cloud with key skills sorted to front",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 119-126 (sorting), 210-220 (rendering), 740-768 (chip styles with t.dark ternary for key skill fill)"
+    },
+    {
+      "requirement": "PlatoTab succeeded: footer disclaimer with info icon and correct copy",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 222-229, styled at 770-804. 30px top margin, 14px top padding, 1px border, info icon 13px gray[400], 12px placeholderText"
+    },
+    {
+      "requirement": "PlatoTab: eyebrow style uses t.text.xs standalone (not inside font-size:)",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 668-679 (Styled.Eyebrow). Uses ${[t.text.xs]} spread correctly"
+    },
+    {
+      "requirement": "PlatoTab: action column layout (column, centered, 8px gap)",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 987-994 (Styled.ActionColumn)"
+    },
+    {
+      "requirement": "PlatoTab: generating skeleton with shimmer and dot animations",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 234-261 (render), 372-375 (shimmer keyframes), 377-380 (dotPulse keyframes)"
+    },
+    {
+      "requirement": "PlatoTab: prefers-reduced-motion: reduce on both animations",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 838-840 (dots), 867-869 (shimmer bar), 890-892 (shimmer block), 917-919 (shimmer chip)"
+    },
+    {
+      "requirement": "PlatoTab: generate mutation with success/error toasts",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 47-63. Success toast 'Summary generation queued', error toast with server message"
+    },
+    {
+      "requirement": "PlatoTab: credit balance display with buy-credits pattern",
+      "status": "PASS",
+      "location": "PlatoTab.tsx lines 80-109 (renderCreditsAction). Admin: internalLink to /hire/settings/ai-billing. Non-admin: modal"
+    },
+    {
+      "requirement": "PlatoOverviewCallout: 6-state copy variants in correct evaluation order",
+      "status": "PASS",
+      "location": "PlatoOverviewCallout.tsx lines 21-51. Succeeded (stale/not-stale), failed, generating, no summary+resume, no summary+no resume"
+    },
+    {
+      "requirement": "PlatoOverviewCallout: button element with reset CSS",
+      "status": "PASS",
+      "location": "PlatoOverviewCallout.tsx lines 76-115 (Styled.Card). appearance:none, background:none, border:none, padding:0, text-align:left, width:100%, cursor:pointer, font:inherit"
+    },
+    {
+      "requirement": "PlatoOverviewCallout: connector tick (::after pseudo-element)",
+      "status": "PASS",
+      "location": "PlatoOverviewCallout.tsx lines 104-113. 4px width, t.spacing[6] height, gray[800]/gray[200] dark mode"
+    },
+    {
+      "requirement": "PlatoOverviewCallout: card styling with border, radius, cardCanvas, hover, transition",
+      "status": "PASS",
+      "location": "PlatoOverviewCallout.tsx lines 89-102. 1px border, poly.radii.md, cardCanvas bg, borderHover on hover, 0.2s transition"
+    },
+    {
+      "requirement": "PlatoOverviewCallout: subtitle single-line with text-overflow ellipsis",
+      "status": "PASS",
+      "location": "PlatoOverviewCallout.tsx lines 144-154"
+    },
+    {
+      "requirement": "PlatoOverviewCallout: 3px accent-gradient left bar",
+      "status": "PASS",
+      "location": "PlatoOverviewCallout.tsx lines 117-125"
+    },
+    {
+      "requirement": "PlatoOverviewCallout: clicking card calls onOpen, never triggers generate mutation",
+      "status": "PASS",
+      "location": "PlatoOverviewCallout.tsx line 54 (onClick={onOpen}). No import of useGenerateAiSummary"
+    },
+    {
+      "requirement": "JobApplicationContainer: PlatoTab import and /ai route",
+      "status": "PASS",
+      "location": "JobApplicationContainer.tsx lines 17-18 (imports), 278-289 (route)"
+    },
+    {
+      "requirement": "JobApplicationContainer: possiblePaths conditionally includes 'ai'",
+      "status": "PASS",
+      "location": "JobApplicationContainer.tsx line 155. Uses isAiEnabled spread with Features enum"
+    },
+    {
+      "requirement": "JobApplicationContainer: isAiEnabled defined at component top level (not inside useEffect)",
+      "status": "PASS",
+      "location": "JobApplicationContainer.tsx lines 45-46. useFeatureFlipper() called at top level"
+    },
+    {
+      "requirement": "JobApplicationContainer: useEffect deps include isAiEnabled",
+      "status": "PASS",
+      "location": "JobApplicationContainer.tsx line 162"
+    },
+    {
+      "requirement": "JobApplicationSidebar: PlatoNavItem using NavLink with isPropValid",
+      "status": "PASS",
+      "location": "JobApplicationSidebar.tsx line 471"
+    },
+    {
+      "requirement": "JobApplicationSidebar: linkStyles copied verbatim from NavItem.tsx",
+      "status": "PASS",
+      "location": "JobApplicationSidebar.tsx lines 429-469. Compared against NavItem.tsx lines 56-95: identical properties, responsive gate, svg transitions, active state"
+    },
+    {
+      "requirement": "JobApplicationSidebar: StyledLabel inner wrapper pattern replicated",
+      "status": "PASS",
+      "location": "JobApplicationSidebar.tsx lines 473-489 (PlatoNavLabel). Adapted > span:first-of-type instead of svg for PlatoChip"
+    },
+    {
+      "requirement": "JobApplicationSidebar: FeatureFlipper wrapping nav item",
+      "status": "PASS",
+      "location": "JobApplicationSidebar.tsx lines 99-107"
+    },
+    {
+      "requirement": "JobApplicationSidebar: PlatoChip(22, 6) + 'Plato' label + chevron-right icon",
+      "status": "PASS",
+      "location": "JobApplicationSidebar.tsx lines 100-106"
+    },
+    {
+      "requirement": "JobApplicationActivity: old imports removed (AiJobApplicationSummaryFeedItem, AiSummaryState)",
+      "status": "PASS",
+      "location": "Confirmed via diff and grep -- no references to AiJobApplicationSummaryFeedItem or AiSummaryState remain"
+    },
+    {
+      "requirement": "JobApplicationActivity: PlatoOverviewCallout imported and rendered",
+      "status": "PASS",
+      "location": "JobApplicationActivity.tsx line 10 (import), lines 394-399 (render)"
+    },
+    {
+      "requirement": "JobApplicationActivity: match added to Props type and destructured",
+      "status": "PASS",
+      "location": "JobApplicationActivity.tsx line 37 (Props type), line 39 (destructuring)"
+    },
+    {
+      "requirement": "JobApplicationActivity: FeatureFlipper wrapping callout",
+      "status": "PASS",
+      "location": "JobApplicationActivity.tsx lines 394-399"
+    },
+    {
+      "requirement": "AiAssessment interface with correct fields",
+      "status": "PASS",
+      "location": "aiJobApplicationSummary.ts lines 15-23. primaryDomain, secondaryDomain, tertiaryDomain (with | null), keySkills, standoutAccomplishments, careerNarrative?, experienceClassifications?"
+    },
+    {
+      "requirement": "AiResumeStructuredData.assessment typed as AiAssessment (not any)",
+      "status": "PASS",
+      "location": "aiJobApplicationSummary.ts line 41"
+    },
+    {
+      "requirement": "useAiJobApplicationSummary: enabled condition added",
+      "status": "PASS",
+      "location": "useAiJobApplicationSummary.ts line 44. enabled: !!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0"
+    },
+    {
+      "requirement": "Dark mode: Poly DS tokens preferred, t.dark ternaries where needed",
+      "status": "PASS",
+      "location": "Throughout all files. Poly DS tokens used for loudText, secondaryText, placeholderText, border, borderHover, wellCanvas, cardCanvas, chipBorder. t.dark ternaries only for specific gray values (key skill chip fill, shimmer gradient, achievement icon color, header border, connector color)"
+    },
+    {
+      "requirement": "Gradient is same in light and dark mode (brand element)",
+      "status": "PASS",
+      "location": "PlatoMark.tsx line 104, PlatoTab.tsx line 629, PlatoOverviewCallout.tsx line 124. All use hardcoded gradient, no dark mode branching"
+    },
+    {
+      "requirement": "Styled component labels follow ParentComponent_ElementName pattern",
+      "status": "PASS",
+      "location": "All styled components across all files follow this pattern consistently"
+    },
+    {
+      "requirement": "All sections omitted when data is empty/falsy",
+      "status": "PASS",
+      "location": "PlatoTab.tsx: achievements (line 180 length > 0), experience (line 196 truthy), gaps (line 203 truthy), skills (line 210 length > 0), domain labels (line 155 truthy check)"
+    }
+  ],
+  "non_findings": [
+    {
+      "item": "PlatoMark has extra color prop not in spec",
+      "reason": "The color prop is an implementation convenience used by PlatoChip to set gray[900]. Default is currentColor per spec. No spec violation."
+    },
+    {
+      "item": "onOpen URL construction uses regex replace instead of spec's match.url/ai",
+      "reason": "The spec's instruction would produce an incorrect URL because match.url in the overview route context ends in /overview. The regex approach correctly handles this."
+    },
+    {
+      "item": "Route gated via isAiEnabled instead of FeatureFlipper component",
+      "reason": "Functionally identical. The spec's own example code makes isAiEnabled the primary mechanism, making FeatureFlipper redundant for the route."
+    }
+  ],
+  "summary": "Found 1 actionable HIGH finding (H1: lazy fetch fires for non-succeeded statuses). 3 initially assessed as HIGH were retracted after deeper analysis showed functional correctness (H3: URL construction is correct given route context; H5: connector tick dimensions match; H6: feature gating mechanism is functionally identical). H2 retracted as code quality only. H4 stands as the kebab button renders without functionality in no-summary states, which matches the spec literally but may be unintentional. All other spec requirements verified: 6-state machine, feature flag gating, PlatoMark variants/accessibility, succeeded layout sections, callout states, NavItem styling, dark mode tokens, animations, accessibility."
+}

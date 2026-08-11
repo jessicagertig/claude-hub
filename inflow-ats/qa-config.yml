@@ -69,6 +69,13 @@ seed:
     - method: GET
       path: /cypress/individual_app/careers_page_subscriptions/{id}
       returns: "Careers page subscription data"
+    - method: POST
+      path: /api/v1/flipper/features
+      params: {name: string}
+      creates: "Creates a Flipper feature flag (does not enable it). See feature_flags.enable_steps."
+    - method: POST
+      path: /api/v1/flipper/features/{name}/boolean
+      creates: "Enables a Flipper feature flag globally (boolean gate on). See feature_flags.enable_steps."
 
   feature_flags:
     description: |

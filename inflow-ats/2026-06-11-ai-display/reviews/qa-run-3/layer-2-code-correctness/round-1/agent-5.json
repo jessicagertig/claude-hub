@@ -1,0 +1,89 @@
+{
+  "agent": "agent-5",
+  "assignedFiles": [
+    "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx (styled components section, lines 360+)"
+  ],
+  "comparisonFiles": [
+    "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx"
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 171,
+      "severity": "MED",
+      "category": "dark-mode",
+      "title": "PlatoMark in FitHeader uses hardcoded colors.gray[700] -- poor contrast in dark mode",
+      "description": "The PlatoMark inside the Fit Card header receives `color={colors.gray[700]}` (hardcoded #404040). In dark mode, the FitCard has no explicit background (inherits the dark canvas), so this icon renders as dark gray on a dark background with a contrast ratio of approximately 2.4:1. The analogous pattern in the same file -- `Styled.AchievementIcon` at line 702 -- correctly uses a `t.dark` ternary: `color: ${t.dark ? t.color.gray[400] : t.color.gray[700]}`. The spec says `colors.gray[700]` without a dark variant, but the codebase's own convention for icon colors is to use a ternary. This is a real visibility deficiency in dark mode.",
+      "evidence": "Line 171: `<PlatoMark size={15} color={colors.gray[700]} />` (hardcoded #404040). Compare line 702: `color: ${t.dark ? t.color.gray[400] : t.color.gray[700]};` (correct dark mode handling for same gray[700] value).",
+      "suggestedFix": "Pass a theme-aware color to PlatoMark. Since PlatoMark accepts a `color` prop, the simplest fix is to define a themed color variable in the component body (e.g., using theme context or by moving the PlatoMark rendering into a themed styled component that sets `color` via CSS and lets PlatoMark inherit via `currentColor`)."
+    },
+    {
+      "id": "F2",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 545,
+      "severity": "LOW",
+      "category": "dark-mode",
+      "title": "Styled.StaleActionIcon has no theme-aware color -- relies on parent inheritance",
+      "description": "Styled.StaleActionIcon (line 545) is defined as a plain template literal with no theme access. The SVG icon color is inherited from the parent Styled.StaleAction, which correctly sets `color: ${t.poly.color.loudText}`. This works because CSS color inheritance reaches into the SVG. However, unlike Styled.StaleIcon (line 498) which explicitly sets its own color to `t.poly.color.secondaryText`, the StaleActionIcon has no explicit color and would break if its parent element's color were ever changed or overridden. This is a fragile pattern but not currently broken.",
+      "evidence": "Lines 545-552: plain template literal, no theme callback. Lines 498-510: Styled.StaleIcon has explicit `color: ${t.poly.color.secondaryText}`.",
+      "suggestedFix": "No fix required -- the inheritance is correct. Noting for completeness."
+    },
+    {
+      "id": "F3",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 379,
+      "severity": "LOW",
+      "category": "dark-mode",
+      "title": "Styled.FooterIcon uses non-poly raw gray[400] -- works in both modes but deviates from pattern",
+      "description": "Styled.FooterIcon (line 789) uses `color: ${t.color.gray[400]}` (raw theme value, #A3A3A3) without a dark mode ternary. The value #A3A3A3 has acceptable contrast on both light (#FFFFFF, ratio ~3:1) and dark (#171717, ratio ~5:1) backgrounds, so this is not visually broken. However, the spec says `colors.gray[400]` and most other icon-color usages in this file use either poly tokens or dark ternaries. The spec matches the code here; this is a nitpick about consistency.",
+      "evidence": "Line 789: `color: ${t.color.gray[400]};` -- no ternary. Compare Styled.AchievementIcon line 702: `color: ${t.dark ? t.color.gray[400] : t.color.gray[700]};`.",
+      "suggestedFix": "No fix needed. The value works in both modes. Could optionally switch to `t.poly.color.placeholderText` (gray[500] light / gray[500] dark) for consistency, but the spec explicitly says gray[400]."
+    },
+    {
+      "id": "F4",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 672,
+      "severity": "LOW",
+      "category": "known-failure-pattern",
+      "title": "Known Failure Pattern #1 verified: t.text.xs used correctly in Styled.Eyebrow",
+      "description": "The Styled.Eyebrow component at line 672 uses `${[t.text.xs]}` as a standalone array spread inside a css template literal. This is the correct usage pattern -- t.text.xs is a complete CSS declaration including `font-size:`, so it must not be placed inside another `font-size:` property. The code matches the pattern from the AiJobApplicationSummaryFeedItem Styled.SectionTitle (line 321). No violation of Known Failure Pattern #1 found anywhere in this file.",
+      "evidence": "Line 672: `${[t.text.xs]}` (standalone). No occurrences of `font-size: ${t.text.xs}` or `font-size: ${t.text.sm}` in the file.",
+      "suggestedFix": "None needed. Verified correct."
+    },
+    {
+      "id": "F5",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 836,
+      "severity": "LOW",
+      "category": "css-correctness",
+      "title": "Verified: prefers-reduced-motion respected on all animated components",
+      "description": "All four animated styled components (Styled.Dot line 828, Styled.ShimmerBar line 853, Styled.ShimmerBlock line 873, Styled.ShimmerChip line 903) include `@media (prefers-reduced-motion: reduce) { animation: none; }`. The keyframe definitions (shimmer line 372, dotPulse line 377) are correctly defined using Emotion's keyframes utility. Animation correctness is verified.",
+      "evidence": "Lines 838-840, 867-869, 890-892, 918-920 all contain the prefers-reduced-motion media query with `animation: none;`.",
+      "suggestedFix": "None needed. Verified correct."
+    },
+    {
+      "id": "F6",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 609,
+      "severity": "LOW",
+      "category": "dark-mode",
+      "title": "FitCard has no explicit background-color -- inherits from page canvas",
+      "description": "Styled.FitCard (line 609) sets border and border-radius but no background-color. It inherits from the page canvas, which is correct in both modes (white in light, dark in dark). The neighboring JobApplicationActivity.tsx sets explicit backgrounds on card-like components (e.g., Styled.Actions line 637: `background-color: ${t.dark ? t.color.gray[800] : t.color.white}`). The FitCard's implicit inheritance works but diverges from the neighboring file's pattern. Not a bug -- the FitCard sits within the tab body which already has the correct canvas, and adding an explicit background would be redundant.",
+      "evidence": "Lines 609-620: no background-color declaration. Compare JobApplicationActivity.tsx lines 637-638: explicit dark/light backgrounds on bordered containers.",
+      "suggestedFix": "None needed. The inheritance chain is correct. Optionally add `background: ${t.poly.color.cardCanvas}` for explicitness and defense against future layout changes that might insert a different background ancestor."
+    },
+    {
+      "id": "F7",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 395,
+      "severity": "LOW",
+      "category": "pattern-deviation",
+      "title": "Header border uses raw t.dark ternary while poly.color.border token exists and matches the same values",
+      "description": "Styled.Header (line 400) uses `border-bottom: 1px solid ${t.dark ? t.color.gray[800] : t.color.gray[200]}`. The poly theme defines `border: colors.gray[200]` (light) and `border: colors.gray[800]` (dark) -- exactly the same values. Other components in this file use `t.poly.color.border` (e.g., FitCard line 614, Footer line 776). The Header manually replicates the poly token. This matches the pattern in JobApplicationActivity.tsx Styled.Title (line 457) which also uses the raw ternary. Not a bug -- both approaches produce identical CSS. But switching to the poly token would be more maintainable if border colors ever change.",
+      "evidence": "Line 400: `${t.dark ? t.color.gray[800] : t.color.gray[200]}`. Compare line 614: `${t.poly.color.border}`. Both resolve to the same values (see lightTheme.ts line 7, darkTheme.ts line 7).",
+      "suggestedFix": "Consider replacing with `${t.poly.color.border}` for consistency within this file. Not a bug."
+    }
+  ],
+  "summary": "The styled components section of PlatoTab.tsx is well-implemented. No HIGH-severity CSS correctness issues found. The Known Failure Pattern #1 (t.text.xs misuse) is correctly avoided. All four animated components respect prefers-reduced-motion. Dark mode coverage is comprehensive -- all color-bearing components use either poly tokens (auto-switching) or explicit t.dark ternaries. The one MED finding is the PlatoMark color prop in the FitHeader which hardcodes colors.gray[700] without a dark mode variant, producing poor contrast on dark backgrounds. This matches the spec but contradicts the file's own pattern (AchievementIcon uses a ternary for the same gray[700] value). The remaining findings are LOW-severity consistency observations."
+}

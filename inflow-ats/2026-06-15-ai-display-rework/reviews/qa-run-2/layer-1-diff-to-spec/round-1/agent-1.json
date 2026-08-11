@@ -1,0 +1,20 @@
+{
+  "reviewer": "diff-to-spec-r1-agent-1",
+  "qaRun": 2,
+  "layer": 1,
+  "round": 1,
+  "scope": "PlatoTab.tsx targeted re-verification after PT-1 fix",
+  "findings": [],
+  "summary": {
+    "fixVerification": "The fix on line 49 is correct. structuredData is now available for both 'current' and 'regenerating' statusValue. This aligns with the spec (lines 72-73) which states both states should render PlatoGeneratedReviewCallout (meaning both have existing summary data). Before the fix, renderBody() correctly routed 'regenerating' to renderSucceeded() (line 122-124), but renderSucceeded() would receive null structuredData because the old condition only allowed 'current'. The fix resolves this inconsistency.",
+    "specRequirements": {
+      "S10_summaryStatus_as_data_source": "PASS — line 39 reads jobApplication.aiJobApplicationSummaryStatus, line 40 derives statusValue from it. No references to the old aiJobApplicationSummary for status.",
+      "S11_useAiJobApplicationSummary_fires_on_render": "PASS — lines 42-45 call useAiJobApplicationSummary with summaryStatus?.aiJobApplicationSummaryId. No succeeded gate. Hook's own enabled condition (aiJobApplicationSummaryId != undefined) is the only guard, which is correct per spec.",
+      "S12_PlatoLoadingState_replaces_shimmer": "PASS — line 128-129 renders PlatoLoadingState with fullSummaryStatus. No shimmer animation in the file.",
+      "stale_check_uses_fullSummary": "PASS — line 107 (summaryData) and line 167 (renderHeaderRight) both use fullSummary?.stale.",
+      "generatedAgo_uses_summaryStatus_updatedAt": "PASS — line 98 uses distanceInWords(summaryStatus?.updatedAt).",
+      "renderBody_state_machine": "PASS — 6 branches in correct priority order: current+fullSummary, regenerating+fullSummary, isGeneratingPipeline, failed, noResume, fallback empty state. All match spec intent."
+    },
+    "newDeviationsIntroducedByFix": "None. The fix only changed the structuredData condition and does not affect any other spec requirement. The renderBody() state machine, data sources, and component usage are all unchanged and correct."
+  }
+}

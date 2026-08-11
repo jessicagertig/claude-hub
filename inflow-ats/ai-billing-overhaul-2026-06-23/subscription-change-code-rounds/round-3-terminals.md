@@ -1,0 +1,55 @@
+# Round 3 — TERMINALS segment (SCREEN / STRIPE / DATABASE)
+
+Adversarial audit of OUR AI-credit subscription-change flow terminals vs the verified analog trace.
+Worktree: `/Users/jessica/wrk/wrk-corp/inflow-ats.billing-bonanza`.
+
+Files traced (chain):
+`OrganizationAiBilling.tsx → AiCreditSubscription.tsx → AiSubscriptionStatus.tsx / AiSubscriptionTierCard.tsx / aiSubscriptionHelpers.ts / planHelpers.ts (aiCreditPrices + AI_CREDIT_PACK_CREDITS_BY_LOOKUP_KEY) → useOrganizationAiCreditPurchase.ts → api.ts → config/routes.rb → organization_ai_credit_purchases_controller.rb → organization_ai_credit_purchase.rb (#stripe_subscription) → organization_ai_credit_purchase_serializer.rb`
+vs `traces/subscription-change-analog-trace.md`
+(analog chain `AccountBilling.tsx → AccountBillingPlans.tsx → PlanCard.tsx → planLookups.js → useBilling.ts → api.ts → billing_controller.rb → organization.rb#stripe_subscription`).
+
+Sanctioned / whitelisted and therefore NOT flagged (verified against both lists this round):
+- All four endpoints scoped to the `OrganizationAiCreditPurchase` subscription row via `find_by(subscription_status: [:active, :past_due])` instead of `current_organization.stripe_subscription_id` — SANCTIONED #2/#4.
+- `flow_data.subscription` = `organization_ai_credit_purchase.stripe_subscription_id` (change + continue actions) — SANCTIONED #1.
+- No `ValidateSubscriptionChange` / job-limit gate in the change/continue actions — SANCTIONED #3.
+- `ai_credit_*` naming, `ap` debug-string text changes — SANCTIONED #5.
+- `determine_price_id` else-branch raising — WHITELIST W1.
+- `continue_url` pointing at `/api/v1/ai_credit_purchases/...` — WHITELIST W2.
+
+Verified MATCHES at the terminals this round (no deviation):
+- STRIPE: `OrganizationAiCreditPurchase#stripe_subscription` → `Stripe::Subscription.retrieve({ id:, expand: ['items.data.price.tiers'] })` (`organization_ai_credit_purchase.rb:263`) matches analog `Organization#stripe_subscription` (`organization.rb:477`) byte-for-byte (same expand path).
+- STRIPE: `customer_subscription` double-invokes `stripe_subscription` (once at the `ap` debug `:424`, once in the render branch `:430`) exactly as the analog double-call structure (`billing_controller.rb:608` + `:614`); `&.` guard added (forced by SANCTIONED #4 row-scoping) does not change the call count on the happy path.
+- STRIPE: `change_subscription_portal_session` `flow_data.subscription_update_confirm` options block (`:245-259`) matches the analog options shape verbatim (`type`, `subscription`, `items:[{id, price, quantity:1}]`); StandardError rescue WITHOUT Sentry (`:278-280`) matches analog `:324`; `update_payment_method_*` StandardError rescue WITH Sentry (`:334-337`) matches analog `:376`.
+- DATABASE: change + continue actions write NO DB record (matches analog note "no DB record is written in this action"; sync happens on Stripe return).
+- SCREEN: per-tier `isCurrent = currentSubscription?.plan?.id === tier.priceId` (`AiCreditSubscription.tsx:287`) reads the LIVE Stripe object exactly as analog `isCurrentPlan` (`AccountBillingPlans.tsx:436`).
+- SCREEN: `isSubscribed`, `currentPeriodEnd`, `cancelAtPeriodEnd`, `cancelAt`, `currentPriceObject`, `currentPlanLookupKey` all derive from the LIVE Stripe `currentSubscription` object (`AiCreditSubscription.tsx:53-73`), matching the analog principle (display derived from the live Stripe subscription, not a local status column). The round-2 D1/D3 defect (credits headline + button text driven by a nullable `?? null` local-table lookup) is RESOLVED: `currentCredits` is now derived by matching the live `currentPlanLookupKey` against the rendered `subscriptionTiers` list (`:66-70`).
+
+---
+
+## D1 (SCREEN terminal) — current-subscription credits value is sourced from a LOCAL frontend credits table, not from the live Stripe object the analog uses
+
+ANALOG (trace, price-model section): "The analog has NO local price-id↔credits/limits table — it round-trips the price id through Stripe (`Stripe::Price.retrieve.lookup_key`), substring-matches the lookup_key against `PLAN_LOOKUP_MAPPING` to derive the internal alias, persists the alias on `organizations.plan`, and `PlanFeatureGate` keys all limits/features/AI-credit allocations off that alias string." There is no second client-side credits table the live key must appear in; every current-plan SCREEN value flows off the live Stripe object (`currentPriceObject = currentSubscription && currentSubscription.items.data[0].price`, `AccountBillingPlans.tsx:67`) or off the persisted backend alias.
+
+OURS: the active-subscription headline `{currentCredits?.toLocaleString()} credits / month` (`AiSubscriptionStatus.tsx:35`) terminates on `currentCredits = currentSubscriptionTier ? currentSubscriptionTier.credits : null` (`AiCreditSubscription.tsx:70`). `currentSubscriptionTier` is `subscriptionTiers.find(tier => tier.lookupKey === currentPlanLookupKey)` (`:66-68`); `subscriptionTiers` comes from `splitTiers(pricesData)` → `aiCreditPrices(pricesData.data)` (`aiSubscriptionHelpers.ts:23`), and `aiCreditPrices` sets each tier's `credits: AI_CREDIT_PACK_CREDITS_BY_LOOKUP_KEY[lookupKey]` (`planHelpers.ts:115`) — a LOCAL hardcoded TS table (`planHelpers.ts:74-87`), NOT the live Stripe price object. The live Stripe price object carries `unitAmount` (used for `priceDollars`) but the credits number is injected from the local table. This is the same structural class the analog explicitly avoids (a divergent client-side credits/limits table). It is a genuine forced deviation (credit allocation is AI-domain metadata not present on the Stripe price object — there is no `tiers`/`unitAmount`→credits mapping for a flat per-period credit grant), so it is a WHITELIST candidate, but it is NOT yet listed in SANCTIONED-subscription-change.md or AGENT-WHITELIST-subscription-change.md. FIX agent: either whitelist it (cite: AI credit allocation is not carried on the Stripe price object, unlike the analog whose limits are derived backend-side from the persisted plan alias) or source `credits` from a backend-rendered field.
+
+file:line — credits terminal `app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiCreditSubscription.tsx:66-70`; injection point `app/javascript/shared/lib/planHelpers.ts:115`; local table `app/javascript/shared/lib/planHelpers.ts:74-87`; SCREEN render `app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiSubscriptionStatus.tsx:35`
+
+---
+
+## D2 (SCREEN terminal) — `AiCreditSubscription` renders UNCONDITIONALLY; the analog gates its plans component behind a parent `hasActiveSubscription` ternary, so the subscribed-vs-unsubscribed SCREEN branch lives at a different layer
+
+ANALOG (trace item 13): "`AccountBillingPlans` is rendered CONDITIONALLY, not unconditionally: `AccountBilling.tsx:122-134` is a 3-way ternary — `currentOrganization.eligibleForFreeTrial && hasActiveSubscription ?` renders `AccountBillingPlansFreeTrial` … `: hasActiveSubscription ?` renders `AccountBillingPlans` … `: (` else renders `AccountBillingPlansUnsubscribed`." The subscribed/unsubscribed SCREEN fork lives in the PARENT (`AccountBilling.tsx`), and `AccountBillingPlans` is reached ONLY for an active-subscription, non-free-trial org. `hasActiveSubscription` is an org-level prop the parent owns.
+
+OURS: the parent `OrganizationAiBilling.tsx:30` renders `<AiCreditSubscription pricesData={pricesData} />` UNCONDITIONALLY (no `hasActiveSubscription` ternary, no sibling unsubscribed/free-trial components). The subscribed/unsubscribed SCREEN fork is instead pushed DOWN into `AiCreditSubscription` itself and gated on the live-Stripe-derived `isSubscribed` boolean (`AiCreditSubscription.tsx:59-60`), which drives `AiSubscriptionStatus`'s internal `isSubscribed ? … : …` branch (`AiSubscriptionStatus.tsx:32-52`) and the subtitle ternary (`AiCreditSubscription.tsx:283`). This is a STRUCTURAL relocation of the analog's parent-owned render gate into a single dual-mode component, and there are no `…FreeTrial` / `…Unsubscribed` sibling components. Not covered by SANCTIONED (#2/#4 sanction the data-row scoping, not the component-tree shape) or WHITELIST. It is arguably a forced product simplification (one AI-billing screen handles both states; AI credits have no free-trial tier), so it is a WHITELIST candidate — but it is currently UNLISTED, and `isSubscribed` being derived from the live Stripe object rather than an org-level `hasActiveSubscription` prop is the exact terminal whose mismatch produced the original "active subscription does not display" symptom in the column-gated version. FIX agent: confirm and whitelist (cite: AI billing has a single dual-mode screen with no free-trial/unsubscribed siblings) or surface to owner.
+
+file:line — `app/javascript/ats/src/views/accountAdmin/OrganizationAiBilling.tsx:30` (unconditional render) vs analog `AccountBilling.tsx:122-134` (3-way `hasActiveSubscription` ternary); fork relocated to `app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiCreditSubscription.tsx:59-60` / `:283` + `AiSubscriptionStatus.tsx:32-52`
+
+---
+
+## D3 (STRIPE terminal) — `prices` Stripe call args diverge from the analog's `prices` shape (filtered `lookup_keys` + `expand: ['data.product']` vs `limit: 20` + `expand: ['data.tiers']`)
+
+ANALOG (trace item 13, price-model table): `BillingController#prices` calls `Stripe::Price.list({ active: true, limit: 20, expand: ['data.tiers'] })` (`billing_controller.rb:537`) — no `lookup_keys` filter, `limit: 20`, and the expand pulls `data.tiers` (the tiered-pricing structure the analog reads downstream for `currentProductPrice` / tiered unit amount).
+
+OURS: `prices` calls `Stripe::Price.list(lookup_keys: OrganizationAiCreditPurchase.ai_credit_lookup_keys, active: true, expand: ['data.product'])` (`organization_ai_credit_purchases_controller.rb:219`) — adds a `lookup_keys:` filter (no analog counterpart), drops `limit`, and expands `data.product` instead of `data.tiers`. The `lookup_keys` scoping is defensible AI-domain scoping (only return AI-credit prices), and the AI-credit prices are flat (not tiered) so `data.tiers` would be empty — but `data.product` is an EXTRA expand the analog does not request, and the downstream consumer `aiCreditPrices` (`planHelpers.ts:104-124`) does NOT read `price.product` (display names come from the local `AI_CREDIT_PACK_DISPLAY_NAMES` table, `:113`). So the `expand: ['data.product']` fetches data that reaches no terminal — an unused Stripe expand with no analog basis. The `lookup_keys` filter + dropped `limit` are domain-forced (and overlap the naming/domain family) but the unused `data.product` expand is a pure divergence with no consumer and no analog. Not in SANCTIONED/WHITELIST. FIX agent: drop the unused `expand: ['data.product']` (or replace with `['data.tiers']` to mirror the analog if any tiered consumer is added), keeping the `lookup_keys` domain filter.
+
+file:line — `app/controllers/api/v1/organization_ai_credit_purchases_controller.rb:219` vs analog `app/controllers/api/v1/billing_controller.rb:537`

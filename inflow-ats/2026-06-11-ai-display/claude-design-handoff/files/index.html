@@ -1,0 +1,94 @@
+<!-- @startingPoint section="Screens" subtitle="Job → Applications list (nested candidate review)" viewport="1440x840" -->
+<!-- @dsCard group="Job" viewport="1440x840" name="Job — Applications list" subtitle="4-pane nested view: stage rail → candidates → candidate sidebar → tab content" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polymer — Job (Applications)</title>
+<link rel="stylesheet" href="../../../styles.css">
+<link rel="stylesheet" href="../frames/frame.css">
+<link rel="stylesheet" href="job.css">
+<link rel="stylesheet" href="tabs.css">
+<link rel="stylesheet" href="ai.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Tier 1: PolymerBar -->
+    <header class="polybar">
+      <div class="brand">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="19" viewBox="0 0 13 19" fill="none">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M6.55482 2.33789C4.04119 2.33789 2.00349 4.49506 2.00349 7.15607C2.00349 9.81708 4.04119 11.9743 6.55482 11.9743C9.06845 11.9743 11.1061 9.81708 11.1061 7.15607C11.1061 4.49506 9.06845 2.33789 6.55482 2.33789ZM0.114258 7.15607C0.114258 3.39049 2.99779 0.337891 6.55482 0.337891C10.1118 0.337891 12.9954 3.39049 12.9954 7.15607C12.9954 10.9217 10.1118 13.9743 6.55482 13.9743C2.99779 13.9743 0.114258 10.9217 0.114258 7.15607Z" fill="currentColor" />
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M0.114258 6.97425C0.114258 4.81532 1.76749 3.06516 3.80685 3.06516C5.8462 3.06516 7.49943 4.81532 7.49943 6.97425V14.4288C7.49943 16.5877 5.8462 18.3379 3.80685 18.3379C1.76749 18.3379 0.114258 16.5877 0.114258 14.4288V6.97425ZM3.80685 5.06516C2.81088 5.06516 2.00349 5.91989 2.00349 6.97425V14.4288C2.00349 15.4832 2.81088 16.3379 3.80685 16.3379C4.80281 16.3379 5.6102 15.4832 5.6102 14.4288V6.97425C5.6102 5.91989 4.80281 5.06516 3.80685 5.06516Z" fill="currentColor" />
+        </svg>
+        <span class="word">Polymer</span>
+      </div>
+      <div class="user">
+        <span class="uavatar">JG</span>
+        <span class="name">Jessica Gertig</span>
+      </div>
+    </header>
+
+    <!-- Tier 2: AppHeader -->
+    <header class="appheader">
+      <div class="org">
+        <span class="logo">A</span>
+        <span class="orgname">Aperture Labs</span>
+        <button class="iconbtn"><i data-feather="more-vertical"></i></button>
+      </div>
+      <div class="search"><i data-feather="search" style="width:17px;height:17px"></i><span>Search candidates</span></div>
+      <div class="actions">
+        <button class="iconbtn"><i data-feather="bell"></i><span class="dot"></span></button>
+        <button class="iconbtn"><i data-feather="settings"></i></button>
+      </div>
+    </header>
+
+    <!-- Section NavBar (the job) -->
+    <div class="navbar">
+      <div class="main">
+        <button class="nav-close" title="Back to jobs"><i data-feather="arrow-left"></i></button>
+        <span class="title">Senior Frontend Engineer</span>
+      </div>
+      <button class="iconbtn" title="Job options"><i data-feather="more-vertical"></i></button>
+    </div>
+
+    <!-- Body: stage rail + applications view -->
+    <div class="body">
+      <nav class="rail">
+        <div class="group">
+          <a class="railitem active"><span class="ri-icon" data-feather="inbox" style="width:17px;height:17px"></span><span class="ri-label">Inbox</span><span class="ri-count">11</span></a>
+          <a class="railitem"><span class="ri-icon" data-feather="folder" style="width:17px;height:17px"></span><span class="ri-label">Screen</span><span class="ri-count">2</span></a>
+          <a class="railitem"><span class="ri-icon" data-feather="folder" style="width:17px;height:17px"></span><span class="ri-label">Interview</span><span class="ri-count">0</span></a>
+          <a class="railitem"><span class="ri-icon" data-feather="folder" style="width:17px;height:17px"></span><span class="ri-label">Decide</span><span class="ri-count">0</span></a>
+          <a class="railitem"><span class="ri-icon" data-feather="folder" style="width:17px;height:17px"></span><span class="ri-label">Offer</span><span class="ri-count">0</span></a>
+          <a class="railitem"><span class="ri-icon" data-feather="check-square" style="width:17px;height:17px"></span><span class="ri-label">Hired</span><span class="ri-count">0</span></a>
+          <a class="railitem"><span class="ri-icon" data-feather="archive" style="width:17px;height:17px"></span><span class="ri-label">Archived</span><span class="ri-count">0</span></a>
+        </div>
+        <div class="divider"></div>
+        <div class="group">
+          <a class="railitem"><span class="ri-icon" data-feather="settings" style="width:17px;height:17px"></span><span class="ri-label">Job setup</span><i class="ri-chevron" data-feather="chevron-right" style="width:15px;height:15px"></i></a>
+          <a class="railitem"><span class="ri-icon" data-feather="share-2" style="width:17px;height:17px"></span><span class="ri-label">Distribution</span><i class="ri-chevron" data-feather="chevron-right" style="width:15px;height:15px"></i></a>
+        </div>
+      </nav>
+      <div class="colmain">
+        <div id="applications-root" style="flex:1;display:flex;min-height:0;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.2/dist/feather.min.js"></script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="../../../_ds_bundle.js"></script>
+  <script src="../../../lib/samples.js"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="ai-tab.jsx"></script>
+  <script type="text/babel" src="JobTabs.jsx"></script>
+  <script type="text/babel" src="JobApplicationsView.jsx"></script>
+  <script type="text/babel">
+    feather.replace({ "stroke-width": 2, width: 18, height: 18 });
+    ReactDOM.createRoot(document.getElementById("applications-root")).render(<JobApplicationsView />);
+  </script>
+</body>
+</html>

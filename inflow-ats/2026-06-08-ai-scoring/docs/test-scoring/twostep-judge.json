@@ -1,0 +1,193 @@
+{
+  "criteria": [
+    {
+      "original": {
+        "text": "Strong programming experience in Go (Golang) for production backend systems.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"strong\"",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Strong programming experience in Go (Golang) for production backend systems."
+      },
+      "action": "keep",
+      "reasoning": "This is a single requirement focused on Go programming for backend systems.",
+      "decomposed": [
+
+      ]
+    },
+    {
+      "original": {
+        "text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"solid\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+      },
+      "action": "decompose",
+      "reasoning": "This criterion lists multiple distinct technical areas within Kubernetes that should be separated for clarity.",
+      "decomposed": [
+        {
+          "text": "Solid understanding of Kubernetes cluster design",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        },
+        {
+          "text": "Solid understanding of Kubernetes deployments and autoscaling",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        },
+        {
+          "text": "Solid understanding of Kubernetes service mesh or networking",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        },
+        {
+          "text": "Solid understanding of Kubernetes stateful vs stateless workloads",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"experience with\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers."
+      },
+      "action": "keep",
+      "reasoning": "This is a single requirement regarding IaC tooling.",
+      "decomposed": [
+
+      ]
+    },
+    {
+      "original": {
+        "text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"experience in\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+      },
+      "action": "decompose",
+      "reasoning": "This criterion combines cloud platform experience with specific management domains that are distinct skill areas.",
+      "decomposed": [
+        {
+          "text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"experience in\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+        },
+        {
+          "text": "Ability to manage cloud services, network, compute, storage, and security",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"experience in\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"understanding of\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control. (https://www.convox.com/product)"
+      },
+      "action": "keep",
+      "reasoning": "This is a single conceptual requirement.",
+      "decomposed": [
+
+      ]
+    },
+    {
+      "original": {
+        "text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"strong\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+      },
+      "action": "decompose",
+      "reasoning": "This criterion lists three distinct areas of familiarity.",
+      "decomposed": [
+        {
+          "text": "Familiarity with CI/CD pipelines",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"strong\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+        },
+        {
+          "text": "Familiarity with developer tooling",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"strong\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+        },
+        {
+          "text": "Exposure to marketplace or cloud provider integrations",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"strong\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "Ability to work cross functionally",
+        "tier": "tier_1",
+        "tier_reasoning": "soft skills cap at tier_2",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+      },
+      "action": "keep",
+      "reasoning": "This is a single soft skill requirement.",
+      "decomposed": [
+
+      ]
+    },
+    {
+      "original": {
+        "text": "Thrive within a fast moving product engineering environment",
+        "tier": "tier_1",
+        "tier_reasoning": "soft skills cap at tier_2",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+      },
+      "action": "keep",
+      "reasoning": "This is a single soft skill requirement.",
+      "decomposed": [
+
+      ]
+    }
+  ]
+}

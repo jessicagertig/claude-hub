@@ -1,0 +1,34 @@
+{
+  "agent": "diff-to-spec-reviewer-1",
+  "round": 2,
+  "layer": 1,
+  "scope": "Cross-cutting data flow verification for PlatoTab rendering pipeline",
+  "files_reviewed": [
+    "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoLoadingState.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoGeneratedReviewCallout.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoSummary.tsx",
+    "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts",
+    "app/javascript/shared/types/aiJobApplicationSummary.ts"
+  ],
+  "verification_summary": {
+    "pt1_fix_correct": true,
+    "pt1_fix_line": "const structuredData = (statusValue === \"current\" || statusValue === \"regenerating\") ? fullSummary?.structuredData : null;",
+    "pt1_fix_location": "PlatoTab.tsx line 49",
+    "data_flow_consistent": true,
+    "traces": [
+      "statusValue sourced from jobApplication.aiJobApplicationSummaryStatus.status (denormalized status record)",
+      "fullSummary fetched via useAiJobApplicationSummary when aiJobApplicationSummaryId is defined",
+      "structuredData gated on statusValue being 'current' or 'regenerating' — both branches call renderSucceeded() which reads structuredData",
+      "isGeneratingPipeline uses fullSummary.status (the summary's own pipeline status) — correctly distinct from statusValue",
+      "PlatoLoadingState receives fullSummaryStatus (pipeline status like 'extracting', 'scoring') — maps correctly via STATUS_TO_STEP",
+      "JobApplicationActivity uses status record fields (headline, integratedRoleAnalysis, scorePercentage) for the lightweight overview callout — does not need fullSummary",
+      "AiJobApplicationSummaryFull type confirms structuredData: AiResumeStructuredData | null exists on the full record",
+      "PlatoSummaryData interface matches the fields extracted from structuredData in renderSucceeded()"
+    ]
+  },
+  "findings": [],
+  "finding_count": 0,
+  "verdict": "PASS — no findings. Data flow is internally consistent across all reviewed files. The PT-1 fix is correct and complete."
+}

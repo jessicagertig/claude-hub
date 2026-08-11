@@ -1,0 +1,23 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 5,
+  "agent_index": 2,
+  "assignment": "D5 cash cells + row completeness + fan-out",
+  "findings": [],
+  "verified": [
+    "invoice.paid main-plan branch, amount_paid 2900 + trial_end PRESENT (epoch 10.days.ago): exactly one SubscriptionEvent row created (total DB count 0 -> 1, confirmed by separate read-back: total=1). Row born complete: id 3350, organization_id 37129, event_type 'trial_converted_to_paid', amount 2900, stripe_subscription_id 'sub_qa_agent2_trial' (the EVENT's subscription id, distinct from the org column 'test_subscription_cfe0b97a1b851ee6'), to_plan 'plan_ats_tier_starter' (= organization.plan), from_plan null, created_at/updated_at present.",
+    "Scenario 1 fan-out (queue adapter :test, verified via enqueued_jobs, nothing performed): exactly one PosthogTrackJob [41103 (= organization.owner.id), 'trial_converted_to_paid', properties] and exactly one Discord::NotifyTrialConvertedToPaidJob [37129 (= organization_id)]; no other Discord jobs. PostHog properties (.compact observed live): amount 2900, stripe_subscription_id 'sub_qa_agent2_trial', stripe_customer_id 'cus_qa_agent2', to_plan 'plan_ats_tier_starter'; all 13 attribution fields absent (seeded owner/org carry none — .compact dropped them, none fabricated).",
+    "Scenario 1 existing branch behavior intact: organization.stripe_current_period_end_at updated to the stubbed subscription's current_period_end (epoch 1790460593 both sides); reset_ai_credits ran (AiCreditBalanceTransaction count 0 -> 1, monthly_credits_remaining 50).",
+    "After cleanup + re-seed — invoice.paid main-plan branch, amount_paid 2900 + trial_end ABSENT (nil): exactly one row (0 -> 1). Row born complete: id 3351, organization_id 37130, event_type 'converted_to_paid', amount 2900, stripe_subscription_id 'sub_qa_agent2_nontrial' (event-sourced, distinct from org column 'test_subscription_cbd0c466894a171c'), to_plan 'plan_ats_tier_starter', from_plan null, timestamps present.",
+    "Scenario 2 fan-out: exactly one PosthogTrackJob [41104 (= owner.id), 'converted_to_paid', same property shape] and ZERO Discord jobs of any class — per SPEC §7 converted_to_paid has no Discord consumer.",
+    "Scenario 2 existing branch behavior intact: stripe_current_period_end_at epoch 1790460654 both sides; reset_ai_credits ran (AiCreditBalanceTransaction 0 -> 1, monthly_credits_remaining 50).",
+    "Edge probe (observation, not a finding): trial_end = 0 (integer zero, distinct subscription id 'sub_qa_agent2_edge0') classifies as 'trial_converted_to_paid' — 0.present? is true in Ruby — row id 3352 created complete (amount 2900) and fan-out fired PosthogTrackJob + Discord::NotifyTrialConvertedToPaidJob. Consistent with SPEC §4's ruled present? predicate; Stripe sends trial_end as epoch integer or nil, so 0 is not a real payload value. No behavior change proposed.",
+    "Safety protocol held: ActiveJob::Base.queue_adapter = :test as first logic line of every script; all notification jobs verified via enqueued_jobs only, none performed; Stripe::Subscription.retrieve stubbed in-script via rspec/mocks/standalone with real-shape doubles (per spec/jobs/stripe_webhook_handler_subscription_events_spec.rb); StripeWebhookHandlerJob.new.handle_stripe_event called directly; the subscription double's default_payment_method nil let the real stripe_update_default_payment_method execute its early return with zero live Stripe calls; source repo untouched (stripe_webhook_handler_job.rb exercised only); DB touched only via qa-harness seed/cleanup HTTP endpoints and in-script ActiveRecord (sanctioned: update_column(:stripe_customer_id, 'cus_qa_agent2') on the seeded org); final cleanup run."
+  ],
+  "scripts": [
+    "/tmp/qa5_agent2_s1_trial_present.rb",
+    "/tmp/qa5_agent2_s1_verify_count.rb",
+    "/tmp/qa5_agent2_s2_trial_absent.rb"
+  ]
+}

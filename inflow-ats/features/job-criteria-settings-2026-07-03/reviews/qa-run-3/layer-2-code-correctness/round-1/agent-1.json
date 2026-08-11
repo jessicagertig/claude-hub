@@ -1,0 +1,16 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 1,
+  "focus_area": "ExtractJobCriteriaJob — signature change, broadcast_completion helper, 3 broadcast sites, retry_on exhaustion block; structural analog comparison vs GenerateAiJobApplicationSummaryJob",
+  "files_reviewed": [
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/jobs/generate_ai_job_application_summary_job.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/channels/global_channel.rb",
+    "app/jobs/application_job.rb",
+    "app/errors/custom_error_ai_summary.rb",
+    "app/services/ai_job_application_action/scoring/extract_criteria.rb"
+  ],
+  "findings": []
+}

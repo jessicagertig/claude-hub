@@ -1,0 +1,7 @@
+Read and execute /Users/jessica/claude-hub/inflow-ats/features/ai-summary-creation-gaps-2026-06-23/KICKOFF.md in full — it is your complete brief.
+
+You are running from the claude-hub launcher, NOT from inside the source repo. Do ALL code, git, test, rails console, and migration work in the SOURCE repo at /Users/jessica/wrk/wrk-corp/inflow-ats — cd there, or use absolute paths and git -C /Users/jessica/wrk/wrk-corp/inflow-ats. It is already on branch ai-summary-creation-gaps with the AI-summary/criteria specs and a regenerated db/schema.rb applied and the DB migrated. Confirm with: git -C /Users/jessica/wrk/wrk-corp/inflow-ats status. Do not create scratch files in the source repo; write findings/spec/plan to the hub feature dir (the same folder as this file).
+
+Work autonomously and exhaustively ALL NIGHT per the doc's "Working mode" section: do not stop before LIFECYCLE phase 7 is complete OR ~9am — print the current time (run: date) whenever you are tempted to stop, and if it is before ~9am there is no reason to stop, so keep going. Do not wait for my approval at any phase gate (use rigorous adversarial agent self-review instead). Never stage or commit db/schema.rb. Leaving the work uncommitted on the branch is fine. Treat my issue descriptions as hypotheses to prove or disprove with evidence — reproduce via tests / rails console / the app where reading code is not enough.
+
+Start with the exploration workflow now.

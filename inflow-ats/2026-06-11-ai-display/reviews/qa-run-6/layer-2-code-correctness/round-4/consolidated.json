@@ -1,0 +1,34 @@
+{
+  "layer": "code-correctness",
+  "round": 4,
+  "run": 6,
+  "findings": [],
+  "dismissed": [
+    {
+      "id": "l2r4-d1",
+      "title": "PlatoMark dark mode color ternary (repeat from R3)",
+      "agents": [3],
+      "reason": "Spec dark mode section (lines 208-212) requires dark mode variants for all components and t.dark ternaries for gray scale values. The ternary IS spec-compliant. Specific gray[700] mention in item 5 is for the light mode value."
+    }
+  ],
+  "convergence": {
+    "status": "CONVERGED",
+    "consecutive_clean_rounds": 2,
+    "rounds": [
+      { "round": 1, "valid_high_findings": 1, "fixed": ["dark mode icon color"] },
+      { "round": 2, "valid_high_findings": 1, "fixed": ["credit loading race"] },
+      { "round": 3, "valid_high_findings": 0 },
+      { "round": 4, "valid_high_findings": 0 }
+    ]
+  },
+  "fixes_applied": [
+    {
+      "commit": "451169723",
+      "description": "Fix dark mode: use theme-aware color for PlatoMark icon in Fit card header"
+    },
+    {
+      "commit": "add603e76",
+      "description": "Fix credit loading race: show generate button while credits load"
+    }
+  ]
+}

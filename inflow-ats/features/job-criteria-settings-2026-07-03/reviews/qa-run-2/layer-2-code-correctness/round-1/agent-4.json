@@ -1,0 +1,25 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 4,
+  "focus_area": "Interactors and scoring services — guard/validation logic, zero-criteria detection, context threading, fail-fast behavior",
+  "files_reviewed": [
+    "app/interactors/queue_bulk_ai_summary_jobs.rb",
+    "app/interactors/validate_ai_summary_generation.rb",
+    "app/interactors/validate_auto_ai_summary_generation.rb",
+    "app/services/ai_job_application_action/scoring/extract_criteria.rb",
+    "app/services/ai_job_application_action/scoring/score_job_application.rb"
+  ],
+  "trace_notes": "queue_bulk_ai_summary_jobs.rb:19 -> context.job (Interactor::Context is OpenStruct; unset key returns nil) -> Job#zero_criteria_extraction_failure? (job.rb:696, PUBLIC — first `private` in job.rb is at line 1551) -> Job#latest_ai_job_criteria (job.rb:688, newest by created_at desc) -> AiJobCriteria#zero_criteria_failure? (ai_job_criteria.rb:17) -> status_failed? (enum, ai_job_criteria.rb:21-27, _prefix:true) && ZERO_CRITERIA_ERROR_MESSAGES.include?(error_message) (ai_job_criteria.rb:11-15, three messages incl. 'Criteria array is empty'). Callers of QueueBulkAiSummaryJobs: bulk_ai_job_application_summaries_controller.rb:13 and :39 both pass `job: @job` (@job from current_organization.jobs.find, never nil); interactor spec queue_bulk_ai_summary_jobs_spec.rb existing examples call WITHOUT `job:` and pass -> optional-input safe-nav confirmed. Manual guard: validate_ai_summary_generation.rb:30 uses @job_application.job&.zero_criteria_extraction_failure?, reachable only after the @job_application.nil? fail! at line 24; single-send controller (ai_job_application_summaries_controller.rb:8-20) runs the validator BEFORE CreateAiSummaryGeneration, so a guard-fail 422s with no summary row created (no stranded row). Auto guard: validate_auto_ai_summary_generation.rb:19, reachable after the @job_application.nil? fail! at line 13. Constant substitutions: extract_criteria.rb:62 = ZERO_CRITERIA_NO_SECTIONS_ERROR_MESSAGE ('No criteria sections found in job description'), :122 = ZERO_CRITERIA_NONE_EXTRACTED_ERROR_MESSAGE ('No criteria extracted from job description'), score_job_application.rb:43 = ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE ('Criteria array is empty') — all three match the prior string literals exactly (verified against ai_job_criteria.rb:7-9), so no behavior change.",
+  "findings": [
+    {
+      "id": "l2-a4-001",
+      "severity": "LOW",
+      "title": "Pre-existing `ap` (awesome_print) debug statements execute on every validation/scoring call in production",
+      "file": "app/interactors/validate_ai_summary_generation.rb",
+      "line": 10,
+      "description": "ValidateAiSummaryGeneration#call emits ~12 `ap` (awesome_print) debug prints on every invocation (lines 10-22, 34-37), including candidate/org ids and credit balances. The scoring services under review do the same (extract_criteria.rb:18-19,47-48,78-79,91-92,145,150,154; score_job_application.rb:15-16,60,69,75-77,84,129,138). These fire in production for every manual/auto/bulk review path — the zero-criteria guard added by this feature (validate_ai_summary_generation.rb:30) sits amid this noise. This is NOT introduced by the feature: it is a pre-existing, codebase-wide pattern in the AI-scoring domain (only line 30 was added to this validator; the scoring-service edits are pure constant substitutions). Reported for the record only; no actionable feature defect.",
+      "recommendation": "No feature action. If the team wants to reduce production log noise / id leakage, strip `ap` calls from the AI-scoring pipeline in a separate cleanup — out of scope for this feature."
+    }
+  ]
+}

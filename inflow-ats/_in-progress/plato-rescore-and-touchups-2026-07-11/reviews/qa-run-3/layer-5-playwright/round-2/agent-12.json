@@ -1,0 +1,42 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 12,
+  "assignment": "Console/network/websocket sweep + navigation integrity, display only. Full click-path pass: jobs list -> Senior Engineer -> each stage -> one Plato tab per stage (Inbox reviewed, Screen bare) -> jobs list -> Design Lead -> Inbox -> one Plato tab. Categorize console noise vs NEW; any 4xx/5xx on feature endpoints; cable errors; one screenshot per major page.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc). Jobs list rendered: Design Lead (Inbox 2/Total 2) and Senior Engineer (Inbox 3/Total 63). No error boundary, no blank pane.",
+    "Console baseline on jobs-list load: 4x react-router history deprecation, 2x 'Store does not have a valid reducer', 1x heap-api.com 404, Stripe.js HTTP warning, @reach/tooltip styles warning — ALL known/pre-existing noise, none feature-referencing.",
+    "Clicked Senior Engineer -> job page rendered, Inbox selected (3 candidates: Agnes Sipes, Carl Dietrich [Weak fit chip], Emilee Hand [Good fit chip]). Stage links Inbox 3 / Screen 5 / Interview 55 / Decide 0 / Offer 0 / Hired 0 / Archived 0 all present.",
+    "Opened Agnes Sipes -> Plato tab: full organic re-scored review rendered (Poor fit, headline 'Quality analyst with a focus on manual testing and defect management', Scoring detail 5 criteria 0/0/5, Relevant experience, Open questions, Skills, disclaimer footer). Regenerate button verified present, visible (rect x=1087,y=149) and enabled via DOM inspection — the a11y snapshot showed it as an unnamed button (snapshot name-resolution quirk, not a defect). SPEC 2.5 non-stale current-review Regenerate rendering confirmed on this candidate.",
+    "Console at first PlatoTab mount: exactly 2x Emotion ':first-child potentially unsafe' errors — known noise (already reported round 1). '[PlatoTab] render' debug logs fired on each PlatoTab mount (jobApplicationId 20977/20982/21037/21039) — known noise, pre-existing debug log.",
+    "Reproduced known l5-med-001 (report-only): Agnes Sipes has NO fit chip in the Inbox candidate list while Carl/Emilee rows show chips. API evidence: GET /api/v1/jobs/29092/job_applications?hiring_stage=203589&page=1 returns her ai_job_application_summary_status with status 'current', score_percentage 0, ai_job_application_summary_id 2537 — the 0 score renders no chip (falsy-zero guard in untouched list code). Overview and Plato tab both show 'Poor fit' correctly. Recorded as MED dedup, not a new finding.",
+    "Clicked Screen stage -> rendered 5 candidates: Yesenia Bernhard [Good fit], Cornelius Jenkins [Excellent fit], Brent Lubowitz / Refugio Ondricka / Wally Blanda bare (no chips). No error boundary.",
+    "Opened Brent Lubowitz (bare) -> Plato tab: 'Plato needs a resume' empty state with 'Upload a resume on the resume tab, then come back to generate a review.' and 'Go to resume tab' button. No fabricated GET /ai_job_application_summaries/0 fired for bare candidates (rule-13 regression absent; verified in network list).",
+    "Clicked Interview stage -> list rendered (page 1 of 55, no error boundary). Opened auto-selected candidate 21037 -> Plato tab: same 'Plato needs a resume' empty state rendered.",
+    "Clicked 'Navigate back to all jobs' -> jobs list re-rendered. Clicked Design Lead -> job page rendered, Inbox selected (Rowan Ellis, Quinn Barrett). Opened Rowan Ellis -> Plato tab: current seeded review ('Seeded review —' headline, Excellent fit) with Regenerate button present. No error boundary.",
+    "Console sweep across the ENTIRE pass (session console log, 950 lines): errors/warnings limited to the jobs-list baseline noise + 2x Emotion ':first-child' at first PlatoTab mount. ZERO new feature-referencing errors (no rescore/BulkGenerateAiSummaries/React errors, no failed ai_job_application_summaries entries).",
+    "Network sweep across the ENTIRE pass: every api/v1 request returned 200 — including feature endpoints GET /api/v1/ai_credits (x4), GET /api/v1/job_applications/20977/ai_job_application_summaries/2537, GET /api/v1/job_applications/21039/ai_job_application_summaries/2535, and all jobs/29092 + jobs/29093 job_applications stage lists. Only non-200: https://sdk.us.heap-api.com/js/heap-.js 404 (known noise). No bulk_ai_job_application_summaries requests fired (display-only assignment, no modals opened).",
+    "Websocket/cable: zero cable, WebSocket, or ActionCable errors in the console log across all navigation."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-12/01-jobs-list.png",
+    "/tmp/qa-run-3-l5/agent-12/02-senior-engineer-inbox.png",
+    "/tmp/qa-run-3-l5/agent-12/03-plato-tab-inbox-agnes.png",
+    "/tmp/qa-run-3-l5/agent-12/04-senior-engineer-screen.png",
+    "/tmp/qa-run-3-l5/agent-12/05-plato-tab-screen-bare-brent.png",
+    "/tmp/qa-run-3-l5/agent-12/06-senior-engineer-interview.png",
+    "/tmp/qa-run-3-l5/agent-12/07-design-lead-inbox.png",
+    "/tmp/qa-run-3-l5/agent-12/08-plato-tab-design-lead-rowan.png"
+  ],
+  "findings": [
+    {
+      "id": "l5-r2-a12-001",
+      "severity": "MED",
+      "title": "Report-only dedup of l5-med-001 (still present in round 2): candidate list renders no fit chip for a current review with score_percentage 0 (Agnes Sipes, Poor fit)",
+      "url": "http://app.lvh.me:5007/jobs/29092/stages/203589/applicants",
+      "expected": "Agnes Sipes's Inbox list row shows a Poor fit chip like Carl Dietrich (Weak fit) and Emilee Hand (Good fit) rows do",
+      "actual": "No chip rendered in her list row; Overview and Plato tab both display 'Poor fit' correctly. API row: ai_job_application_summary_status = {status: 'current', score_percentage: 0, ai_job_application_summary_id: 2537}",
+      "evidence": "Round-1 consolidation already classified this MED (pre-existing untouched list code, likely falsy-zero guard; no changes in feature diff range; observed on pre-feature fixture data by agents 1/9). Independently reproduced this round with DOM + API payload; recorded so round-2 consolidation knows it persists. Not a new finding."
+    }
+  ]
+}

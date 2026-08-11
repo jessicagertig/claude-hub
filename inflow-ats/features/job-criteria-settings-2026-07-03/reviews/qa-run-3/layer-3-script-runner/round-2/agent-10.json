@@ -1,0 +1,19 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 10,
+  "focus": "BulkGenerateAiSummariesJob#each_iteration claim-row fix (SPEC 6.3), triggering the ValidateAiSummaryGeneration failure via the ZERO-CRITERIA path (round 1 used the no-resume path). Plus the QueueBulkAiSummaryJobs re-claim filter query (queue_bulk_ai_summary_jobs.rb L46-50) that un-poisons a :failed candidate.",
+  "scenarios_run": [
+    "Set ActiveJob::Base.queue_adapter = :test FIRST (test.rb defaults to :inline) so no enqueued job runs; built an isolated org/user/job with a REAL positive credit balance (daily_credits_remaining=100 => ai_credits_available? genuinely true) and a description present.",
+    "Reopened JobApplication#has_resume => true for the process (each_iteration RELOADS JobApplication as a fresh instance, so a per-object singleton stub would not survive the reload). ja_zero also given a real textract_result (no result text => its after_commit is a no-op).",
+    "Made the job's LATEST AiJobCriteria a terminal zero-criteria failure (status: failed, error_message = ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE) => zero_criteria_extraction_failure? == true.",
+    "Direct ValidateAiSummaryGeneration.call(ja_zero, org): asserted failure? == true AND error == the exact zero-criteria message (guard fires on the zero-criteria branch, past has_resume/credits/description), proving this round exercises a DIFFERENT failing guard than round 1's no-resume path.",
+    "CONTROL: a sibling job whose latest AiJobCriteria is :succeeded => ValidateAiSummaryGeneration error is NOT the zero-criteria message (guard is branch-specific to the failure row).",
+    "Created a BulkAiSummaryJobApplication claim row in :processing for ja_zero; ran the literal re-claim filter (where status: :processing) BEFORE each_iteration => candidate is in already_claimed_ids and absent from working_set (BLOCKED / poisoned).",
+    "Invoked BulkGenerateAiSummariesJob.new.each_iteration(ja_zero.id, payload) with correct payload (bulk_job_id, user_id, job_id, rescore_requested). Asserted: claim row ends :failed (NOT :processing); Rails.logger.error logged the zero-criteria validation message; NO AiJobApplicationSummary created (count stayed 0).",
+    "AFTER each_iteration: re-ran the literal re-claim filter => the now-:failed row is absent from already_claimed_ids and present in working_set (candidate UN-POISONED).",
+    "FALSIFIABILITY (branch-specific :failed write): a candidate with an already-processed :succeeded summary (created_at >= claim row) + a :processing claim row => each_iteration takes the summary_already_processed branch and writes :deferred, NOT :failed. Proves the :failed write belongs specifically to the validation-failure branch.",
+    "Re-claim filter state table across four candidates (:failed, :deferred, :done, :processing): already_claimed_ids == only the :processing candidate; working_set == the :failed + :deferred + :done candidates. Confirms ONLY :processing blocks re-claim; :failed/:done/:deferred are all re-claimable."
+  ],
+  "findings": []
+}

@@ -1,0 +1,37 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 6,
+  "focus_area": "Adversarial whole-diff sweep: every hunk in all 33 files traced to SPEC / DECISIONS / adjudicated ruling authority (the 'every change must trace back' direction). Special attention to auth commit 859c85ead scope, files outside SPEC §13 inventory, and NOT-touched analogs.",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "AUTH: commit 859c85ead scope = exactly 2 files (ai_job_criteria_controller.rb +1/-1, ai_job_criteria_controller_spec.rb +21/-2) — verified via git show --stat; no scope creep",
+      "AUTH: create authorizes job, :update? (controller line 19); show authorizes job, :show? (controller line 12) — SPEC §9 + DECISIONS + adjudicated",
+      "AUTH: spec auth contexts genuinely exercise update? semantics (Pundit not stubbed; hiring-team member w/o AI-credits control allowed on show+create; outsider 403 on create) — not ghost tests",
+      "SPEC §13 inventory: all 33 changed files map to inventory except jobCriteriaTiers.ts, which is the adjudicated conventions-pass fix batch item 3 (shared tier metadata constant)",
+      "NOT-touched analog generate_ai_job_application_summary_job.rb — confirmed absent from diff (deliberately untouched per qa-run-1 fix batch)",
+      "SPEC §4.1 job.rb gating change + requesting_organization_user_id kwarg (flag 1)",
+      "SPEC §4.2 ai_job_criteria.rb ZERO_CRITERIA constants + third message 'Criteria array is empty' (flag 2) + zero_criteria_failure?",
+      "SPEC §4.2 writer constant substitutions in extract_criteria.rb (2) and score_job_application.rb (1)",
+      "SPEC §4.3 Job#zero_criteria_extraction_failure?",
+      "SPEC §5.1 routes.rb nested singleton resource :ai_job_criteria",
+      "SPEC §5.2 ai_job_criteria_controller.rb (Flipper gate, blank-description 422, extract_job_criteria_immediately call, render_one)",
+      "SPEC §5.3 job_ai_job_criteria_serializer.rb (4 attributes + delegated methods)",
+      "SPEC §6.2.1/6.2.2/6.2.3/6.2.4 guard fail! in ValidateAiSummaryGeneration, ValidateAutoAiSummaryGeneration, QueueBulkAiSummaryJobs (+ job input; flag 7), TextractResult funnel guard",
+      "SPEC §6.3 bulk_generate_ai_summaries_job.rb claim-row :failed fix (flag 6) + conventions-pass item 2 Rails.logger.error line",
+      "SPEC §7 extract_job_criteria_job.rb optional positional arg (flag 4), broadcast at 3 sites, fresh-read helper (conventions-pass item 1), qa-run-1 fix item 1 job.send(:broadcast_completion, ...) in exhaustion block",
+      "SPEC §8.1 useAiJobCriteria.ts hook file",
+      "SPEC §8.2/8.3 JobCriteriaSection.tsx display-state precedence, card, empty states, action row, sidebar wiring; conventions-pass items 3/4/5/6/7/8; qa-run-1 fix item 3 react-router Link; adjudicated vestigial history prop",
+      "SPEC §8.4 JobCriteriaViewModal.tsx FullModal slide-over",
+      "SPEC §8.5 RegenerateJobCriteriaConfirmModal.tsx owns mutation, loading/disabled props (adjudicated rule-22 no-fix ruling)",
+      "SPEC §8.6 WebsocketGlobalChannelHandler.tsx JOB_CRITERIA_EXTRACTION_COMPLETE case",
+      "SPEC §8.7 aiSummaryWebsocketPayloads.ts payload interface + header comment change",
+      "SPEC §12 all new/modified spec files (controller, serializer, ValidateAiSummaryGeneration, ValidateAutoAiSummaryGeneration, QueueBulkAiSummaryJobs, bulk controller, bulk job, extract job, ai_job_criteria model, job_criteria_lifecycle, textract funnel guard)",
+      "DEVELOP-MERGE REPAIR: bulk_ai_job_application_summaries_controller_spec.rb rescore_requested additions + params reshaping (adjudicated, not a finding)"
+    ],
+    "implemented": 33,
+    "missing": 0,
+    "notes": "ZERO findings. Every hunk across all 33 files traces to authority. File inventory: 32 files are in SPEC §13 exactly; jobCriteriaTiers.ts is the adjudicated conventions-pass fix batch item 3. Auth commit 859c85ead touched EXACTLY the two intended files at +21/-2 (git show --stat confirmed) — no scope creep. The identical-defect analog generate_ai_job_application_summary_job.rb is confirmed UNTOUCHED (out of scope per qa-run-1 fix batch note). No unexpected analog modifications. All adjudicated items (flags 1-7, conventions-pass 8-item batch, qa-run-1 fix batch, develop-merge repair, vestigial history prop, the update? auth change) match their rulings and are correctly not flagged. Two items examined and deliberately NOT flagged as false positives: (a) raw px font-sizes without token equivalents (13.5px/15px/12.5px/13px/22px in JobCriteriaViewModal + JobCriteriaSection) — visual-spec values with no poly token, left raw by the adjudicated conventions-pass batch which only tokenized sm/xs/base; (b) the two-line job_application.reload test-harness fix in textract_result_ai_trigger_spec.rb before-block — test-only isolation maintenance keeping existing examples green in an explicitly-modified spec file, converged in qa-run-2 L1, changes no production behavior or assertion. Auth spec contexts run Pundit for real (only auth/current_user helpers stubbed, not authorize/policy), so the hiring-team-allowed and outsider-403 assertions genuinely exercise JobPolicy#update? and are not ghost tests."
+  }
+}

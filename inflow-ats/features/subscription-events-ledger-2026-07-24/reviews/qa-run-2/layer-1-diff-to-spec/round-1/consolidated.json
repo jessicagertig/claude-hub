@@ -1,0 +1,27 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 2,
+  "agents": 10,
+  "findings": [
+    {
+      "id": "r2-l1-a3-001",
+      "severity": "HIGH",
+      "agent": 3,
+      "validated_by": [9],
+      "title": "subscription.deleted spec stubs sync_with_stripe but never asserts it",
+      "spec_requirement": "SPEC §9.1: existing branch behavior byte-identical around the insertions (load-bearing clause; 'insertions' plural covers the subscription.deleted branch)",
+      "evidence": "spec/jobs/stripe_webhook_handler_subscription_events_spec.rb:161 — allow(organization).to receive(:sync_with_stripe) with no have_received(:sync_with_stripe) anywhere in the file. Deleting the branch's `organization&.sync_with_stripe if stripe_subscription_id == organization&.stripe_subscription_id` line would pass the entire suite. The only one of the deleted branch's four existing effects with no coverage (both job enqueues and the subscription_canceled_at write are asserted).",
+      "recommendation": "Add one have_received(:sync_with_stripe) assertion to the subscription.deleted example, alongside the existing stub. Same class as run 1's l1-a2-001."
+    }
+  ],
+  "prior_finding_review": {
+    "l1-a2-001": "FIX VERIFIED by agent 2 — commit 7574df408 is exactly the 3-line reset_ai_credits assertion, non-vacuous, mirrors the success-path shape; also independently confirmed by agents 8, 9, 10"
+  },
+  "spec_coverage": {
+    "total_slices": 10,
+    "clean_slices": 9,
+    "slices_with_findings": [3],
+    "notes": "Agents 1,2,4,5,6,7,8,10 clean; agent 9 validated a3's finding, ran a systematic stubbed-but-never-asserted sweep across all four spec files, and found no other instance. Delicacy audit (agent 8): webhook diff 34 insertions / 0 deletions, two sanctioned hunks, fix commit touched only the spec file. Reverse traceability (agent 10): all 17 hunks across 11 files traced."
+  }
+}

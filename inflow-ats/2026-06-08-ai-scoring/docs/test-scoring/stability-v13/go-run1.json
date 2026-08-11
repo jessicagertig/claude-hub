@@ -1,0 +1,239 @@
+{
+  "run": 1,
+  "criteria_count": 28,
+  "call2_count": 20,
+  "decomposed_delta": 8,
+  "tier_counts": {
+    "tier_1": 2,
+    "tier_2": 26,
+    "tier_3": 0
+  },
+  "cost": 0.014689,
+  "title_technology": "Go",
+  "criteria": [
+    {
+      "text": "Ability to design, build, and maintain backend services in Go that power our PaaS",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": true,
+      "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+    },
+    {
+      "text": "Ability to develop APIs, scheduler and orchestrator logic",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+    },
+    {
+      "text": "Ability to build integrations with cloud providers",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+    },
+    {
+      "text": "Ability to create internal tooling",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+    },
+    {
+      "text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds."
+    },
+    {
+      "text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment."
+    },
+    {
+      "text": "Ability to collaborate with product and UX teams",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences."
+    },
+    {
+      "text": "Ability to improve CLI usage and enhance CI/CD workflows",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences."
+    },
+    {
+      "text": "Ability to enable marketplace and cloud provider integrations",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences."
+    },
+    {
+      "text": "Ability to create observability and logging experiences",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences."
+    },
+    {
+      "text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies."
+    },
+    {
+      "text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": true,
+      "source_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments."
+    },
+    {
+      "text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "tier_reasoning": "signal: strong",
+      "binary": false,
+      "contains_title_technology": true,
+      "source_text": "Strong programming experience in Go (Golang) for production backend systems."
+    },
+    {
+      "text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "tier_reasoning": "signal: solid",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+    },
+    {
+      "text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: experience with",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers."
+    },
+    {
+      "text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: experience in",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+    },
+    {
+      "text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: understanding of",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control."
+    },
+    {
+      "text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: familiarity with",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+    },
+    {
+      "text": "Excellent communication skills",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: excellent (soft skill exception applied)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+    },
+    {
+      "text": "Ability to work cross functionally",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: ability to (soft skill exception applied)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+    },
+    {
+      "text": "Thrive within a fast moving product engineering environment",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+    },
+    {
+      "text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: experience (Nice to Have heading is tier_2)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace."
+    },
+    {
+      "text": "Experience working in multi cloud or hybrid cloud environments",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: experience (Nice to Have heading is tier_2)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios."
+    },
+    {
+      "text": "Experience with customer facing deployment scenarios",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: experience (Nice to Have heading is tier_2)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios."
+    },
+    {
+      "text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: familiarity (Nice to Have heading is tier_2)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures."
+    },
+    {
+      "text": "Experience with open source projects",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: experience (Nice to Have heading is tier_2)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience with open source projects or distributed systems."
+    },
+    {
+      "text": "Experience with distributed systems",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: experience (Nice to Have heading is tier_2)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience with open source projects or distributed systems."
+    },
+    {
+      "text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: familiarity (Nice to Have heading is tier_2)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack."
+    }
+  ]
+}

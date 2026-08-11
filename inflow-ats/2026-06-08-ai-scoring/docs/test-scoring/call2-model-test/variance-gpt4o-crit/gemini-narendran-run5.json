@@ -1,0 +1,99 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience in multi-cloud environments (AWS, Azure) and managed Kubernetes platforms at Civo, nClouds, and Lineten, involving architecture and deployment."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate demonstrates strong experience enhancing CI/CD workflows and observability experiences. However, the resume does not explicitly mention collaboration with UX teams or specific CLI development for internal developers."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has proven success in reliability (99.9% uptime), implementing Prometheus/Grafana stacks, GitOps rollbacks (ArgoCD), and multi-region/multi-cloud architecture."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with Go and cloud deployments but there is no specific mention of mentoring others or formalizing best practices in a leadership capacity."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Go as a programming language and mentions using custom Golang controllers for Kubernetes in their experience at Lineten."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate holds multiple CNCF certifications (CKA, CKAD, CKS) and lists experience with Istio, Linkerd, and various Kubernetes management tasks across multiple roles."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Terraform and has extensive project experience using it for multi-tenant and multi-region infrastructure."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has significant hands-on experience with AWS and Azure, specifically mentioning EKS, compute, and security compliance."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate worked at Civo (a PaaS provider) and has experience managing DBaaS and Kubeflow environments, indicating deep understanding of infrastructure abstraction."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience with CI/CD tools (GitHub Actions, ArgoCD, etc.) and developer platform tooling."
+    },
+    {
+      "criterion_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The resume describes the candidate as 'Highly collaborative', but does not provide specific instances of cross-functional team communication in a professional setting."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The candidate does not mention specific experience with publishing or integrating solutions on cloud marketplaces."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has direct experience implementing multi-region Kubernetes clusters and multi-tenant AWS EKS platforms."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has worked with K3s, Mayastor, and other open-source/distributed system technologies in professional roles."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience with Prometheus and Grafana, explicitly mentioning their use in multiple roles."
+    }
+  ],
+  "computed_score": {
+    "points": 78.0,
+    "max": 92,
+    "percentage": 84.8
+  }
+}

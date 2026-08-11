@@ -1,0 +1,49 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "run": 2,
+  "head": "3e5aaf7c5",
+  "agents_dispatched": 6,
+  "agents_reporting": 6,
+  "shuffled": "Assignments reshuffled vs round-1 (jobs+textract combined; models+full-guard-chain combined; controllers+auth-depth; full-UI single agent; data+ws round-trip contract; tests+adversarial second-opinion) so re-verification is independent.",
+  "coverage": {
+    "agent-1": "backend jobs (extract_job_criteria_job, bulk_generate_ai_summaries_job) + textract trigger + analog structural diff; re-adjudicated l2-a3-001 via git blame",
+    "agent-2": "AiJobCriteria model + Job criteria methods + full zero-criteria guard chain end-to-end (model constant -> writer sites -> predicate -> validators -> bulk queue -> scoring)",
+    "agent-3": "controllers + serializer + routes + authorization chain in depth; re-adjudicated l2-a1-001",
+    "agent-4": "full frontend UI (section + sidebar + both modals + hook)",
+    "agent-5": "frontend data layer + full websocket round-trip contract (backend broadcast <-> payload type <-> handler)",
+    "agent-6": "test correctness across all 11 spec files (ghost/tautology hunt) + adversarial second opinion on the 2 highest-risk production files"
+  },
+  "findings": [],
+  "high_plus_count": 0,
+  "med_findings": [
+    {
+      "id": "l2-a1-001",
+      "severity": "MED",
+      "status": "confirmed MED by round-1 agent-1, round-2 agent-3, and the discarded partial agent-1 — three independent reviewers",
+      "title": "GET gated by hiring-team show? but POST regenerate gated by org-wide update_ai_settings?/can_use_ai_credits? — a non-hiring-team org member (with hiring_team_ai_credits_control_enabled) can POST a paid regeneration on a job they cannot GET",
+      "file": "app/controllers/api/v1/ai_job_criteria_controller.rb",
+      "classification": "do-not-fix: code matches SPEC §9 literally (no spec-impl mismatch), and it is analog-consistent (the AI-summary single-create and bulk-create controllers share the identical asymmetry — reads gate on hiring-team, paid writes gate on org-wide can_use_ai_credits?). Product-awareness item for Jessica.",
+      "doc_note": "round-2 agent-3: SPEC §9 cites jobs_controller.rb:163 as the analog, but that update_ai_settings? call sits behind a preceding bare `authorize job` (update?/on_hiring_team?) at line 162, making jobs_controller#update STRICTER than this endpoint. The truer analogs are the AI-summary create controllers, which do share the asymmetry. Doc imprecision only; does not change correctness or severity."
+    },
+    {
+      "id": "l2-a3-001",
+      "severity": "MED",
+      "status": "confirmed MED + proven pre-existing by round-2 agent-1 (git blame -> commit a5c0e1f823, 2026-04-15; feature's only change to the file is the +5/-1 validation hunk)",
+      "title": "Two PRE-EXISTING paths in BulkGenerateAiSummariesJob#each_iteration (StandardError catch-all + job-application-not-found early return) leave the claim row :processing, contradicting the file's header comment",
+      "file": "app/jobs/bulk_generate_ai_summaries_job.rb",
+      "classification": "do-not-fix: pre-existing, out of feature scope. The feature's ADDED validation-failure path correctly sets :failed (adjudicated flag 6) and does not funnel through either pre-existing path."
+    },
+    {
+      "id": "l2-a4-001",
+      "severity": "MED",
+      "status": "new in round-2 (agent-4)",
+      "title": "react-query v3.13.10: isError can coexist with retained stale data, so a transient background-refetch failure renders the 'Could not load job criteria' error state over an already-populated criteria card (hiding the card + its action buttons) until the next successful refetch or a reload",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+      "classification": "do-not-fix: the code matches the conventions-pass-adjudicated precedence exactly (query-error state has priority after isLoading and before all payload states — an unconditional isError check). This is that adjudicated design working as specified; whether isError should suppress cached data is a design/product decision about react-query behavior, not a spec-implementation mismatch. Auto-recovers on next refetch. Surfaced for Jessica's awareness."
+    }
+  ],
+  "low_findings_summary": "10 LOW across round-2 agents — all analog-consistent / pre-existing / spec-verbatim / cosmetic observations (unmemoized serializer re-reads with self-correcting torn-read window; unguarded .job.title deref unreachable due to FK; spec-accepted §4.1 pending-window double-enqueue; isFetching-folded-into-isInFlight cosmetic button flicker; static-list index keys; etc.). None actionable.",
+  "convergence": "Round 1 (8 agents, 0 HIGH+) + Round 2 (6 agents, 0 HIGH+) = two consecutive clean rounds. Both round-1 MEDs re-validated at MED (not escalated); one new MED (l2-a4-001) collected. No HIGH+ found or invalidated.",
+  "verdict": "LAYER 2 CONVERGED — advance to Layer 3"
+}

@@ -1,0 +1,27 @@
+{
+  "agent": 1,
+  "round": 2,
+  "focus": "New components -- PlatoMark.tsx and PlatoOverviewCallout.tsx",
+  "spec_sections": [1, 3],
+  "findings": [
+    {
+      "id": "A1-R2-1",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/components/shared/PlatoMark.tsx",
+      "lines": "89-106",
+      "title": "Styled components use bare template literals instead of the mandated (props: any) => css`` function form",
+      "description": "The spec's 'Emotion styled component conventions' section states: 'All styled components use the Styled.* namespace pattern' with the form `styled.div((props: any) => { const t: any = props.theme; return css`...`; })`. Both Styled.Wrapper (lines 92-96) and Styled.Chip (lines 98-106) use bare template literals (`styled.span`...``) instead. Neither accesses the theme, so there is no runtime breakage today, but the convention is prescriptive ('All styled components use...') and these two components are non-conforming. Future maintainers adding theme-dependent styles to either will need to restructure the component. Fix: convert both to the (props: any) => css`` function form.",
+      "fix": "Convert Styled.Wrapper and Styled.Chip to use `styled.span((props: any) => { const t: any = props.theme; return css`label: ...; ...`; })` per the mandated convention."
+    },
+    {
+      "id": "A1-R2-2",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoOverviewCallout.tsx",
+      "lines": "31",
+      "title": "Failed-state subtitle uses em dash instead of spec-specified copy",
+      "description": "Spec section 3 table row for Failed state specifies subtitle: \"No credit was used -- open to retry.\" (double hyphen as written in the spec). The implementation renders: \"No credit was used — open to retry.\" (em dash, Unicode U+2014). While the em dash is typographically correct English, this is a literal copy mismatch from the spec. All other subtitle strings match the spec exactly. The spec is the authoritative source for copy; the implementation must match it unless the discrepancy is explicitly approved.",
+      "fix": "Align the subtitle string with the spec. Either the implementation should use the em dash (if that was the design intent and the spec's double-hyphen was a markdown rendering artifact) or the spec should be amended. Surface to Jessica for a decision — do not silently accept either form."
+    }
+  ],
+  "clean": []
+}

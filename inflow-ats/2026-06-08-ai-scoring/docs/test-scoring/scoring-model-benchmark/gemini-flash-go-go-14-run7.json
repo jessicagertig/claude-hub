@@ -1,0 +1,153 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume shows experience with infrastructure modernization and scaling systems, but does not explicitly mention collaboration with an infrastructure team on Kubernetes integrations or Terraform usage."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience architecting and scaling backend systems at Reddit and Deliveroo, and built decentralized storage at YourStorage, but there is no specific evidence of managing multi-cloud racks or customer-facing environment deployments."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The candidate has strong experience delivering features for end users, but no explicit evidence of collaborating with product/UX to build developer-focused features."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists Go in their tech stack at Solid and has extensive experience building backend systems at Reddit, Deliveroo, and Coinbase."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "While the candidate has scaled large systems, the resume does not explicitly mention working with Kubernetes."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "No mention of Terraform or other IaC tools like Pulumi, CloudFormation, etc."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists AWS in their tech stack and describes managing scalable services and data processing storage frameworks."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Experience as a Founding Engineer and co-founder of a storage service suggests some understanding of backend infrastructure, but no direct experience working on a PaaS product."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with internal infrastructure modernization and integrations, but does not explicitly mention CI/CD pipelines."
+    },
+    {
+      "criterion_text": "Excellent communication skills",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate mentions leading, planning, and communicating with stakeholders and stakeholders for scaling efforts."
+    },
+    {
+      "criterion_text": "Ability to work cross functionally",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Experience integrating systems between third-party companies (McDonald's/Subway and Deliveroo) and internal ads organization at Reddit demonstrates cross-functional capability."
+    },
+    {
+      "criterion_text": "Thrive within a fast moving product engineering environment.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has experience in several high-growth, fast-paced environments including Coinbase, Reddit, and Deliveroo."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of cloud marketplace experience."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience integrating large-scale systems across different business partners, though multi-cloud infrastructure management is not explicitly demonstrated."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate architected highly available systems for Deliveroo and Reddit, handling millions of transactions/requests."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate built a decentralized storage service on top of IPFS and works extensively with distributed blockchain nodes."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No mention of specific monitoring/observability tools like Prometheus, Grafana, or ELK."
+    },
+    {
+      "criterion_text": "Ability to design, build, and maintain backend services in Go that power our PaaS",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Strong evidence of designing/building Go backend services, but not specifically for a PaaS."
+    },
+    {
+      "criterion_text": "Ability to develop APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling as part of backend services",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate developed APIs, state machines, and system integrations as part of their backend work at Solid and Deliveroo."
+    },
+    {
+      "criterion_text": "Ability to participate in code reviews for backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Experience as a lead/founding engineer implies code review duties, though not explicitly stated."
+    },
+    {
+      "criterion_text": "Ability to mentor others in backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Mentions leading scaling efforts and guiding re-architectures, implying a mentorship capacity, but lacks specific mentorship experience details."
+    },
+    {
+      "criterion_text": "Ability to help define best practices for backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has led re-architecting and modernization projects which involves setting standards, but this is implied rather than explicitly stated."
+    },
+    {
+      "criterion_text": "Ability to ensure high reliability, scalability, and security of the platform",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume highlights numerous instances of scaling systems, improving uptime, and architecting for high reliability and security."
+    },
+    {
+      "criterion_text": "Ability to implement monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies to support platform reliability, scalability, and security",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate demonstrates strong focus on reliability and uptime (e.g., Deliveroo success rates), but lacks evidence of specific implementation of alerting or rollback strategies."
+    }
+  ],
+  "computed_score": {
+    "points": 100.0,
+    "max": 164,
+    "percentage": 61.0
+  }
+}

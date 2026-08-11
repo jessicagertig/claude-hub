@@ -1,0 +1,41 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 2,
+  "focus_area": "backend data layer (2nd pass)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "SPEC §3 / D6 — users migration: utm_source string, utm_campaign string, utm_data jsonb, internal_ref string; no defaults, nullable, no index",
+      "SPEC §3 / D6 — organizations migration: identical column set; no defaults, nullable, no index",
+      "SPEC §3 / D6 — no defaults on utm_data jsonb (deliberately unlike settings jsonb `default: {}, null: false`)",
+      "SPEC §3 / D6 — no backfill, no data migration",
+      "SPEC §3 — no model changes: no validations, no enums, no attr_accessor for the four columns",
+      "SPEC §3 — app/models/organization.rb has NO edit",
+      "SPEC §3 — db/schema.rb regenerated with matching column shapes on both tables",
+      "SPEC §4.6 / D9 — from_omniauth all-keyword signature in the exact order auth:, created_via:, partner_source: nil, utm_source: nil, utm_campaign: nil, utm_data: nil, internal_ref: nil",
+      "SPEC §4.6 / D9 — four new assignments INSIDE the first_or_create block alongside created_via/partner_source; raw assignment (no &.downcase on the four; partner_source keeps its downcase)",
+      "SPEC §4.6 / D9 — post-block behavior unchanged: assign_attributes(remember_me: true), update(first_name:, last_name:), enqueue_complete_user_setup",
+      "SPEC §4.6 / D9 — repo-wide call-site conversion: every from_omniauth call site uses keyword form",
+      "SPEC §7 constraint 2 — nil for absent: no column defaults at the data layer",
+      "SPEC §7 constraint 3 — no backfill: existing rows keep nil",
+      "SPEC §7 constraint 4 — raw storage: no get_created_via-style mapping, no downcasing of the four",
+      "SPEC §7 constraint 5 — creation-time only: from_omniauth assigns the four only when the User row is created; existing SSO users untouched"
+    ],
+    "verified": [
+      "db/migrate/20260715233505_add_attribution_columns_to_users.rb — four add_column calls in spec order (utm_source :string, utm_campaign :string, utm_data :jsonb, internal_ref :string), no default:, no null: false, no add_index; class AddAttributionColumnsToUsers matches file name; ActiveRecord::Migration[6.1] matches the repo's current migration convention",
+      "db/migrate/20260715233506_add_attribution_columns_to_organizations.rb — identical column set and shape; class AddAttributionColumnsToOrganizations matches file name",
+      "db/schema.rb — version bumped to 2026_07_15_233506; `t.string \"utm_source\"`, `t.string \"utm_campaign\"`, `t.jsonb \"utm_data\"`, `t.string \"internal_ref\"` added inside create_table \"organizations\" (line 1033 block, columns at 1086-1089) and create_table \"users\" (columns at 1285-1288); none carry default/null constraints (contrast confirmed: sibling settings jsonb columns are `default: {}, null: false`); no index on any of the four; schema diff contains nothing else (10 changed lines = version line + 8 column lines)",
+      "schema version line traceability — the jump from 2026_06_11_120003 to 2026_07_15_233506 spans two pre-existing migrations (20260622182504, 20260622204646) whose effects (jobs AI columns at schema lines 907-909, non-unique index_ai_job_criteria_on_job_id at line 189) were ALREADY present in the base commit's schema.rb; the base version line was stale pre-existing state, corrected as a byproduct of regeneration — no untraced schema content introduced by this diff",
+      "no backfill — git diff 62dd55867..8dcc2f06f touches no db/data/ file, no db/structure.sql, and contains no data migration; the only db/ changes are the two migrations and schema.rb",
+      "app/models/user.rb — entire diff is 6 lines: the from_omniauth signature (line 379) replaced with the exact spec signature, character-identical to SPEC §4.6, plus four assignments (lines 389-392) inside the where(email:).first_or_create block, placed directly after `omniauth_user.partner_source = partner_source&.downcase`; assignments are raw (no &.downcase, no mapping); partner_source keeps &.downcase; no validations/enums/attr_accessor added (only pre-existing attr_accessor :activity_filter_key_search, :activity_filter_job_id at line 11)",
+      "app/models/user.rb post-block — lines 401-409 unchanged: user.assign_attributes(remember_me: true); user.update(first_name:, last_name:); user.enqueue_complete_user_setup('organization_user'); return user",
+      "app/models/organization.rb — zero diff (git diff --stat over app/models/ shows only user.rb); no other model file references the four columns except pre-existing unrelated URL strings in board_wwr_listing.rb:250 and board_what_jobs_listing.rb:385",
+      "call-site conversion — re-ran `git grep -ln from_omniauth` at 8dcc2f06f: app/models/user.rb (definition), app/controllers/api/v1/users/omniauth_callbacks_controller.rb (sole production call site, lines 22-30, keyword form with auth:, created_via:, partner_source:, and the four new keywords read from merged_tracking string keys), plus the two new spec files (spec/models/user_from_omniauth_spec.rb, spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb) whose calls and message expectations are all keyword form; zero positional call sites remain",
+      "creation-time only — the four assignments exist only inside the first_or_create block; nothing outside the block writes any of the four columns; an existing SSO user gets only remember_me/first_name/last_name updates",
+      "raw storage — no server-side sanitization, no downcase, no get_created_via-style mapping applied to the four values anywhere in the focus files",
+      "diff-to-spec direction — every hunk in the four focus files traces to SPEC §3 or §4.6; no untraceable code"
+    ],
+    "missing": []
+  }
+}

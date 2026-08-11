@@ -1,0 +1,9 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agents": 5,
+  "agents_clean": 5,
+  "findings": [],
+  "note": "Compressed round per coordinator deadline directive (clean-stop 10:45, ceiling 11:00 CT): 5 file-group agents instead of 15, single-round convergence instead of two consecutive clean rounds. Reduction logged, not silent. Full 15-agent double-coverage round at 8dcc2f06f (qa-run-1 round-1) found 2 HIGH, fixed in 299cf9465; this round re-verified the full diff 62dd55867..299cf9465 including the fix commit (traced to FAILURE-REPORT F1/F2, empirically re-verified, Jest 11/11).",
+  "gate": "PASS - 0 findings, Layer 1 complete under compressed convergence"
+}

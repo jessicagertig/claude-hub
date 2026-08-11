@@ -1,0 +1,111 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The resume confirms experience building backend services using Golang and REST APIs at Epwery / 2U. However, there is no specific evidence of building PaaS-specific components like orchestrators or custom schedulers."
+    },
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate lists Kubernetes and Terraform in their technical skills. While they have worked with AWS and Azure, there is no explicit mention of working with an infrastructure team on Kubernetes cluster management or complex multi-cloud IaC integrations."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no evidence in the resume of architecting or maintaining customer-facing infrastructure environments or managed service offerings."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience enhancing CI/CD pipelines at Epwery / 2U and working with observability tools (Datadog), but there is no specific mention of developer-focused tools, CLIs, or product/UX collaboration."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Experience with scalability, observability (Datadog), and API reliability is cited, but no specific implementation of failover strategies or sophisticated platform security is mentioned."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate mentions 'Led improvements' at Epwery / 2U, which implies some leadership, but there is no explicit mention of mentoring or defining company-wide engineering best practices."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The resume explicitly lists Golang in professional skills and notes its use in production backend features at Epwery / 2U."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Kubernetes is listed as a skill, but the resume does not describe specific hands-on experience with advanced K8s features like cluster design, service meshes, or complex stateful orchestration."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Terraform and Pulumi are listed as technical skills, but the resume does not provide specific projects or details regarding the management of multi-cloud infrastructure via IaC."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume confirms extensive experience with AWS (EC2, S3, RDS, Lambda) and Azure, including managing backend services."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no evidence in the resume of experience with PaaS product development or infrastructure abstraction."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly notes experience leading improvements in CI/CD pipelines and integrating AWS services."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no mention of cloud marketplace publishing or integration in the resume."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Experience with both AWS and Azure is mentioned at Southworks, demonstrating multi-cloud exposure, though customer-facing deployment scenarios are not specifically documented."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with 'scalable systems' and 'distributed systems', which are relevant to high availability and system design, but multi-region or multi-tenant specific experience is not confirmed."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists 'distributed systems' as a technical skill."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with observability (Datadog), but not the specific tools Prometheus, Grafana, or ELK stack mentioned in the criteria."
+    }
+  ],
+  "computed_score": {
+    "points": 39.0,
+    "max": 72,
+    "percentage": 54.2
+  }
+}

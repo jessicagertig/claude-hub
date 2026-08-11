@@ -1,0 +1,33 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 4,
+  "focus_area": "frontend SSO + events",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "SPEC §5.3 (D7) — GoogleSSOButton.tsx: optional props utmSource/utmCampaign/utmData/internalRef; hidden inputs utm_source/utm_campaign/internal_ref with the exact referral/partner analog guard typeof x === \"string\" && x.length > 0; utm_data one input per key with Rails-nested name utm_data[key] and the same per-key guard",
+      "SPEC §5.6 (D12) — Auth.tsx: mount path unchanged; SECOND useEffect deps [emailConfirmed]; bare return unless true; id AND email both-present guard else NEITHER call; identifyUser({id: Number(id), email}) THEN trackEvent(\"email_verified\"); AuthRegister.tsx/Login.tsx untouched",
+      "SPEC §5.7 (D13) — OrganizationForm.tsx: trackEvent(\"organization_created\") before onComplete(data); NO identify added",
+      "SPEC §5.8 (D16) — ProfileForm.tsx: isNewOwner → organization_owner_user_name_submitted else invited_user_name_submitted, before onComplete",
+      "SPEC §5.9 — posthog.ts diff is ONLY the identifyUser window.logger hunk",
+      "SPEC §7 constraint 7 — zero PosthogTrackJob/PosthogIdentifyJob touches in the whole diff",
+      "SPEC §7 constraint 8 — exactly five event names, all plain no-property trackEvent calls; git grep -n user_signed_up_client_side app/ → exactly AuthForm.tsx + SignupForm.tsx",
+      "diff-to-spec: every hunk in the 5 assigned files traceable to the spec"
+    ],
+    "verified": [
+      "§5.3: GoogleSSOButton.tsx Props extends utmSource?, utmCampaign?, utmData? (Record<string, any>), internalRef?; three hidden inputs (name=utm_source/utm_campaign/internal_ref) each guarded by the exact analog form typeof utmSource === \"string\" && utmSource.length > 0 (byte-matching the pre-existing referral/partner guards at lines 43-51); inputs rendered inside the existing form after the partner input",
+      "§5.3: utm_data rendered via utmData != undefined ? Object.keys(utmData).map(...) with one hidden input per key, name={\"utm_data[\" + key + \"]\"} exactly as spec'd, per-key guard typeof utmData[key] === \"string\" && utmData[key].length > 0 (null/\"\" values render no input, matching the spec's stated degenerate-value consequence); outer != undefined nil-guard is the house form and mechanically required for an optional prop; React key={key} is mechanical",
+      "§5.6: Auth.tsx mount effect (deps []) and showEmailConfirmationBannerIfApplicable are byte-identical to base; the new SECOND React.useEffect has deps [emailConfirmed], bare-returns via if (!emailConfirmed) return;, reads { id, email } from queryString.parse(props.location.search), guards if (id != undefined && email != undefined) so an absent id or email (stale bookmarked URL) fires NEITHER call, then calls identifyUser({ id: Number(id), email: email as string }) followed by trackEvent(\"email_verified\") — order matches spec; the as string cast is a mechanical TS narrowing, identical runtime to the spec's identifyUser({ id: Number(id), email })",
+      "§5.6: emailConfirmed transitions false→true only on the email_confirmed=true landing (emailConfirmedParam === \"true\") and never back, so the pair fires once per landing and the email_confirmed=false branch gets nothing; import { identifyUser, trackEvent } from \"@shared/lib/posthog\" as spec'd; git diff --name-only contains neither AuthRegister.tsx nor Login.tsx",
+      "§5.7: OrganizationForm.tsx createOrganization onSuccess fires trackEvent(\"organization_created\") (no properties) on the line before onComplete(data); the only other addition is the trackEvent import; no identifyUser import or call added — diff-wide grep shows identifyUser( added only in Auth.tsx",
+      "§5.8: ProfileForm.tsx updateMe onSuccess fires exactly one of trackEvent(\"organization_owner_user_name_submitted\") when props.isNewOwner else trackEvent(\"invited_user_name_submitted\") (wasInvited and neither-true both land in the else), both plain no-property calls, before props.onComplete(); only other addition is the trackEvent import",
+      "§5.9: the posthog.ts diff is a single hunk inside identifyUser adding window.logger to the not-loaded skip path and the fire path; trackEvent/resetUser/getPosthog untouched (trackEvent's window.logger lines are pre-existing at base 62dd55867); per instructions this hunk is spec'd as part of the PR and not a finding",
+      "§7 constraint 7: grep of the full 62dd55867..299cf9465 diff for PosthogTrackJob|PosthogIdentifyJob returns zero added/removed/modified lines (the callbacks-controller jobs appear only as unchanged context)",
+      "§7 constraint 8: the diff adds exactly six trackEvent calls using exactly the five fixed names (user_signed_up_client_side ×2, email_verified, organization_created, organization_owner_user_name_submitted, invited_user_name_submitted), all single-argument no-property calls; git grep -n user_signed_up_client_side app/ at 299cf9465 → exactly AuthForm.tsx:91 and SignupForm.tsx:75; no user_signed_up or user_logged_in server string appears in the diff",
+      "trackEvent and identifyUser definitions read in app/javascript/shared/lib/posthog.ts: identifyUser requires { id: number; email: string } (satisfied by Number(id) + string email) and keys on String(user.id); trackEvent(event, properties?) passes through to ph.capture — plain calls send no properties",
+      "diff-to-spec: every hunk in the 5 assigned files traces to §5.3/§5.6/§5.7/§5.8/§5.9 — no extra code, no untraceable additions"
+    ],
+    "missing": []
+  }
+}

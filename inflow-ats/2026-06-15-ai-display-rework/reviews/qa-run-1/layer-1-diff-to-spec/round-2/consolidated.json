@@ -1,0 +1,23 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "total_agents": 5,
+  "findings_high": [],
+  "findings_med": [
+    {
+      "id": "l1-med-001",
+      "severity": "MED",
+      "title": "JobApplicationNavItem checks 'succeeded' instead of 'current'",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationNavItem.tsx",
+      "line": 26,
+      "description": "The harvey dot condition checks summaryStatus === 'succeeded' but the status record uses 'current'/'regenerating'/'none'. This means the harvey dot never renders in the nav list. Pre-existing on the ai-frontend-work base branch — not introduced by this feature's diff.",
+      "classification_reason": "Pre-existing. File not modified in this feature's diff. The bug was introduced in commit c35809614 on the base branch."
+    }
+  ],
+  "convergence": {
+    "round_1_high": 0,
+    "round_2_high": 0,
+    "consecutive_clean_rounds": 2,
+    "status": "CONVERGED"
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "meta": {
+    "batch": 31,
+    "criteria_prompt_version": 7,
+    "job_id": 32310,
+    "title": "Técnico Metalomecânica",
+    "organization": "Aralab",
+    "cost": 0.000629
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "A Aralab é um fabricante líder de câmaras climáticas, com o propósito de garantir que os nossos clientes conseguem simular todo o tipo de ambientes, desde o clima mais rigoroso do Pólo Norte até aos locais mais quentes do nosso planeta. Somos uma empresa com uma forte componente de engenharia e inovação. Centenas de instituições de investigação e empresas multinacionais têm confiado no nosso trabalho nos últimos 40 anos.\n\nO nosso equipamento tem diversas finalidades, desde ajudar as equipas de Fórmula 1 a entregar carros mais fiáveis, até ao combate ao cancro ou à resolução de problemas de produção alimentar em massa, através da ciência agrícola.\n\nConhece aqui a nossa fábrica"
+      },
+      {
+        "heading": "Qual o desafio?",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Interpretar desenhos técnicos, esquemas e instruções de montagem.\nPreparar e cortar materiais metálicos com diversas espessuras.\nRealizar  medições precisas utilizando paquímetros e outros instrumentos de medida.\nExecutar a montagem e assemblagem de componentes e estruturas metálicas.\nManusear equipamentos de oficina como berbequins, rebarbadoras, polidoras e outras ferramentas manuais e elétricas.\nExecutar trabalhos de soldadura, com especial foco em inox.\nControlar a qualidade das peças produzidas, identificando e reportando quaisquer defeitos ou não conformidades ao responsável de equipa."
+      },
+      {
+        "heading": "O que podes esperar?",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "Integração numa empresa em crescimento e referência no setor\nAmbiente de trabalho dinâmico, desafiante e colaborativo\nOportunidades de desenvolvimento profissional e formação\nCultura que valoriza as pessoas e o seu bem-estar\nPrémio anual baseado na performance\nSeguro de saúde desde o primeiro dia"
+      },
+      {
+        "heading": "Se és alguém com…",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Experiência comprovada em funções similares na área da metalomecânica.\nSólidos conhecimentos em leitura e interpretação de desenho técnico.\nExperiência em soldadura de Inox (TIG/MIG-MAG será valorizado).\nDestreza no manuseamento de ferramentas manuais e elétricas de oficina.\nSentido de responsabilidade, rigor e atenção ao detalhe.\nDinamismo, proatividade e capacidade de trabalhar em equipa.\nFormação técnica na área (preferencial)."
+      },
+      {
+        "heading": "Então és tu quem procuramos! Candidata-te 👊🏼",
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": ""
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Interpretar desenhos técnicos, esquemas e instruções de montagem.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Interpretar desenhos técnicos, esquemas e instruções de montagem."
+      },
+      {
+        "text": "Preparar e cortar materiais metálicos com diversas espessuras.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Preparar e cortar materiais metálicos com diversas espessuras."
+      },
+      {
+        "text": "Realizar  medições precisas utilizando paquímetros e outros instrumentos de medida.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Realizar  medições precisas utilizando paquímetros e outros instrumentos de medida."
+      },
+      {
+        "text": "Executar a montagem e assemblagem de componentes e estruturas metálicas.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Executar a montagem e assemblagem de componentes e estruturas metálicas."
+      },
+      {
+        "text": "Manusear equipamentos de oficina como berbequins, rebarbadoras, polidoras e outras ferramentas manuais e elétricas.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Manusear equipamentos de oficina como berbequins, rebarbadoras, polidoras e outras ferramentas manuais e elétricas."
+      },
+      {
+        "text": "Executar trabalhos de soldadura, com especial foco em inox.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Executar trabalhos de soldadura, com especial foco em inox."
+      },
+      {
+        "text": "Controlar a qualidade das peças produzidas, identificando e reportando quaisquer defeitos ou não conformidades ao responsável de equipa.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Controlar a qualidade das peças produzidas, identificando e reportando quaisquer defeitos ou não conformidades ao responsável de equipa."
+      },
+      {
+        "text": "Experiência comprovada em funções similares na área da metalomecânica.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"comprovada\" (tier_1 strong expectation signal)",
+        "binary": false,
+        "source_text": "Experiência comprovada em funções similares na área da metalomecânica."
+      },
+      {
+        "text": "Sólidos conhecimentos em leitura e interpretação de desenho técnico.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Sólidos\" (tier_1 strong expectation signal)",
+        "binary": false,
+        "source_text": "Sólidos conhecimentos em leitura e interpretação de desenho técnico."
+      },
+      {
+        "text": "Experiência em soldadura de Inox (TIG/MIG-MAG será valorizado).",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Experiência em soldadura de Inox (TIG/MIG-MAG será valorizado)."
+      },
+      {
+        "text": "Destreza no manuseamento de ferramentas manuais e elétricas de oficina.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Destreza no manuseamento de ferramentas manuais e elétricas de oficina."
+      },
+      {
+        "text": "Sentido de responsabilidade, rigor e atenção ao detalhe.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Sentido de responsabilidade, rigor e atenção ao detalhe."
+      },
+      {
+        "text": "Dinamismo, proatividade e capacidade de trabalhar em equipa.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Dinamismo, proatividade e capacidade de trabalhar em equipa."
+      },
+      {
+        "text": "Formação técnica na área (preferencial).",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"preferencial\" (preferred signal)",
+        "binary": false,
+        "source_text": "Formação técnica na área (preferencial)."
+      }
+    ]
+  }
+}

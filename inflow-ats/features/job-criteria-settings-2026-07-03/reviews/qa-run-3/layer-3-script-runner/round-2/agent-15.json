@@ -1,0 +1,18 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 15,
+  "focus": "Re-verify ExtractJobCriteriaJob#broadcast_completion (private) payload + guard logic in isolation (SPEC §7): capture GlobalChannel.broadcast_to; call broadcast_completion(ai_job_criteria, requesting_organization_user_id) directly across all states; NEVER trigger real extraction.",
+  "scenarios_run": [
+    "Built own isolated org/user/owner_ou/job (SecureRandom-suffixed); stubbed GlobalChannel.broadcast_to to capture calls; called ExtractJobCriteriaJob.new.send(:broadcast_completion, ...) per case. 43 assertions, all PASS.",
+    "C1 succeeded row -> exactly 1 broadcast; target arg == the user; action=='JOB_CRITERIA_EXTRACTION_COMPLETE'; payload status=='succeeded', jobId==job.id, jobTitle==job.title, zeroCriteriaFailure==false, and NO :errorMessage key.",
+    "C2 each of the 3 ZERO_CRITERIA_ERROR_MESSAGES (No criteria sections found / No criteria extracted / Criteria array is empty) -> status=='failed', zeroCriteriaFailure==true, errorMessage==the message.",
+    "C3 non-zero-criteria failed row ('Job description is blank') -> status=='failed', zeroCriteriaFailure==false, errorMessage=='Job description is blank'.",
+    "C4 failed row with nil error_message -> status=='failed', zeroCriteriaFailure==false, NO :errorMessage key (present? guard). C4b same for '' (blank) error_message -> NO :errorMessage key.",
+    "C5 non-terminal rows (pending / in_progress / retrying) -> NO broadcast (terminal-state guard).",
+    "C6 stale-in-memory re-read: created succeeded row, mutated DB row underneath via update_all to failed + ZERO_CRITERIA_EMPTY_ARRAY message; in-memory obj still 'succeeded' but broadcast payload reflected CURRENT DB state (failed, zeroCriteriaFailure true, current errorMessage) -- proves AiJobCriteria.find_by(id:) fresh read is load-bearing.",
+    "C7 non-existent requesting_organization_user_id (999999999) -> NO broadcast; C7b nil id -> NO broadcast.",
+    "C8 OrganizationUser present but its .user is nil (stubbed find_by to return OU whose user is nil) -> NO broadcast (return unless user)."
+  ],
+  "findings": []
+}

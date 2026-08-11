@@ -1,0 +1,111 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience in Go, developing backend systems for platforms like Hunter Douglas and the Upwork Integration Platform. Their work on integration platforms and observability stacks for mobility cloud platforms directly aligns with building backend logic for PaaS-like functionality."
+    },
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume lists experience with Kubernetes, Terraform, AWS, GCP, and Azure. In their role at Hunter Douglas, they utilized these specific tools (Go, Kubernetes, Azure, Terraform) for their platform work."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience working in multi-cloud environments (AWS, GCP, Azure) and performing migrations between them, and has experience with enterprise integration platforms, though there is no explicit mention of deploying to external customer-owned accounts."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has documented experience improving developer productivity, enhancing CI/CD pipelines (Jenkins, ArgoCD), building observability dashboards (Prometheus/Grafana), and developing integration layers for enterprise systems."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience in observability (Prometheus, Grafana, Thanos, Cortex) and has explicitly worked on ensuring high availability (99.9% uptime) and multi-cloud migration strategies."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has served as a lead engineer managing teams of up to 10 engineers, setting architecture standards, conducting technical interviews, mentoring, and performing code reviews."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has over 8 years of experience and has used Go for multiple high-profile production systems, including those at Hunter Douglas, Upwork, and Ford/Autonomic."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Kubernetes is listed as a core skill, and the candidate has practical experience deploying and managing services within Kubernetes across multiple past roles."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Terraform in their current role at Hunter Douglas."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has hands-on experience with all three major providers (AWS, GCP, Azure) in various engineering capacities."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate worked on an Integration Platform that abstracted and decoupled communication for Enterprise applications, demonstrating a clear understanding of building abstraction layers."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has deep experience with CI/CD tools (Jenkins, ArgoCD, GitHub Actions) and extensive experience with enterprise integration and platform development."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "While the candidate has experience with enterprise integrations, there is no evidence provided of publishing or managing solutions on a cloud marketplace."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has worked in multi-cloud environments (AWS, GCP, Azure) and has direct experience in client-facing deployment scenarios at SIGMA EMEA and other consulting roles."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate's work on systems processing 1B+ daily events and serving millions of users demonstrates familiarity with the requirements of high-availability, high-scale architectures."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly mentions contributing to and customizing OSS tools like Cortex Metrics, Grafana, and Thanos."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate is highly experienced in observability, having built custom dashboards and stacks using Prometheus, Grafana, Cortex, and Thanos."
+    }
+  ],
+  "computed_score": {
+    "points": 66.0,
+    "max": 72,
+    "percentage": 91.7
+  }
+}

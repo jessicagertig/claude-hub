@@ -1,0 +1,128 @@
+{
+  "agent": "code-correctness-reviewer-2",
+  "round": 1,
+  "files_reviewed": [
+    "app/serializers/api/v1/job_application_serializer.rb",
+    "app/serializers/api/v1/ai_job_application_summary_status_serializer.rb",
+    "spec/models/ai_job_application_summary_spec.rb"
+  ],
+  "files_traced": [
+    "app/models/job_application.rb",
+    "app/models/ai_job_application_summary.rb",
+    "app/models/ai_job_application_summary_status.rb",
+    "app/serializers/api/v1/shallow_job_application_serializer.rb",
+    "app/controllers/api/v1/job_applications_controller.rb",
+    "spec/support/ai_credits_test_helpers.rb",
+    "db/schema.rb"
+  ],
+  "findings": [
+    {
+      "id": "CC2-1",
+      "severity": "HIGH",
+      "file": "app/controllers/api/v1/job_applications_controller.rb",
+      "line": 52,
+      "category": "N+1 query",
+      "summary": "show action does not eager-load :ai_job_application_summary_status, causing N+1",
+      "detail": "The show action on line 52 uses `.includes(:latest_ai_job_application_summary)` but does NOT `.includes(:ai_job_application_summary_status)`. The JobApplicationSerializer now declares `has_one :ai_job_application_summary_status`, so every show request will trigger a separate query to load the status record. The list endpoints (lines 25, 35) already include `.includes(:ai_job_application_summary_status)` for the ShallowJobApplicationSerializer, confirming the pattern exists -- but the show action was not updated to match.",
+      "fix": "Add `.includes(:ai_job_application_summary_status)` to line 52, changing it to: `current_organization.job_applications.includes(:latest_ai_job_application_summary, :ai_job_application_summary_status).find_by(id_or_hash_id(params[:id]))`",
+      "note": "This file was not in my assigned set, but the N+1 is directly caused by the serializer change that IS in my assigned set. The serializer is correct; the controller needs updating."
+    },
+    {
+      "id": "CC2-2",
+      "severity": "MED",
+      "file": "app/controllers/api/v1/job_applications_controller.rb",
+      "line": 52,
+      "category": "Stale includes",
+      "summary": "show action still includes :latest_ai_job_application_summary but serializer no longer uses it",
+      "detail": "Line 52 eager-loads `:latest_ai_job_application_summary`, but the JobApplicationSerializer no longer has `has_one :ai_job_application_summary` (it was removed as part of this rework and replaced with `has_one :ai_job_application_summary_status`). The eager-load is now dead weight -- it loads data that the serializer never touches. This wastes a query and memory on every show request.",
+      "fix": "Remove `.includes(:latest_ai_job_application_summary)` from line 52 and replace with `.includes(:ai_job_application_summary_status)`. If `:latest_ai_job_application_summary` is still used elsewhere in the show action (e.g., for some side effect), keep it, but currently nothing in the show action or serializer references it."
+    },
+    {
+      "id": "CC2-3",
+      "severity": "LOW",
+      "file": "app/serializers/api/v1/job_application_serializer.rb",
+      "line": 40,
+      "category": "Pattern match verification",
+      "summary": "has_one :ai_job_application_summary_status correctly matches ShallowJobApplicationSerializer pattern",
+      "detail": "The serializer's `has_one :ai_job_application_summary_status, serializer: Api::V1::AiJobApplicationSummaryStatusSerializer` on lines 40-41 matches the ShallowJobApplicationSerializer (lines 18-19) exactly. The JobApplication model has `has_one :ai_job_application_summary_status` on line 31. The AiJobApplicationSummaryStatus model has `belongs_to :job_application` on line 4. The schema confirms `ai_job_application_summary_statuses` has a `job_application_id` column with a unique index. No custom method override is needed because the association name maps directly to the model's association -- unlike the old `has_one :ai_job_application_summary` which needed a method override to call `latest_ai_job_application_summary`. This is correct.",
+      "fix": "No fix needed. Informational."
+    },
+    {
+      "id": "CC2-4",
+      "severity": "LOW",
+      "file": "app/serializers/api/v1/ai_job_application_summary_status_serializer.rb",
+      "line": 4,
+      "category": "Data integrity",
+      "summary": "Serializer fields match schema columns and spec requirements",
+      "detail": "The serializer exposes: id, ai_job_application_summary_id, status, score_percentage, headline, integrated_role_analysis, updated_at. The schema has all of these columns. The spec requires: status, scorePercentage, headline, integratedRoleAnalysis. The serializer includes all spec-required fields plus id, ai_job_application_summary_id, and updated_at as extras. The status enum uses _prefix: true on the model, so serialized status values will be the raw enum strings ('none', 'current', 'regenerating') not the prefixed method names. This is correct.",
+      "fix": "No fix needed. Informational."
+    },
+    {
+      "id": "CC2-5",
+      "severity": "LOW",
+      "file": "app/serializers/api/v1/job_application_serializer.rb",
+      "line": 40,
+      "category": "Edge case: missing status record",
+      "summary": "When ai_job_application_summary_status is nil, serializer returns null -- acceptable",
+      "detail": "If a job application has no AiJobApplicationSummaryStatus record (e.g., created before the feature, or before a summary was ever requested), the `has_one` association returns nil, and ActiveModelSerializers serializes it as `null` in JSON. The frontend must handle `aiJobApplicationSummaryStatus: null`. The spec says 'No record/none' maps to empty states in the UI, so this is the expected edge case behavior. The `create_status_record` callback on AiJobApplicationSummary ensures a status record is created whenever a summary is created, but job applications that never had a summary will have no status record.",
+      "fix": "No fix needed. Informational -- frontend should handle null."
+    },
+    {
+      "id": "CC2-6",
+      "severity": "LOW",
+      "file": "spec/models/ai_job_application_summary_spec.rb",
+      "line": 29,
+      "category": "Test correctness: bang methods",
+      "summary": "create! and update! usage is permitted in spec files per CLAUDE.md rule 10",
+      "detail": "The spec uses create! (lines 29, 64) and update! (lines 39, 45, 51, 57, 59, 89). CLAUDE.md rule 10 explicitly states: 'Exception: Bang methods (update!, create!, save!, find_or_create_by!) ARE permitted in RSpec spec files (spec/**/*.rb). Test setup should fail loudly -- silent failures lead to tests passing for the wrong reasons.' All usages are in spec/models/ai_job_application_summary_spec.rb. Confirmed compliant.",
+      "fix": "No fix needed."
+    },
+    {
+      "id": "CC2-7",
+      "severity": "LOW",
+      "file": "spec/models/ai_job_application_summary_spec.rb",
+      "line": 37,
+      "category": "Test correctness: broadcast status iteration",
+      "summary": "BROADCAST_STATUSES iteration test correctly resets to pending between iterations",
+      "detail": "Lines 37-46 iterate over BROADCAST_STATUSES. Line 39 resets status to :pending before each test if it changed. This reset triggers the before_update callback, but 'pending' is NOT in BROADCAST_STATUSES, so the second guard (`BROADCAST_STATUSES.include?(status)`) returns false and no broadcast occurs during reset. The expectation on line 40-44 is set after the reset, so only the final update on line 45 is tested. Logic is correct.",
+      "fix": "No fix needed."
+    },
+    {
+      "id": "CC2-8",
+      "severity": "LOW",
+      "file": "spec/models/ai_job_application_summary_spec.rb",
+      "line": 56,
+      "category": "Test correctness: expectation ordering",
+      "summary": "does not broadcast when status is unchanged test has correct expectation timing",
+      "detail": "Line 57 updates to :extracting (broadcasts, but no expectation yet). Line 58 sets the not_to receive expectation. Line 59 updates stale only (no status change). The broadcast_status_change callback checks `status_changed?` which returns false since only stale changed. The expectation only covers line 59's update, not line 57's. This is correct -- it proves that non-status updates don't trigger broadcasts.",
+      "fix": "No fix needed."
+    },
+    {
+      "id": "CC2-9",
+      "severity": "LOW",
+      "file": "spec/models/ai_job_application_summary_spec.rb",
+      "line": 62,
+      "category": "Test correctness: create vs update callback",
+      "summary": "does not broadcast on create test is correct -- before_update never fires on create",
+      "detail": "The test verifies that creating a new AiJobApplicationSummary does not trigger broadcast_status_change. This is correct because broadcast_status_change is a `before_update` callback (model line 32), and create never triggers before_update. The `create_status_record` callback (after_commit on: :create, model line 29) does fire, but it only calls `find_or_create_by` on AiJobApplicationSummaryStatus -- it does not broadcast. Since the let!(:summary) block already created a summary and its status record, this second create's `create_status_record` finds the existing record (no-op). Test is correct.",
+      "fix": "No fix needed."
+    },
+    {
+      "id": "CC2-10",
+      "severity": "LOW",
+      "file": "spec/models/ai_job_application_summary_spec.rb",
+      "line": 49,
+      "category": "Test correctness: non-broadcast statuses",
+      "summary": "Non-broadcast status test only covers 2 of 3 non-broadcast statuses",
+      "detail": "The BROADCAST_STATUSES constant has 7 values: textract_processing, extracting, summarizing, scoring, integrating, succeeded, failed. The full enum has 10 values. That leaves 3 non-broadcast: pending, awaiting_job_criteria, retrying. The test on lines 49-54 only checks awaiting_job_criteria and retrying, not pending. However, pending is the initial state set in the let!(:summary) block, so transitioning from pending to pending would be a no-op (status_changed? returns false). A test for pending-to-pending wouldn't actually test the BROADCAST_STATUSES guard -- it would test the status_changed? guard. The omission is technically correct because pending can only be a 'no broadcast' scenario via the status_changed? path, not the BROADCAST_STATUSES path. Still, for completeness, a note that pending is covered implicitly by the 'does not broadcast when status is unchanged' pattern.",
+      "fix": "No fix needed. Coverage is adequate."
+    }
+  ],
+  "summary": {
+    "blockers": 0,
+    "high": 1,
+    "med": 1,
+    "low": 8,
+    "verdict": "The three assigned files are correct in isolation. The serializer properly matches the ShallowJobApplicationSerializer pattern, the status serializer exposes the right fields, and the spec tests verify what they claim with correct expectation ordering. The one HIGH finding is an N+1 query caused by the controller's show action not eager-loading :ai_job_application_summary_status now that the serializer includes it. The MED finding is that the show action still eager-loads :latest_ai_job_application_summary which the serializer no longer uses. Both are in the controller file, not the assigned files, but are direct consequences of the serializer change."
+  }
+}

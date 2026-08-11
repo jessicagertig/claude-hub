@@ -1,0 +1,16 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 5,
+  "focus_area": "§6.3 BulkGenerateAiSummariesJob claim-row :failed fix + re-claimability in QueueBulkAiSummaryJobs; §4.2 constant substitutions in ExtractCriteria and ScoreJobApplication (value-preservation for zero_criteria_failure? detection)",
+  "files_reviewed": [
+    "app/jobs/bulk_generate_ai_summaries_job.rb",
+    "app/interactors/queue_bulk_ai_summary_jobs.rb",
+    "app/services/ai_job_application_action/scoring/extract_criteria.rb",
+    "app/services/ai_job_application_action/scoring/score_job_application.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/models/bulk_ai_summary_job_application.rb",
+    "app/models/job.rb"
+  ],
+  "findings": []
+}

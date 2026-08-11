@@ -1,0 +1,29 @@
+[
+  {
+    "id": "R1-A8-01",
+    "severity": "HIGH",
+    "file": "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+    "line": "278-287",
+    "finding": "The `/ai` Route is not wrapped in `<FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">`. The spec (section 4) explicitly requires: 'Wrap the new route in `<FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">`.' The constraints section requires: 'All three new UI surfaces (nav item, tab, callout) must be wrapped in FeatureFlipper or gated via useFeatureFlipper checking \"AI_APPLICANT_SUMMARY\". When the feature is disabled... the `/ai` route must redirect to `/overview`.' The `possiblePaths` conditional gating via `isAiEnabled` prevents the redirect loop (which is correct), but the Route itself is unconditionally rendered in the Switch. A user who manually navigates to the `/ai` path (bookmark, URL bar, browser history) when the feature flag is off will see the full PlatoTab rendered. The route must be wrapped in FeatureFlipper.",
+    "spec_ref": "Spec section 4 (JobApplicationContainer.tsx changes): 'Wrap the new route in `<FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">`'; Spec 'Feature flag gating' constraint: 'the `/ai` route must redirect to `/overview`'",
+    "fix": "Wrap `<Route path={`${match.path}/ai`} ... />` in `<FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">`."
+  },
+  {
+    "id": "R1-A8-02",
+    "severity": "HIGH",
+    "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+    "line": "38-40",
+    "finding": "useAiJobApplicationSummary is called unconditionally, passing `aiJobApplicationSummaryId: aiSummary?.id || 0`. The spec requires lazy fetching: 'use the shallow `aiJobApplicationSummary` from the `jobApplication` object for status checks, then fetch the full data only when status is `succeeded` and the rich layout needs rendering.' When no summary exists (empty/no-resume states) or status is not `succeeded` (generating/processing/failed states), this fires an API request to `/job_applications/{id}/ai_job_application_summaries/0` -- a nonexistent resource that will 404. This happens on every render of PlatoTab regardless of state, wasting a network round-trip and producing console errors in 5 of the 6 tab states. The hook's underlying `useQuery` accepts an `enabled` option that should be used to prevent the fetch.",
+    "spec_ref": "Spec 'AI summary data fetching' pattern: 'use the shallow `aiJobApplicationSummary`... then fetch the full data only when status is `succeeded`'",
+    "fix": "Either modify useAiJobApplicationSummary to accept and forward an `enabled` option to useQuery, or pass `enabled: status === 'succeeded' && !!aiSummary?.id` directly. The hook should not fire when there is no succeeded summary."
+  },
+  {
+    "id": "R1-A8-03",
+    "severity": "HIGH",
+    "file": "app/javascript/ats/src/views/jobApplications/JobApplicationSidebar.tsx",
+    "line": "429-468",
+    "finding": "platoNavLinkStyles does not include a `label:` property for Emotion debugging. The spec's 'Emotion styled component conventions' section requires: 'Every styled component must have a `label` property for debugging. The label format is `ParentComponentName_StyledElementName`.' PlatoNavLabel correctly has `label: JobApplicationSidebar_PlatoNavLabel` (line 473), but PlatoNavItem (the NavLink wrapper, created at line 470 via `styled(NavLink, ...)(platoNavLinkStyles)`) lacks one. The original `NavItem.tsx` `linkStyles` also lacks a label, but the spec requires labels on all styled components in the new code -- replicating a pre-existing gap does not satisfy the spec.",
+    "spec_ref": "Spec 'Emotion styled component conventions': 'Every styled component must have a `label` property for debugging. The label format is `ParentComponentName_StyledElementName`.'",
+    "fix": "Add `label: JobApplicationSidebar_PlatoNavItem;` as the first line inside the platoNavLinkStyles template string."
+  }
+]

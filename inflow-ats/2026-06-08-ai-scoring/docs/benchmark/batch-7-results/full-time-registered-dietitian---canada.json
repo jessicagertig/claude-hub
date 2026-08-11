@@ -1,0 +1,174 @@
+{
+  "meta": {
+    "batch": 7,
+    "criteria_prompt_version": 10,
+    "job_id": 33271,
+    "title": "Full-Time Registered Dietitian - Canada",
+    "organization": "LifestyleRx",
+    "cost": 0.000492
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "LifestyleRx is a precision lifestyle medical practice, combining medical expertise with a team-based approach including one-to-one and group medical visits, nutritional coaching, education, and digital tracking. We are currently looking for a Registered Dietitian to join our team."
+      },
+      {
+        "heading": "Responsibilities will include:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Working collaboratively with a physician-led health team.\nCompleting Nutrition Assessments using the LifestyleRx tools and systems.\nMeeting with individuals via telephone or video calls from home.\nCreating nutrition goals with individuals and providing ongoing support and accountability in cooperation with a health-care team.\nScheduling nutrition and coaching sessions.\nDocumenting appointments in our electronic medical records system.\nMonitoring digital tracking used with individual health programs.\nGeneral help involved while working in a clinic setting."
+      },
+      {
+        "heading": "You are a person who:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Loves healthy food and is passionate about sharing a healthy lifestyle with others.\nIs compassionate and understanding of a variety of individual health needs and life situations.\nHas knowledge of whole foods, exercise, sleep and stress management habits.\nHas skills and techniques to support others in adopting healthy nutrition, lifestyle habits and goal setting.\nHas experience working with diverse populations.\nIs flexible and excited to be part of growing health movement.\nIs comfortable with technology and willing to learn and adapt to multiple systems."
+      },
+      {
+        "heading": "Qualifications include:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Registered Dietitian \nExperience working in a clinic or health-care setting.\nExperience working collaboratively with a health-care team."
+      },
+      {
+        "heading": "What we offer:",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "100% remote working environment.\nCompetitive compensation, based on education and experience."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Working collaboratively with a physician-led health team.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Working collaboratively with a physician-led health team."
+      },
+      {
+        "text": "Completing Nutrition Assessments using the LifestyleRx tools and systems.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Completing Nutrition Assessments using the LifestyleRx tools and systems."
+      },
+      {
+        "text": "Meeting with individuals via telephone or video calls from home.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Meeting with individuals via telephone or video calls from home."
+      },
+      {
+        "text": "Creating nutrition goals with individuals and providing ongoing support and accountability in cooperation with a health-care team.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Creating nutrition goals with individuals and providing ongoing support and accountability in cooperation with a health-care team."
+      },
+      {
+        "text": "Scheduling nutrition and coaching sessions.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Scheduling nutrition and coaching sessions."
+      },
+      {
+        "text": "Documenting appointments in our electronic medical records system.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Documenting appointments in our electronic medical records system."
+      },
+      {
+        "text": "Monitoring digital tracking used with individual health programs.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Monitoring digital tracking used with individual health programs."
+      },
+      {
+        "text": "General help involved while working in a clinic setting.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "General help involved while working in a clinic setting."
+      },
+      {
+        "text": "Loves healthy food and is passionate about sharing a healthy lifestyle with others.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Loves healthy food and is passionate about sharing a healthy lifestyle with others."
+      },
+      {
+        "text": "Is compassionate and understanding of a variety of individual health needs and life situations.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Is compassionate and understanding of a variety of individual health needs and life situations."
+      },
+      {
+        "text": "Has knowledge of whole foods, exercise, sleep and stress management habits.",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: knowledge of",
+        "binary": false,
+        "source_text": "Has knowledge of whole foods, exercise, sleep and stress management habits."
+      },
+      {
+        "text": "Has skills and techniques to support others in adopting healthy nutrition, lifestyle habits and goal setting.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Has skills and techniques to support others in adopting healthy nutrition, lifestyle habits and goal setting."
+      },
+      {
+        "text": "Has experience working with diverse populations.",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: experience working with",
+        "binary": false,
+        "source_text": "Has experience working with diverse populations."
+      },
+      {
+        "text": "Is flexible and excited to be part of growing health movement.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Is flexible and excited to be part of growing health movement."
+      },
+      {
+        "text": "Is comfortable with technology and willing to learn and adapt to multiple systems.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Is comfortable with technology and willing to learn and adapt to multiple systems."
+      },
+      {
+        "text": "Registered Dietitian",
+        "tier": "tier_1",
+        "tier_reasoning": "default tier_1 — Qualifications section implies importance",
+        "binary": true,
+        "source_text": "Registered Dietitian"
+      },
+      {
+        "text": "Experience working in a clinic or health-care setting.",
+        "tier": "tier_1",
+        "tier_reasoning": "default tier_1 — Qualifications section implies importance",
+        "binary": false,
+        "source_text": "Experience working in a clinic or health-care setting."
+      },
+      {
+        "text": "Experience working collaboratively with a health-care team.",
+        "tier": "tier_1",
+        "tier_reasoning": "default tier_1 — Qualifications section implies importance",
+        "binary": false,
+        "source_text": "Experience working collaboratively with a health-care team."
+      }
+    ]
+  }
+}

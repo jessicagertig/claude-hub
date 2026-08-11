@@ -1,0 +1,27 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 2,
+  "assignment": "(A) Re-confirm SUCCEEDED-state criteria card + View criteria slide-over on QA Succeeded (28055). (B) NEW angle: intro 'job description' inline LINK navigation to /jobs/28055/setup/description + FullModal backdrop/Esc close verification.",
+  "steps": [
+    "browser_navigate http://app.lvh.me:5007/jobs -> jobs list rendered; already logged in as Rezu May / Acme Inc. (7 published jobs incl. QA Succeeded).",
+    "Clicked heading 'QA Succeeded' -> /jobs/28055/stages/196330/applicants (candidates view).",
+    "Clicked left-nav 'Job setup' -> /jobs/28055/setup/details.",
+    "Clicked setup sidebar 'Plato AI settings' -> /jobs/28055/setup/ai. Job criteria FormSection (h4 'Job criteria') present below 'Plato reviews'.",
+    "(A) Verified SUCCEEDED card: Plato disc img + 'Job criteria' title + 'Plato extracted these from your job description about 1 hour ago.'; count rail Core 2 / Preferred 1 / Bonus 1 (matches seed); action row 'View criteria' + 'Regenerate criteria'. Right sidebar 'Criteria tiers' glossary (Core/Preferred/Bonus) present. Screenshot 01.",
+    "(A) Clicked 'View criteria' -> FullModal slide-over opened (right 50% panel, x=600 w=600 on 1200px viewport). Header h2 'Job criteria' + Close (X). Body description verbatim per SPEC 8.4: 'New reviews score candidates against these. To change them, edit the job description. Reviews that have already run keep the criteria they were scored against.' Tier-grouped list: Core(2) '5+ years Ruby on Rails experience' + 'PostgreSQL and relational database design'; Preferred(1) 'REST API design'; Bonus(1) 'Experience mentoring engineers'. No tier-hint sentences. Read-only. Screenshot 02.",
+    "(A) Pressed Escape -> modal closed; panel removed, section restored intact. Esc close works.",
+    "(B) Reopened 'View criteria'; inspected DOM: backdrop is div.ModalBackdrop covering full viewport, panel occupies right 50%. Dispatched a real click sequence (mousedown/mouseup/click) on the backdrop at left-center point (80, 431) which resolved to div.css-tvu6e4-ModalBackdrop_ModalBackdrop. Modal closed: backdrop, panel, and description paragraph all removed. Backdrop close works. Screenshot 03.",
+    "(B) Clicked inline 'job description' link in the Job criteria intro paragraph -> navigated to /jobs/28055/setup/description (exact expected URL). Description setup page rendered. Screenshot 04. Link navigation confirmed working (not just present).",
+    "Checked console (all, level error) on description page: 16 errors = 4 react-router history deprecation + 2 'Store does not have a valid reducer' + 1 heap-api.com 404 (all known pre-existing) + 9 ':first-child potentially unsafe for SSR' emitted from a vendor chunk by the description page's rich-text editor. None reference the feature (no aiJobCriteria / JobCriteria / useAiJobCriteria / ai_job_criteria). Not feature findings.",
+    "Navigated back via setup sidebar 'Plato AI settings' -> /jobs/28055/setup/ai. Round-trip complete; section restored. Screenshot 05."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5-r2/agent-2/01-succeeded-section.png",
+    "/tmp/qa-run-3-l5-r2/agent-2/02-view-modal-open.png",
+    "/tmp/qa-run-3-l5-r2/agent-2/03-modal-closed.png",
+    "/tmp/qa-run-3-l5-r2/agent-2/04-description-page.png",
+    "/tmp/qa-run-3-l5-r2/agent-2/05-back-on-ai-settings.png"
+  ],
+  "findings": []
+}

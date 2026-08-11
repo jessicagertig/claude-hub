@@ -1,0 +1,23 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 6,
+  "focus": "SPEC 4.1 gating change end-to-end: Job#extract_job_criteria_immediately(requesting_organization_user_id:) AND Job#extract_job_criteria_if_needed together. Fresh-eyes re-confirmation of round-1 agent-5/agent-6 PASS.",
+  "scenarios_run": [
+    "Static: app/models/job.rb:730-747 is a VERBATIM match to the SPEC 4.1 replacement block (guards moved into _immediately; _if_needed keeps only the succeeded guard; enqueue is ExtractJobCriteriaJob.perform_later(new_row.id, requesting_organization_user_id)). AiJobCriteria enum confirmed pending/in_progress/succeeded/failed/retrying with _prefix. ExtractJobCriteriaJob#perform signature is (ai_job_criteria_id, requesting_organization_user_id = nil) => 2nd positional arg.",
+    "Runtime harness: ActiveJob::Base.queue_adapter=:test (asserted ExtractJobCriteriaJob.queue_adapter is TestAdapter before AND after run; NEVER performed => no real AI). Fresh uniquely-suffixed org(32743)+owner_ou(35467); one fresh draft job per scenario; seeded AiJobCriteria rows with explicit past created_at so the method-created (now) row is unambiguously latest; enqueued_jobs cleared before each call. 33 assertions, ALL PASS.",
+    "A1 _immediately blank description '' -> no new row, no enqueue. A1b nil description -> no new row, no enqueue.",
+    "A2 _immediately latest in_progress -> no new row, no enqueue. A3 latest retrying -> no new row, no enqueue.",
+    "A4 _immediately latest pending -> NEW pending row (documents deliberate absence of pending guard), 1 enqueue, args[0]==new id.",
+    "A5 _immediately latest succeeded -> NEW row + 1 enqueue (proves _immediately has NO succeeded guard).",
+    "A6 _immediately latest failed(non-zero-crit) -> NEW row + enqueue. A6b latest failed with ZERO_CRITERIA_EMPTY_ARRAY message -> STILL NEW row + enqueue (no zero-crit special-casing in _immediately).",
+    "A7 _immediately no rows -> NEW row + 1 enqueue, args[0]==new id.",
+    "A8 _immediately(requesting_organization_user_id: owner_ou.id) -> enqueued args == [new_id, 35467] (threaded as 2nd positional arg). A9 _immediately default -> args == [new_id, nil].",
+    "B1 _if_needed latest succeeded -> no-op (no new row, no enqueue) [succeeded guard lives ONLY here].",
+    "B2 _if_needed latest failed -> delegates -> NEW row, enqueue args == [new_id, nil] (auto path passes no requesting id). B3 no rows -> delegates -> NEW row, args == [new_id, nil].",
+    "B4 _if_needed latest in_progress -> NET no-op (delegates to _immediately whose in_progress guard blocks). B5 latest retrying -> NET no-op. B6 latest pending -> NEW row + enqueue.",
+    "C1 falsifiability: succeeded-latest -> _immediately creates a row (1) while _if_needed does NOT (0) => the B1 no-op is caused by _if_needed's succeeded guard, not tautology.",
+    "C2/C3 guard load-bearing: _immediately on in_progress-latest and retrying-latest each create NO row => B4/B5 net-no-ops are caused by _immediately's moved guards. C4 falsifiability: _immediately on failed-latest (guard N/A) DOES create a row => the no-row assertions are falsifiable, not ghost."
+  ],
+  "findings": []
+}

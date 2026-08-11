@@ -1,0 +1,35 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 2,
+  "focus_area": "API surface (SPEC 5.1-5.3, 9) + zero-criteria review guard (SPEC 6 complete) + their SPEC 12 test files",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §5.1 (route: singleton resource inside resources :jobs, explicit controller option)",
+      "SPEC §5.2 (controller code block verbatim: exists/authorize/Flipper/blank-description ordering, exact error strings, kwarg call, render_one both actions)",
+      "SPEC §5.3 (serializer code block verbatim; six-state payload table)",
+      "SPEC §6.1 (entry-point trace — no untraced guard sites added)",
+      "SPEC §6.2.1 (ValidateAiSummaryGeneration fail! after has_job_description?, exact shared error string, @job_application.job&. safe-nav)",
+      "SPEC §6.2.2 (ValidateAutoAiSummaryGeneration same fail! after line 18)",
+      "SPEC §6.2.3 (QueueBulkAiSummaryJobs optional job input via context.job&., fail! after credits fail; both bulk controller actions pass job: @job)",
+      "SPEC §6.2.4 (TextractResult#generate_ai_summary_with_credit_flow bare return AFTER succeeded-summary early return and BEFORE extract_job_criteria_if_needed)",
+      "SPEC §6.2 not-placed list (no guard in Orchestrate, ScoreJobApplication, CreateAiSummaryGeneration, CreateBulkAiSummaryGeneration — grep-verified)",
+      "SPEC §6.3 (claim-row :failed fix via update_columns + adjudicated Rails.logger.error line matching CONVENTIONS-FAILURE-REPORT item 2 exactly)",
+      "SPEC §6.4 (funnel guard returns bare — no new state transition smuggled in, pipeline rule 20 respected)",
+      "SPEC §9 (show? and update_ai_settings? verified in job_policy.rb:12,24 delegating to ai_job_application_summary_policy.rb:16 can_use_ai_credits?; no new policy methods in diff; org scoping via current_organization.jobs both actions; Flipper on POST only, GET ungated)",
+      "SPEC §12 ai_job_criteria_controller_spec.rb (all six §5.3 show states; create: pending row + ExtractJobCriteriaJob enqueued with row id and organization_user.id; blank description 422 exact message no row; Flipper 422 no row; in_progress AND retrying no-op 200; draft AND published; auth split show-allowed/create-forbidden for hiring-team org_user without AI-credits control)",
+      "SPEC §12 validate_ai_summary_generation_spec.rb (new file: happy path; 3-message ZERO_CRITERIA_ERROR_MESSAGES loop; 'Job description is blank' negative; pending negative; in-flight-over-zero-criteria negative)",
+      "SPEC §12 validate_auto_ai_summary_generation_spec.rb (zero-criteria fail context: exact-message fail + in-flight-on-top negative)",
+      "SPEC §12 queue_bulk_ai_summary_jobs_spec.rb (fail with message, nothing enqueued, no claim rows; succeeds without job input — optionality asserted)",
+      "SPEC §12 bulk_ai_job_application_summaries_controller_spec.rb (job: kind_of(Job) in hash_including for both actions; zero-criteria 422 with exact message for both #create and #all_stages)",
+      "SPEC §12 textract_result_ai_trigger_spec.rb (funnel guard returns before extract_job_criteria_if_needed and before Orchestrate.new)",
+      "SPEC §12 bulk_generate_ai_summaries_job_spec.rb (validation-failure iteration claim row :failed retitled example; zero-criteria batch through the REAL validator: row :failed + AI_SUMMARY_BULK_FAILED broadcast + failed mailer deliver_later)",
+      "SPEC §12 job_ai_job_criteria_serializer_spec.rb (mixed state: criteria from older succeeded row, status failed, zero_criteria_failure true; plus never-ran all-nil state tracing to §5.3 table row 1)",
+      "Adjudicated rulings verified: develop-merge repair (rescore_requested additions + params: reshaping in bulk controller spec; textract spec job_application.reload) — matched, not flagged; qa-run-1 fix commit 3e5aaf7c5 scope = exactly 3 files +22/-3; analog generate_ai_job_application_summary_job.rb untouched (0-line diff)"
+    ],
+    "implemented": 21,
+    "missing": 0,
+    "notes": "Zero findings. Controller and serializer match the §5.2/§5.3 code blocks character-for-character, including operation order (exists -> authorize -> Flipper -> blank description -> extract -> render) and both exact error strings. The shared guard error string is character-identical at all three fail! sites; the funnel guard is a bare return per §6.2.4 with correct ordering (textract_result.rb:70, after the succeeded-summary return at :68, before extract_job_criteria_if_needed at :72). The §6.3 logger line matches the conventions-pass adjudicated text verbatim. All test additions are behavioral and falsifiable (HTTP status/body, row counts, enqueued jobs, message expectations that fail if the guard or the §6.3 fix is removed) — no ghost tests. Two judgment calls examined and judged satisfied, recorded for orchestrator visibility: (1) §12's auto-validator line says 'zero-criteria fail context (mirror of the new ValidateAiSummaryGeneration contexts)' — the implemented context has the exact-message fail case plus the in-flight-on-top negative but not the 3-message loop, 'Job description is blank' negative, or pending-only negative. Judged satisfied: the requirement noun is singular, the added context exceeds the file's established one-example-per-gate granularity, the pending-only negative is behaviorally subsumed by the in-flight-on-top test, and the message truth table is mandated and present in the two places §12 explicitly puts it (ai_job_criteria_spec truth table + validate_ai_summary_generation_spec 3-message loop) against the same shared predicate the auto guard calls. (2) §12's 'zero-criteria job batch -> all rows :failed' is exercised with a one-row batch; each_iteration is per-row so the code path is fully exercised end-to-end through the real validator. If the orchestrator reads either §12 line more strictly, escalate — but neither leaves a shipped-behavior defect undetectable."
+  }
+}

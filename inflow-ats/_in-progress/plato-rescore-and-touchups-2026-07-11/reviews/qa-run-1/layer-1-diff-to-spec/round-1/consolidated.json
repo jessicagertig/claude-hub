@@ -1,0 +1,24 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agents": 10,
+  "findings": [
+    {
+      "id": "l1-7-001",
+      "severity": "HIGH",
+      "title": "Controller spec's rejection test is not falsifiable for the rescore_requested requirement (rule 26)",
+      "spec_requirement": "SPEC 2.8: 'Create the controller spec ... request without rescore_requested is rejected'. Task instruction: assertions must be falsifiable (core rule 26); the feature-under-test is the boundary requiredness added by SPEC 2.2 (`params.require(:ai_job_application_summary).require(:rescore_requested)`).",
+      "file": "spec/controllers/api/v1/ai_job_application_summaries_controller_spec.rb",
+      "evidence": "Test 1 ('rejects a request without rescore_requested', lines 773-781) posts `params: { job_application_id: ..., ai_job_application_summary: {} }` and expects `ActionController::ParameterMissing`. The empty (blank/absent) `ai_job_application_summary` payload makes the OUTER `params.require(:ai_job_application_summary)` (controller line 44) raise before `.require(:rescore_requested)` is ever evaluated. Mentally deleting the inner `.require(:rescore_requested)` from the controller (the exact declaration this test claims to guard) leaves `params.require(:ai_job_application_summary)` in place, which still raises ParameterMissing on the empty hash, so the test still passes. The assertion therefore provides zero coverage that `rescore_requested` specifically is required; it only proves the top-level key is required. This is the rule-26 tautology pattern. (Confirmed against Rails `require`: blank/absent value raises; `attribute :ai_summary_rescore_requested, :boolean` in job_application.rb:11 is irrelevant here because line 17 is never reached.)",
+      "recommendation": "Post a NON-EMPTY `ai_job_application_summary` payload that is missing only `rescore_requested` (e.g. `ai_job_application_summary: { job_application_id: job_application.id }` or any sibling key) so the outer `require(:ai_job_application_summary)` passes and ONLY `.require(:rescore_requested)` can raise ParameterMissing. Then removing the inner require fails the test, making it falsifiable for the actual feature. Test 2 (threading) is correct and falsifiable and needs no change."
+    }
+  ],
+  "spec_coverage": {
+    "total_requirements": 16,
+    "implemented": 16,
+    "missing": 0,
+    "details": [
+      "All SPEC 1.1-1.8 and 2.1-2.8 requirements traced to committed code by at least two agents; the single finding is a test-falsifiability defect in the new controller spec, not a missing implementation."
+    ]
+  }
+}

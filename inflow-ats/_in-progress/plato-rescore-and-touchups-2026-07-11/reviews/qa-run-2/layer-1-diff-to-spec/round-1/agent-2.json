@@ -1,0 +1,70 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 2,
+  "focus": "SPEC 1.5 (RunPlatoReviewAllModal.tsx three defect fixes) + SPEC 1.6 (BulkAllStagesAiSummaryResultMailer recipients + greeting removal) + polymer-mail all-stages template greeting deletions",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "1.5 checked-state first sentence '{candidatesCount} candidate(s) in this job will be reviewed, including candidates that already have a review.' with NO leading 'The' (owner-ruled)",
+      "1.5 checked-state credit sentence follows unchanged",
+      "1.5 zero-state (unchecked, candidatesToScoreCount === 0): '0 candidates in this job don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.' — numeric 0, no credit sentence",
+      "1.5 zero-state button stays disabled via existing candidatesToScoreCount === 0 condition",
+      "1.5 Statement second sentence 'Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' with first sentence 'The hiring team gets an email with the final count when it's done.' kept",
+      "1.5 NO other behavior changes in RunPlatoReviewAllModal.tsx (diff-hunk audit, direction 2)",
+      "1.6 complete: ONE email to job.organization_users.actives mapped to {name, email} in the to: array",
+      "1.6 failed: ONE email to job.organization_users.actives mapped to {name, email} in the to: array",
+      "1.6 bare 'return unless recipients.any?' guard in both methods",
+      "1.6 NO preference filter (owner-ruled: no receives_new_job_application_emails scope)",
+      "1.6 user_first_name dropped from variables in BOTH methods",
+      "1.6 @user = User.find(user_id) load removed in BOTH methods",
+      "1.6 user_id argument RETAINED in both method signatures",
+      "1.6 BulkJobApplicationAiSummaryResultMailer untouched",
+      "1.6 polymer-mail: '<p>Hi {{user_first_name}},</p>' deleted from user-bulk-all-stages-ai-summary-complete.mjml",
+      "1.6 polymer-mail: '<p>Hi {{user_first_name}},</p>' deleted from user-bulk-all-stages-ai-summary-failed.mjml",
+      "1.6 polymer-mail: nothing else changed, no replacement greeting",
+      "RUN 2 ADDENDUM: fix commit 970b0f4b2 present, minimal (one test payload only), test falsifiable"
+    ],
+    "implemented": [
+      "1.5 checked-state first sentence '{candidatesCount} candidate(s) in this job will be reviewed, including candidates that already have a review.' with NO leading 'The' (owner-ruled)",
+      "1.5 checked-state credit sentence follows unchanged",
+      "1.5 zero-state (unchecked, candidatesToScoreCount === 0): '0 candidates in this job don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.' — numeric 0, no credit sentence",
+      "1.5 zero-state button stays disabled via existing candidatesToScoreCount === 0 condition",
+      "1.5 Statement second sentence 'Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' with first sentence 'The hiring team gets an email with the final count when it's done.' kept",
+      "1.5 NO other behavior changes in RunPlatoReviewAllModal.tsx (diff-hunk audit, direction 2)",
+      "1.6 complete: ONE email to job.organization_users.actives mapped to {name, email} in the to: array",
+      "1.6 failed: ONE email to job.organization_users.actives mapped to {name, email} in the to: array",
+      "1.6 bare 'return unless recipients.any?' guard in both methods",
+      "1.6 NO preference filter (owner-ruled: no receives_new_job_application_emails scope)",
+      "1.6 user_first_name dropped from variables in BOTH methods",
+      "1.6 @user = User.find(user_id) load removed in BOTH methods",
+      "1.6 user_id argument RETAINED in both method signatures",
+      "1.6 BulkJobApplicationAiSummaryResultMailer untouched",
+      "1.6 polymer-mail: '<p>Hi {{user_first_name}},</p>' deleted from user-bulk-all-stages-ai-summary-complete.mjml",
+      "1.6 polymer-mail: '<p>Hi {{user_first_name}},</p>' deleted from user-bulk-all-stages-ai-summary-failed.mjml",
+      "1.6 polymer-mail: nothing else changed, no replacement greeting",
+      "RUN 2 ADDENDUM: fix commit 970b0f4b2 present, minimal (one test payload only), test falsifiable"
+    ],
+    "missing": []
+  },
+  "verification_detail": {
+    "1_5_checked_sentence": "feature-diff-run2.patch hunk @@ -112,22 +112,41 @@ / worktree RunPlatoReviewAllModal.tsx:136-140: `{rescore ? (<>{candidatesCount} candidate{candidatesCount === 1 ? \"\" : \"s\"} in this job will be reviewed, including candidates that already have a review. {creditSentence}</>)`. Renders '{candidatesCount} candidate(s) in this job will be reviewed, including candidates that already have a review.' — no leading 'The' (owner-ruled divergence from per-stage 1.2 state 4; not flagged). MATCH.",
+    "1_5_credit_sentence_unchanged": "The extracted `creditSentence` fragment (worktree :115-131) is byte-identical in rendered content to the pre-diff inline copy: 'Each successful review uses one AI credit' + shortfall branch ('. You are short <b>{shortfall}</b> credit(s). The first {available} candidate(s) will get reviews generated; the rest will be skipped.') gated on `shortfall > 0 && candidatesToScoreCount > 0`, else ', so running this uses up to <b>{candidatesToScoreCount}</b> credit(s) from your balance of <b>{available}</b> available.'. The diff's removed lines match the added creditSentence lines exactly — pure extraction, no wording or logic change. It follows the checked-state first sentence as SPEC requires. MATCH.",
+    "1_5_zero_state": "Worktree :141-145: `: candidatesToScoreCount === 0 ? (<>0 candidates in this job don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.</>)` — reached only when `rescore` is false (checked branch is first), literal numeric '0', creditSentence NOT rendered in this branch. MATCH.",
+    "1_5_zero_state_button": "Worktree :98 `disabled={isLoading || candidatesToScoreCount === 0}` on the submit Button — pre-existing (no diff hunk touches modalButtons), so the zero-state disable comes from the existing condition exactly as SPEC pins. Existing `loading={isLoading}` at :97 remains paired with `disabled` (known-failure #11 satisfied, pre-existing). MATCH.",
+    "1_5_statement": "Diff hunk @@ -146,7 +165,8 @@ / worktree :164-171: first sentence 'The hiring team gets an email with the final count when it's done.' kept verbatim; second sentence changed from 'Candidates without a resume, or one that's still processing, are skipped.' to 'Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.'. MATCH.",
+    "1_5_no_other_changes": "feature-diff-run2.patch contains exactly two hunks for RunPlatoReviewAllModal.tsx (patch lines 567-631): (1) creditSentence extraction + three-branch body restructure, (2) the Statement second sentence. Unchecked non-zero branch keeps the original copy verbatim ('{candidatesToScoreCount} candidate(s) in this job doesn't/don't have a Plato review yet.' + creditSentence). `rescore` state, RescoreCheckbox, candidatesCount prop, handleOnConfirm, rescoreRequested wiring, trackEvent, and all styles are untouched context. Every added line traces to SPEC 1.5. MATCH.",
+    "1_6_recipients_complete_and_failed": "Committed worktree app/mailers/bulk_all_stages_ai_summary_result_mailer.rb — complete :9-14, failed :42-47: `recipients = @job.organization_users.actives.includes(:user)`; `return unless recipients.any?`; `to_recipients = recipients.map { |organization_user| { name: \"#{organization_user.user.first_name} #{organization_user.user.last_name}\".strip, email: organization_user.user.email } }`; `to: to_recipients` (:18/:51) inside ONE message_params, ONE `Emails::SendTemplateEmail.new(message_params).send` per method (:34/:64). Matches the pinned analog JobApplicationMailer#hiring_team_new_job_application (job_application_mailer.rb:19 `...organization_users.actives.receives_new_job_application_emails.includes(:user)`, :21 `return unless recipients.any?`, :28-32 name = \"#{user.first_name} #{user.last_name}\".strip) minus exactly the preference scope, per SPEC/owner ruling. `actives` scope confirmed at organization_user.rb:48. MATCH.",
+    "1_6_no_preference_filter": "No receives_new_job_application_emails (or any with_preference_for scope) in either method — owner-ruled omission honored, not flagged. MATCH.",
+    "1_6_greeting_removal": "Both methods: `@user = User.find(user_id)` line deleted (diff -4/-33 lines), `user_first_name:` deleted from variables (diff lines); committed file has no @user reference and no user_first_name key anywhere. MATCH.",
+    "1_6_user_id_retained": "Signatures unchanged as context lines: `def complete(user_id, job_id, succeeded_count, failed_count, skipped_count, total)` (:4) and `def failed(user_id, job_id, total_queued_count)` (:37) — user_id present, unread, callers unchanged. MATCH.",
+    "1_6_per_stage_mailer_untouched": "app/mailers/bulk_job_application_ai_summary_result_mailer.rb absent from feature-diff-run2.patch file list; `git diff f8815555a..HEAD --stat -- <file>` in the worktree is empty. MATCH.",
+    "polymer_mail": "reviews/polymer-mail-diff.patch contains exactly two single-line deletions: `-            <p>Hi {{user_first_name}},</p>` at line 30 of transactional/user-facing/user-bulk-all-stages-ai-summary-complete.mjml and of user-bulk-all-stages-ai-summary-failed.mjml. No additions, no replacement greeting, no other hunks. Live check: `git diff` in /Users/jessica/wrk/wrk-corp/polymer-mail for the two files is byte-identical to the patch, and grep confirms zero remaining 'user_first_name' / 'Hi {{' occurrences in either template. MATCH.",
+    "run2_addendum_fix_970b0f4b2": "git show 970b0f4b2: 1 file changed, 1 insertion(+), 1 deletion(-) — spec/controllers/api/v1/ai_job_application_summaries_controller_spec.rb line 58 only: posted payload `ai_job_application_summary: {}` -> `ai_job_application_summary: { irrelevant: 'x' }`. Minimal (nothing else in the commit). Falsifiable: outer `params.require(:ai_job_application_summary)` now passes on the non-empty hash, so the asserted ActionController::ParameterMissing can only come from the inner `.require(:rescore_requested)` — removing the inner require would make the test fail. VERIFIED."
+  },
+  "observations_non_findings": [
+    "The two polymer-mail template deletions are UNCOMMITTED in /Users/jessica/wrk/wrk-corp/polymer-mail (git status shows both .mjml files modified in the working tree; HEAD is 4cf3ceb). The working-tree diff is byte-identical to the reviewed reviews/polymer-mail-diff.patch, so the reviewed artifact is accurate — but per pipeline rule 15 (review committed code), the polymer-mail change will need a commit before it exists on any branch. SPEC 1.6 also notes the separate MANUAL DEPLOY step (paste into Mailgun) which is Jessica's. Recorded as an observation, not a spec-mismatch finding: the shared context designates polymer-mail-diff.patch as the review artifact and it matches SPEC exactly.",
+    "The mailer's recipient mapping inlines `organization_user.user.first_name/last_name` where the analog assigns `user = recipient.user` first — identical constructed value and .strip, block variable named organization_user (fuller than the analog's `recipient`). Not a divergence in behavior or in any SPEC-pinned string.",
+    "In the checked state with candidatesCount === 0, the modal shows the checked-state copy ('0 candidates in this job will be reviewed...') with the credit sentence, and the button is enabled only if candidatesToScoreCount > 0 — with rescore checked candidatesToScoreCount === candidatesCount === 0, so the button stays disabled. Consistent with SPEC's state definitions; no gap."
+  ]
+}

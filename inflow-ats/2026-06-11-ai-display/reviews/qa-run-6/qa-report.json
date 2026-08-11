@@ -1,0 +1,71 @@
+{
+  "feature": "Plato AI Review Tab",
+  "run": 6,
+  "branch": "ai-display-qa",
+  "base_branch": "spike/scoring-display-prompt",
+  "status": "QA APPROVED",
+  "date": "2026-06-11",
+  "layers": {
+    "layer_1_diff_to_spec": {
+      "status": "CONVERGED",
+      "rounds": 2,
+      "valid_high_findings": 0,
+      "notes": "Clean in 2 rounds. User-directed overrides for route gating (static possiblePaths, unconditional Route)."
+    },
+    "layer_2_code_correctness": {
+      "status": "CONVERGED",
+      "rounds": 4,
+      "valid_high_findings_fixed": 2,
+      "fixes": [
+        "451169723: Dark mode -- PlatoMark icon in Fit card header used hardcoded colors.gray[700], invisible in dark mode. Fixed with useTheme + t.dark ternary.",
+        "add603e76: Credit loading race -- totalRemaining evaluated to 0 during useOrganizationAiCreditBalance fetch, flashing 'Buy credits' before real balance arrived. Fixed with isLoadingCredits guard at all 3 sites."
+      ]
+    },
+    "layer_3_script_runner": {
+      "status": "SKIPPED_WITH_RATIONALE",
+      "reason": "Frontend-only feature. All 8 changed files are in app/javascript/. No backend business logic to exercise."
+    },
+    "layer_4_regression": {
+      "status": "PASSED",
+      "rounds": 1,
+      "method": "Pre-commit hook runs full Cypress suite (yarn cy:run) on every commit. All 8 commits passed. No RSpec specs exist for modified frontend components."
+    },
+    "layer_5_playwright": {
+      "status": "CONVERGED",
+      "rounds": 2,
+      "valid_high_findings": 0,
+      "scenarios_verified": [
+        "Plato nav item visible with gradient chip when flag ON",
+        "Plato tab renders no-resume state",
+        "Overview callout renders and navigates to Plato tab",
+        "Header bar layout correct",
+        "Candidate switching works",
+        "Flag OFF hides all Plato elements",
+        "Zero console errors"
+      ],
+      "not_tested": [
+        "Succeeded state (needs candidate with AI summary)",
+        "Generate/regenerate actions (needs candidate with resume)",
+        "Generating/processing/failed states (needs pipeline activity)"
+      ]
+    }
+  },
+  "med_findings_for_report": [
+    { "id": "l2-m1", "title": "Credit hint string comparison in renderCreditsAction" },
+    { "id": "l2-m2", "title": "Kebab button has no click functionality" },
+    { "id": "l2-m3", "title": "FitHeader gray[700] dark mode (FIXED)" },
+    { "id": "l2-m4", "title": "Callout state evaluation order" },
+    { "id": "l2-m5", "title": "AiAssessment optional fields" },
+    { "id": "l2-m6", "title": "|| 0 fabricated fallback for aiJobApplicationSummaryId (code smell, no runtime impact)" }
+  ],
+  "commits_on_branch": [
+    "9150765c2 - Add Plato AI review tab with sidebar navigation and overview callout",
+    "5966ce409 - Fix QA Layer 1 findings",
+    "20353afcc - Fix lazy fetch: only call useAiJobApplicationSummary when status is succeeded",
+    "4ce718fe6 - Fix zero-credits guard on Regenerate and redirect loop on flag toggle",
+    "4b2446956 - Revert route gating to static possiblePaths, fix stale banner navigation",
+    "9aef60e21 - Fix connector tick visibility on PlatoOverviewCallout",
+    "451169723 - Fix dark mode: use theme-aware color for PlatoMark icon in Fit card header",
+    "add603e76 - Fix credit loading race: show generate button while credits load"
+  ]
+}

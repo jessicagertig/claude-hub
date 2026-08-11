@@ -1,0 +1,25 @@
+{
+  "layer": "diff-to-spec",
+  "round": 3,
+  "agent_index": 2,
+  "focus_area": "All backend non-controller code — models (Job gating §4.1, AiJobCriteria §4.2, Job predicate §4.3), routes §5.1, serializer §5.3, zero-criteria guard chain §6 (2 validators, queue interactor, textract funnel, bulk claim-row fix, bulk controller job input), broadcast job §7 (ExtractJobCriteriaJob), constant substitutions.",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §4.1",
+      "SPEC §4.2",
+      "SPEC §4.3",
+      "SPEC §5.1",
+      "SPEC §5.3",
+      "SPEC §6.2.1",
+      "SPEC §6.2.2",
+      "SPEC §6.2.3",
+      "SPEC §6.2.4",
+      "SPEC §6.3",
+      "SPEC §7"
+    ],
+    "implemented": 11,
+    "missing": 0,
+    "notes": "Independent fresh re-verification of every backend file in the diff. All requirements in my area match the spec exactly. Details: (§4.1) app/models/job.rb:730-747 replaces extract_job_criteria_immediately with the in_progress/retrying guards moved IN and the requesting_organization_user_id: kwarg (default nil, flag-1 adjudicated); ExtractJobCriteriaJob.perform_later(new_ai_job_criteria.id, requesting_organization_user_id). extract_job_criteria_if_needed keeps only the succeeded guard. Verbatim match to the SPEC §4.1 replacement block. (§4.2) app/models/ai_job_criteria.rb:7-20 defines the three ZERO_CRITERIA_* message constants (values byte-exact vs the original literals), ZERO_CRITERIA_ERROR_MESSAGES frozen array of all three (flag-2 'Criteria array is empty' third message adjudicated), and zero_criteria_failure? = status_failed? && ZERO_CRITERIA_ERROR_MESSAGES.include?(error_message). Constant defined before the enum but only invoked at runtime, so no load-order issue. (§4.3) job.rb:696-698 zero_criteria_extraction_failure? = latest_ai_job_criteria&.zero_criteria_failure? placed adjacent to latest_ai_job_criteria/latest_succeeded_ai_job_criteria; reads the LATEST row (any status), matching §4.3 semantics. (§5.1) config/routes.rb: resource :ai_job_criteria, only: [:show, :create], controller: 'ai_job_criteria' is a singleton resource nested inside resources :jobs do (verified block context lines 224-266), alongside bulk_channel_messages. (§5.3) app/serializers/api/v1/job_ai_job_criteria_serializer.rb matches the spec block verbatim: criteria and extracted_at from latest_succeeded_ai_job_criteria (LATEST-SUCCEEDED), status from latest_ai_job_criteria (LATEST, any status), zero_criteria_failure via zero_criteria_extraction_failure? with safe-nav (no fabricated || false). latest-vs-latest-succeeded split correct. (§6.2.1/6.2.2) validate_ai_summary_generation.rb:30 and validate_auto_ai_summary_generation.rb:19 each add the guard AFTER has_job_description? fail, using @job_application.job&.zero_criteria_extraction_failure? with the exact message 'No scoring criteria were found in the job description. Regenerate job criteria in Plato AI settings before running reviews.' (§6.2.3) queue_bulk_ai_summary_jobs.rb:19 adds the same-message guard after the credits fail, using context.job&. (optional/safe-nav); bulk controller passes job: @job in BOTH create and all_stages (lines 17, 43), with @job set via current_organization.jobs.find (lines 9, 35). (§6.2.4) textract_result.rb:70 return if job_application.job.zero_criteria_extraction_failure? placed AFTER the succeeded-summary early return (line 68) and BEFORE extract_job_criteria_if_needed (line 72) — ordering exactly per spec. (§6.3) bulk_generate_ai_summaries_job.rb:62-66 converts the bare 'return unless result.success?' to the unless-block that logs (adjudicated conventions-pass fix-batch item 2), sets job_application_bulk_job_status.update_columns(status: :failed), returns; update_columns matches sibling row-status writes and is NOT inside a transaction (rule 25 OK). (§7) extract_job_criteria_job.rb: perform(ai_job_criteria_id, requesting_organization_user_id = nil) optional POSITIONAL (flag-4 adjudicated); post-extract broadcast guarded on requesting id; retry_on exhaustion block reads job.arguments.first/.second and calls job.send(:broadcast_completion, ...) ONLY when the row exists (qa-run-1 fix item 1, adjudicated); StandardError rescue broadcasts guarded on (ai_job_criteria && requesting_organization_user_id); broadcast_completion helper matches the spec block verbatim including the fresh-read AiJobCriteria.find_by(id: ai_job_criteria.id) (§7 amendment), terminal-status guard, and payload {status, jobId, jobTitle, zeroCriteriaFailure, conditional errorMessage} with action 'JOB_CRITERIA_EXTRACTION_COMPLETE'. Analog app/jobs/generate_ai_job_application_summary_job.rb confirmed UNTOUCHED (absent from git diff --stat). All three constant substitutions present and value-exact (extract_criteria.rb:62,122; score_job_application.rb:43). No untraceable, EXTRA, or MISSING backend changes; no ordering errors."
+  }
+}

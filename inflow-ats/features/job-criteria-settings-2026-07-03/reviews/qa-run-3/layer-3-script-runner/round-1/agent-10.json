@@ -1,0 +1,19 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 10,
+  "focus": "Api::V1::JobAiJobCriteriaSerializer — six-state payload (criteria, extracted_at, status, zero_criteria_failure) per SPEC.md §5.3; criteria/extracted_at from latest_succeeded_ai_job_criteria vs status/zero_criteria_failure from latest_ai_job_criteria",
+  "scenarios_run": [
+    "Built own isolated org/jobs (SecureRandom suffix); read-only confirmed AI_APPLICANT_SUMMARY flag enabled globally (never toggled). All AiJobCriteria rows created directly; no real AI/extractor invoked. 67 assertions total, 0 failures.",
+    "STATE 1 never-ran (no ai_job_criteria rows): criteria nil, extracted_at nil, status nil, zero_criteria_failure nil — all null as required.",
+    "STATE 2 first extraction running (only a non-terminal row), tested for in_progress AND pending AND retrying: criteria nil, extracted_at nil, status == that row's status, zero_criteria_failure false (row exists, not nil).",
+    "STATE 3 succeeded (single succeeded row w/ criteria array): criteria == stored jsonb array (string keys preserved, no camelization at backend), extracted_at == that row's updated_at, status 'succeeded', zero_criteria_failure false.",
+    "STATE 4 regenerating after success (older succeeded + newer non-terminal), tested newer=in_progress/pending/retrying: criteria == OLD succeeded array, extracted_at == OLD succeeded updated_at, status == newer row's status, zero_criteria_failure false. Asserted latest_ai_job_criteria == newer row and latest_succeeded_ai_job_criteria == old row (different rows).",
+    "STATE 5 zero-criteria failure, no older succeeded, tested all 3 ZERO_CRITERIA_ERROR_MESSAGES: criteria nil, extracted_at nil, status 'failed', zero_criteria_failure true.",
+    "STATE 6 CRITICAL mixed (older succeeded + newer failed-zero, explicit created_at ordering): criteria == OLD succeeded array, extracted_at == OLD succeeded updated_at, status 'failed', zero_criteria_failure true. Verified latest_ai_job_criteria is the FAILED row while latest_succeeded_ai_job_criteria is the SUCCEEDED row — the two serializer sources read DIFFERENT rows.",
+    "STATE 7 other (non-zero) failure: no older success -> criteria nil, extracted_at nil, status 'failed', zero_criteria_failure false. Over older success (7b) -> criteria/extracted_at from the older succeeded row, status 'failed', zero_criteria_failure false.",
+    "Falsifiability probe: failed row with nil error_message -> status 'failed', zero_criteria_failure false (not incorrectly true).",
+    "Serialization exercised via ActiveModelSerializers::SerializableResource.new(job, serializer: Api::V1::JobAiJobCriteriaSerializer).as_json; raw payload shape confirmed {criteria:[{\"text\"=>..,\"tier\"=>\"tier_1\"}], extracted_at: <Time>, status:\"succeeded\", zero_criteria_failure:false}."
+  ],
+  "findings": []
+}

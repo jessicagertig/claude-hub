@@ -1,0 +1,35 @@
+{
+  "layer": "script-runner",
+  "run": "qa-run-3",
+  "round": 1,
+  "agents_dispatched": 15,
+  "agents_reporting": 15,
+  "execution_model": "additive-only isolation (each agent built its own uniquely-suffixed org; no qa-harness cleanup; global AI_APPLICANT_SUMMARY flag read-only) enabling safe parallel batches of 4; DB-corruption hazard neutralized per documented-isolation rule",
+  "findings": [],
+  "high_plus_count": 0,
+  "med_count": 0,
+  "low_count": 0,
+  "coverage": {
+    "zero_criteria_guard_manual_single": "agent-1 (ValidateAiSummaryGeneration truth table + falsifiability) PASS",
+    "zero_criteria_guard_bulk_failfast": "agent-2 (QueueBulkAiSummaryJobs fail! + nothing enqueued + no claim rows + optional-job safe-nav) PASS",
+    "zero_criteria_guard_auto_path": "agent-3 (ValidateAutoAiSummaryGeneration silent decline) PASS",
+    "zero_criteria_guard_textract_funnel": "agent-4 (generate_ai_summary_with_credit_flow early return before extract_job_criteria_if_needed; ordering) PASS",
+    "gating_extract_immediately": "agent-5 (blank/in_progress/retrying no-op; pending creates row; requesting_organization_user_id 2nd positional arg) PASS",
+    "gating_if_needed": "agent-6 (succeeded no-op; delegation; net no-op via moved guards; nil requesting id) PASS",
+    "predicates": "agent-7 (zero_criteria_failure? + zero_criteria_extraction_failure? truth tables; latest-row semantics) PASS",
+    "regenerate_auth": "agent-8 (JobPolicy#update?/#show? admin+member allowed, outsider 403; not credits-gated; Pundit user = User) PASS",
+    "websocket_broadcast": "agent-9 (broadcast_completion payload + terminal/requesting-user guards; fresh re-read authoritative) PASS",
+    "serializer_six_states": "agent-10 (all 6 §5.3 states; mixed state reads latest vs latest_succeeded correctly) PASS",
+    "bulk_claim_row_fix": "agent-11 (each_iteration validation-fail -> :failed not :processing; re-claim consequence) PASS",
+    "constants_wiring": "agent-12 (3 constants exact values; writer references not stale literals; no drift; non-zero msgs excluded) PASS",
+    "cross_cutting_integration": "agent-13 (one zero-criteria job blocks all 4 entry points; identical canonical message; control allows) PASS",
+    "false_positive_guard_safety": "agent-14 (in-flight-over-zero, other-failure msgs, succeeded, no-rows -> not over-blocked) PASS",
+    "controller_create_show_logic": "agent-15 (controller source == SPEC §5.2 verbatim; exact error strings; org-scoped exists+authorize; in-flight idempotency) PASS"
+  },
+  "notes": [
+    "Test env default ActiveJob adapter is :inline; agents set queue_adapter = :test per-script-process to prevent enqueued ExtractJobCriteriaJob/BulkGenerateAiSummariesJob/SubmitResumeToTextractJob from synchronously triggering real AI/Textract calls. No real AI calls were made.",
+    "has_resume is an ActiveStorage-backed method (not a column) — stubbed in scripts; BRIEF updated.",
+    "All assertions verified falsifiable (non-ghost)."
+  ],
+  "verdict": "CLEAN (round 1 of 2 needed for convergence)"
+}

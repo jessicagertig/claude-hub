@@ -1,0 +1,62 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": "A",
+  "files_reviewed": [
+    "app/controllers/api/v1/registrations_controller.rb",
+    "app/controllers/api/v1/organizations_controller.rb",
+    "app/controllers/hire/confirmations_controller.rb",
+    "app/controllers/api/v1/users/omniauth_callbacks_controller.rb",
+    "app/models/user.rb (from_omniauth)",
+    "config/initializers/omniauth.rb",
+    "db/migrate/20260715233505_add_attribution_columns_to_users.rb",
+    "db/migrate/20260715233506_add_attribution_columns_to_organizations.rb"
+  ],
+  "findings": [
+    {
+      "id": "l2-A-1",
+      "severity": "MED",
+      "title": "SSO session ride is typeless: mistyped tracking params store garbage or silently nil, inconsistent with the JSON signup path",
+      "file": "config/initializers/omniauth.rb",
+      "line": 17,
+      "description": "The setup lambda's guard is `value = rack_request.params[key]; tracking_params[key] = value if value && !value.empty?` — Array, String, and Hash all respond to empty?, so any Rack-parsed type rides session[:oauth_tracking] to User.from_omniauth. Hand-crafted requests produce type mismatches: (a) `?utm_source[]=a&utm_source[]=b` on the SSO request path stores the Array via ActiveModel::Type::String cast (Array#to_s) as the literal string '[\"a\", \"b\"]'; (b) a scalar `utm_data=123` passes ActiveRecord::Type::Json#cast (JSON.decode succeeds) and stores jsonb number 123 instead of an object; (c) a non-JSON string `utm_data=evil` is silently nil'd by Type::Json#deserialize's `rescue nil`. The JSON signup path behaves differently: `params.permit(:utm_source, ..., utm_data: {})` drops arrays on scalar filters and drops non-Parameters utm_data values, yielding nil. So the two capture paths disagree on mistyped input. Reachable only by hand-crafted requests (the frontend sanitizer and hidden inputs always send well-typed values); the approved design deliberately has no server-side sanitization (SPEC §7.1, Risks 2/4), and the worst outcome is self-attribution garbage, not a crash — hence MED.",
+      "recommendation": "If any server-side hardening is ever approved, constrain types in the setup lambda (e.g. keep utm_source/utm_campaign/internal_ref only when String, utm_data only when Hash). Otherwise accept as a documented property of the no-server-sanitization design."
+    },
+    {
+      "id": "l2-A-2",
+      "severity": "MED",
+      "title": "Uncapped tracking values on the SSO request path can overflow the session cookie (CookieOverflow 500)",
+      "file": "config/initializers/omniauth.rb",
+      "line": 23,
+      "description": "The app uses the default cookie session store with the :json serializer (config/initializers/cookies_serializer.rb). The setup lambda applies no length caps — the 255-char/10-key limits live only in the frontend sanitizeTrackingParams helper. A direct POST to /api/v1/users/auth/google_oauth2 with oversized utm values writes them all into env['rack.session'][:oauth_tracking]; past the ~4KB cookie ceiling ActionDispatch raises ActionDispatch::Cookies::CookieOverflow, 500ing that request. Spec-acknowledged as an accepted property of the approved design (SPEC Risk 2), so MED not HIGH.",
+      "recommendation": "Accepted per the spec. If it ever bites in production, per-value truncation inside the setup lambda before the session write is the minimal fix."
+    },
+    {
+      "id": "l2-A-3",
+      "severity": "MED",
+      "title": "Pre-existing guaranteed NoMethodError in magic_create's connect branch; the new utm keys were added into that crashing branch",
+      "file": "app/controllers/api/v1/registrations_controller.rb",
+      "line": 88,
+      "description": "The connect branch is taken when `login_intent == 'connect' && organization.nil?` (line 88), yet line 96 inside that same branch evaluates `connect_login_intent_organization_id: organization.id` — organization is definitionally nil there, so the branch raises NoMethodError before any of the newly merged utm_source/utm_campaign/utm_data/internal_ref keys (lines 97-100) can matter. login_intent defaults to 'connect' (line 81), so any POST to /magic_login omitting login_intent with no valid organization_slug 500s. This inversion pre-dates the branch (confirmed via `git diff develop...HEAD` — only the utm merge keys are new) and the spec explicitly routes tests around it (SPEC §9.1: 'Pre-existing behavior outside this feature's scope'). Reported for visibility: the feature's connect-branch utm additions are effectively dead code until the pre-existing crash is fixed.",
+      "recommendation": "No action in this PR (out of scope per spec). Flag for a separate fix: the condition or the organization.id reference is inverted — a nil organization cannot supply connect_login_intent_organization_id."
+    },
+    {
+      "id": "l2-A-4",
+      "severity": "LOW",
+      "title": "Omniauth setup lambda also runs on the callback phase and can overwrite request-phase session tracking",
+      "file": "config/initializers/omniauth.rb",
+      "line": 12,
+      "description": "OmniAuth invokes the setup proc on both the request phase and the callback phase. On a normal callback (Google redirect: code/state only) no allowed key is present, tracking_params is empty, and the `if tracking_params.any?` guard prevents clobbering — correct. But a user who appends e.g. ?utm_source=x to the callback URL overwrites the session tracking captured at request phase, and the callback controller then reads the overwritten values. Only the user's own attribution row is affected; no security impact. Same mechanism already applied to partner/referral before this branch.",
+      "recommendation": "None required. If ever hardened, gate the session write on the request phase (e.g. check env['PATH_INFO'] against request_path)."
+    },
+    {
+      "id": "l2-A-5",
+      "severity": "LOW",
+      "title": "Confirmation redirect carries the user's email in the URL — encoding verified sufficient, PII exposure is spec-directed",
+      "file": "app/controllers/hire/confirmations_controller.rb",
+      "line": 18,
+      "description": "`redirect_to \"/auth?email_confirmed=true&id=#{user.id}&email=#{CGI.escape(user.email)}\"` — encoding checked: user.id is an integer; CGI.escape percent-encodes &, =, #, %, CR/LF, and encodes literal '+' (plus-addressed emails) as %2B, which query-string's decode-uri-component round-trips correctly ('+' is not decoded as space by that library, and spaces cannot appear in a validated email). No header injection is possible (Devise-validated email, and control chars would be escaped anyway); the path is fixed so no open redirect. In the success branch `user.errors.blank?` guarantees a persisted confirmed user, so id/email are always present. The residual concern — email lands in browser history and request logs — is exactly what D12 specifies and is documented as SPEC Risk 6.",
+      "recommendation": "None. Noted as verified-safe; PII-in-URL is an accepted, spec-directed property."
+    }
+  ]
+}

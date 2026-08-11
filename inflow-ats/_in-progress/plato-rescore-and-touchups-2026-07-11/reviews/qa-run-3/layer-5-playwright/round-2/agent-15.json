@@ -1,0 +1,26 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 15,
+  "assignment": "Final byte-level spot re-checks at balance 15 + closing sweep, display only: (1) per-stage no-selection state, (2) per-stage checked state Inbox all 3, (3) all-stages Senior Engineer unchecked shortfall, (4) all-stages Design Lead zero-state, (5) one PlatoTab render + Regenerate, (6) closing console + network sweep, (7) screenshots.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc). Senior Engineer (29092, Inbox 3 / Total 63) and Design Lead (29093, Inbox 2) both listed.",
+    "CHECK 1 PASS — Senior Engineer > Inbox, nothing selected > Bulk options three-dot > Run Plato reviews. Modal body paragraph byte-exact: 'No candidates selected. Use the checkboxes next to the candidate names to select the candidates to generate reviews for. To select all candidates within this hiring stage, use the checkbox next to the stage name.' Re-review checkbox rendered DISABLED and unchecked; 'Generate reviews' DISABLED; Statement block byte-exact per SPEC 1.4 ('You will receive an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.'). Cancelled.",
+    "CHECK 2 PASS — selected all 3 Inbox candidates via stage-name checkbox, reopened modal. Unchecked state first rendered SPEC state 2 byte-exact ('0 of the 3 candidates selected from this hiring stage don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.', numeric 0, no credit sentence, submit disabled) — bonus verification. Checked the re-review checkbox: body byte-exact 'The 3 candidates selected from this hiring stage will be reviewed, including candidates that already have a review. Each successful review uses one AI credit, so running this uses up to 3 credits from your balance of 15 available.' — <b>3</b> and <b>15</b> bold, balance displayed 15 as briefed, no 'Up to' prefix, no overestimate block, 'Generate reviews' ENABLED. Cancelled and deselected all.",
+    "CHECK 3 PASS — Senior Engineer 'Plato Reviews' card > Run Plato. Unchecked body byte-exact: '58 candidates in this job don't have a Plato review yet. Each successful review uses one AI credit. You are short 43 credits. The first 15 candidates will get reviews generated; the rest will be skipped.' (58 - 15 = 43, <b>43</b> bold). Statement block matches SPEC 1.5: 'The hiring team gets an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' 'Review all' enabled. Cancelled.",
+    "CHECK 4 PASS — Design Lead > Run Plato. Zero-state body byte-exact: '0 candidates in this job don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.' Numeric 0, no credit sentence, 'Review all' DISABLED, re-review checkbox enabled/uncheckable-state correct (checkbox itself checkable per SPEC — disabled checkbox applies only to per-stage no-selection). Cancelled.",
+    "CHECK 5 PASS — Senior Engineer > Inbox > Emilee Hand > Plato tab. Full current review rendered (Good fit chip, headline 'Software engineer specializing in android development', 5-criteria scoring detail 4/0/1, notable achievement, relevant experience, open questions, skills chips, disclaimer footer). 'Regenerate' button present and enabled in header-right (x=1087,y=149). GET /api/v1/job_applications/20975/ai_job_application_summaries/2539 => 200.",
+    "CHECK 6 PASS — closing sweep. Console: aggregated all 22 session console logs (console-2026-07-13T*.log); every [ERROR] falls into known noise (44x Redux 'Store does not have a valid reducer', 88x react-router history deprecations, 22x Emotion :first-child, 22x heap-api 404). Zero feature-referencing errors (no rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summaries/React errors). Warnings only @reach/tooltip styles + Stripe HTTP notice (pre-existing library noise). Network: all app.lvh.me API requests 200 (me, flipper, jobs, job_applications per stage, ai_credits, ai_job_application_summaries/2539); only failure is the known heap-api.com 404.",
+    "Displayed AI credit balance was 15 throughout, matching the briefed CURRENT STATE; all expectations computed from 15."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-15/01-per-stage-no-selection.png",
+    "/tmp/qa-run-3-l5/agent-15/02-per-stage-checked-3-of-15.png",
+    "/tmp/qa-run-3-l5/agent-15/03-all-stages-senior-engineer-unchecked-58-short-43.png",
+    "/tmp/qa-run-3-l5/agent-15/04-all-stages-design-lead-zero-state.png",
+    "/tmp/qa-run-3-l5/agent-15/05-platotab-emilee-hand-regenerate.png",
+    "/tmp/qa-run-3-l5/agent-15/agent-15-console-all-errors.log",
+    "/tmp/qa-run-3-l5/agent-15/agent-15-network.log"
+  ],
+  "findings": []
+}

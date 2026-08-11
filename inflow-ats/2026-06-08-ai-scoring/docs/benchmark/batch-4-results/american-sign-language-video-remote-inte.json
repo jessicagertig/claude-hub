@@ -1,0 +1,133 @@
+{
+  "meta": {
+    "batch": 4,
+    "criteria_prompt_version": 10,
+    "job_id": 26382,
+    "title": "American Sign Language Video Remote Interpreter",
+    "organization": "SignGlasses",
+    "cost": 0.000451
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": "Job Summary:",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "At SignGlasses we provide interpreting services, captioning services, and platform scheduling services specialized for business, engineering, education, medical and healthcare, legal, and more.\nSignGlasses' mission is to give humans the power to communicate and form connections by bridging the gap between accessibility wherever and whenever needed.\nWe are seeking like-minded and passionate individuals to join our team as remote Interpreters."
+      },
+      {
+        "heading": "Essential Job Duties and Responsibilities:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Demonstrate high-quality ASL - English interpretation in a variety of settings.\nAbility to handle confidential information and demonstrate industry standard of Code of Professional Conduct\nProvide effective communication in a virtual services environment\nMaintain a working knowledge and increased understanding of the subject matter to enable effective interpretation for all required disciplines\nDemonstrate professionalism in appearance, preparation, and punctuality  \nProvide stellar professionalism to both internal and external customers\nWork collaboratively and professionally with other interpreters during assignments"
+      },
+      {
+        "heading": "Required Skills and Qualification:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "At least three years of experience interpreting in a professional setting  \nStrong interpersonal skills in various settings  \nBasic knowledge of computer technology to be able to work over video\nCertificates from either of the following: RID, NAD, BEI, EIPA 3.5+"
+      },
+      {
+        "heading": "Pre-Employment Requirements:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Operating systems: Windows 10-11 or MacOS\nDedicated confidential workspace"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Demonstrate high-quality ASL - English interpretation in a variety of settings.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Demonstrate high-quality ASL - English interpretation in a variety of settings."
+      },
+      {
+        "text": "Ability to handle confidential information and demonstrate industry standard of Code of Professional Conduct",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Ability to handle confidential information and demonstrate industry standard of Code of Professional Conduct"
+      },
+      {
+        "text": "Provide effective communication in a virtual services environment",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Provide effective communication in a virtual services environment"
+      },
+      {
+        "text": "Maintain a working knowledge and increased understanding of the subject matter to enable effective interpretation for all required disciplines",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Maintain a working knowledge and increased understanding of the subject matter to enable effective interpretation for all required disciplines"
+      },
+      {
+        "text": "Demonstrate professionalism in appearance, preparation, and punctuality",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Demonstrate professionalism in appearance, preparation, and punctuality"
+      },
+      {
+        "text": "Provide stellar professionalism to both internal and external customers",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Provide stellar professionalism to both internal and external customers"
+      },
+      {
+        "text": "Work collaboratively and professionally with other interpreters during assignments",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Work collaboratively and professionally with other interpreters during assignments"
+      },
+      {
+        "text": "At least three years of experience interpreting in a professional setting",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"At least\"",
+        "binary": false,
+        "source_text": "At least three years of experience interpreting in a professional setting"
+      },
+      {
+        "text": "Strong interpersonal skills in various settings",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Strong\"",
+        "binary": false,
+        "source_text": "Strong interpersonal skills in various settings"
+      },
+      {
+        "text": "Basic knowledge of computer technology to be able to work over video",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"Basic knowledge of\"",
+        "binary": false,
+        "source_text": "Basic knowledge of computer technology to be able to work over video"
+      },
+      {
+        "text": "Certificates from either of the following: RID, NAD, BEI, EIPA 3.5+",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 heading — Required Skills and Qualification",
+        "binary": true,
+        "source_text": "Certificates from either of the following: RID, NAD, BEI, EIPA 3.5+"
+      },
+      {
+        "text": "Operating systems: Windows 10-11 or MacOS",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 heading — Pre-Employment Requirements",
+        "binary": true,
+        "source_text": "Operating systems: Windows 10-11 or MacOS"
+      },
+      {
+        "text": "Dedicated confidential workspace",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 heading — Pre-Employment Requirements",
+        "binary": true,
+        "source_text": "Dedicated confidential workspace"
+      }
+    ]
+  }
+}

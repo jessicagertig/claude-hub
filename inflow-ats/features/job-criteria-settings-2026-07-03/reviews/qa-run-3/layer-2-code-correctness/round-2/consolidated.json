@@ -1,0 +1,29 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "run": 3,
+  "head": "859c85ead",
+  "agents_dispatched": 6,
+  "agents_reporting": 6,
+  "reshuffle_note": "Fresh agents on RESHUFFLED file groupings vs round-1 (combined/split differently) for independent redundant coverage.",
+  "coverage": {
+    "agent-1": "entire backend extraction lifecycle end-to-end — job.rb + ai_job_criteria.rb + extract_job_criteria_job.rb, structural diff vs generate_ai_job_application_summary_job.rb; also found a 5th enqueue site (recurring_tasks.rake:249) — single-arg, compatible",
+    "agent-2": "ai_job_criteria_controller.rb + routes.rb + serializer, full auth-enforcement trace + the §5.3 six-state serializer table walk",
+    "agent-3": "entire review-blocking story — 2 validators + queue_bulk + bulk controller + textract funnel guard + bulk claim-row §6.3 fix + constant substitutions (byte-exact)",
+    "agent-4": "frontend display-state — JobCriteriaSection.tsx §8.2 priority chain + jobCriteriaTiers.ts + JobSetupAiSettings.tsx wiring",
+    "agent-5": "modals + hook — RegenerateJobCriteriaConfirmModal.tsx + JobCriteriaViewModal.tsx + useAiJobCriteria.ts",
+    "agent-6": "cross-cutting WS chain (backend broadcast ↔ handler ↔ TS interface ↔ query-key Number()) + full copy-rule compliance sweep of all new user-facing strings"
+  },
+  "findings": [],
+  "high_plus_count": 0,
+  "med_count": 0,
+  "low_count": 5,
+  "low_findings": [
+    {"id": "l2r2-a1-001", "title": "broadcast_completion dereferences ai_job_criteria.job.title without the return-unless-job guard the analog has", "note": "SAFE: ai_job_criteria.job_id is null:false (required belongs_to), so .job cannot be nil; stylistic delta from analog only, no NoMethodError path"},
+    {"id": "l2r2-a1-002", "title": "Success-path broadcast sits inside perform's rescue scope: an ActionCable/Redis failure at broadcast time would demote a just-succeeded row to failed", "note": "MIRRORS THE BLESSED ANALOG (generate_ai_job_application_summary_job does the same). Analog-consistent backend edge case with tradeoffs — do-not-fix; surfaced to final MED report for owner visibility. Extremely narrow window; a re-extraction recovers."},
+    {"id": "l2r2-a2-001", "title": "Serializer issues 4 unmemoized latest-row queries per single-object render", "note": "spec-prescribed computed-delegation pattern, not an N+1; convention-consistent; no correctness impact"},
+    {"id": "l2r2-a4-001", "title": "Unused `history` prop threaded into JobCriteriaSection", "note": "vestigial `any`-typed dead code, no runtime effect; already accepted at L1"},
+    {"id": "l2r2-a4-002", "title": "isInFlight folds in raw isFetching → transient Regenerate-button disable on any background refetch", "note": "spec-compliant per §8.2/§8.3 (the query is refetching); cosmetic"}
+  ],
+  "verdict": "Round 2 raw-clean of HIGH+ (0 BLOCKER / 0 HIGH / 0 MED / 5 LOW), 6 fresh agents on reshuffled groupings. Independently re-confirmed: analog structural match, authorization enforcement with no bypass + six-state serializer table, guard-chain ordering/nil-safety/coverage, §6.3 claim-row un-poisoning, byte-exact zero-criteria constants, WS end-to-end key/case/Number() match, and full copy-rule compliance. Combined with round 1 (0 HIGH+) = TWO CONSECUTIVE RAW-CLEAN ROUNDS. LAYER 2 CONVERGED. 14 agents across 2 rounds. Advance to Layer 3. No new MED beyond the analog-consistent do-not-fix broadcast edge (l2r2-a1-002)."
+}

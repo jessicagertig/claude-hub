@@ -1,0 +1,30 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 1,
+  "focus_area": "Backend model + callback",
+  "assigned_requirements": ["S4", "S5", "S6", "S7", "S8"],
+  "findings": [],
+  "spec_coverage": {
+    "S4": {
+      "status": "implemented",
+      "evidence": "Line 32 of ai_job_application_summary.rb: `before_update :broadcast_status_change` — matches spec exactly. Callback is registered after the three existing after_commit callbacks."
+    },
+    "S5": {
+      "status": "implemented",
+      "evidence": "Line 23: `BROADCAST_STATUSES = %w[textract_processing extracting summarizing scoring integrating succeeded failed].freeze` — matches spec exactly. All 7 statuses present, frozen as expected."
+    },
+    "S6": {
+      "status": "implemented",
+      "evidence": "Lines 79-80: `return unless status_changed?` then `return unless BROADCAST_STATUSES.include?(status)`. Uses `status_changed?` (dirty tracking) as the plan resolved, not `saved_change_to_status?`. Correct for a before_update callback where changes are not yet persisted."
+    },
+    "S7": {
+      "status": "implemented",
+      "evidence": "Line 85: `JobChannel.broadcast_to(job_application.job, event: 'ai_summary_status_change', payload: { jobApplicationId: job_application.id })`. Event name, channel, broadcast target (job_application.job), and payload shape all match spec. JobChannel uses `stream_for job` (verified in app/channels/job_channel.rb), so `broadcast_to(job)` is the correct counterpart."
+    },
+    "S8": {
+      "status": "implemented",
+      "evidence": "The enum defines 10 statuses: pending(0), textract_processing(1), extracting(2), summarizing(3), awaiting_job_criteria(4), scoring(5), integrating(6), succeeded(7), retrying(8), failed(9). BROADCAST_STATUSES omits exactly `pending`, `awaiting_job_criteria`, and `retrying` — the three statuses the spec says to skip. The guard on line 80 ensures only BROADCAST_STATUSES members trigger a broadcast."
+    }
+  }
+}

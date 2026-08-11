@@ -1,0 +1,16 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 9,
+  "focus": "Regenerate/GET authorization gate (SPEC §9): JobPolicy#update? and #show? for admin / hiring-team member / outsider; verify regenerate is NOT credits-gated (mid-QA JobPolicy#update? change).",
+  "scenarios_run": [
+    "Confirmed Pundit policy user is a User (Api::V1::BaseController `alias current_user current_api_v1_user`; no pundit_user override; ApplicationPolicy/JobPolicy call user.current_organization_user throughout).",
+    "Built ONE isolated org (uniquely-suffixed) with owner(org_owner), admin(org_admin), member(org_user + HiringTeamMembership on job), outsider(org_user, no membership); job has a description. Asserted on the User objects (correct policy-user).",
+    "JobPolicy.new(user, job).update?: admin=true, member(hiring-team)=true, outsider=false.",
+    "JobPolicy.new(user, job).show?: admin=true, member=true, outsider=false (same effective results as update?).",
+    "Credits-gate non-interference: member (role org_user, no hiring_team_ai_credits_control_enabled setting) -> AiJobApplicationSummaryPolicy#can_use_ai_credits?=false AND JobPolicy#update_ai_settings?=false, yet JobPolicy#update?=true. Proves regenerate is NOT credits-gated (the §9 change).",
+    "is_org_admin? sanity: admin=true, member=false, outsider=false.",
+    "Falsifiability: outsider update?/show? (false) diverge from member+admin (true); admin(35852) and outsider(35854) are absent from job.users while admin still passes via is_org_admin? and outsider fails, confirming the gate distinguishes hiring-team membership vs admin vs outsider rather than passing everyone."
+  ],
+  "findings": []
+}

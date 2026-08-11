@@ -1,0 +1,99 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience in multi-cloud environments (AWS, Azure) and designing infrastructure across regions for various clients in consulting roles at nClouds, Lineten, and Alcrowd."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience enhancing CI/CD and observability, but there is no specific mention of working with UX teams or improving CLI usage specifically for developer experience."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists experience with observability stacks (Prometheus/Grafana/Thanos), rollback capabilities (via ArgoCD), and improving system uptime/reliability metrics across multiple roles."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate shows technical leadership in defining best practices (DevSecOps, GitOps), but the resume does not explicitly mention participating in code reviews or mentoring others."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists Go in their programming languages and has experience creating custom Golang controllers for production infrastructure."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate holds multiple CNCF certifications including CKA, CKAD, and CKS, and has extensive hands-on experience with K3s, EKS, Linkerd, and Istio."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists Terraform as a primary skill and has used it across various roles for AWS and multi-cloud infrastructure management."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has significant hands-on experience with AWS and Azure, as noted in the skills section and work experience at nClouds and Civo."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has worked at Civo (a cloud provider) and on platforms involving DBaaS, Kubeflow (MLOps), and managed Kubernetes services, demonstrating an understanding of PaaS architecture."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists extensive experience with CI/CD tools (ArgoCD, GitHub Actions, GitLab CI, Jenkins-X) and experience optimizing container workflows."
+    },
+    {
+      "criterion_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate mentions being 'highly collaborative', but lacks specific evidence of cross-functional work outside of standard SRE responsibilities."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no mention of working with cloud marketplaces in the provided resume."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate specifically mentions designing multi-region Kubernetes clusters and working with multi-tenant EKS platforms."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate worked with various CNCF projects and mentions distributed systems like PostgreSQL/MySQL DBaaS stacks and Mayastor storage."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience with Prometheus, Grafana, Thanos, and Fluentd."
+    }
+  ],
+  "computed_score": {
+    "points": 78.0,
+    "max": 92,
+    "percentage": 84.8
+  }
+}

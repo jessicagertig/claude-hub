@@ -1,0 +1,26 @@
+Calling `DidYouMean::SPELL_CHECKERS.merge!(error_name => spell_checker)' has been deprecated. Please call `DidYouMean.correct_error(error_name, spell_checker)' instead.
+Calling `DidYouMean::SPELL_CHECKERS.merge!(error_name => spell_checker)' has been deprecated. Please call `DidYouMean.correct_error(error_name, spell_checker)' instead.
+Calling `DidYouMean::SPELL_CHECKERS.merge!(error_name => spell_checker)' has been deprecated. Please call `DidYouMean.correct_error(error_name, spell_checker)' instead.
+NOTE: nokogumbo: Using Nokogiri::HTML5 provided by Nokogiri. See https://github.com/sparklemotion/nokogiri/issues/2205 for more information.
+Top level ::CompositeIO is deprecated, require 'multipart/post' and use `Multipart::Post::CompositeReadIO` instead!
+Top level ::Parts is deprecated, require 'multipart/post' and use `Multipart::Post::Parts` instead!
+[0;33m"=== gemini-scorer ==="[0m
+[0;33m"Go Narendran: 87.0% | FM:12 PM:2 NF:1"[0m
+[0;33m"Go Ganesh: 68.5% | FM:5 PM:9 NF:1"[0m
+[0;33m"Go Nishant: 39.1% | FM:2 PM:6 NF:7"[0m
+[0;33m"Go Barruri: 5.4% | FM:0 PM:2 NF:13"[0m
+[0;33m"TL Daniela: 91.0% | FM:16 PM:4 NF:0"[0m
+[0;33m"TL Ravi: 16.0% | FM:0 PM:7 NF:13"[0m
+[0;33m"TL Alexia: 62.0% | FM:8 PM:9 NF:3"[0m
+[0;33m"TL Abhidipta: 93.0% | FM:18 PM:1 NF:1"[0m
+[0;33m"TL Guillaume: 50.0% | FM:9 PM:3 NF:8"[0m
+[0;33m"=== gpt4omini-scorer-b ==="[0m
+[0;33m"Go Narendran: 77.2% | FM:9 PM:4 NF:2"[0m
+[0;33m"Go Ganesh: 62.0% | FM:7 PM:4 NF:4"[0m
+[0;33m"Go Nishant: 29.3% | FM:2 PM:2 NF:11"[0m
+[0;33m"Go Barruri: 9.8% | FM:1 PM:1 NF:13"[0m
+[0;33m"TL Daniela: 73.0% | FM:13 PM:2 NF:5"[0m
+[0;33m"TL Ravi: 7.0% | FM:0 PM:3 NF:17"[0m
+[0;33m"TL Alexia: 51.0% | FM:7 PM:6 NF:7"[0m
+[0;33m"TL Abhidipta: 82.0% | FM:16 PM:1 NF:3"[0m
+[0;33m"TL Guillaume: 45.0% | FM:7 PM:5 NF:8"[0m

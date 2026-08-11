@@ -1,0 +1,139 @@
+{
+  "meta": {
+    "batch": 6,
+    "criteria_prompt_version": 10,
+    "job_id": 28945,
+    "title": "Executive Assistant- REMOTE",
+    "organization": "The Martin House Children's Advocacy Center",
+    "cost": 0.000561
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Job Title: Executive Assistant\nType: Full Time\nLocation: Must Reside In Canada and USA"
+      },
+      {
+        "heading": "Job Summary",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "At our company, we value team performance and credit our success to the individual efforts of our dedicated employees to make a difference. As an executive assistant, you will contribute directly to this cause by working alongside our executive staff to facilitate communication and execute planning. We are looking for an individual who takes initiative to expedite the details, thus enabling our company's leaders to contribute their best performance to achieve organizational directives. As a valued assistant, you will be the foundation for strong performance, efficient processes, and successful outcomes. If you find satisfaction in helping others, organizing, and working as part of a team, this is a promising opportunity for you."
+      },
+      {
+        "heading": "Job Responsibilities",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Formulate and classify briefing materials, financial documents, and marketing plans to have them readily available for important executive meetings.\nAct as a liaison between staff members and executive leaders to ensure important information is relayed, escalated issues are flagged and resolved, and mediocre matters are solved by appropriate parties.\nKeep an organized schedule of events, meetings, traveling itineraries, conference calls, and international communications in order to confidently debrief executives on such plans.\nMaintain a professional and candid demeanor at all times to ensure you are behaving in a manner that is in alignment with executive image and company reputation and brand.\nParticipate in standard advisory duties such as sending emails and other electronic correspondences, faxing, copying, scheduling, and running errands.\nCreate press release information and write, draft, and edit important data such as documents, reports, proof letters, and memos.\nDocument and finalize time cards on a regular basis, and have them sent to the HR department on time."
+      },
+      {
+        "heading": "Job Skills & Qualifications",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Required\n\nBachelor's degree\nFlexibility with traveling\nSuperior writing and communication skills\nStrong organizational skills"
+      },
+      {
+        "heading": "Preferred",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Experience working as an assistant or in a similar advisory position\nFamiliarity with Microsoft Office and common scheduling software such as Outlook"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Bachelor's degree",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 heading 'Required'",
+        "binary": true,
+        "source_text": "Bachelor's degree"
+      },
+      {
+        "text": "Flexibility with traveling",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 heading 'Required'",
+        "binary": false,
+        "source_text": "Flexibility with traveling"
+      },
+      {
+        "text": "Superior writing and communication skills",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 heading 'Required'",
+        "binary": false,
+        "source_text": "Superior writing and communication skills"
+      },
+      {
+        "text": "Strong organizational skills",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 heading 'Required'",
+        "binary": false,
+        "source_text": "Strong organizational skills"
+      },
+      {
+        "text": "Experience working as an assistant or in a similar advisory position",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 heading 'Preferred'",
+        "binary": false,
+        "source_text": "Experience working as an assistant or in a similar advisory position"
+      },
+      {
+        "text": "Familiarity with Microsoft Office and common scheduling software such as Outlook",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 heading 'Preferred'",
+        "binary": false,
+        "source_text": "Familiarity with Microsoft Office and common scheduling software such as Outlook"
+      },
+      {
+        "text": "Formulate and classify briefing materials, financial documents, and marketing plans to have them readily available for important executive meetings.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Formulate and classify briefing materials, financial documents, and marketing plans to have them readily available for important executive meetings."
+      },
+      {
+        "text": "Act as a liaison between staff members and executive leaders to ensure important information is relayed, escalated issues are flagged and resolved, and mediocre matters are solved by appropriate parties.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Act as a liaison between staff members and executive leaders to ensure important information is relayed, escalated issues are flagged and resolved, and mediocre matters are solved by appropriate parties."
+      },
+      {
+        "text": "Keep an organized schedule of events, meetings, traveling itineraries, conference calls, and international communications in order to confidently debrief executives on such plans.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Keep an organized schedule of events, meetings, traveling itineraries, conference calls, and international communications in order to confidently debrief executives on such plans."
+      },
+      {
+        "text": "Maintain a professional and candid demeanor at all times to ensure you are behaving in a manner that is in alignment with executive image and company reputation and brand.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Maintain a professional and candid demeanor at all times to ensure you are behaving in a manner that is in alignment with executive image and company reputation and brand."
+      },
+      {
+        "text": "Participate in standard advisory duties such as sending emails and other electronic correspondences, faxing, copying, scheduling, and running errands.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Participate in standard advisory duties such as sending emails and other electronic correspondences, faxing, copying, scheduling, and running errands."
+      },
+      {
+        "text": "Create press release information and write, draft, and edit important data such as documents, reports, proof letters, and memos.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Create press release information and write, draft, and edit important data such as documents, reports, proof letters, and memos."
+      },
+      {
+        "text": "Document and finalize time cards on a regular basis, and have them sent to the HR department on time.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Document and finalize time cards on a regular basis, and have them sent to the HR department on time."
+      }
+    ]
+  }
+}

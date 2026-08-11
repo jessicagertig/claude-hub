@@ -1,0 +1,274 @@
+{
+  "meta": {
+    "version": 24,
+    "name": "housekeeper---buena-vista",
+    "kind": "problematic",
+    "title": "Housekeeper - Buena Vista",
+    "description": "NO_BINARY: has vehicle req, 28 criteria",
+    "cost": 0.004809
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": "Independent Contractor | Piece Rate | Weekly Pay",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Are you looking for a way to earn extra income on weekends?\nRenjoy is seeking reliable and detail-oriented Independent Contractors to help clean and reset beautiful short-term rental homes in Buena Vista, primarily in the South Main area."
+      },
+      {
+        "heading": "Mission Statement: PURPOSE",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Deliver an exceptional, guest-ready clean at every Renjoy property in the Buena Vista market. You are the last line of quality before a guest walks through the door — your work directly determines the review they leave and the experience they remember. In a small, remote market, every cleaner carries significant weight. Precision, reliability, and ownership are non-negotiable."
+      },
+      {
+        "heading": "3 OBSESSIONS",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Every room must look, feel, and smell spotless — no exceptions, no shortcuts.\nFollow the checklist and standard operating procedures every single clean.\nReport issues, damages, lost-and-found items, and low supplies immediately upon discovery."
+      },
+      {
+        "heading": "CORE RESPONSIBILITIES",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Cleaning & Turnover\nComplete full departure cleans between guest stays according to the Renjoy departure clean checklist.\nLaunder, fold, and stage all linens and towels to presentation standards.\nRestock consumable supplies (toiletries, paper products, coffee) to property par levels.\nEnsure all furniture, decor, and amenities are reset to their designated positions.\nVerify all windows, doors, and locks are secure before departing the property."
+      },
+      {
+        "heading": "Quality & Inspections",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Self-inspect all spaces against the Renjoy quality checklist before marking a clean complete.\nPhotograph any damage, maintenance issue, or guest-left item and report immediately via SuiteOp.\nAccept and respond constructively to quality inspections and scoring feedback.\nFlag any property condition (appliance, fixture, lock, safety item) that does not meet standard."
+      },
+      {
+        "heading": "Communication & Reporting",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Receive task assignments and updates through SuiteOp — check the app before each clean.\nCommunicate directly with the Head of Homes (BV) for scheduling changes, supply needs, or property issues.\nReport lost-and-found items with photos and property details on the same day of discovery.\nProvide an accurate completion time when a clean is finished so operations can confirm guest readiness."
+      },
+      {
+        "heading": "Supplies & Inventory",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Maintain awareness of supply levels at each assigned property and proactively flag shortages.\nPick up supplies from the designated BV storage location as directed.\nNever substitute unapproved products — use only Renjoy-approved cleaning products and consumables."
+      },
+      {
+        "heading": "BUENA VISTA MARKET — WHAT YOU NEED TO KNOW",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "The BV market operates as a small, tight-knit team in a remote mountain environment. Unlike our Colorado Springs operation, there is no large support staff nearby. That means each cleaner carries more individual accountability — you are expected to be proactive, self-directed, and communicative without daily in-person oversight.\nProperties include mountain homes and condos in and around Buena Vista — some with hot tubs, outdoor furniture, and seasonal considerations.\nWeather and road conditions can affect schedules; reliability and advance communication are critical.\nYou will coordinate directly with the Head of Homes for all scheduling, supply, and issue escalation.\nTask management and completion confirmation occur through SuiteOp — not text or phone."
+      },
+      {
+        "heading": "Compensation & Perks",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "Competitive piece-rate pay\nWeekly direct deposit\nFlexible scheduling\nWork locally — no long commutes"
+      },
+      {
+        "heading": "Location:",
+        "inferred_section_type": "non_criteria",
+        "type": "non_criteria",
+        "content": "Buena Vista & surrounding areas\nCompensation: Piece rate ($50–$150 per clean)\nStart Date: ASAP"
+      },
+      {
+        "heading": "Job Type: Contract",
+        "inferred_section_type": "non_criteria",
+        "type": "non_criteria",
+        "content": ""
+      },
+      {
+        "heading": "Experience:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Commercial cleaning: 2 years (Preferred)"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Precision, reliability, and ownership are non-negotiable.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: non-negotiable",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Precision, reliability, and ownership are non-negotiable."
+      },
+      {
+        "text": "Every room must look, feel, and smell spotless",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Every room must look, feel, and smell spotless — no exceptions, no shortcuts."
+      },
+      {
+        "text": "Follow the checklist and standard operating procedures every single clean.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Follow the checklist and standard operating procedures every single clean."
+      },
+      {
+        "text": "Report issues, damages, lost-and-found items, and low supplies immediately upon discovery.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Report issues, damages, lost-and-found items, and low supplies immediately upon discovery."
+      },
+      {
+        "text": "Complete full departure cleans between guest stays according to the Renjoy departure clean checklist.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Complete full departure cleans between guest stays according to the Renjoy departure clean checklist."
+      },
+      {
+        "text": "Launder, fold, and stage all linens and towels to presentation standards.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Launder, fold, and stage all linens and towels to presentation standards."
+      },
+      {
+        "text": "Restock consumable supplies (toiletries, paper products, coffee) to property par levels.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Restock consumable supplies (toiletries, paper products, coffee) to property par levels."
+      },
+      {
+        "text": "Ensure all furniture, decor, and amenities are reset to their designated positions.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Ensure all furniture, decor, and amenities are reset to their designated positions."
+      },
+      {
+        "text": "Verify all windows, doors, and locks are secure before departing the property.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Verify all windows, doors, and locks are secure before departing the property."
+      },
+      {
+        "text": "Self-inspect all spaces against the Renjoy quality checklist before marking a clean complete.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Self-inspect all spaces against the Renjoy quality checklist before marking a clean complete."
+      },
+      {
+        "text": "Photograph any damage, maintenance issue, or guest-left item and report immediately via SuiteOp.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Photograph any damage, maintenance issue, or guest-left item and report immediately via SuiteOp."
+      },
+      {
+        "text": "Accept and respond constructively to quality inspections and scoring feedback.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Accept and respond constructively to quality inspections and scoring feedback."
+      },
+      {
+        "text": "Flag any property condition (appliance, fixture, lock, safety item) that does not meet standard.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Flag any property condition (appliance, fixture, lock, safety item) that does not meet standard."
+      },
+      {
+        "text": "Receive task assignments and updates through SuiteOp — check the app before each clean.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Receive task assignments and updates through SuiteOp — check the app before each clean."
+      },
+      {
+        "text": "Communicate directly with the Head of Homes (BV) for scheduling changes, supply needs, or property issues.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Communicate directly with the Head of Homes (BV) for scheduling changes, supply needs, or property issues."
+      },
+      {
+        "text": "Report lost-and-found items with photos and property details on the same day of discovery.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Report lost-and-found items with photos and property details on the same day of discovery."
+      },
+      {
+        "text": "Provide an accurate completion time when a clean is finished so operations can confirm guest readiness.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Provide an accurate completion time when a clean is finished so operations can confirm guest readiness."
+      },
+      {
+        "text": "Maintain awareness of supply levels at each assigned property and proactively flag shortages.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Maintain awareness of supply levels at each assigned property and proactively flag shortages."
+      },
+      {
+        "text": "Pick up supplies from the designated BV storage location as directed.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Pick up supplies from the designated BV storage location as directed."
+      },
+      {
+        "text": "Never substitute unapproved products — use only Renjoy-approved cleaning products and consumables.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Never substitute unapproved products — use only Renjoy-approved cleaning products and consumables."
+      },
+      {
+        "text": "proactive, self-directed, and communicative without daily in-person oversight.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "That means each cleaner carries more individual accountability — you are expected to be proactive, self-directed, and communicative without daily in-person oversight."
+      },
+      {
+        "text": "reliability and advance communication are critical.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: critical",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Weather and road conditions can affect schedules; reliability and advance communication are critical."
+      },
+      {
+        "text": "Commercial cleaning: 2 years",
+        "tier": "tier_2",
+        "tier_reasoning": "preferred",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Commercial cleaning: 2 years (Preferred)"
+      }
+    ]
+  }
+}

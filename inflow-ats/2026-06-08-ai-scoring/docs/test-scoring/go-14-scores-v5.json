@@ -1,0 +1,129 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has professional experience building backend services in Go (e.g., at Solid I), but there is no specific evidence of building PaaS-related components like schedulers or orchestrator logic."
+    },
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume mentions working with AWS and backend infrastructure, but does not specifically mention working with Kubernetes or Terraform in the context of integration."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not provide evidence of experience in multi-cloud rack deployment or managing environments within customer accounts."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate demonstrates collaboration with stakeholders (Reddit, Deliveroo) and infrastructure improvement, but there is no evidence of direct developer-tooling features like CLI development or CI/CD workflow enhancements."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has significant experience in scaling high-load systems (Reddit, Deliveroo, Coinbase) and improving reliability, though specific mention of multi-cloud failover strategies is absent."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The resume mentions leadership roles and guiding teams in scaling efforts, which implies mentorship and influence, though explicit mention of code review and best practice documentation for infrastructure is not provided."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Go in their tech stack for their work as a Founding Engineer at Solid I, which involved high-volume backend systems."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "There is no mention of Kubernetes experience in the resume."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume mentions AWS as part of the tech stack but does not specify using Terraform or any other IaC tool for infrastructure management."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists AWS in their tech stack for the Solid I project and describes extensive cloud-based scaling and infrastructure work at Coinbase and Reddit."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience scaling large backend platforms, but the resume does not show direct experience working within a PaaS product or building abstraction layers for developers."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate describes infrastructure modernization and integration (gRPC, McDonald's systems), but does not explicitly detail CI/CD pipeline management or marketplace integrations."
+    },
+    {
+      "criterion_text": "Excellent communication skills",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume highlights that the candidate 'Led, planned, communicated with stakeholders' and demonstrated 'extraordinary leadership,' indicating strong professional communication."
+    },
+    {
+      "criterion_text": "Ability to work cross functionally",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate frequently describes working with stakeholders, product teams, and external business partners like McDonald's, indicating strong cross-functional experience."
+    },
+    {
+      "criterion_text": "Ability to thrive within a fast moving product engineering environment",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume shows the candidate working at fast-paced companies like Reddit, Coinbase, and Deliveroo, consistently delivering high-impact projects."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of cloud marketplace experience is present in the resume."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with customer-facing integration systems (McDonald's/Subway at Deliveroo) and complex backend architecture, but specific multi-cloud experience is not detailed."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience designing highly available systems for global enterprises (Reddit, Deliveroo) and built a decentralized storage service (YourStorage)."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate built a decentralized storage service on top of IPFS, which is a significant open-source, distributed systems project."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume mentions system performance and uptime, but does not explicitly name monitoring/observability tools like Prometheus or Grafana."
+    }
+  ],
+  "computed_score": {
+    "points": 64.0,
+    "max": 112,
+    "percentage": 57.1
+  }
+}

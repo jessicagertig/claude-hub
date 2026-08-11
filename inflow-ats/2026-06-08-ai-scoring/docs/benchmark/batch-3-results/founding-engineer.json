@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "batch": 3,
+    "criteria_prompt_version": 10,
+    "job_id": 22596,
+    "title": "Founding Engineer",
+    "organization": "Bloom",
+    "cost": 0.000507
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Bloom (YC S21) unlocks access for a new generation of Americans (ages 13 - 17) to start building wealth early through investing in the stock market. We believe that wealth inequality is one of America's most pressing issues, and that encouraging the next generation to build wealth early is the most effective way to tackle it.\nWe are incredibly excited to have the opportunity to make a generational impact in improving the financial future of the next generation. Our company is mission-driven, and we've raised $3.3M with backing from some of the best investors in the valley."
+      },
+      {
+        "heading": "What would you be doing?",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Architect and build our core React Native product\nCreate infrastructure and internal tooling to handle extremely high trade transaction volume\nHelp assess and recruit future engineers"
+      },
+      {
+        "heading": "What are we looking for?",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "2+ years of software engineering experience\nFamiliarity with Node, TypeScript, & React\nExperience with Docker, Storybook, Lerna, and Kubernetes\nBonus: Interest in consumer fintech, and developer tools"
+      },
+      {
+        "heading": "Why work with us?",
+        "inferred_section_type": "culture",
+        "type": "non_criteria",
+        "content": "Our stack is modern: on the engineering side, we're Typescript heavy and on the organization side, we're power users of tools like Linear, Figma, Discord. We also have a fervent user community that loves the product.\nWe have an incredible team backed by the best investors, and we have a kind and fun environment to work in. Our company culture is primarily an engineering culture, and we value technical decisions.\nWe are providing access for the next generation of Americans to start building wealth on their own initiative\nWe provide meaningful ownership of work through generous equity and competitive salaries with benefits."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "legal",
+        "type": "non_criteria",
+        "content": ""
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Architect and build our core React Native product",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Architect and build our core React Native product"
+      },
+      {
+        "text": "Create infrastructure and internal tooling to handle extremely high trade transaction volume",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Create infrastructure and internal tooling to handle extremely high trade transaction volume"
+      },
+      {
+        "text": "Help assess and recruit future engineers",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Help assess and recruit future engineers"
+      },
+      {
+        "text": "2+ years of software engineering experience",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "2+ years of software engineering experience"
+      },
+      {
+        "text": "Familiarity with Node, TypeScript, & React",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: \"Familiarity with\"",
+        "binary": false,
+        "source_text": "Familiarity with Node, TypeScript, & React"
+      },
+      {
+        "text": "Experience with Docker, Storybook, Lerna, and Kubernetes",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Experience with Docker, Storybook, Lerna, and Kubernetes"
+      },
+      {
+        "text": "Interest in consumer fintech, and developer tools",
+        "tier": "tier_3",
+        "tier_reasoning": "tier_3 signal: \"Interest in\"",
+        "binary": false,
+        "source_text": "Bonus: Interest in consumer fintech, and developer tools"
+      }
+    ]
+  }
+}

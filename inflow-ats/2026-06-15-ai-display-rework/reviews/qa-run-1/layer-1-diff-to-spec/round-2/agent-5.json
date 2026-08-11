@@ -1,0 +1,55 @@
+{
+  "agent": 5,
+  "round": 2,
+  "focus": "Frontend component wiring — prop passing chain consistency",
+  "filesReviewed": [
+    "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoLoadingState.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoTabEmptyState.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoOverviewCallout.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoGeneratedReviewCallout.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/JobApplicationTabEmptyState.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoSummary.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+    "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts",
+    "app/javascript/shared/types/jobApplication.ts",
+    "app/javascript/shared/types/aiJobApplicationSummary.ts"
+  ],
+  "findings": [],
+  "verifiedCorrect": [
+    {
+      "chain": "JobApplicationContainer -> PlatoTab (history, match)",
+      "detail": "JobApplicationContainer renders PlatoTab inside a <Route render={renderProps => ...}> at line 276-283. It spreads both {...props} (which includes history from the parent Route) and {...renderProps} (which contains history, match, location from the Route itself). PlatoTab declares Props with history: any and match: any at lines 22-26. The renderProps spread from the Route provides both. Correct."
+    },
+    {
+      "chain": "PlatoTab -> PlatoLoadingState (status={fullSummaryStatus})",
+      "detail": "PlatoTab line 47 sets fullSummaryStatus = fullSummary?.status, where fullSummary is from useAiJobApplicationSummary. Line 128 passes status={fullSummaryStatus} to PlatoLoadingState. PlatoLoadingState accepts status?: string at line 30-32. When fullSummary is undefined, fullSummaryStatus is undefined, and PlatoLoadingState handles undefined correctly at line 37 (target becomes null, and line 38 defaults active to 1). Correct."
+    },
+    {
+      "chain": "PlatoTab -> PlatoTabEmptyState noResume branch (onClick={handleNavigateToResumeTab})",
+      "detail": "PlatoTab lines 144-152 render PlatoTabEmptyState with status='noResume' and onClick={handleNavigateToResumeTab}. PlatoTabEmptyState accepts onClick?: () => void at line 11. In the noResume branch (line 100-110), it passes onClick={props.onClick} to JobApplicationTabEmptyState. JobApplicationTabEmptyState accepts onClick?: () => void at line 25, and uses it at line 41 (buttonProps.onClick = props.onClick). The noResume branch also passes buttonLabel='Go to resume tab' so the button renders. handleNavigateToResumeTab at PlatoTab line 87-89 uses history.push to navigate to the resume tab. Correct."
+    },
+    {
+      "chain": "JobApplicationActivity -> PlatoOverviewCallout (summaryStatusValue)",
+      "detail": "JobApplicationActivity line 408-413 passes summaryStatusValue={jobApplication.aiJobApplicationSummaryStatus?.status} to PlatoOverviewCallout. PlatoOverviewCallout's interface at line 12-17 declares summaryStatusValue?: 'none' | 'current' | 'regenerating' | null. The prop name matches. Correct."
+    },
+    {
+      "chain": "JobApplicationActivity -> PlatoGeneratedReviewCallout",
+      "detail": "Lines 399-405 pass headline, roleFit, scorePct, generatedAgo, onClick to PlatoGeneratedReviewCallout. The interface at PlatoGeneratedReviewCallout lines 11-17 matches exactly: headline: string, roleFit: string, scorePct: number, generatedAgo: string, onClick?: () => void. Correct."
+    },
+    {
+      "chain": "PlatoTab -> PlatoTabEmptyState failed/ready branches",
+      "detail": "Failed branch (lines 134-142) passes status='failed', creditsRemaining, isAdmin, onClick=handleGenerate. Ready branch (lines 155-163) passes status from deriveEmptyStatus() which returns 'noCredits' or 'ready', with creditsRemaining, isAdmin, onClick=handleGenerate. PlatoTabEmptyState's resolveStatus function at lines 61-97 handles all these statuses via PLATO_EMPTY_STATES record. Correct."
+    },
+    {
+      "chain": "PlatoTab -> PlatoSummary (data={summaryData})",
+      "detail": "PlatoTab renderSucceeded at lines 91-110 constructs PlatoSummaryData matching the interface in PlatoSummary.tsx lines 11-25. All required fields (headline, roleFit, scorePct, generatedAgo, criteria, standoutAccomplishments, skills) are populated with fallbacks. Optional fields (applicableExperience, gaps, keySkills, primaryDomain, secondaryDomain, stale) are passed when available. Correct."
+    },
+    {
+      "chain": "useAiJobApplicationSummary hook parameter wiring",
+      "detail": "PlatoTab line 42-45 passes jobApplicationId: jobApplication.id and aiJobApplicationSummaryId: summaryStatus?.aiJobApplicationSummaryId. The AiJobApplicationSummaryStatus type at jobApplication.ts line 3 includes aiJobApplicationSummaryId: number | null. The hook at useAiJobApplicationSummary.ts line 39 accepts aiJobApplicationSummaryId: number | undefined. When summaryStatus is null, optional chaining yields undefined, which disables the query (line 44: enabled: aiJobApplicationSummaryId != undefined). When summaryStatus.aiJobApplicationSummaryId is null, null != undefined is true in JS loose comparison, but the hook uses non-null assertion at line 43 (aiJobApplicationSummaryId!), which would pass null to the API path, producing a URL like /ai_job_application_summaries/null. However, this only fires when the query is enabled, and the enabled check uses != which treats null as != undefined being true. This is a potential issue but not a prop wiring problem -- it is a type mismatch between the status type (number | null) and the hook parameter (number | undefined). In practice the aiJobApplicationSummaryId is only null when status is 'none', and PlatoTab only enters paths that use fullSummary when statusValue is 'current' or 'regenerating', so the query result is simply unused when the ID is null. The query would fire with a null ID, get a 404 or error, and the result would be ignored. Not ideal but not a prop wiring bug."
+    }
+  ],
+  "summary": "All prop wiring chains are correct. No HIGH findings. Every parent-child prop interface was verified to match: PlatoTab receives history and match via Route renderProps spread from JobApplicationContainer; PlatoLoadingState correctly handles undefined status; PlatoTabEmptyState noResume branch passes onClick through to JobApplicationTabEmptyState which wires it to a button; JobApplicationActivity passes summaryStatusValue (matching PlatoOverviewCallout's interface) and passes headline/roleFit/scorePct/generatedAgo to PlatoGeneratedReviewCallout (matching its interface). The useAiJobApplicationSummary hook parameter wiring has a minor type mismatch (null vs undefined for aiJobApplicationSummaryId) but is functionally safe because the query result is only consumed in code paths where the ID is non-null."
+}

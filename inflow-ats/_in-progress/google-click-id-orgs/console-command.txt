@@ -1,0 +1,26 @@
+def organizations_with_google_click_id
+  organizations = Organization.where.not(google_click_id: [nil, '']).order(:created_at)
+  data = organizations.map do |organization|
+    {
+      organization_id: organization.id,
+      organization_name: organization.name,
+      google_click_id: organization.google_click_id,
+      plan: organization.plan,
+      stripe_subscription_status: organization.stripe_subscription_status,
+      owner_id: organization.owner_id,
+      owner_name: organization.owner&.full_name,
+      owner_email: organization.owner&.email,
+      created_at: organization.created_at
+    }
+  end
+  duplicates = data.group_by { |organization_attributes| organization_attributes[:google_click_id] }
+                   .select { |_google_click_id, sharing_organizations| sharing_organizations.size > 1 }
+  ap 'Organizations created with a Google click ID', color: { string: :white }
+  ap data.size, color: { integer: data.size.positive? ? :purple : :white }
+  puts JSON.pretty_generate(data)
+  ap 'Google click IDs used by more than one organization', color: { string: :white }
+  ap duplicates.size, color: { integer: duplicates.size.positive? ? :purple : :white }
+  puts JSON.pretty_generate(duplicates)
+end
+
+organizations_with_google_click_id

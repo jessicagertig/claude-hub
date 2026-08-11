@@ -1,0 +1,41 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agent_index": 6,
+  "focus_area": "Test correctness (ghost/tautological hunt across all 11 new/modified spec files) + adversarial second opinion on app/jobs/extract_job_criteria_job.rb and app/models/ai_job_criteria.rb (+ job.rb broadcast/guard methods)",
+  "files_reviewed": [
+    "spec/controllers/api/v1/ai_job_criteria_controller_spec.rb",
+    "spec/controllers/api/v1/bulk_ai_job_application_summaries_controller_spec.rb",
+    "spec/interactors/queue_bulk_ai_summary_jobs_spec.rb",
+    "spec/interactors/validate_ai_summary_generation_spec.rb",
+    "spec/interactors/validate_auto_ai_summary_generation_spec.rb",
+    "spec/jobs/bulk_generate_ai_summaries_job_spec.rb",
+    "spec/jobs/extract_job_criteria_job_spec.rb",
+    "spec/models/ai_job_criteria_spec.rb",
+    "spec/models/job_criteria_lifecycle_spec.rb",
+    "spec/models/textract_result_ai_trigger_spec.rb",
+    "spec/serializers/api/v1/job_ai_job_criteria_serializer_spec.rb",
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/models/job.rb",
+    "app/models/textract_result.rb",
+    "app/interactors/queue_bulk_ai_summary_jobs.rb",
+    "app/interactors/validate_ai_summary_generation.rb",
+    "app/interactors/validate_auto_ai_summary_generation.rb",
+    "app/jobs/bulk_generate_ai_summaries_job.rb",
+    "app/controllers/api/v1/ai_job_criteria_controller.rb",
+    "app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+    "app/controllers/api/v1/bulk_ai_job_application_summaries_controller.rb"
+  ],
+  "findings": [
+    {
+      "id": "l2-a6-001",
+      "severity": "LOW",
+      "title": "broadcast_completion dereferences ai_job_criteria.job.title with no nil guard on the job association",
+      "file": "app/jobs/extract_job_criteria_job.rb",
+      "line": 54,
+      "description": "In broadcast_completion, `jobTitle: ai_job_criteria.job.title` (line 54) dereferences the belongs_to :job association after re-reading the row (line 46). If the parent Job were deleted between extraction start and the broadcast, `.job` would be nil and this would raise NoMethodError inside the retry_on exhaustion block (which is NOT wrapped in a rescue), or inside the StandardError rescue. This is negligible in practice: `belongs_to :job` is required, jobs are not deleted mid-extraction, and the analog (generate_ai_job_application_summary_job.rb) uses the identical unguarded `.job_application...`/`.job.title` access pattern. A nil `title` (possible on a draft job) is not a crash — it only yields an empty toast interpolation, which is cosmetic. Traced: extract_job_criteria_job.rb:46-54 -> ai_job_criteria.rb belongs_to :job -> Job#title. Reported for completeness only; matches the adjudicated analog structure (item 10) and is not actionable.",
+      "recommendation": "No change required (matches analog). If defensiveness is ever desired, guard `jobTitle: ai_job_criteria.job&.title`."
+    }
+  ]
+}

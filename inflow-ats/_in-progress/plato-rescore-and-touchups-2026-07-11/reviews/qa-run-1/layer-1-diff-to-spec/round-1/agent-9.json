@@ -1,0 +1,23 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 9,
+  "focus": "SPEC 2.6 delete AiSummaryState.tsx + backward-compat of now-required rescoreRequested in GenerateParams (SPEC 2.3)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "SPEC 2.6: app/javascript/ats/src/views/jobApplications/AiSummaryState.tsx is DELETED in the diff (221 deletions)",
+      "SPEC 2.6: zero remaining references/imports of AiSummaryState in app/ or cypress/",
+      "Backward-compat (SPEC 2.3 makes rescoreRequested REQUIRED in GenerateParams): no surviving generate({...}) callsite through useGenerateAiSummary omits rescoreRequested (compile-break check)",
+      "Scope check (known-failure #23): the diff deletes ONLY AiSummaryState.tsx and no other file/component/validation"
+    ],
+    "implemented": [
+      "SPEC 2.6 DELETION CONFIRMED: feature-diff.patch line 46-51 shows 'deleted file mode 100644', header '@@ -1,221 +0,0 @@', '+++ /dev/null'. Block lines 52-272 are all 221 deletion lines with ZERO non-deletion lines — a pure 221-line file deletion, exactly matching SPEC's '221 deletions' claim.",
+      "COMPILE-HAZARD CONFIRMED REMOVED: the deleted file's callsite was 'generate({ jobApplicationId }, {...})' (feature-diff.patch block, deleted lines ~83-98) which omits rescoreRequested. With GenerateParams.rescoreRequested now required (useAiJobApplicationSummary.ts diff line 646 adds 'rescoreRequested: boolean;' with no optional marker), this callsite would have failed to compile. Deleting the file removes the hazard exactly as SPEC 2.6 states.",
+      "ZERO DANGLING REFERENCES (independently verified): grep -rn 'AiSummaryState' over /Users/jessica/wrk/wrk-corp/inflow-ats.job-criteria-settings/app and /cypress returns no matches; a broad worktree sweep (all .ts/.tsx/.js/.jsx excl node_modules) also returns zero. SPEC 2.6's 'zero references' claim holds.",
+      "BACKWARD-COMPAT VERIFIED: useGenerateAiSummary is destructured in exactly ONE consumer file — PlatoTab.tsx:38 ('const { mutate: generate, ... } = useGenerateAiSummary()'); the only other match is the hook definition at useAiJobApplicationSummary.ts:16. useAiJobApplicationSummary (query hook) is consumed only at PlatoTab.tsx:48. The single generate(...) callsite (PlatoTab.tsx:74-75) passes '{ jobApplicationId: jobApplication.id, rescoreRequested }' — rescoreRequested present. All four handleGenerate() callers pass an explicit boolean literal: PlatoTab.tsx:108 handleGenerate(true), :192/:203/:233 handleGenerate(false). No surviving bare/incomplete callsite anywhere.",
+      "SCOPE CHECK #23 PASSED: the entire feature-diff.patch contains exactly ONE 'deleted file mode' and ONE '+++ /dev/null' — both for AiSummaryState.tsx (patch lines 47 and 50). No other file/component/validation is deleted alongside it."
+    ],
+    "missing": []
+  }
+}

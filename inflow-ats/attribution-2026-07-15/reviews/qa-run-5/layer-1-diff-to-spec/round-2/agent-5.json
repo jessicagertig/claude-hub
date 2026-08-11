@@ -1,0 +1,37 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 5,
+  "focus_area": "Google SSO backend chain: config/initializers/omniauth.rb (§4.5, D8), User.from_omniauth (§4.6, D9), omniauth_callbacks_controller.rb (§4.7, D9), :json cookies_serializer factual check",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "§4.5 allowed_keys exact list %w[partner referral utm_source utm_campaign utm_data internal_ref]",
+      "§4.5 single-line diff — no other change to the setup lambda",
+      "§4.5 existing loop handles new keys as-is (strings + Hash utm_data, Hash responds to empty?)",
+      "§4.6 exact keyword signature and declaration order (auth:, created_via: required; partner_source:/utm_source:/utm_campaign:/utm_data:/internal_ref: default nil)",
+      "§4.6 four raw assignments inside the first_or_create block only, no assignment outside the block",
+      "§4.6 partner_source&.downcase retained; new values raw (no downcase)",
+      "§4.6 post-block behavior unchanged vs base (assign_attributes(remember_me: true), update(first_name:/last_name:), enqueue_complete_user_setup)",
+      "§4.6 mandatory repo-wide call-site search: every from_omniauth call site keyword-form",
+      "§4.7 keyword call site with string-key merged_tracking reads, spec-verbatim argument list",
+      "§4.7 nothing else changed in the google_oauth2 action vs base (Posthog jobs, redirect intact)",
+      "§4.5 factual claim: cookies_serializer is :json (config/initializers/cookies_serializer.rb)"
+    ],
+    "verified": [
+      "§4.5 allowed_keys — HEAD fc3f047f9 config/initializers/omniauth.rb:14 reads exactly `allowed_keys = %w[partner referral utm_source utm_campaign utm_data internal_ref]` (spec's exact list and order)",
+      "§4.5 single-line diff — full-file comparison of 62dd55867 vs fc3f047f9 for omniauth.rb: only line 14 differs; git diff shows exactly 1 hunk, stat `2 (+1/-1)`; loop body `value = rack_request.params[key]; tracking_params[key] = value if value && !value.empty?`, the `tracking_params.any?` session write, and the Rails.logger line all byte-identical to base",
+      "§4.5 loop handles new keys — Rack::Request#params parses nested `utm_data[<key>]` names into a Hash; Hash responds to empty?; strings for the other three; no loop modification needed or made",
+      "§4.6 signature — user.rb:378 at HEAD is exactly `def self.from_omniauth(auth:, created_via:, partner_source: nil, utm_source: nil, utm_campaign: nil, utm_data: nil, internal_ref: nil)` — spec-verbatim keyword order, auth:/created_via: required (no defaults)",
+      "§4.6 block-only assignment — the four `omniauth_user.utm_source/utm_campaign/utm_data/internal_ref = ...` lines sit inside the `where(email: auth.info.email).first_or_create do |omniauth_user|` block, directly after `omniauth_user.partner_source = partner_source&.downcase`; full method read at HEAD confirms zero references to the four keywords outside the block",
+      "§4.6 partner_source&.downcase retained; the four new assignments are raw (no &.downcase, no mapping)",
+      "§4.6 post-block unchanged — base-vs-HEAD comparison of the full method: `user.assign_attributes(remember_me: true)`, `user.update(first_name: auth.info.first_name, last_name: auth.info.last_name)`, `user.enqueue_complete_user_setup('organization_user')`, `user` return all byte-identical; user.rb diff across the range is 2 hunks (+5/-1), both inside from_omniauth, nothing else in the file touched; `ap` debug lines are pre-existing base context per the brief",
+      "§4.6 call-site search — `git grep -ln from_omniauth` at HEAD returns 4 files: app/models/user.rb (definition), app/controllers/api/v1/users/omniauth_callbacks_controller.rb (sole production call site, keyword-form), plus the two NEW spec files added by this PR (spec/models/user_from_omniauth_spec.rb — 4 calls at lines 26/45/65/82-83, all keyword-form; spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb — stub + have_received(...).with(auth:, created_via:, partner_source:, utm_source:, utm_campaign:, utm_data:, internal_ref:) expectations, keyword-form). Zero positional call sites remain",
+      "§4.7 call site — controller lines 22-30 at HEAD match the spec's code block verbatim: `User.from_omniauth(auth: oauth_data, created_via: created_via_value, partner_source: partner_param, utm_source: merged_tracking['utm_source'], utm_campaign: merged_tracking['utm_campaign'], utm_data: merged_tracking['utm_data'], internal_ref: merged_tracking['internal_ref'])` — string-key reads on the pre-existing `merged_tracking = request_phase_params.merge(tracking_from_session)`",
+      "§4.7 nothing else changed — `git diff 62dd55867..fc3f047f9 -- omniauth_callbacks_controller.rb` shows exactly one hunk (the call-site conversion, +9/-1); `session.delete(:oauth_tracking) || {}`, `merged_tracking` construction, `get_created_via`, `sign_in`, `PosthogIdentifyJob.perform_later`, `PosthogTrackJob.perform_later(user.id, event, { method: 'google_sso' })`, and the `redirect_to \"#{Variables::AtsRootUrl}/\"` are all pre-existing and untouched",
+      ":json cookies_serializer — config/initializers/cookies_serializer.rb at HEAD and at 62dd55867 both read `Rails.application.config.action_dispatch.cookies_serializer = :json`, unchanged in the range; the spec's string-key round-trip claim for the utm_data hash is factually supported"
+    ],
+    "missing": []
+  },
+  "notes": "Re-verified from scratch against HEAD fc3f047f9 on attribution-work-qa (confirmed via git rev-parse) and base 62dd55867; did not read round-1 outputs. Every assigned §4.5/§4.6/§4.7 requirement traced to concrete diff lines, and every diff hunk in the three focus-area files (3 hunks total: omniauth.rb 1, user.rb 2, callbacks controller 1) traced back to a spec requirement — no untraced changes in the area. The two new spec files referencing from_omniauth are §9 items 2-3 deliverables (other agents' primary scope); checked here only for the §4.6 keyword-call-site mandate, which they satisfy. Settled rulings respected: did not flag the uncapped/untyped session ride (M1), the bracket-key 400 (M3), the pre-existing ap debug lines, or the rubocop Metrics/ParameterLists LOW. Prior finding l1-run4-001 concerns §5.1/§7/§11 truncation text — outside this focus area, not evaluated. Zero findings: the Google SSO backend chain matches the spec exactly."
+}

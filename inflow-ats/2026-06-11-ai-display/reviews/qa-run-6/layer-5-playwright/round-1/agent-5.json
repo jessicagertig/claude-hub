@@ -1,0 +1,89 @@
+{
+  "agent": 5,
+  "scope": "Navigation flows between Overview callout and Plato tab",
+  "run": "qa-run-6",
+  "layer": 5,
+  "round": 1,
+  "timestamp": "2026-06-11T21:43:00Z",
+  "result": "PASS",
+  "console_errors": 0,
+  "console_warnings": 0,
+  "steps": [
+    {
+      "step": 1,
+      "description": "Login and navigate to Software Engineer job",
+      "result": "PASS",
+      "detail": "Already authenticated as Rezu May. Clicked Software Engineer job card. Landed on /jobs/17773/stages/124384/applicants/13501/overview (Alonso Parker)."
+    },
+    {
+      "step": 2,
+      "description": "Find PlatoOverviewCallout on Overview tab",
+      "result": "PASS",
+      "detail": "Callout present: button 'Plato needs a resume Add one to this candidate and Plato can review them. View' (ref e359) visible in the activity feed on Overview tab."
+    },
+    {
+      "step": 3,
+      "description": "Click callout — verify arrival at Plato tab",
+      "result": "PASS",
+      "detail": "URL changed to /jobs/17773/stages/124384/applicants/13501/ai. Plato tab content rendered: heading 'Plato needs a resume', paragraph 'Plato reviews a candidate from their resume. Add one to this candidate to get started.' Correct candidate (Alonso Parker) shown in header."
+    },
+    {
+      "step": 4,
+      "description": "Click Overview in sidebar to go back",
+      "result": "PASS",
+      "detail": "URL changed to /jobs/17773/stages/124384/applicants/13501/overview."
+    },
+    {
+      "step": 5,
+      "description": "Verify callout still present after returning to Overview",
+      "result": "PASS",
+      "detail": "Callout button 'Plato needs a resume Add one to this candidate and Plato can review them. View' still present in activity feed (ref e426). No state loss."
+    },
+    {
+      "step": 6,
+      "description": "Click a different candidate (Filomena Hilll, applicant 13500)",
+      "result": "PASS",
+      "detail": "Clicked Filomena Hilll link (ref e234). URL changed to /jobs/17773/stages/124384/applicants/13500/overview. Candidate header updated to 'Filomena Hilll'."
+    },
+    {
+      "step": 7,
+      "description": "Verify new candidate's Overview tab shows callout",
+      "result": "PASS",
+      "detail": "Callout button visible for Filomena Hilll (ref e470). Text identical: 'Plato needs a resume Add one to this candidate and Plato can review them. View'."
+    },
+    {
+      "step": 8,
+      "description": "Click callout for new candidate — verify Plato tab for new candidate",
+      "result": "PASS",
+      "detail": "URL changed to /jobs/17773/stages/124384/applicants/13500/ai. Plato tab content rendered with 'Plato needs a resume' for Filomena Hilll. Candidate header confirms correct identity (heading 'Filomena Hilll'). All sidebar tab URLs scoped to applicant 13500."
+    },
+    {
+      "step": 9,
+      "description": "From Plato tab, click Overview to go back",
+      "result": "PASS",
+      "detail": "URL changed back to /jobs/17773/stages/124384/applicants/13500/overview. Overview tab marked [active]. Callout present."
+    },
+    {
+      "step": 10,
+      "description": "Multiple round-trips — no errors or state issues",
+      "result": "PASS",
+      "detail": "Performed 4 additional round-trips: Overview -> Plato (direct tab click) -> Overview -> Plato (callout click) -> Overview. All navigations resolved correctly each time. URL scoping remained correct for Filomena Hilll (13500) throughout. Callout rendered correctly on every return to Overview. No stale state, no missing content, no stuck loading states observed."
+    },
+    {
+      "step": 11,
+      "description": "Check console for errors throughout",
+      "result": "PASS",
+      "detail": "Zero console errors. Zero console warnings. Total 181 console messages (all informational/debug level). No React errors, no 404s, no failed network requests surfaced in console."
+    }
+  ],
+  "findings": [],
+  "screenshots": [
+    ".playwright-mcp/agent-5-01-overview-with-callout.png",
+    ".playwright-mcp/agent-5-02-plato-tab-after-callout-click.png",
+    ".playwright-mcp/agent-5-03-overview-callout-still-present.png",
+    ".playwright-mcp/agent-5-04-filomena-overview-callout.png",
+    ".playwright-mcp/agent-5-05-filomena-plato-tab.png",
+    ".playwright-mcp/agent-5-06-final-state.png"
+  ],
+  "notes": "All three seeded candidates lack resumes, so every callout shows the 'Plato needs a resume' variant. The navigation behavior for the 'Plato has a summary' variant (if it renders a different callout state) was not testable with this seed data. No bugs found in the callout-to-tab navigation or candidate switching flows."
+}

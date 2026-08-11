@@ -1,0 +1,27 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 6,
+  "assignment": "Per-stage modal OVERESTIMATE info block + tooltip + SHORTFALL credit copy on Senior Engineer / Interview (55 bare candidates, page size 50) — SPEC 1.2 state 3 'Up to ' prefix + SPEC 1.3, display only.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc.)",
+    "Clicked 'Senior Engineer' (job 29092) → candidates view opened on Inbox",
+    "Clicked 'Interview' stage (55). Candidate list loaded page 1 only (50 rows, Aja Swaniawski #21037 down to Linette Farrell #20988). Did NOT scroll the list at any point",
+    "Clicked the stage-name Select-All checkbox at the top of column 2 — all 50 loaded rows checked",
+    "Opened Bulk options three-dot menu → clicked 'Run Plato reviews'. Modal 'Review candidates' opened, re-score checkbox UNCHECKED",
+    "VERIFIED state 3 body byte-exact: 'Up to 55 of the 55 candidates selected from this hiring stage don't have a Plato review yet. Each successful review uses one AI credit. You are short 35 credits. The first 20 candidates will get reviews generated; the rest will be skipped.' — 'Up to ' prefix present, '35' rendered bold (screenshot), 'The first 20 candidates' consistent with displayed balance 20 (short 35 = 55 − 20; balance matched the expected 20, no recompute needed)",
+    "VERIFIED overestimate info block present directly beneath the body: exact text 'This count may be an overestimate.' with the alert-circle icon to its left (screenshot agent-6-01/agent-6-02)",
+    "HOVERED the info block — tooltip appeared with byte-exact label: 'This is not an exact count of candidates without a review. If fewer candidates than stated above are unreviewed, only those unreviewed candidates will be reviewed, and fewer credits will be consumed.' (accessibility tree role=tooltip captured in agent-6-tooltip-snapshot.md; visible in agent-6-02-tooltip-visible.png)",
+    "VERIFIED submit 'Generate reviews' ENABLED in unchecked state 3 (no [disabled] in accessibility tree; solid button in screenshot)",
+    "CHECKED the re-score checkbox. Body switched byte-exact to state 4: 'The 55 candidates selected from this hiring stage will be reviewed, including candidates that already have a review. Each successful review uses one AI credit. You are short 35 credits. The first 20 candidates will get reviews generated; the rest will be skipped.' — NO 'Up to ' prefix, overestimate info block REMOVED from the DOM (targeted snapshot of modal), '35' bold",
+    "VERIFIED submit 'Generate reviews' ENABLED in checked state 4",
+    "Clicked Cancel — modal closed, nothing submitted",
+    "Console check: 0 errors, 0 warnings via browser_console_messages (all=true, 196 total messages); raw MCP console log grep found zero feature-referencing entries (rescore/BulkGenerate/PlatoTab/ai_job_application) and nothing outside known noise"
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-6/agent-6-01-unchecked-info-block.png",
+    "/tmp/qa-run-3-l5/agent-6/agent-6-02-tooltip-visible.png",
+    "/tmp/qa-run-3-l5/agent-6/agent-6-03-checked-no-block.png"
+  ],
+  "findings": []
+}

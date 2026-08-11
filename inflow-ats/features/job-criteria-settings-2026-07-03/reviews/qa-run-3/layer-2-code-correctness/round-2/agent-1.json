@@ -1,0 +1,37 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agent_index": 1,
+  "focus_area": "Backend extraction lifecycle end-to-end: enqueue sites (Job) -> ExtractJobCriteriaJob (signature, retry_on exhaustion, StandardError rescue, broadcast_completion) -> WebSocket broadcast payload -> zero_criteria predicates (Job + AiJobCriteria). Analog diff vs GenerateAiJobApplicationSummaryJob.",
+  "files_reviewed": [
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/jobs/generate_ai_job_application_summary_job.rb",
+    "app/services/ai_job_application_action/scoring/extract_criteria.rb",
+    "app/services/ai_job_application_action/scoring/score_job_application.rb",
+    "lib/tasks/recurring_tasks.rake",
+    "app/channels/global_channel.rb",
+    "app/errors/custom_error_ai_summary.rb"
+  ],
+  "findings": [
+    {
+      "id": "l2r2-a1-001",
+      "severity": "LOW",
+      "title": "broadcast_completion uses ai_job_criteria.job.title unguarded, while the analog guards its association before dereferencing",
+      "file": "app/jobs/extract_job_criteria_job.rb",
+      "line": 54,
+      "description": "In broadcast_completion the payload builds `jobTitle: ai_job_criteria.job.title` with no `return unless ai_job_criteria.job` guard. The blessed analog (generate_ai_job_application_summary_job.rb:57-58) explicitly guards its association (`job_application = textract_result.job_application; return unless job_application`) before using it. `AiJobCriteria belongs_to :job` is required, so `.job` is present in every realistic run; but `Job has_many :ai_job_criteria` (job.rb:52) has NO `dependent: :destroy`, so if a Job were hard-deleted between enqueue and broadcast the criteria row is orphaned and `.job` returns nil -> `nil.title` raises NoMethodError. Because this line sits inside the method-body rescue, the NoMethodError is swallowed by `rescue StandardError` (line 28), which then re-reads the row and `update_columns(status: :failed, ...)`, overwriting an otherwise-succeeded extraction to failed. Extremely narrow (requires job deletion mid-flight) and mirrors nothing worse than the analog's own posture, but it is a genuine dropped analog guard.",
+      "recommendation": "Optional: add `return unless ai_job_criteria.job` before building the payload, mirroring the analog's `return unless job_application`. Not convergence-affecting."
+    },
+    {
+      "id": "l2r2-a1-002",
+      "severity": "LOW",
+      "title": "Success-path broadcast is inside the rescue scope: a broadcast/ActionCable failure marks a just-succeeded row as failed (mirrors the analog)",
+      "file": "app/jobs/extract_job_criteria_job.rb",
+      "line": 23,
+      "description": "The success-path call `broadcast_completion(ai_job_criteria, requesting_organization_user_id) if requesting_organization_user_id` (line 23) is within the scope of the method-body `rescue StandardError` (lines 28-34). ExtractCriteria has already persisted `status: :succeeded` + criteria via `.update` (extract_criteria.rb:140) before control returns here, so if `GlobalChannel.broadcast_to` raises (e.g. Redis/ActionCable outage) the rescue re-reads the succeeded row and `update_columns(status: :failed, error_message: <transport error>)` (line 33), demoting a correctly-extracted row to failed. The failed row then falls out of `latest_succeeded_ai_job_criteria`, so the serializer reports `criteria: nil` / `status: failed` even though criteria are populated on that row. `zero_criteria_failure?` stays false (transport message is not a ZERO_CRITERIA message), so the review guard is not tripped. This is structurally identical to the analog (generate_ai_job_application_summary_job.rb:34 broadcast inside the line-39 rescue) and is triggered only by an infrastructure failure, so it is not independently actionable without changing the blessed analog too. Reported for completeness/honesty, not for convergence.",
+      "recommendation": "None required (matches adjudicated analog). If ever hardened, both jobs should move the success-path broadcast outside the rescue or rescue-and-log broadcast transport failures separately so a notification failure does not corrupt a succeeded record's status."
+    }
+  ]
+}

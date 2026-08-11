@@ -1,0 +1,99 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has AWS cloud experience including hands-on experience with EC2, S3, and IAM, and deployed cloud-based applications. They also worked with Docker for containerized deployment. However, there's no evidence of multi-cloud environments or managing customer accounts specifically."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume shows development experience and some cloud work, but no evidence of collaborating with product/UX teams or working on developer tooling features like CLI, CI/CD workflows, marketplace integrations, or observability tools."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has explored AWS best practices for scalability and has a cybersecurity background (B.Tech in Cyber Security, cybersecurity club involvement). However, there's no direct evidence of implementing monitoring, logging, alerting, rollback capabilities, or multi-cloud failover strategies."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has leadership experience as Design Head of Cyber Security Club and worked in Agile teams at Cognizant. They have backend development experience with ASP.NET Core and cloud deployment experience. However, no evidence of Go services specifically or formal mentoring/code review processes."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The candidate's programming languages listed are C#, Python, SQL, HTML, CSS, and JavaScript. There is no mention of Go (Golang) anywhere in the resume."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "While the candidate has Docker experience and cloud deployment experience, there is no mention of Kubernetes anywhere in the resume."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The resume mentions AWS cloud experience and deployment of cloud-based applications, but there is no mention of Terraform or any Infrastructure as Code (IaC) tools."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate completed an AWS Cloud Intern role where they gained hands-on experience with AWS services including EC2 (compute), S3 (storage), and IAM (security). They also deployed cloud-based applications and explored best practices for scalability."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "While the candidate has cloud experience, there's no evidence in the resume of understanding PaaS concepts or experience with platform abstraction for developers."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The resume mentions GitHub and development tools like Visual Studio and Postman, but there's no mention of CI/CD pipelines, marketplace integrations, or cloud provider integrations."
+    },
+    {
+      "criterion_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has leadership experience as Design Head coordinating with management, worked in Agile teams at Cognizant participating in sprint planning, and has experience working across different technologies and teams. However, no direct evidence of excellent communication skills in professional settings."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no mention anywhere in the resume of experience with cloud marketplaces or publishing/integrating solutions on marketplace platforms."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "While the candidate explored AWS best practices for scalability, there's no evidence of experience with high availability, multi-region, or multi-tenant architecture design."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The candidate has used various open source technologies but there's no evidence of contributing to open source projects or working with distributed systems architecture."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no mention of monitoring and logging tools like Prometheus, Grafana, or ELK stack anywhere in the resume."
+    }
+  ],
+  "computed_score": {
+    "points": 18.0,
+    "max": 92,
+    "percentage": 19.6
+  }
+}

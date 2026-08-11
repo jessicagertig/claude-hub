@@ -1,0 +1,25 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 2,
+  "focus_area": "Api::V1::RegistrationsController (app/controllers/api/v1/registrations_controller.rb)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "SPEC.md §4.1 (D3): sign_up_params gains :utm_source, :utm_campaign, :internal_ref as plain params and utm_data: {} as trailing hash-permit, matching the questions_controller.rb options: {} analog; all pre-existing permitted params retained",
+      "SPEC.md §4.2 (D3): magic_create merges the four keys into user_params in BOTH branches, sourced from sign_up_params, raw storage, absent param -> nil, only new-user branch creates a row, existing-user branches unaffected, no identify/track/redirect/response-shape change",
+      "SPEC.md §4.3 (D10): create (password path) unchanged beyond §4.1; expanded_params = sign_up_params.merge(...) -> build_resource flows the four params automatically",
+      "SPEC.md §7.4: raw storage — no get_created_via-style mapping and no &.downcase on the four values anywhere in this controller",
+      "SPEC.md §7.5: Users get values only at row creation — no existing-user update path in this controller writes the four columns"
+    ],
+    "verified": [
+      "§4.1: HEAD line 310 = params.permit(:name, :first_name, :last_name, :email, :password, :beta_token, :registration_stripe_plan, :referral, :partner, :organization_slug, :login_intent, :utm_source, :utm_campaign, :internal_ref, utm_data: {}). Diff hunk @@ -299,7 +307,7 @@ replaces the old permit line. All 11 pre-existing params retained in identical order; the three new plain params appended; utm_data: {} is the trailing argument. Analog verified: app/controllers/api/v1/questions_controller.rb line 50 uses permit(..., options: {}) with the hash-permit trailing — identical form.",
+      "§4.2: Diff hunks @@ -93,7 +93,11 @@ and @@ -102,7 +106,11 @@ add exactly utm_source: sign_up_params[:utm_source], utm_campaign: sign_up_params[:utm_campaign], utm_data: sign_up_params[:utm_data], internal_ref: sign_up_params[:internal_ref] to BOTH branches of the user_params conditional (HEAD lines 97-100 connect-intent branch, 110-113 default branch). No downcasing/mapping applied to any of the four. Absent param yields nil via sign_up_params[:key]. Row creation only in the else (new-user) branch via build_resource(user_params) at line 166 / resource.save at 167. Existing-user branches read only user_params[:email] (lines 117, 126) — the added keys are inert there. Full magic_create read at HEAD (lines 73-215): every render json line (145, 157, 195-199, 203, 212) is a context line, untouched by the diff; no identify/track/redirect/response-shape change anywhere in the method.",
+      "§4.3: HEAD lines 13-20 confirm create builds expanded_params = sign_up_params.merge(created_via: created_via, partner_source: params[:partner]&.downcase) and passes it to build_resource(expanded_params), so the four newly-permitted params flow automatically. The diff contains NO hunk touching create (method spans lines 10-71; the three hunks are at old-lines 93, 102, 299). git diff --stat for the file: 11 insertions, 3 deletions — fully accounted for by the three hunks.",
+      "§7.4: grep of the controller at HEAD for downcase shows occurrences only at lines 15, 44, 91, 105, 183, 343-344 — all pre-existing, all operating on params[:partner]/referral_source/partner_source. Zero downcase or mapping on utm_source, utm_campaign, utm_data, internal_ref. get_created_via (lines 324-350) untouched by the diff and never receives the four values.",
+      "§7.5: within this controller the four values are assigned only via build_resource in create (new resource) and the new-user branch of magic_create. Existing-user branches (MagicLink.generate, send_confirmation_instructions, accept_invite, add_connect_user, sign_in) never write them. update uses sanitized_account_update_params (lines 313-322) which does not permit any of the four."
+    ],
+    "missing": []
+  },
+  "notes": "Both directions complete. Spec-to-diff: all five assigned requirements traced to concrete diff/HEAD lines (see verified). Diff-to-spec: the file has exactly three hunks in 62dd55867..fc3f047f9 — hunk 1 (connect-intent branch merge keys) -> §4.2; hunk 2 (default branch merge keys) -> §4.2; hunk 3 (sign_up_params permit line) -> §4.1. No unspecced code in this file's diff: no new methods, no removed validations, no response changes. The pre-existing connect-branch nil crash (organization.id on nil at HEAD line 96) is settled ruling M2 — observed, not flagged. The ap/puts debug lines in magic_create (74, 86, 123, 131-132, 163-164, 172, 206) are pre-existing context, not part of the diff. spec/controllers/api/v1/registrations_controller_spec.rb hunks (diff dump line 667+) are outside this agent's focus area and were not reviewed here. Key ordering in both merge blocks matches the spec snippet exactly (utm_source, utm_campaign, utm_data, internal_ref)."
+}

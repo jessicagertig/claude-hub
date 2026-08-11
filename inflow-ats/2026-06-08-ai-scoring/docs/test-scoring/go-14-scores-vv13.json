@@ -1,0 +1,189 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Ability to design, build, and maintain backend services in Go that power our PaaS",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has professional experience building high-scale backend services in Go (e.g., at Solid I and for Coinbase infrastructure), but there is no specific evidence of building a PaaS (Platform as a Service)."
+    },
+    {
+      "criterion_text": "Ability to develop APIs, scheduler, and orchestrator logic",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience in backend API development and system architecture at Reddit, Deliveroo, and Solid I, including building state machine logic and high-concurrency processing systems."
+    },
+    {
+      "criterion_text": "Ability to build integrations with cloud providers",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has experience working with AWS services and integrating external third-party systems at Solid I."
+    },
+    {
+      "criterion_text": "Ability to build internal tooling",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate developed internal infrastructure, including node indexing services at Coinbase and an Ads delivery pipeline at Reddit."
+    },
+    {
+      "criterion_text": "Ability to integrate with Kubernetes clusters, deployments, and autoscaling",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no mention of Kubernetes, container orchestration, or cluster management in the resume."
+    },
+    {
+      "criterion_text": "Ability to integrate with Terraform for infrastructure as code across cloud providers",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no evidence of Terraform or similar IaC tool usage in the resume."
+    },
+    {
+      "criterion_text": "Ability to collaborate with product and UX teams to deliver features for developers",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate reports leading, planning, and communicating with stakeholders and cross-functional teams at Coinbase and Reddit."
+    },
+    {
+      "criterion_text": "Ability to improve CLI usage and CI/CD workflows",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not specifically mention CI/CD pipeline management or CLI tool development."
+    },
+    {
+      "criterion_text": "Ability to enable marketplace and cloud provider integrations",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience integrating with external providers (e.g., Onfido, McDonald's systems) but not specifically cloud marketplaces."
+    },
+    {
+      "criterion_text": "Ability to create better observability and logging experiences",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience in system performance and reliability, but specific mention of observability frameworks like Prometheus or Grafana is missing."
+    },
+    {
+      "criterion_text": "Ability to ensure platform reliability, scalability, and security",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly demonstrates experience scaling high-load systems at Reddit and Coinbase and implementing authentication/authorization at Solid I."
+    },
+    {
+      "criterion_text": "Ability to implement monitoring, logging, alerting, and rollback capabilities",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate focused on reliability and uptime, but direct experience with building monitoring/alerting stacks is not evidenced."
+    },
+    {
+      "criterion_text": "Ability to implement multi cloud failover strategies",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume provides no evidence of multi-cloud failover or disaster recovery strategy implementation."
+    },
+    {
+      "criterion_text": "Ability to participate in code reviews and mentor others",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate specifically mentions providing leadership and guidance to teams at Reddit and Coinbase."
+    },
+    {
+      "criterion_text": "Ability to help define best practices for backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate's work on gRPC migration and infrastructure modernization at Reddit demonstrates the ability to define technical standards."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists Go as a primary skill used at Solid I and for high-scale infrastructure projects at Coinbase and Reddit."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "No mention of Kubernetes experience in the resume."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "No mention of IaC tools."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists AWS as part of the tech stack used at Solid I."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The candidate's experience is in backend services and application-level scaling, not platform-level abstraction for developers."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Experience with cloud provider integrations exists, but CI/CD and developer tooling exposure is not demonstrated."
+    },
+    {
+      "criterion_text": "Excellent communication skills",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly notes experience communicating with stakeholders and leading cross-functional teams."
+    },
+    {
+      "criterion_text": "Ability to work cross functionally",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has collaborated with Ads and product organizations at Reddit and Deliveroo."
+    },
+    {
+      "criterion_text": "Thrive within a fast moving product engineering environment",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has worked at high-growth companies like Reddit and Coinbase and has founding experience in startups."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The candidate has not managed customer-facing multi-cloud racks."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of cloud marketplace publishing experience."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate worked with external systems (McDonald's/Subway) but not explicitly in a multi-cloud/hybrid-cloud deployment context."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has scaled systems handling massive traffic and inter-service communication (Reddit ads pipeline, Coinbase blockchain nodes)."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate built decentralized storage services on IPFS and worked with distributed blockchain indexing systems."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No specific tools mentioned related to monitoring/observability."
+    }
+  ],
+  "computed_score": {
+    "points": 97.0,
+    "max": 160,
+    "percentage": 60.6
+  }
+}

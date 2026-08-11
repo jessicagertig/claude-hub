@@ -1,0 +1,56 @@
+{
+  "agent": "agent-2",
+  "files_reviewed": [
+    "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationSidebar.tsx"
+  ],
+  "pattern_references": [
+    "app/javascript/ats/src/components/shared/NavItem.tsx",
+    "app/javascript/ats/src/components/shared/FeatureFlipper.tsx",
+    "app/javascript/ats/src/components/shared/Icon/index.js"
+  ],
+  "findings": [
+    {
+      "id": "CC2-1",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+      "lines": "154-162",
+      "severity": "HIGH",
+      "category": "logic_error",
+      "title": "Stale currentViewPath causes infinite redirect loop when isAiEnabled toggles off while user is on /ai",
+      "description": "When isAiEnabled changes from true to false while the user is on the /ai route, the useEffect on line 154 fires but does NOT clear currentViewPath. The effect only calls setCurrentViewPath when possiblePaths.includes(currentView) is true (line 159-161). When isAiEnabled is false, 'ai' is excluded from possiblePaths, so the condition fails and currentViewPath remains 'ai'. On re-render, the /ai Route is removed (line 278 conditional), no route matches, and redirector() on line 189-195 fires. Since currentViewPath is 'ai' (not undefined), it returns <Redirect to='${match.url}/ai' />, which doesn't match any route, triggering redirector() again in an infinite loop.",
+      "reproduction": "1. Enable AI_APPLICANT_SUMMARY feature flag. 2. Navigate to a candidate's /ai tab (currentViewPath becomes 'ai'). 3. Disable the feature flag (e.g., admin disables it, or flipper store updates from another source). 4. The component re-renders: the /ai Route disappears, but currentViewPath is still 'ai'. 5. Infinite redirect to /ai.",
+      "fix": "Add an else clause to the useEffect that resets currentViewPath when the current URL path is not in possiblePaths. For example: if (possiblePaths.includes(currentView)) { setCurrentViewPath(currentView); } else { setCurrentViewPath('overview'); }"
+    },
+    {
+      "id": "CC2-2",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+      "lines": "278-289",
+      "severity": "LOW",
+      "category": "spec_deviation",
+      "title": "Route uses conditional rendering instead of FeatureFlipper wrapper",
+      "description": "The spec (section 4) says 'Wrap the new route in <FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">'. The implementation uses {isAiEnabled && (...)} instead. These are functionally equivalent -- both prevent the route from rendering when the flag is off. The isAiEnabled approach is slightly more direct since useFeatureFlipper is already called for possiblePaths. The FeatureFlipper component approach would add an extra hook call internally. No behavioral difference.",
+      "fix": "No fix needed. The conditional rendering approach is a valid alternative to the FeatureFlipper wrapper and is already consistent with how possiblePaths is gated."
+    },
+    {
+      "id": "CC2-3",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationSidebar.tsx",
+      "lines": "99-107",
+      "severity": "LOW",
+      "category": "pattern_comparison",
+      "title": "FeatureFlipper uses string literal instead of Features enum",
+      "description": "Line 99 uses <FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\"> with a string literal. The FeatureFlipper component's Props type accepts feature: string (FeatureFlipper.tsx line 58), so this works. The Features enum is imported in JobApplicationContainer.tsx (line 18) and used there with the hook, but the sidebar uses the FeatureFlipper component which takes a string prop, matching the existing codebase convention (the HOW TO USE comment at the top of FeatureFlipper.tsx shows string literals). Not a bug.",
+      "fix": "No fix needed. String literal is the established pattern for FeatureFlipper component usage."
+    },
+    {
+      "id": "CC2-4",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationSidebar.tsx",
+      "lines": "429-489",
+      "severity": "LOW",
+      "category": "pattern_comparison",
+      "title": "PlatoNavItem styles faithfully replicate NavItem linkStyles with correct adaptations",
+      "description": "The platoNavLinkStyles function (lines 429-469) is a faithful copy of NavItem.tsx linkStyles (lines 56-95) with two additions: (1) a label property for debugging, and (2) an explicit 'any' type annotation on props. All style values, breakpoint gating, SVG opacity transitions, and hover behavior match exactly. The PlatoNavLabel (lines 473-489) correctly adapts the StyledLabel pattern from NavItem.tsx (lines 103-118) by targeting '> span:first-of-type' instead of 'svg' for the icon slot -- because PlatoChip renders a <span>, not an <svg>. This is a correct adaptation, not a deviation.",
+      "fix": "No fix needed."
+    }
+  ],
+  "summary": "One HIGH finding: a stale currentViewPath state causes an infinite redirect loop when isAiEnabled toggles off while the user is on the /ai tab. The useEffect does not clear currentViewPath when the current URL path becomes invalid. Three LOW findings are informational pattern comparisons with no behavioral impact. The sidebar implementation correctly replicates NavItem patterns with appropriate adaptations for the PlatoChip component. Feature flag gating is sound -- both the conditional rendering approach and FeatureFlipper wrapper achieve the same gate."
+}

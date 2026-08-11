@@ -1,0 +1,20 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 2,
+  "focus_area": "Frontend half of qa-run-1 fix commit 3e5aaf7c5: Link conversion in components/JobCriteriaSection.tsx",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §8.3 (intro copy, 'job description' inline link, /jobs/${job.id}/setup/description target)",
+      "qa-run-1 FAILURE-REPORT finding 2 (keyboard accessibility of the intro link)",
+      "BRIEF fix-batch item 3 (Link import + element swap + history destructuring removal ONLY)",
+      "BRIEF scope check (fix commit limited to 3 files, +22/-3, analog job untouched)",
+      "Conventions-pass fix item 8 (SectionIntro a focus ring must remain functional)",
+      "Pipeline rule 13 / core rule 10 (no fabricated fallbacks)"
+    ],
+    "implemented": 6,
+    "missing": 0,
+    "notes": "Trace chain: BRIEF.md -> SPEC.md §8.3 -> qa-run-1 FAILURE-REPORT.md -> git diff 9ed954142..3e5aaf7c5 -> JobCriteriaSection.tsx -> JobSetupAiSettings.tsx -> JobSetupContainer.tsx -> JobStagesContainer.tsx -> JobContainer.tsx -> AppContainer.tsx -> App.tsx -> RunPlatoAddDescriptionModal.tsx -> package.json. (1) DIFF SCOPE: `git diff 9ed954142..3e5aaf7c5 -- app/javascript` touches ONLY components/JobCriteriaSection.tsx, +3/-2: `import { Link } from \"react-router-dom\"` added (line 2), destructuring `{ job, history }` -> `{ job }` (line 25), `<a onClick={() => history.push(...)}>` -> `<Link to={...}>` (line 40). Nothing else; whole commit is exactly the 3 briefed files (5 tsx lines + extract_job_criteria_job.rb 1 line + 18 spec lines = +22/-3); analog generate_ai_job_application_summary_job.rb untouched. (2) KEYBOARD ACCESSIBILITY: react-router-dom is 4.2.2 (package.json:106); RR4 Link renders a real `<a href>` (href via history.createHref), so the element is in tab order and Enter fires click -> SPA navigation. `to` target is exactly `/jobs/${job.id}/setup/description` where `job` is `passedJob` (JobSetupAiSettings.tsx:107) whose `.id` is the same identifier the file already sends to the update mutation (line 38); route form matches the SPA route `/jobs/:jobId` (AppContainer.tsx:146, JobContainer.tsx:368) and the SPEC-cited precedent RunPlatoAddDescriptionModal.tsx:32 plus 6+ other `/jobs/${job.id}/setup/description` callsites — no hash_id form exists anywhere in ats/src for this route. Styled.SectionIntro (lines 180-202) targets descendant `a { ... }`; Link's rendered anchor matches that selector, so color/weight/hover AND the conventions-pass :focus ring (lines 196-199) apply, and the ring is now reachable because the href puts the anchor in tab order — the qa-run-1 'dead CSS' defect is resolved. (3) ROUTER CONTEXT: App.tsx:36 BrowserRouter -> AppContainer Route /jobs/:jobId -> JobContainer (itself uses inline `<Link>` at line 331, import react-router-dom line 3) -> JobStagesContainer.tsx:181 Route -> JobSetupContainer.tsx:485-489 Route `${match.path}/ai` -> JobSetupAiSettings -> JobCriteriaSection. Link is inside Router context; no invariant throw. (4) COPY/STYLE/BEHAVIOR: rendered intro text after JSX whitespace collapsing is byte-identical to SPEC §8.3 ('...To change them, edit your job description.' — the `{\" \"}` preserves the space before the link, link text exactly 'job description', trailing period outside the Link); zero styled-component/class churn in this commit; display-state machine (lines 66-85), empty states, card, action row all untouched at 3e5aaf7c5. SPEC §8.3's literal 'via props.history.push' wording is superseded per the BRIEF's adjudicated fix-batch item 3 — not flagged. (5) RULE 13/10: no `|| 0`/`|| \"\"`/`|| []` or any other fallback introduced; `job.id` used bare. `history` remaining references: only `interface Props { history: any }` (line 22) — adjudicated as deliberately untouched; no other use of `history` in the file, and the parent still passing `history={props.history}` (JobSetupAiSettings.tsx:107) is harmless (unused prop, `any`-typed, no tsc error). Zero findings."
+  }
+}

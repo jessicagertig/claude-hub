@@ -1,0 +1,39 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 1,
+  "files_reviewed": [
+    "app/controllers/api/v1/ai_job_criteria_controller.rb",
+    "app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+    "config/routes.rb (line 266 and jobs-resources context)"
+  ],
+  "findings": [
+    {
+      "id": "l2-a1-001",
+      "severity": "MED",
+      "title": "POST create authorization drops the hiring-team layer present in the cited jobs_controller precedent, producing a write-without-read asymmetry",
+      "file": "app/controllers/api/v1/ai_job_criteria_controller.rb",
+      "line": 13,
+      "description": "create authorizes only `authorize job, :update_ai_settings?`. JobPolicy#update_ai_settings? (job_policy.rb:24-26) delegates to AiJobApplicationSummaryPolicy#can_use_ai_credits? (ai_job_application_summary_policy.rb:16-18) = `is_org_admin? || (is_org_user? && hiring_team_ai_credits_control_enabled?)` — no hiring-team membership check. The precedent the spec cites (jobs_controller.rb:163) applies `authorize job, :update_ai_settings?` as an ADDITIONAL check layered on top of `authorize job` (JobPolicy#update? -> on_hiring_team?), so the existing gate for changing per-job AI behavior is hiring-team AND can_use_ai_credits. Consequence here: in an org with `hiring_team_ai_credits_control_enabled`, a non-admin org_user who is NOT on a job's hiring team can POST regenerate criteria for that job (changing what all future reviews score against), while GET on the very same endpoint 403s them (JobPolicy#show? job_policy.rb:12-14 requires hiring-team membership for non-admins). They can mutate a resource they cannot read. Mitigants: spec Section 9 explicitly directs this exact authorize call and declares 'No new policy methods', so the implementation matches the spec verbatim; and BulkAiJobApplicationSummariesController#create (bulk_ai_job_application_summaries_controller.rb:7-9) similarly gates a per-job AI mutation on `bulk_create?` (= can_use_ai_credits?) with no per-job hiring-team authorization, so a partial in-domain precedent exists. Reported as MED (spec-directed / design-decision territory), not demanding a fix — but the spec's rationale ('the exact policy gate the app already uses', citing jobs_controller.rb:163) mischaracterizes that precedent, which is two-layered, and the spec nowhere acknowledges the POST-allowed/GET-denied asymmetry.",
+      "recommendation": "Surface to the owner: either accept the asymmetry explicitly, or add `authorize job, :update?` (hiring-team) before the `update_ai_settings?` check in create to match the jobs_controller.rb:163 layering. No code change without owner direction."
+    },
+    {
+      "id": "l2-a1-002",
+      "severity": "LOW",
+      "title": "Serializer issues four duplicate latest-row queries per render (no memoization), with a theoretical torn read across attributes",
+      "file": "app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+      "line": 6,
+      "description": "Job#latest_succeeded_ai_job_criteria and Job#latest_ai_job_criteria (job.rb:688-694) are plain methods that run a fresh `ai_job_criteria.order(created_at: :desc).first` query on every call — they are not memoized and not associations. The serializer calls latest_succeeded_ai_job_criteria twice (criteria, extracted_at) and latest_ai_job_criteria twice (status directly, and again inside zero_criteria_extraction_failure? via job.rb:696-698) — 4 near-identical queries per GET, plus 2 more inside extract_job_criteria_immediately's guards (job.rb:732-733) on the POST path. Because each attribute reads at a different instant, a row transition landing mid-serialization can produce a payload mixing states (e.g., criteria from one succeeded row, extracted_at from a newer one) — window is milliseconds, practical impact negligible. The non-memoized fresh read is also what makes the POST response correctly reflect the just-created pending row, so memoizing on Job would need care; serializer-local memoization (or single locals per method) would be safe. Sibling serializers (e.g., OrganizationAiCreditBalanceSerializer) also delegate per-attribute, so this matches convention; perf nit only.",
+      "recommendation": "Optional: memoize within the serializer (e.g., private methods caching object.latest_succeeded_ai_job_criteria / object.latest_ai_job_criteria in ivars) to collapse 4 queries to 2 and make the payload internally consistent. Not required."
+    },
+    {
+      "id": "l2-a1-003",
+      "severity": "LOW",
+      "title": "Blank-description error says 'Job setup' while both existing sibling messages say 'Job Setup'",
+      "file": "app/controllers/api/v1/ai_job_criteria_controller.rb",
+      "line": 21,
+      "description": "The new user-facing message ends 'Add one in Job setup.' The two existing messages in the same register both end 'Add one in Job Setup.' (validate_ai_summary_generation.rb:29 and validate_auto_ai_summary_generation.rb:18). A user who hits both flows sees the same destination named with two different casings. The implemented text matches SPEC Section 5.2 verbatim (the spec block itself uses 'Job setup', consistent with the spec's sentence-case copy rule in Section 10), so this is spec-directed; the inconsistency is between the spec's copy rule and the pre-existing messages. Report-only.",
+      "recommendation": "None required. If casing consistency matters, align all three messages in one direction as a copy pass (owner call — the spec's copy rules mandate sentence case, which would mean changing the two pre-existing messages, out of this feature's scope)."
+    }
+  ]
+}

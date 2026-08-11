@@ -1,0 +1,13 @@
+# Textract Call Site — Round 1
+
+## Findings
+
+- F1 [MED] Spec lines 129-130, 165-166 — **Call site leaves inline-vs-callback as open choice without specifying the background job requirement.** The spec says the extraction call goes "in `GetResumeTextFromTextract#parse_resume_text` after the successful update, OR via a new `after_commit` callback on TextractResult." Both options involve calling GPT-4o-mini (an external API call that takes seconds). The existing `after_commit :queue_ai_summary_job` callback only enqueues a Sidekiq job (`GenerateAiJobApplicationSummaryJob.perform_later`) — it does NOT do synchronous API work in the callback. If the new extraction is done via `after_commit`, it must also enqueue a background job rather than calling GPT-4o-mini synchronously in the callback chain. If done inline in `parse_resume_text`, it runs inside `GetResumeTextFromTextractJob` which already has retry logic. **The spec must state that the GPT-4o-mini call happens in a background job (new or existing), not synchronously in the callback or inline in `parse_resume_text`.** Evidence: `queue_ai_summary_job` at `textract_result.rb:114-143` enqueues `GenerateAiJobApplicationSummaryJob.perform_later`, never calls AI directly. Fix: Add a section specifying a background job for the extraction (e.g., `ExtractStructuredResumeDataJob`), with retry/exhaustion behavior matching codebase patterns.
+
+- F2 [MED] Spec lines 157-162, 165-166 — **Spec does not specify error handling for the extraction service itself.** The spec says "Failure of the extraction MUST NOT prevent the Textract success path from completing" (line 130) but does not specify what happens when the extraction fails. Should there be retries? An exhaustion handler? A status column to track extraction state? The existing AI summary pipeline has `retrying` and `failed` statuses on `AiJobApplicationSummary`. Per known failure pattern #14 (analog structural matching), if analogous jobs use exhaustion blocks on `retry_on`, the new job must too. `GetResumeTextFromTextractJob` has `retry_on CustomErrorTextract, wait: 5.minutes, attempts: 3` with an exhaustion block. Fix: Specify retry behavior for the extraction job (retry count, wait interval, exhaustion behavior — e.g., log and move on, since extraction is supplementary).
+
+- F3 [LOW] Spec line 127-128 — **Spec says callback is at "line 7" but this is fragile.** Line numbers change with edits. The spec correctly identifies the callback by name (`after_commit :queue_ai_summary_job, on: [:create, :update]`), which is sufficient. No fix needed, just noting the fragility.
+
+## Amendments Applied
+
+None yet — findings need to be applied to the spec by the parent agent.

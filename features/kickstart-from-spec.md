@@ -14,7 +14,7 @@ If the user didn't provide all of these, ask for the missing pieces before proce
 
 ## Setup steps
 
-1. Create the working directory: `~/claude-hub/<pipeline>/YYYY-MM-DD-<slug>/`
+1. Create the working directory: `~/claude-hub/<pipeline>/<slug>-YYYY-MM-DD/`
 2. Copy the spec to the working directory with the specified name (default `SPEC.md`)
 3. Write `REPO-PATH` with the worktree/repo path (one line, absolute path, trailing slash)
 4. Verify the worktree/repo exists and is accessible

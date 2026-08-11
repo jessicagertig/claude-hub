@@ -6,7 +6,7 @@ The prompt files in this directory (and any pipeline-specific overrides) are ins
 
 ## How to find your context
 
-1. **Working directory:** You are running from a feature working directory (e.g., `~/claude-hub/<pipeline>/YYYY-MM-DD-feature-name/`).
+1. **Working directory:** You are running from a feature working directory (e.g., `~/claude-hub/<pipeline>/feature-name-YYYY-MM-DD/`).
 2. **Pipeline:** The pipeline is the parent directory of your working directory (e.g., `inflow-ats/`, `thought-leadership-automation/`).
 3. **Pipeline CLAUDE.md:** Read `~/claude-hub/<pipeline>/CLAUDE.md` for the source repo path, tech stack, conventions sources, and any pipeline-specific rules. Conventions can come from multiple places — the pipeline CLAUDE.md itself, the source repo's own CLAUDE.md, a conventions directory, a reference repo, and the existing codebase patterns (analogs).
 4. **REPO-PATH:** The working directory contains a `REPO-PATH` file pointing to the source repo or worktree.
@@ -129,12 +129,13 @@ The sub-agent reads all failure reports and round verdicts, extracts lessons, an
 
 **Prompt file:** `qa-prompt.md`
 
-The sub-agent is the QA orchestrator. It runs the feature through four sequential verification layers, each a gate before the next:
+The sub-agent is the QA orchestrator. It runs the feature through five sequential verification layers, each a gate before the next:
 
-1. **Layer 1: Diff-to-spec review** (no server) — 5-30 agents verify every spec requirement has a corresponding implementation. Most intensive layer.
-2. **Layer 2: Script runner** (server, no browser) — 15+ agents write and run temporary scripts to exercise business logic.
-3. **Layer 3: Regression suites** (server, no browser) — single agent runs existing RSpec/Cypress tests.
-4. **Layer 4: Playwright MCP** (server + browser) — 15+ agents verify the feature works in the UI.
+1. **Layer 1: Diff-to-spec review** (no server) — 5-30 agents verify every spec requirement has a corresponding implementation. Most intensive layer. All findings are HIGH — no MED in Layer 1.
+2. **Layer 2: Code correctness review** (no server) — 5-15 fresh agents read the code cold with no prior context. Includes analog structural matching (BLOCKER severity).
+3. **Layer 3: Script runner** (server, no browser) — 15+ agents write and run temporary scripts to exercise business logic.
+4. **Layer 4: Regression suites** (server, no browser) — single agent runs existing RSpec/Cypress tests.
+5. **Layer 5: Playwright MCP** (server + browser) — 15+ agents verify the feature works in the UI. Has its own two-phase fix loop (blocking errors fixed immediately, non-blocking HIGH+ batched) before convergence.
 
 Each layer converges via two consecutive clean rounds (HIGH+ only — MEDs are collected but don't block). If HIGH+ findings exist at any layer, the orchestrator sends a failure report to Phase 5 (impl), skips Phase 6 on re-entry, then **restarts from Layer 1 in a new run directory** (`qa-run-N/`). This ensures a fix at a later layer doesn't break compliance at an earlier one. A final consolidated MED report is produced at the end for the user to review.
 
@@ -149,7 +150,7 @@ Each layer converges via two consecutive clean rounds (HIGH+ only — MEDs are c
 ## Full artifact trail
 
 ```
-~/claude-hub/<pipeline>/YYYY-MM-DD-feature-name/
+~/claude-hub/<pipeline>/feature-name-YYYY-MM-DD/
 ├── SPEC.md
 ├── REPO-PATH
 ├── plan.md

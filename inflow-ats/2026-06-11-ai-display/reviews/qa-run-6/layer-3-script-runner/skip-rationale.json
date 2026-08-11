@@ -1,0 +1,16 @@
+{
+  "layer": "script-runner",
+  "run": 6,
+  "status": "SKIPPED_WITH_RATIONALE",
+  "rationale": "This feature is frontend-only (spec lines 9-13: 'Frontend only. No backend changes: no new controllers, serializers, models, routes, or migrations.'). Layer 3 exercises backend business logic via rails runner scripts. There are no backend methods, services, models, or controllers changed by this feature. All 8 changed files are in app/javascript/. Running rails runner scripts would test pre-existing, untouched backend code -- which is Layer 4's job (regression), not Layer 3's.",
+  "changed_files": [
+    "app/javascript/ats/src/components/shared/PlatoMark.tsx (new)",
+    "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx (new)",
+    "app/javascript/ats/src/views/jobApplications/PlatoOverviewCallout.tsx (new)",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx (modified)",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationSidebar.tsx (modified)",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx (modified)",
+    "app/javascript/shared/types/aiJobApplicationSummary.ts (modified)",
+    "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts (modified)"
+  ]
+}

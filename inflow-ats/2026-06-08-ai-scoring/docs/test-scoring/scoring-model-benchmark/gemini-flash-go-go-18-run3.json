@@ -1,0 +1,153 @@
+{
+  "scores": [
+    {
+      "criterion_text": "[tier_2] Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has strong experience with Kubernetes (AKS) and Terraform on Azure, but lacks evidence of working across multiple clouds (GCP) or specific cross-team integration for internal infrastructure."
+    },
+    {
+      "criterion_text": "[tier_2] Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience deploying microservices on Azure and working with customer-facing platforms at AT&T, but lacks evidence of managing multi-cloud racks or specific environment management inside customer accounts."
+    },
+    {
+      "criterion_text": "[tier_2] Collaborate with product and UX teams to deliver features for developers",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate's experience at Intuit and AT&T explicitly mentions collaborating with product and design teams to deliver customer-centric solutions."
+    },
+    {
+      "criterion_text": "[tier_1] Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The resume highlights expertise in Python, Node.js, Java, and TypeScript, but does not list Go (Golang) in the skills or experience sections."
+    },
+    {
+      "criterion_text": "[tier_1] Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate demonstrates strong Kubernetes knowledge, including migrations, deployments, service mesh (Istio/Linkerd), and scaling microservices at Microsoft and AT&T."
+    },
+    {
+      "criterion_text": "[tier_1] Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate mentions implementing infrastructure as code (IaC) as part of their automation work at Microsoft."
+    },
+    {
+      "criterion_text": "[tier_1] Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has significant experience with Azure and mentions AWS in their skills section."
+    },
+    {
+      "criterion_text": "[tier_1] A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience working with microservices, AKS, and CI/CD pipelines which are closely related to PaaS concepts, though direct experience building a PaaS is not explicitly stated."
+    },
+    {
+      "criterion_text": "[tier_1] Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience with CI/CD pipelines using Azure DevOps and GitHub Actions."
+    },
+    {
+      "criterion_text": "[tier_2] Excellent communication skills",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The resume demonstrates professional experience in team environments, which implies collaboration, but does not provide direct evidence of 'excellent' communication skills."
+    },
+    {
+      "criterion_text": "[tier_1] Ability to work cross functionally",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The resume notes collaboration with compliance, design, and product teams at Intuit, and working with enterprise customers at Microsoft."
+    },
+    {
+      "criterion_text": "[tier_1] Thrive within a fast moving product engineering environment.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has worked at major companies (Microsoft, AT&T, Intuit) in high-volume, regulated environments, demonstrating the ability to handle pressure and deadlines."
+    },
+    {
+      "criterion_text": "[tier_2] Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence found regarding publishing or integrating software specifically on cloud marketplaces."
+    },
+    {
+      "criterion_text": "[tier_2] Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has extensive experience in customer-facing deployment scenarios at AT&T and Microsoft, but lacks explicit multi-cloud implementation experience beyond Azure."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has designed microservices with high availability and scaling requirements, and mentions security frameworks like HIPAA and PCI DSS common in multi-tenant environments."
+    },
+    {
+      "criterion_text": "[tier_2] Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has built distributed microservices using Kafka, RabbitMQ, and Redis, which are core distributed systems components."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate mentions telemetry-driven rollback and real-time network monitoring, but does not explicitly name the requested monitoring tools."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to design, build, and maintain backend services in Go that power our PaaS",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence found for Go (Golang) programming experience."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to develop APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling as part of backend services",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has built RESTful/GraphQL APIs, orchestration via Kubernetes/Helm, and internal tooling across several roles."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to participate in code reviews for backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate is a Senior Software Engineer, which inherently implies code review responsibilities, though specific experience with Go services is not found."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to mentor others in backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "As a Senior Software Engineer, the candidate likely mentors, but no specific evidence of mentoring is documented."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to help define best practices for backend infrastructure, Go services, and cloud deployments",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has architected systems and modernized legacy stacks, implying they help define best practices, but specific evidence for Go is missing."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to ensure high reliability, scalability, and security of the platform",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has a track record of maintaining high-volume platforms with strict security (HIPAA/PCI) and scaling requirements."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to implement monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies to support platform reliability, scalability, and security",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate mentions telemetry-driven rollbacks and network monitoring, but lacks evidence of explicit multi-cloud failover strategies."
+    }
+  ],
+  "computed_score": {
+    "points": 97.0,
+    "max": 164,
+    "percentage": 59.1
+  }
+}

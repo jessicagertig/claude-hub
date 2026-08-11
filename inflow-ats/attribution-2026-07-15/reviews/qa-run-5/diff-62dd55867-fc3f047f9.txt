@@ -1,0 +1,1057 @@
+diff --git a/app/controllers/api/v1/organizations_controller.rb b/app/controllers/api/v1/organizations_controller.rb
+index 82d5b623e..d2cfbe794 100644
+--- a/app/controllers/api/v1/organizations_controller.rb
++++ b/app/controllers/api/v1/organizations_controller.rb
+@@ -29,6 +29,10 @@ class Api::V1::OrganizationsController < Api::V1::BaseController
+     @organization = Organization.new(organization_params)
+     @organization.owner_id = current_user.id
+     @organization.created_via = current_user.created_via
++    @organization.utm_source = current_user.utm_source
++    @organization.utm_campaign = current_user.utm_campaign
++    @organization.utm_data = current_user.utm_data
++    @organization.internal_ref = current_user.internal_ref
+     @organization.is_claimed = true
+     authorize @organization
+ 
+diff --git a/app/controllers/api/v1/registrations_controller.rb b/app/controllers/api/v1/registrations_controller.rb
+index b7751c5ee..18f6573be 100644
+--- a/app/controllers/api/v1/registrations_controller.rb
++++ b/app/controllers/api/v1/registrations_controller.rb
+@@ -93,7 +93,11 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
+                       created_via: created_via,
+                       password: password,
+                       password_confirmation: password,
+-                      connect_login_intent_organization_id: organization.id # Used to determine where to redirect a customer
++                      connect_login_intent_organization_id: organization.id, # Used to determine where to redirect a customer
++                      utm_source: sign_up_params[:utm_source],
++                      utm_campaign: sign_up_params[:utm_campaign],
++                      utm_data: sign_up_params[:utm_data],
++                      internal_ref: sign_up_params[:internal_ref]
+                     )
+                   else
+                     {
+@@ -102,7 +106,11 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
+                     }.merge(
+                       created_via: created_via,
+                       password: password,
+-                      password_confirmation: password
++                      password_confirmation: password,
++                      utm_source: sign_up_params[:utm_source],
++                      utm_campaign: sign_up_params[:utm_campaign],
++                      utm_data: sign_up_params[:utm_data],
++                      internal_ref: sign_up_params[:internal_ref]
+                     )
+                   end
+ 
+@@ -299,7 +307,7 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
+ 
+   def sign_up_params
+     # params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation, :beta_token, :registration_stripe_plan)
+-    params.permit(:name, :first_name, :last_name, :email, :password, :beta_token, :registration_stripe_plan, :referral, :partner, :organization_slug, :login_intent)
++    params.permit(:name, :first_name, :last_name, :email, :password, :beta_token, :registration_stripe_plan, :referral, :partner, :organization_slug, :login_intent, :utm_source, :utm_campaign, :internal_ref, utm_data: {})
+   end
+ 
+   def sanitized_account_update_params
+diff --git a/app/controllers/api/v1/users/omniauth_callbacks_controller.rb b/app/controllers/api/v1/users/omniauth_callbacks_controller.rb
+index b90185ff0..14ce4cbf7 100644
+--- a/app/controllers/api/v1/users/omniauth_callbacks_controller.rb
++++ b/app/controllers/api/v1/users/omniauth_callbacks_controller.rb
+@@ -19,7 +19,15 @@ class Api::V1::Users::OmniauthCallbacksController < Devise::OmniauthCallbacksCon
+ 
+     created_via_value = get_created_via({ partner: partner_param, referral: referral_param })
+ 
+-    user = User.from_omniauth(oauth_data, created_via_value, partner_param)
++    user = User.from_omniauth(
++      auth: oauth_data,
++      created_via: created_via_value,
++      partner_source: partner_param,
++      utm_source: merged_tracking['utm_source'],
++      utm_campaign: merged_tracking['utm_campaign'],
++      utm_data: merged_tracking['utm_data'],
++      internal_ref: merged_tracking['internal_ref']
++    )
+ 
+     if user.persisted?
+       sign_in(user)
+diff --git a/app/javascript/ats/src/views/sessions/OnboardingProfile.tsx b/app/javascript/ats/src/views/sessions/OnboardingProfile.tsx
+index f5a7bba13..086b7d1b8 100644
+--- a/app/javascript/ats/src/views/sessions/OnboardingProfile.tsx
++++ b/app/javascript/ats/src/views/sessions/OnboardingProfile.tsx
+@@ -9,6 +9,7 @@ import FormLogoHeader from "@ats/src/views/sessions/components/FormLogoHeader";
+ import SessionsLayout from "@ats/src/views/sessions/components/SessionsLayout";
+ import AdRollScript from "@ats/src/components/shared/AdRollScript";
+ import { useCurrentSession } from "@ats/src/context/CurrentSessionContext";
++import { trackEvent } from "@shared/lib/posthog";
+ 
+ function OnboardingProfile(props: any) {
+   const { currentOrganizationUser, currentUser } = useCurrentSession();
+@@ -24,6 +25,15 @@ function OnboardingProfile(props: any) {
+     adrollExists: !!window.adroll,
+   });
+ 
++  React.useEffect(() => {
++    if (isNewOwner) {
++      trackEvent("organization_owner_email_verified");
++    } else {
++      trackEvent("invited_user_email_verified");
++    }
++    // eslint-disable-next-line react-hooks/exhaustive-deps
++  }, []);
++
+   const onComplete = () => {
+     props.history.push("/jobs");
+   };
+diff --git a/app/javascript/ats/src/views/sessions/components/AuthForm.tsx b/app/javascript/ats/src/views/sessions/components/AuthForm.tsx
+index edba0eaaf..4c8c5a7b8 100644
+--- a/app/javascript/ats/src/views/sessions/components/AuthForm.tsx
++++ b/app/javascript/ats/src/views/sessions/components/AuthForm.tsx
+@@ -6,6 +6,8 @@ import styled from "@emotion/styled";
+ import { css } from "@emotion/react";
+ import Styled from "@ats/src/views/sessions/components/Styled";
+ import { validateEmail } from "@shared/lib/validateWithYup";
++import { sanitizeTrackingParams } from "@shared/lib/utils";
++import { trackEvent } from "@shared/lib/posthog";
+ 
+ import FormContainer from "@ats/src/components/forms/FormContainer";
+ import GoogleSSOButton from "@ats/src/views/sessions/components/GoogleSSOButton";
+@@ -36,6 +38,7 @@ function AuthForm({
+   // const inviteToken = queryString.parse(location.search).invite_token;
+   const [referral, setReferral] = React.useState(queryString.parse(location.search).referral);
+   const [partner] = React.useState(queryString.parse(location.search).partner);
++  const [trackingParams] = React.useState(sanitizeTrackingParams(location.search));
+   const recaptchaRef = React.useRef(null);
+ 
+   const { mutate: magicLink, isLoading: isLoadingMagicLink } = useMagicLink();
+@@ -75,12 +78,17 @@ function AuthForm({
+           redirectTo: redirectPath,
+           referral,
+           partner,
++          utmSource: trackingParams.utmSource,
++          utmCampaign: trackingParams.utmCampaign,
++          utmData: trackingParams.utmData,
++          internalRef: trackingParams.internalRef,
+           loginIntent: "hire",
+           recaptchaToken: recaptchaToken,
+         },
+         {
+           onSuccess: (data) => {
+             window.logger("[AuthForm] data", { ...data });
++            trackEvent("user_signed_up_client_side");
+             onComplete({ email: cleanedEmail, ...data });
+           },
+           onError: (response: any) => {
+@@ -117,7 +125,15 @@ function AuthForm({
+   return (
+     <Styled.AuthForm>
+       <Styled.GoogleSSOWrapper>
+-        <GoogleSSOButton referral={referral} partner={partner} darkModeAllowed={darkModeAllowed} />
++        <GoogleSSOButton
++          referral={referral}
++          partner={partner}
++          utmSource={trackingParams.utmSource}
++          utmCampaign={trackingParams.utmCampaign}
++          utmData={trackingParams.utmData}
++          internalRef={trackingParams.internalRef}
++          darkModeAllowed={darkModeAllowed}
++        />
+       </Styled.GoogleSSOWrapper>
+       <Local.ContinueText darkModeAllowed={darkModeAllowed}>Or continue with email</Local.ContinueText>
+ 
+diff --git a/app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx b/app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx
+index 778cfc059..dee8dc3f4 100644
+--- a/app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx
++++ b/app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx
+@@ -10,10 +10,23 @@ interface Props {
+   isDisabled?: boolean;
+   referral?: string;
+   partner?: string;
++  utmSource?: string;
++  utmCampaign?: string;
++  utmData?: Record<string, any>;
++  internalRef?: string;
+   darkModeAllowed?: boolean;
+ }
+ 
+-function GoogleSSOButton({ isDisabled = false, referral, partner, darkModeAllowed = true }: Props) {
++function GoogleSSOButton({
++  isDisabled = false,
++  referral,
++  partner,
++  utmSource,
++  utmCampaign,
++  utmData,
++  internalRef,
++  darkModeAllowed = true,
++}: Props) {
+   const { refreshCsrfToken } = useCsrfToken("/");
+   const authenticityTokenInputRef = React.useRef<HTMLInputElement>(null);
+ 
+@@ -49,6 +62,22 @@ function GoogleSSOButton({ isDisabled = false, referral, partner, darkModeAllowe
+       {typeof partner === "string" && partner.length > 0 ? (
+         <input type="hidden" name="partner" value={partner} />
+       ) : null}
++      {typeof utmSource === "string" && utmSource.length > 0 ? (
++        <input type="hidden" name="utm_source" value={utmSource} />
++      ) : null}
++      {typeof utmCampaign === "string" && utmCampaign.length > 0 ? (
++        <input type="hidden" name="utm_campaign" value={utmCampaign} />
++      ) : null}
++      {typeof internalRef === "string" && internalRef.length > 0 ? (
++        <input type="hidden" name="internal_ref" value={internalRef} />
++      ) : null}
++      {utmData != undefined
++        ? Object.keys(utmData).map((key) =>
++            typeof utmData[key] === "string" && utmData[key].length > 0 ? (
++              <input type="hidden" name={"utm_data[" + key + "]"} value={utmData[key]} key={key} />
++            ) : null,
++          )
++        : null}
+     </form>
+   );
+ }
+diff --git a/app/javascript/ats/src/views/sessions/components/OrganizationForm.tsx b/app/javascript/ats/src/views/sessions/components/OrganizationForm.tsx
+index dd65ba0a6..dab4e9e7f 100644
+--- a/app/javascript/ats/src/views/sessions/components/OrganizationForm.tsx
++++ b/app/javascript/ats/src/views/sessions/components/OrganizationForm.tsx
+@@ -7,6 +7,7 @@ import FormContainer from "@ats/src/components/forms/FormContainer";
+ import SessionButton from "@ats/src/views/sessions/components/SessionButton";
+ 
+ import { validateNewOrganization } from "@shared/lib/validateWithYup";
++import { trackEvent } from "@shared/lib/posthog";
+ import { useCreateOrganization } from "@shared/queryHooks/useOrganization";
+ import breakpoint from "@shared/styles/breakpoints";
+ 
+@@ -67,6 +68,7 @@ function OrganizationForm(props) {
+         {
+           onSuccess: (data) => {
+             window.logger("[OrganizationForm] createOrganization onSuccess", { data });
++            trackEvent("organization_created");
+             onComplete(data);
+           },
+           onError: (response: any) => {
+diff --git a/app/javascript/ats/src/views/sessions/components/ProfileForm.tsx b/app/javascript/ats/src/views/sessions/components/ProfileForm.tsx
+index 916b21c35..3b95eab34 100644
+--- a/app/javascript/ats/src/views/sessions/components/ProfileForm.tsx
++++ b/app/javascript/ats/src/views/sessions/components/ProfileForm.tsx
+@@ -5,6 +5,7 @@ import FormContainer from "@ats/src/components/forms/FormContainer";
+ import SessionButton from "@ats/src/views/sessions/components/SessionButton";
+ 
+ import { validateOnboardingProfile } from "@shared/lib/validateWithYup";
++import { trackEvent } from "@shared/lib/posthog";
+ 
+ import { useUpdateMe } from "@shared/queryHooks/useMe";
+ 
+@@ -63,6 +64,11 @@ function ProfileForm(props) {
+         {
+           onSuccess: (data) => {
+             window.logger("[ProfileForm] onSuccess", { data });
++            if (props.isNewOwner) {
++              trackEvent("organization_owner_user_name_submitted");
++            } else {
++              trackEvent("invited_user_name_submitted");
++            }
+             props.onComplete();
+           },
+           onError: (response: any) => {
+diff --git a/app/javascript/ats/src/views/sessions/components/SignupForm.tsx b/app/javascript/ats/src/views/sessions/components/SignupForm.tsx
+index b51fd7dc1..d2b1cef32 100644
+--- a/app/javascript/ats/src/views/sessions/components/SignupForm.tsx
++++ b/app/javascript/ats/src/views/sessions/components/SignupForm.tsx
+@@ -7,6 +7,8 @@ import SessionFormInput from "@ats/src/views/sessions/components/SessionFormInpu
+ import SessionButton from "@ats/src/views/sessions/components/SessionButton";
+ 
+ import { validateRegistration } from "@shared/lib/validateWithYup";
++import { sanitizeTrackingParams } from "@shared/lib/utils";
++import { trackEvent } from "@shared/lib/posthog";
+ 
+ import { useRegister } from "@shared/queryHooks/useSession";
+ import { useGetInvite } from "@shared/queryHooks/useInvite";
+@@ -21,6 +23,7 @@ function SignupForm(props) {
+ 
+   const inviteToken = queryString.parse(props.location.search).invite_token;
+   const [referral, setReferral] = React.useState(queryString.parse(props.location.search).referral);
++  const [trackingParams] = React.useState(sanitizeTrackingParams(props.location.search));
+   const [errors, setErrors] = React.useState(null);
+ 
+   const { firstName, lastName, email, password } = state;
+@@ -61,10 +64,15 @@ function SignupForm(props) {
+           password,
+           inviteToken,
+           referral,
++          utmSource: trackingParams.utmSource,
++          utmCampaign: trackingParams.utmCampaign,
++          utmData: trackingParams.utmData,
++          internalRef: trackingParams.internalRef,
+         },
+         {
+           onSuccess: (data) => {
+             window.logger("[SignupForm] register onScucess", { data });
++            trackEvent("user_signed_up_client_side");
+             props.onComplete();
+           },
+           onError: (response: any) => {
+diff --git a/app/javascript/shared/lib/posthog.ts b/app/javascript/shared/lib/posthog.ts
+index f7fe3017a..2b5ea980b 100644
+--- a/app/javascript/shared/lib/posthog.ts
++++ b/app/javascript/shared/lib/posthog.ts
+@@ -23,8 +23,12 @@ function identifyUser(user: {
+   organizationUserRole?: string;
+ }): void {
+   const ph = getPosthog();
+-  if (!ph) return;
++  if (!ph) {
++    window.logger("%c[PostHog] identifyUser skipped - not loaded", "background-color: #FF76D2", { user });
++    return;
++  }
+ 
++  window.logger("%c[PostHog] identifyUser", "background-color: #FF76D2", { user });
+   ph.identify(String(user.id), {
+     email: user.email,
+     organization_id: user.organizationId,
+diff --git a/app/javascript/shared/lib/utils.js b/app/javascript/shared/lib/utils.js
+index df8a44865..f308b9af9 100644
+--- a/app/javascript/shared/lib/utils.js
++++ b/app/javascript/shared/lib/utils.js
+@@ -2,6 +2,8 @@ import keys from "lodash/keys";
+ import isString from "lodash/isString";
+ import isArray from "lodash/isArray";
+ import isPlainObject from "lodash/isPlainObject";
++import queryString from "query-string";
++import decodeUriComponent from "decode-uri-component";
+ 
+ /* standardizeQueryParamsObject
+ --===================================================-- */
+@@ -18,6 +20,73 @@ export function standardizeQueryParamsObject(queryObject) {
+   return filterObject;
+ }
+ 
++/* sanitizeTrackingParams
++--===================================================-- */
++// Captures utm_source, utm_campaign, internal_ref, and up to 10 additional utm_* params
++// from the raw location.search string. Key occurrence order is derived from the raw string
++// because queryString.parse (v6.1.0) returns its keys alphabetically sorted.
++const TRACKING_VALUE_MAX_LENGTH = 255;
++const UTM_DATA_MAX_KEYS = 10;
++
++function sanitizeTrackingValue(value) {
++  const firstValue = isArray(value) ? value[0] : value; // repeated param: keep first occurrence
++  if (!isString(firstValue)) return firstValue;
++  const truncatedValue = firstValue.slice(0, TRACKING_VALUE_MAX_LENGTH); // truncate to 255
++  const lastCodeUnit = truncatedValue.charCodeAt(truncatedValue.length - 1);
++  // drop a trailing lone high surrogate left by the slice (would serialize as an unparsable \udXXX escape)
++  return lastCodeUnit >= 0xd800 && lastCodeUnit <= 0xdbff
++    ? truncatedValue.slice(0, -1)
++    : truncatedValue;
++}
++
++export function sanitizeTrackingParams(search) {
++  const parsedParams = queryString.parse(search);
++
++  const keysInOccurrenceOrder = [];
++  queryString
++    .extract(search)
++    .split("&")
++    .forEach((param) => {
++      if (param.length === 0) return;
++      const rawKey = param.replace(/\+/g, " ").split("=")[0];
++      const decodedKey = decodeUriComponent(rawKey); // same decoder queryString.parse uses for keys
++      if (keysInOccurrenceOrder.indexOf(decodedKey) === -1) {
++        keysInOccurrenceOrder.push(decodedKey);
++      }
++    });
++
++  const trackingParams = {};
++  if (parsedParams.utm_source !== undefined) {
++    trackingParams.utmSource = sanitizeTrackingValue(parsedParams.utm_source);
++  }
++  if (parsedParams.utm_campaign !== undefined) {
++    trackingParams.utmCampaign = sanitizeTrackingValue(parsedParams.utm_campaign);
++  }
++  if (parsedParams.internal_ref !== undefined) {
++    trackingParams.internalRef = sanitizeTrackingValue(parsedParams.internal_ref);
++  }
++
++  const utmDataKeys = keysInOccurrenceOrder
++    .filter(
++      (key) =>
++        key.indexOf("utm_") === 0 &&
++        key !== "utm_source" &&
++        key !== "utm_campaign" &&
++        parsedParams[key] !== undefined,
++    )
++    .slice(0, UTM_DATA_MAX_KEYS); // first 10 by occurrence order in the raw string
++
++  if (utmDataKeys.length > 0) {
++    const utmData = {};
++    utmDataKeys.forEach((key) => {
++      utmData[key] = sanitizeTrackingValue(parsedParams[key]);
++    });
++    trackingParams.utmData = utmData;
++  }
++
++  return trackingParams;
++}
++
+ export const trimFilename = (filename) => {
+   let cutStart, cutEnd;
+ 
+diff --git a/app/javascript/shared/queryHooks/useSession.ts b/app/javascript/shared/queryHooks/useSession.ts
+index 770701ca1..ab8ca3874 100644
+--- a/app/javascript/shared/queryHooks/useSession.ts
++++ b/app/javascript/shared/queryHooks/useSession.ts
+@@ -24,7 +24,18 @@ const resetPassword = async ({ password, passwordConfirmation, resetPasswordToke
+   });
+ };
+ 
+-const register = async ({ firstName, lastName, email, password, inviteToken, referral }) => {
++const register = async ({
++  firstName,
++  lastName,
++  email,
++  password,
++  inviteToken,
++  referral,
++  utmSource,
++  utmCampaign,
++  utmData,
++  internalRef,
++}) => {
+   return await apiPost({
+     path: `/sign_up`,
+     variables: {
+@@ -34,6 +45,10 @@ const register = async ({ firstName, lastName, email, password, inviteToken, ref
+       password,
+       inviteToken,
+       referral,
++      utmSource,
++      utmCampaign,
++      utmData,
++      internalRef,
+     },
+   });
+ };
+@@ -47,6 +62,10 @@ const magicLink = async ({
+   referral,
+   recaptchaToken,
+   partner,
++  utmSource,
++  utmCampaign,
++  utmData,
++  internalRef,
+ }: {
+   email: string;
+   loginIntent: string;
+@@ -56,6 +75,10 @@ const magicLink = async ({
+   referral?: string | null;
+   recaptchaToken?: string | null;
+   partner?: string | null;
++  utmSource?: string | null;
++  utmCampaign?: string | null;
++  utmData?: Record<string, any> | null;
++  internalRef?: string | null;
+ }) => {
+   window.logger("%c[useSession] magicLink", "color: #1976D2", {
+     email,
+@@ -77,6 +100,10 @@ const magicLink = async ({
+       loginIntent,
+       recaptchaToken,
+       partner,
++      utmSource,
++      utmCampaign,
++      utmData,
++      internalRef,
+     },
+   });
+ };
+diff --git a/app/models/user.rb b/app/models/user.rb
+index e074b8f38..d6ad72804 100644
+--- a/app/models/user.rb
++++ b/app/models/user.rb
+@@ -376,7 +376,7 @@ class User < ApplicationRecord
+   # OMNIAUTH LOGIN/SIGNUP
+   ##################
+ 
+-  def self.from_omniauth(auth, created_via, partner_source = nil)
++  def self.from_omniauth(auth:, created_via:, partner_source: nil, utm_source: nil, utm_campaign: nil, utm_data: nil, internal_ref: nil)
+     ap 'PARTNER SOURCE?'
+     ap partner_source
+     ap 'CREATED_VIA'
+@@ -386,6 +386,10 @@ class User < ApplicationRecord
+       omniauth_user.password = Devise.friendly_token[0, 20]
+       omniauth_user.created_via = created_via
+       omniauth_user.partner_source = partner_source&.downcase
++      omniauth_user.utm_source = utm_source
++      omniauth_user.utm_campaign = utm_campaign
++      omniauth_user.utm_data = utm_data
++      omniauth_user.internal_ref = internal_ref
+       omniauth_user.sign_on_provider = 'google'
+       # Inflow requires user confirmation, so we skip it for omniauth users
+       # as Google has already verified their email.
+diff --git a/config/initializers/omniauth.rb b/config/initializers/omniauth.rb
+index e8193e001..a5cb82b85 100644
+--- a/config/initializers/omniauth.rb
++++ b/config/initializers/omniauth.rb
+@@ -11,7 +11,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
+     callback_path: '/api/v1/users/auth/google_oauth2/callback',
+     setup: lambda { |env|
+       rack_request = Rack::Request.new(env)
+-      allowed_keys = %w[partner referral]
++      allowed_keys = %w[partner referral utm_source utm_campaign utm_data internal_ref]
+ 
+       tracking_params = {}
+       allowed_keys.each do |key|
+diff --git a/db/migrate/20260715233505_add_attribution_columns_to_users.rb b/db/migrate/20260715233505_add_attribution_columns_to_users.rb
+new file mode 100644
+index 000000000..ccec9a349
+--- /dev/null
++++ b/db/migrate/20260715233505_add_attribution_columns_to_users.rb
+@@ -0,0 +1,10 @@
++# frozen_string_literal: true
++
++class AddAttributionColumnsToUsers < ActiveRecord::Migration[6.1]
++  def change
++    add_column :users, :utm_source, :string
++    add_column :users, :utm_campaign, :string
++    add_column :users, :utm_data, :jsonb
++    add_column :users, :internal_ref, :string
++  end
++end
+diff --git a/db/migrate/20260715233506_add_attribution_columns_to_organizations.rb b/db/migrate/20260715233506_add_attribution_columns_to_organizations.rb
+new file mode 100644
+index 000000000..a2a395f5c
+--- /dev/null
++++ b/db/migrate/20260715233506_add_attribution_columns_to_organizations.rb
+@@ -0,0 +1,10 @@
++# frozen_string_literal: true
++
++class AddAttributionColumnsToOrganizations < ActiveRecord::Migration[6.1]
++  def change
++    add_column :organizations, :utm_source, :string
++    add_column :organizations, :utm_campaign, :string
++    add_column :organizations, :utm_data, :jsonb
++    add_column :organizations, :internal_ref, :string
++  end
++end
+diff --git a/db/schema.rb b/db/schema.rb
+index 949f20c47..84acdfac7 100644
+--- a/db/schema.rb
++++ b/db/schema.rb
+@@ -10,7 +10,7 @@
+ #
+ # It's strongly recommended that you check this file into your version control system.
+ 
+-ActiveRecord::Schema.define(version: 2026_06_11_120003) do
++ActiveRecord::Schema.define(version: 2026_07_15_233506) do
+ 
+   # These are extensions that must be enabled in order to support this database
+   enable_extension "fuzzystrmatch"
+@@ -1086,6 +1086,10 @@ ActiveRecord::Schema.define(version: 2026_06_11_120003) do
+     t.integer "hud_display_visibility", default: 0, null: false
+     t.boolean "stripe_cancel_at_period_end", default: false, null: false
+     t.boolean "free_plan_paid_features_enabled", default: false, null: false
++    t.string "utm_source"
++    t.string "utm_campaign"
++    t.jsonb "utm_data"
++    t.string "internal_ref"
+   end
+ 
+   create_table "process_templates", force: :cascade do |t|
+@@ -1278,6 +1282,10 @@ ActiveRecord::Schema.define(version: 2026_06_11_120003) do
+     t.boolean "is_corporate_email"
+     t.integer "partner_source"
+     t.integer "sign_on_provider", default: 0, null: false
++    t.string "utm_source"
++    t.string "utm_campaign"
++    t.jsonb "utm_data"
++    t.string "internal_ref"
+     t.index ["current_organization_user_id"], name: "index_users_on_current_organization_user_id", unique: true
+     t.index ["discarded_at"], name: "index_users_on_discarded_at"
+     t.index ["email"], name: "index_users_on_email", unique: true
+diff --git a/spec/controllers/api/v1/organizations_controller_spec.rb b/spec/controllers/api/v1/organizations_controller_spec.rb
+new file mode 100644
+index 000000000..3b61142be
+--- /dev/null
++++ b/spec/controllers/api/v1/organizations_controller_spec.rb
+@@ -0,0 +1,91 @@
++# frozen_string_literal: true
++
++require 'rails_helper'
++
++# Verifies #create copies the four attribution values (utm_source, utm_campaign,
++# utm_data, internal_ref) from current_user onto the new Organization. The values
++# never come from the request body — organization_params does not permit them and
++# the action never reads them from params.
++RSpec.describe Api::V1::OrganizationsController, type: :controller do
++  around do |example|
++    original_adapter = ActiveJob::Base.queue_adapter
++    ActiveJob::Base.queue_adapter = :test
++    example.run
++    ActiveJob::Base.queue_adapter = original_adapter
++  end
++
++  before do
++    allow(controller).to receive(:authenticate_api_v1_user!).and_return(true)
++    allow(controller).to receive(:current_user).and_return(user)
++    allow(controller).to receive(:authorize).and_return(true)
++    allow(controller).to receive(:set_sentry_context)
++  end
++
++  describe 'POST #create' do
++    context 'when the current user has attribution values' do
++      let(:user) do
++        User.create!(
++          email: 'attributed-owner@example.com',
++          password: 'password',
++          password_confirmation: 'password',
++          first_name: 'Attributed',
++          last_name: 'Owner',
++          utm_source: 'SomeRawValue',
++          utm_campaign: 'Camp01',
++          utm_data: { 'utm_medium' => 'email' },
++          internal_ref: 'ref-99'
++        ).tap(&:confirm)
++      end
++
++      it 'copies all four attribution values from current_user onto the organization' do
++        post :create, params: { organization: { name: 'Attributed Org' } }
++
++        expect(response).to have_http_status(:ok)
++
++        organization = Organization.find_by(name: 'Attributed Org')
++        expect(organization).to be_present
++        expect(organization.utm_source).to eq 'SomeRawValue'
++        expect(organization.utm_campaign).to eq 'Camp01'
++        expect(organization.utm_data).to eq({ 'utm_medium' => 'email' })
++        expect(organization.internal_ref).to eq 'ref-99'
++      end
++
++      it 'ignores attribution values sent in the request body' do
++        post :create, params: {
++          organization: { name: 'Tamper Org', utm_source: 'attacker' }
++        }
++
++        expect(response).to have_http_status(:ok)
++
++        organization = Organization.find_by(name: 'Tamper Org')
++        expect(organization).to be_present
++        expect(organization.utm_source).to eq 'SomeRawValue'
++      end
++    end
++
++    context 'when the current user has nil attribution columns' do
++      let(:user) do
++        User.create!(
++          email: 'plain-owner@example.com',
++          password: 'password',
++          password_confirmation: 'password',
++          first_name: 'Plain',
++          last_name: 'Owner'
++        ).tap(&:confirm)
++      end
++
++      it 'creates an organization with nil in all four columns' do
++        post :create, params: { organization: { name: 'Plain Org' } }
++
++        expect(response).to have_http_status(:ok)
++
++        organization = Organization.find_by(name: 'Plain Org')
++        expect(organization).to be_present
++        expect(organization.utm_source).to be_nil
++        expect(organization.utm_campaign).to be_nil
++        expect(organization.utm_data).to be_nil
++        expect(organization.internal_ref).to be_nil
++      end
++    end
++  end
++end
+diff --git a/spec/controllers/api/v1/registrations_controller_spec.rb b/spec/controllers/api/v1/registrations_controller_spec.rb
+new file mode 100644
+index 000000000..502edccec
+--- /dev/null
++++ b/spec/controllers/api/v1/registrations_controller_spec.rb
+@@ -0,0 +1,163 @@
++# frozen_string_literal: true
++
++require 'rails_helper'
++
++# Verifies attribution capture (utm_source, utm_campaign, utm_data, internal_ref)
++# through sign_up_params and the magic_create user_params merge. Values are stored
++# raw as sent (no downcasing/mapping), and absent params leave nil columns
++# (utm_data stays nil, never {}).
++#
++# Every magic_create POST includes login_intent: 'hire' (the value AuthForm.tsx
++# always sends). Without it login_intent defaults to 'connect' and — with no
++# organization_slug — the connect branch evaluates organization.id on nil and
++# raises NoMethodError (pre-existing, out of scope).
++RSpec.describe Api::V1::RegistrationsController, type: :controller do
++  include Devise::Test::ControllerHelpers
++
++  around do |example|
++    original_adapter = ActiveJob::Base.queue_adapter
++    ActiveJob::Base.queue_adapter = :test
++    example.run
++    ActiveJob::Base.queue_adapter = original_adapter
++  end
++
++  before do
++    @request.env['devise.mapping'] = Devise.mappings[:api_v1_user]
++  end
++
++  describe 'POST #magic_create' do
++    context 'when the user does not exist yet' do
++      it 'stores the four attribution values raw as sent' do
++        post :magic_create, params: {
++          email: 'new-magic@example.com',
++          login_intent: 'hire',
++          utm_source: 'SomeRawValue',
++          utm_campaign: 'Camp01',
++          internal_ref: 'ref-99',
++          utm_data: { utm_medium: 'email', utm_term: 'hiring' }
++        }
++
++        expect(response).to have_http_status(:ok)
++
++        user = User.find_by(email: 'new-magic@example.com')
++        expect(user).to be_present
++        expect(user.utm_source).to eq 'SomeRawValue'
++        expect(user.utm_campaign).to eq 'Camp01'
++        expect(user.internal_ref).to eq 'ref-99'
++        expect(user.utm_data).to eq({ 'utm_medium' => 'email', 'utm_term' => 'hiring' })
++      end
++
++      it 'leaves all four columns nil when none of the params are sent' do
++        post :magic_create, params: {
++          email: 'new-magic-no-utm@example.com',
++          login_intent: 'hire'
++        }
++
++        expect(response).to have_http_status(:ok)
++
++        user = User.find_by(email: 'new-magic-no-utm@example.com')
++        expect(user).to be_present
++        expect(user.utm_source).to be_nil
++        expect(user.utm_campaign).to be_nil
++        expect(user.utm_data).to be_nil
++        expect(user.internal_ref).to be_nil
++      end
++    end
++
++    context 'when a confirmed user already exists' do
++      it 'does not modify the existing user attribution columns' do
++        user = User.create!(
++          email: 'existing-confirmed@example.com',
++          password: 'password',
++          password_confirmation: 'password',
++          first_name: 'Existing',
++          last_name: 'Confirmed'
++        ).tap(&:confirm)
++
++        post :magic_create, params: {
++          email: 'existing-confirmed@example.com',
++          login_intent: 'hire',
++          utm_source: 'SomeRawValue',
++          utm_campaign: 'Camp01',
++          internal_ref: 'ref-99',
++          utm_data: { utm_medium: 'email' }
++        }
++
++        expect(response).to have_http_status(:ok)
++
++        user.reload
++        expect(user.utm_source).to be_nil
++        expect(user.utm_campaign).to be_nil
++        expect(user.utm_data).to be_nil
++        expect(user.internal_ref).to be_nil
++      end
++    end
++
++    context 'when an unconfirmed user already exists' do
++      it 'resends confirmation and does not modify the attribution columns' do
++        user = User.create!(
++          email: 'existing-unconfirmed@example.com',
++          password: 'password',
++          password_confirmation: 'password',
++          first_name: 'Existing',
++          last_name: 'Unconfirmed'
++        )
++
++        post :magic_create, params: {
++          email: 'existing-unconfirmed@example.com',
++          login_intent: 'hire',
++          utm_source: 'SomeRawValue',
++          utm_campaign: 'Camp01',
++          internal_ref: 'ref-99',
++          utm_data: { utm_medium: 'email' }
++        }
++
++        expect(response).to have_http_status(:ok)
++
++        user.reload
++        expect(user.utm_source).to be_nil
++        expect(user.utm_campaign).to be_nil
++        expect(user.utm_data).to be_nil
++        expect(user.internal_ref).to be_nil
++      end
++    end
++  end
++
++  describe 'POST #create' do
++    it 'persists the four attribution values raw via sign_up_params' do
++      post :create, params: {
++        first_name: 'Pat',
++        last_name: 'Tester',
++        email: 'pw@example.com',
++        password: 'password',
++        utm_source: 'SomeRawValue',
++        utm_campaign: 'Camp01',
++        internal_ref: 'ref-99',
++        utm_data: { utm_medium: 'cpc' }
++      }
++
++      user = User.find_by(email: 'pw@example.com')
++      expect(user).to be_present
++      expect(user.utm_source).to eq 'SomeRawValue'
++      expect(user.utm_campaign).to eq 'Camp01'
++      expect(user.internal_ref).to eq 'ref-99'
++      expect(user.utm_data).to eq({ 'utm_medium' => 'cpc' })
++    end
++
++    it 'leaves all four columns nil when none of the params are sent' do
++      post :create, params: {
++        first_name: 'Pat',
++        last_name: 'Tester',
++        email: 'pw-no-utm@example.com',
++        password: 'password'
++      }
++
++      user = User.find_by(email: 'pw-no-utm@example.com')
++      expect(user).to be_present
++      expect(user.utm_source).to be_nil
++      expect(user.utm_campaign).to be_nil
++      expect(user.utm_data).to be_nil
++      expect(user.internal_ref).to be_nil
++    end
++  end
++end
+diff --git a/spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb b/spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb
+new file mode 100644
+index 000000000..fb316d19b
+--- /dev/null
++++ b/spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb
+@@ -0,0 +1,82 @@
++# frozen_string_literal: true
++
++require 'rails_helper'
++
++# Pins the keyword-form User.from_omniauth call in #google_oauth2 and the
++# string-key read of the session[:oauth_tracking] hash seeded by the omniauth
++# setup lambda (string keys mirror the :json cookie-serializer round-trip).
++#
++# The devise.mapping assignment in the before block is required: devise 4.8.1's
++# DeviseController runs prepend_before_action :assert_is_devise_resource!, which
++# raises AbstractController::ActionNotFound when request.env['devise.mapping'] is
++# unset in a controller spec; Devise::Test::ControllerHelpers does not set it, and
++# the action's own first-line mapping assignment runs too late to help.
++RSpec.describe Api::V1::Users::OmniauthCallbacksController, type: :controller do
++  include Devise::Test::ControllerHelpers
++
++  around do |example|
++    original_adapter = ActiveJob::Base.queue_adapter
++    ActiveJob::Base.queue_adapter = :test
++    example.run
++    ActiveJob::Base.queue_adapter = original_adapter
++  end
++
++  let(:user) do
++    User.create!(
++      email: 'sso-callback@example.com',
++      password: 'password',
++      password_confirmation: 'password',
++      first_name: 'Sso',
++      last_name: 'Callback'
++    ).tap(&:confirm)
++  end
++
++  before do
++    @request.env['devise.mapping'] = Devise.mappings[:api_v1_user]
++    request.env['omniauth.auth'] = OmniAuth::AuthHash.new(
++      info: { email: 'sso-callback@example.com', first_name: 'Sso', last_name: 'Callback' }
++    )
++    allow(User).to receive(:from_omniauth).and_return(user)
++  end
++
++  describe 'GET #google_oauth2' do
++    it 'calls from_omniauth with keywords and the string-key tracking values from the session' do
++      session[:oauth_tracking] = {
++        'partner' => 'wwr',
++        'referral' => 'someref',
++        'utm_source' => 'SomeRawValue',
++        'utm_campaign' => 'Camp01',
++        'utm_data' => { 'utm_medium' => 'cpc' },
++        'internal_ref' => 'ref-99'
++      }
++
++      get :google_oauth2
++
++      expect(User).to have_received(:from_omniauth).with(
++        auth: anything,
++        created_via: 'created_via_weworkremotely_referral',
++        partner_source: 'wwr',
++        utm_source: 'SomeRawValue',
++        utm_campaign: 'Camp01',
++        utm_data: { 'utm_medium' => 'cpc' },
++        internal_ref: 'ref-99'
++      )
++      expect(response).to redirect_to("#{Variables::AtsRootUrl}/")
++    end
++
++    it 'passes nil for all four attribution values when no tracking rode the session' do
++      get :google_oauth2
++
++      expect(User).to have_received(:from_omniauth).with(
++        auth: anything,
++        created_via: 'created_via_signup',
++        partner_source: nil,
++        utm_source: nil,
++        utm_campaign: nil,
++        utm_data: nil,
++        internal_ref: nil
++      )
++      expect(response).to redirect_to("#{Variables::AtsRootUrl}/")
++    end
++  end
++end
+diff --git a/spec/controllers/hire/confirmations_controller_spec.rb b/spec/controllers/hire/confirmations_controller_spec.rb
+new file mode 100644
+index 000000000..bbfd7475f
+--- /dev/null
++++ b/spec/controllers/hire/confirmations_controller_spec.rb
+@@ -0,0 +1,36 @@
++# frozen_string_literal: true
++
++require 'rails_helper'
++
++# Verifies the success redirect is the bare email_confirmed=true URL (no id or
++# email params), and that the failure redirect stays byte-identical.
++RSpec.describe Hire::ConfirmationsController, type: :controller do
++  around do |example|
++    original_adapter = ActiveJob::Base.queue_adapter
++    ActiveJob::Base.queue_adapter = :test
++    example.run
++    ActiveJob::Base.queue_adapter = original_adapter
++  end
++
++  describe 'GET #show' do
++    it 'redirects to the bare email_confirmed=true URL on successful confirmation' do
++      user = User.create!(
++        email: 'confirm+test@example.com',
++        password: 'password',
++        password_confirmation: 'password',
++        first_name: 'C',
++        last_name: 'T'
++      )
++
++      get :show, params: { confirmation_token: user.confirmation_token }
++
++      expect(response).to redirect_to('/auth?email_confirmed=true')
++    end
++
++    it 'redirects to the unchanged failure URL for an invalid token' do
++      get :show, params: { confirmation_token: 'not-a-real-token' }
++
++      expect(response).to redirect_to('/auth?email_confirmed=false')
++    end
++  end
++end
+diff --git a/spec/models/user_from_omniauth_spec.rb b/spec/models/user_from_omniauth_spec.rb
+new file mode 100644
+index 000000000..57386c7bc
+--- /dev/null
++++ b/spec/models/user_from_omniauth_spec.rb
+@@ -0,0 +1,86 @@
++# frozen_string_literal: true
++
++require 'rails_helper'
++
++# Pins the all-keyword User.from_omniauth interface and the creation-time-only
++# assignment of the four attribution values (utm_source, utm_campaign, utm_data,
++# internal_ref). Values are stored raw as sent; partner_source keeps its existing
++# downcasing behavior. Existing users are never modified — assignment happens only
++# inside the first_or_create block.
++RSpec.describe User, type: :model do
++  around do |example|
++    original_adapter = ActiveJob::Base.queue_adapter
++    ActiveJob::Base.queue_adapter = :test
++    example.run
++    ActiveJob::Base.queue_adapter = original_adapter
++  end
++
++  describe '.from_omniauth' do
++    let(:auth_hash) do
++      OmniAuth::AuthHash.new(
++        info: { email: 'sso-new@example.com', first_name: 'Sso', last_name: 'User' }
++      )
++    end
++
++    it 'creates a user with the four attribution values stored raw' do
++      user = User.from_omniauth(
++        auth: auth_hash,
++        created_via: 'created_via_signup',
++        partner_source: 'WWR',
++        utm_source: 'SomeRawValue',
++        utm_campaign: 'Camp01',
++        utm_data: { 'utm_medium' => 'cpc' },
++        internal_ref: 'ref-99'
++      )
++
++      expect(user).to be_persisted
++      expect(user.utm_source).to eq 'SomeRawValue'
++      expect(user.utm_campaign).to eq 'Camp01'
++      expect(user.utm_data).to eq({ 'utm_medium' => 'cpc' })
++      expect(user.internal_ref).to eq 'ref-99'
++      expect(user.partner_source).to eq 'wwr' # existing downcasing behavior, unchanged
++    end
++
++    it 'leaves all four columns nil when the keywords are omitted' do
++      user = User.from_omniauth(auth: auth_hash, created_via: 'created_via_signup')
++
++      expect(user).to be_persisted
++      expect(user.utm_source).to be_nil
++      expect(user.utm_campaign).to be_nil
++      expect(user.utm_data).to be_nil
++      expect(user.internal_ref).to be_nil
++    end
++
++    it 'does not assign attribution values to an existing user' do
++      User.create!(
++        email: 'sso-new@example.com',
++        password: 'password',
++        password_confirmation: 'password',
++        first_name: 'Already',
++        last_name: 'Here'
++      ).tap(&:confirm)
++
++      existing_user = nil
++      expect do
++        existing_user = User.from_omniauth(
++          auth: auth_hash,
++          created_via: 'created_via_signup',
++          utm_source: 'ShouldNotStick',
++          utm_campaign: 'ShouldNotStick',
++          utm_data: { 'utm_medium' => 'ShouldNotStick' },
++          internal_ref: 'ShouldNotStick'
++        )
++      end.not_to change(User, :count)
++
++      expect(existing_user.utm_source).to be_nil
++      expect(existing_user.utm_campaign).to be_nil
++      expect(existing_user.utm_data).to be_nil
++      expect(existing_user.internal_ref).to be_nil
++    end
++
++    it 'requires the auth and created_via keywords' do
++      expect { User.from_omniauth(created_via: 'created_via_signup') }.to raise_error(ArgumentError)
++      expect { User.from_omniauth(auth: auth_hash) }.to raise_error(ArgumentError)
++    end
++  end
++end

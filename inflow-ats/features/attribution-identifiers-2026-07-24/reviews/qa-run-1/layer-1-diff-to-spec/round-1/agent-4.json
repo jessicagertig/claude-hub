@@ -1,0 +1,22 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 4,
+  "focus": "fbp chain",
+  "findings": [],
+  "chain_verified": [
+    "1 PASS — sanitizeTrackingParams capture (app/javascript/shared/lib/utils.js): getCookieEntries splits each entry at indexOf('='), name = substring before first '=', getCookieValue matches by strict equality (cookieEntry.name === '_fbp', no startsWith); value = substring(separatorIndex + 1) so a value containing '=' survives untruncated; cookieValue.length === 0 entries skipped (empty-value cookie = absent); trackingParams.fbp set only under fbpCookieValue !== undefined (absent when cookie absent, never null/''); value passed through sanitizeTrackingValue(value, ATTRIBUTION_IDENTIFIER_MAX_LENGTH=1024) which applies only the 1024-code-unit slice with the trailing-lone-high-surrogate drop — no parsing, no hashing, no other transformation (spec §8.2 permits exactly the §5.1 cap)",
+    "2 PASS — AuthForm.tsx: fbp: trackingParams.fbp in the magicLink payload inside handleAuth; fbp={trackingParams.fbp} passed to GoogleSSOButton",
+    "3 PASS — SignupForm.tsx: fbp: trackingParams.fbp in the register mutation payload",
+    "4 PASS — GoogleSSOButton.tsx: Props gains fbp?: string; destructured; hidden input name=\"fbp\" rendered under typeof fbp === \"string\" && fbp.length > 0",
+    "5 PASS — useSession.ts: fbp destructured in BOTH register and magicLink; fbp?: string | null in the magicLink inline TS type; present in both variables objects; both apiPost calls omit skipKeysToSnake so allKeysToSnake runs (api.ts:52 → structure.js:104); lodash snakeCase('fbp') === 'fbp' verified by executing the installed lodash in node",
+    "6 PASS — sign_up_params (registrations_controller.rb): :fbp plain scalar permit, positioned before the trailing utm_data: {} which remains the last argument",
+    "7 PASS — #magic_create: fbp: sign_up_params[:fbp] present in BOTH branches of the two-branch user_params conditional (verified in committed file a0d59115d)",
+    "8 PASS — config/initializers/omniauth.rb: allowed_keys %w[] includes fbp",
+    "9 PASS — User.from_omniauth (user.rb): fbp: nil nil-defaulted keyword in the signature; omniauth_user.fbp = fbp assigned INSIDE the first_or_create block only — post-block code assigns only new_user_created_via_google_sso, remember_me, and names, so existing users logging in via SSO are untouched (verified in committed file)",
+    "10 PASS — omniauth_callbacks_controller.rb: fbp: merged_tracking['fbp'] (string key) in the from_omniauth call",
+    "11 PASS — OrganizationsController#create: @organization.fbp = current_user.fbp in the copy block",
+    "12 PASS — migrations: add_column :users, :fbp, :string (20260724183710) and add_column :organizations, :fbp, :string (20260724183711), bare add_column — nullable, no default, no index; committed schema.rb (git show a0d59115d:db/schema.rb) shows t.string \"fbp\" on both tables (lines 1098 organizations, 1301 users) with no fbp index or default",
+    "13 PASS — spec coverage per SPEC §10: registrations_controller_spec.rb persists fbp 'fb.1.1699999999.987654321' raw via magic_create and create, asserts nil when omitted, asserts fbp untouched in both existing-user contexts; user_from_omniauth_spec.rb persists fbp on creation, nil when keyword omitted, existing user 'ShouldNotStick' → stays nil; omniauth_callbacks_controller_spec.rb seeds session[:oauth_tracking]['fbp'] and asserts have_received(:from_omniauth) with fbp:, and the no-tracking example gains fbp: nil; organizations_controller_spec.rb asserts identical fbp copied from current_user and nil → nil"
+  ]
+}

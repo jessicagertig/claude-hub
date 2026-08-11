@@ -1,0 +1,65 @@
+{
+  "agent": 3,
+  "files_reviewed": [
+    "app/javascript/ats/src/views/jobApplications/PlatoOverviewCallout.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx"
+  ],
+  "comparisons": [
+    "app/javascript/ats/src/views/jobApplications/activities/AiJobApplicationSummaryFeedItem.tsx",
+    "app/javascript/ats/src/views/jobApplications/AiSummaryState.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx"
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+      "line": 397,
+      "severity": "HIGH",
+      "category": "spec-deviation",
+      "summary": "onOpen URL construction uses regex workaround because spec's recommended approach would navigate to wrong path",
+      "detail": "The spec (line 164) says to use `history.push(`${match.url}/ai`)`. The implementation uses `history.push(`${match.url.replace(/\\/[^/]+$/, \"\")}/ai`)`. The implementation is CORRECT and the spec is wrong. In JobApplicationContainer (lines 230-239), the Route for /overview renders JobApplicationActivity with `{...props}` then `{...renderProps}`. Since renderProps is spread second, `match.url` in the component ends in `/overview` (e.g., `/jobs/123/stages/456/applicants/789/overview`). The spec's `${match.url}/ai` would navigate to `/jobs/123/stages/456/applicants/789/overview/ai`, which is a non-existent route that would trigger the redirector. The regex correctly strips the last segment to produce `/jobs/123/stages/456/applicants/789/ai`. This is a spec-implementation mismatch where the implementation is right and the spec is wrong, but it should be documented.",
+      "recommendation": "The code is correct. The spec should be updated to reflect the regex approach, or the implementation should explicitly receive the parent container's match as a separate named prop (e.g., `containerMatch`) to avoid depending on regex parsing."
+    },
+    {
+      "id": "F2",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoOverviewCallout.tsx",
+      "line": 21,
+      "severity": "MED",
+      "category": "evaluation-order-deviation",
+      "summary": "PlatoOverviewCallout evaluates 'failed' before 'generating' statuses, opposite of PlatoTab order",
+      "detail": "The spec for PlatoOverviewCallout (line 103) says 'Evaluate in the same order as PlatoTab.' The PlatoTab spec (lines 57-64) evaluates: succeeded, generating (pending/in_progress/extracted), textract_processing, failed. The PlatoOverviewCallout implementation evaluates: succeeded (line 21), failed (line 29), then generating (line 33). The PlatoOverviewCallout's own table (lines 105-112) also lists Failed before Generating, so the implementation matches its own table. Since the conditions are mutually exclusive (a summary cannot be both 'failed' and 'pending'), this is functionally harmless. The spec contradicts itself (line 103 says 'same order as PlatoTab' but the callout table has a different order).",
+      "recommendation": "No code change needed -- behavior is correct since conditions are mutually exclusive. Optionally reorder to match PlatoTab order for consistency."
+    },
+    {
+      "id": "F3",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoOverviewCallout.tsx",
+      "line": 27,
+      "severity": "LOW",
+      "category": "null-guard",
+      "summary": "aiSummary.headline used as subtitle without null/undefined guard when status is 'succeeded'",
+      "detail": "Line 27: `subtitle = aiSummary.headline;` -- if `headline` is null or undefined, the subtitle renders as empty (React renders null/undefined as nothing). The Subtitle styled component has text-overflow: ellipsis set up for truncation, so an empty subtitle would just show nothing. This is unlikely in practice since 'succeeded' summaries should always have a headline, but there's no defensive fallback. The old AiJobApplicationSummaryFeedItem (line 131) also had no fallback: `{aiJobApplicationSummary.headline && <Styled.Headline>...}` -- it just skipped rendering entirely if headline was falsy.",
+      "recommendation": "Optionally add a fallback: `subtitle = aiSummary.headline || '';` or a more descriptive fallback string. Low priority since the succeeded state should always have a headline."
+    },
+    {
+      "id": "F4",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoOverviewCallout.tsx",
+      "line": 104,
+      "severity": "LOW",
+      "category": "pattern-mismatch",
+      "summary": "Connector tick uses hardcoded left: 28px instead of theme spacing token",
+      "detail": "The callout's ::after pseudo-element uses `left: 28px` (line 109) while the Styled.Event analog in JobApplicationActivity (line 670) uses `left: ${t.spacing[6]}` (which is typically 1.5rem/24px in most theme configurations). The spec says to match the feed connector pattern. The difference is that the callout card is wider and the 28px aligns the connector with the PlatoChip center (32px chip at ~13px gap from left edge), while the Event connector aligns with the event icon. The different left offset is intentional for visual alignment, but it's a hardcoded pixel value rather than a theme token.",
+      "recommendation": "No change needed -- the different offset is appropriate for aligning under the chip. Consider using a theme token or computed value if the card layout changes."
+    },
+    {
+      "id": "F5",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+      "line": 10,
+      "severity": "LOW",
+      "category": "dead-import-removal",
+      "summary": "Old AiJobApplicationSummaryFeedItem and AiSummaryState imports correctly removed per spec",
+      "detail": "The diff confirms both old imports (AiJobApplicationSummaryFeedItem and AiSummaryState) were removed and replaced with PlatoOverviewCallout. The old components are NOT deleted from the filesystem per spec (line 273: 'can be removed in a follow-up cleanup'). The FeatureFlipper import is retained as it's still used. This is correct.",
+      "recommendation": "No action needed."
+    }
+  ],
+  "summary": "The two assigned files are largely correct. The main finding (F1, HIGH) is that the onOpen URL construction in JobApplicationActivity deviates from the spec's literal recommendation (`${match.url}/ai`) by using a regex to strip the trailing path segment first. This deviation is correct behavior -- the spec's approach would navigate to a wrong path because `match` inside JobApplicationActivity is the Route-level match (ending in `/overview`), not the parent container's match. The remaining findings are low-severity: evaluation order matches the callout's own table despite a contradiction in the spec text, no null guard on headline (unlikely edge case), and a hardcoded pixel value for the connector offset. No logic errors, no broken edge cases, no error handling gaps."
+}

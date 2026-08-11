@@ -1,0 +1,71 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "findings": [
+    {
+      "id": "l1-001",
+      "type": "VIOLATION",
+      "title": "Route for /ai renders PlatoTab even when AI_APPLICANT_SUMMARY flag is off",
+      "spec_requirement": "Spec 'Constraints and requirements > Feature flag gating': 'the /ai route must redirect to /overview' when the feature is disabled. Spec 'Existing files to modify > JobApplicationContainer.tsx': 'Wrap the new route in <FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">'.",
+      "evidence": "JobApplicationContainer.tsx lines 278-287: the <Route path={match.path}/ai> is unconditional inside the <Switch>. The plan review (Pass 1 F1) correctly identified that wrapping a Route in FeatureFlipper breaks React Router v5 Switch path matching and removed the wrapper. However, the alternative (conditional possiblePaths) only prevents the redirector from sending users there -- it does not prevent the Route from matching when someone navigates to /ai directly. A user with flag off who hits /ai will see the PlatoTab. The correct approach is to conditionally render the Route element itself: {isAiEnabled && <Route ... />}.",
+      "recommendation": "Replace the unconditional <Route path={match.path}/ai> with {isAiEnabled && <Route path={match.path}/ai .../>}. This satisfies both the spec requirement (route gated by flag) and the React Router v5 constraint (no non-Route wrapper inside Switch). Also import FeatureFlipper is not needed if this approach is used -- the current imports (useFeatureFlipper + Features) are sufficient.",
+      "agents": [2, 6, 8]
+    },
+    {
+      "id": "l1-002",
+      "type": "VIOLATION",
+      "title": "useAiJobApplicationSummary called unconditionally, fires 404 request when no summary exists",
+      "spec_requirement": "Spec 'AI summary data fetching': 'use the shallow aiJobApplicationSummary from the jobApplication object for status checks, then fetch the full data only when status is succeeded and the rich layout needs rendering'.",
+      "evidence": "PlatoTab.tsx lines 532-535 (diff): useAiJobApplicationSummary is called with aiSummary?.id || 0 on every render regardless of summary state. When no summary exists (3 of 6 states) or status is not succeeded (2 more states), this sends a GET request to /ai_job_application_summaries/0 which returns 404. The hook does not have an 'enabled' option, so the fetch cannot be prevented at the call site without restructuring.",
+      "recommendation": "Either: (a) add an 'enabled' guard to the useQuery call inside useAiJobApplicationSummary.ts (e.g., enabled: !!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0), or (b) extract the succeeded-state rendering into a child component that owns the hook call (only mounts when status === 'succeeded').",
+      "agents": [2, 4, 8]
+    },
+    {
+      "id": "l1-003",
+      "type": "VIOLATION",
+      "title": "capitalize() applied to domain names not specified in spec",
+      "spec_requirement": "Spec section 4 (Domain label): 'Primary domain + secondary domain from structuredData.assessment.primaryDomain.name and structuredData.assessment.secondaryDomain.name'. The spec says to display the values as received -- no transformation is specified.",
+      "evidence": "PlatoTab.tsx lines 613, 654, 658: A capitalize() helper is defined and applied to primaryDomain and secondaryDomain names. The backend pipeline already normalizes domain names to lowercase (e.g., 'software engineering'), so capitalizing produces 'Software engineering'. This may be the intended behavior but it is not in the spec.",
+      "recommendation": "Either remove the capitalize() calls to match the spec exactly, or get explicit approval to keep them (in which case the spec should be amended).",
+      "agents": [3]
+    },
+    {
+      "id": "l1-004",
+      "type": "VIOLATION",
+      "title": "PlatoMark wrapper span uses inline style instead of Emotion styled component",
+      "spec_requirement": "Spec 'PlatoMark component': 'Must use Emotion styled components.' Spec 'Pattern to follow': WandIcon, which uses Emotion css prop.",
+      "evidence": "PlatoMark.tsx line 69: <span style={{ display: 'inline-flex', alignItems: 'center', color }}> uses a plain React style attribute instead of Emotion. The PlatoChip's Styled.Chip correctly uses Emotion.",
+      "recommendation": "Create a Styled.Wrapper Emotion styled component or use the Emotion css prop for the outer span.",
+      "agents": [1]
+    },
+    {
+      "id": "l1-005",
+      "type": "VIOLATION",
+      "title": "platoNavLinkStyles / PlatoNavItem missing required label property",
+      "spec_requirement": "Spec 'Emotion styled component conventions': 'Every styled component must have a label property for debugging.'",
+      "evidence": "JobApplicationSidebar.tsx lines 429-468 (diff): The platoNavLinkStyles function and resulting PlatoNavItem styled component do not include a label: property. The analog (NavItem.tsx linkStyles) also lacks one, but the spec requires it for all new styled components.",
+      "recommendation": "Add label: JobApplicationSidebar_PlatoNavItem; to the platoNavLinkStyles function.",
+      "agents": [7, 8]
+    }
+  ],
+  "spec_coverage": {
+    "total_requirements": 52,
+    "implemented": 47,
+    "missing": 0,
+    "deviating": 5,
+    "details": [
+      "PlatoMark.tsx: 12/13 requirements met (1 deviating: Emotion usage on wrapper)",
+      "PlatoTab state machine + container: all requirements met",
+      "PlatoTab succeeded layout: 10/10 sections correct except capitalize() addition",
+      "PlatoTab zero/generating/credit states: all requirements met except unconditional hook",
+      "PlatoOverviewCallout.tsx: all requirements met (0 findings)",
+      "JobApplicationContainer.tsx: route gating deviates from spec",
+      "JobApplicationSidebar.tsx: all requirements met except missing label",
+      "JobApplicationActivity.tsx: all requirements met (0 findings)",
+      "aiJobApplicationSummary.ts: all requirements met (0 findings)",
+      "Dark mode: all requirements met",
+      "Accessibility: all requirements met",
+      "Backward compatibility: all requirements met"
+    ]
+  }
+}

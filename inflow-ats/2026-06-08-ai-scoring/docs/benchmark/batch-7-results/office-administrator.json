@@ -1,0 +1,161 @@
+{
+  "meta": {
+    "batch": 7,
+    "criteria_prompt_version": 10,
+    "job_id": 24591,
+    "title": "Office Administrator",
+    "organization": "eeetwell",
+    "cost": 0.00061
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Eeetwell is looking for a dynamic, highly organized and motivated Admin to support our team and leadership. In this role you will wear several hats as an Executive Assistant to our CEO, and Office Manager for our distributed team. This is an Associate level position, with ample opportunity to grow within the company, for the motivated individual."
+      },
+      {
+        "heading": "What you’ll do:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Executive Support:\nCalendar management: scheduling, rescheduling, notifying contacts of schedule changes, confirming - make sure calendar invite is sent and has all information (attendees, time, date, location)\nArrange travel, transportation, and stay accommodations as needed (domestic and international) for the upper management\nAdministrative support: complete and submit paperwork and payments, filing, etc. for both business and personal needs - keep diligent and detailed accounts\nRun personal errands as needed\nAssist with scheduling for all executives as needed\n\nOffice Management:\nCoordinate office activities and operations to secure efficiency and compliance with company policies\nSupervise administrative staff and divide responsibilities to ensure performance\nManage phone calls and correspondence (e-mail, letters, packages etc.)\nCreate and update records and databases with personnel, financial and other data\nTrack stocks of office supplies and place orders when necessary\nSubmit timely reports and prepare presentations/proposals as assigned\nAssist colleagues whenever necessary"
+      },
+      {
+        "heading": "About you:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Highly organized\nPerfect command of the English language\nResults-oriented\nCommunication aficionado\nMinimum 2 years of experience in either office management or executive assistance"
+      },
+      {
+        "heading": "Perks of joining the eeetwell family:",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "An attractive salary in line with the industry standards\nComplimentary weekly greens and coffees from our healthy kitchen\nFlexible vacation and wellness time\n50% off your premium gym subscription at Fort Fitness\nMultiple discount opportunities through our partners’ network\nA collaborative and invested family of people who live our core values and have your back\nA clear career path with solid personal and professional development opportunities\nThe chance to make a real impact on the people and communities that surround us, both by growing them and by changing the way they think about food"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Calendar management: scheduling, rescheduling, notifying contacts of schedule changes, confirming - make sure calendar invite is sent and has all information (attendees, time, date, location)",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Calendar management: scheduling, rescheduling, notifying contacts of schedule changes, confirming - make sure calendar invite is sent and has all information (attendees, time, date, location)"
+      },
+      {
+        "text": "Arrange travel, transportation, and stay accommodations as needed (domestic and international) for the upper management",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Arrange travel, transportation, and stay accommodations as needed (domestic and international) for the upper management"
+      },
+      {
+        "text": "Administrative support: complete and submit paperwork and payments, filing, etc. for both business and personal needs - keep diligent and detailed accounts",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Administrative support: complete and submit paperwork and payments, filing, etc. for both business and personal needs - keep diligent and detailed accounts"
+      },
+      {
+        "text": "Run personal errands as needed",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Run personal errands as needed"
+      },
+      {
+        "text": "Assist with scheduling for all executives as needed",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Assist with scheduling for all executives as needed"
+      },
+      {
+        "text": "Coordinate office activities and operations to secure efficiency and compliance with company policies",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Coordinate office activities and operations to secure efficiency and compliance with company policies"
+      },
+      {
+        "text": "Supervise administrative staff and divide responsibilities to ensure performance",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Supervise administrative staff and divide responsibilities to ensure performance"
+      },
+      {
+        "text": "Manage phone calls and correspondence (e-mail, letters, packages etc.)",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Manage phone calls and correspondence (e-mail, letters, packages etc.)"
+      },
+      {
+        "text": "Create and update records and databases with personnel, financial and other data",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Create and update records and databases with personnel, financial and other data"
+      },
+      {
+        "text": "Track stocks of office supplies and place orders when necessary",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Track stocks of office supplies and place orders when necessary"
+      },
+      {
+        "text": "Submit timely reports and prepare presentations/proposals as assigned",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Submit timely reports and prepare presentations/proposals as assigned"
+      },
+      {
+        "text": "Assist colleagues whenever necessary",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Assist colleagues whenever necessary"
+      },
+      {
+        "text": "Highly organized",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"highly\"",
+        "binary": false,
+        "source_text": "Highly organized"
+      },
+      {
+        "text": "Perfect command of the English language",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"perfect\" is equivalent to a strong expectation",
+        "binary": false,
+        "source_text": "Perfect command of the English language"
+      },
+      {
+        "text": "Results-oriented",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Results-oriented"
+      },
+      {
+        "text": "Communication aficionado",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Communication aficionado"
+      },
+      {
+        "text": "Minimum 2 years of experience in either office management or executive assistance",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Minimum\"",
+        "binary": false,
+        "source_text": "Minimum 2 years of experience in either office management or executive assistance"
+      }
+    ]
+  }
+}

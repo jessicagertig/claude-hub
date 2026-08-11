@@ -1,0 +1,134 @@
+{
+  "meta": {
+    "batch": 23,
+    "criteria_prompt_version": 8,
+    "job_id": 28946,
+    "title": "Human Resources Coordinator",
+    "organization": "The Martin House Children's Advocacy Center",
+    "cost": 0.000536
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Job Title: Human Resources Coordinator\nType: Full Time\nLocation: Must Reside In USA\n\nJob Summary\nLooking for a unique opportunity to test and develop your skills as a human resources coordinator? If so, you will love the exciting, fast-paced environment and the incredible support you will experience as a member of our energetic team. Be at the center of everything and facilitate greater cooperation, communication and conflict resolution between employees and departments. Enjoy a deep level of fulfillment as you work daily to overcome challenges and move toward higher levels of success. If you are passionate about helping others and you want a career that gives you room to grow and advance, don't miss this opportunity to become part of something much bigger than yourself."
+      },
+      {
+        "heading": "Job Responsibilities",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "' Maintain, process and verify documentation related to personnel, including training, performance evaluations, classifications, grievances, staffing, employee leaves of absence and recruitment.\n' Explain company procedures, personnel policies and benefits to existing employees, new hires or job applicants.\n' Collect and file personnel records from employees or other departments in both electronic and hard copy form.\n' Record contact and other relevant information for each employee, including weekly earnings, supervisory performance reports, absences, addresses, sales or production amounts, and reasons for and dates of terminations.\n' Compile, prepare, and/or present personnel activity reports at weekly, monthly or quarterly meetings.\n' Answer pertinent questions regarding salaries, eligibility, benefits, examinations and other employee-related data.\n' Provide information for actions taken by, for or against personnel, and answer inquiries with information taken from employee files.\n' Request and file information that can be used to determine a job applicant's employment eligibility, including information from previous employers, law enforcement officials and other references."
+      },
+      {
+        "heading": "Job Skills & Qualifications",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Required\n' High school diploma or equivalent\n' Minimum of one year as an HR coordinator/associate\n' Ability to manage and handle sensitive materials and situations confidentially\n' Basic knowledge of HR compliance requirements, including state and federal labor laws\n' Proficiency in Microsoft Office\nPreferred\n' Spanish language proficiency"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Maintain, process and verify documentation related to personnel, including training, performance evaluations, classifications, grievances, staffing, employee leaves of absence and recruitment.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "' Maintain, process and verify documentation related to personnel, including training, performance evaluations, classifications, grievances, staffing, employee leaves of absence and recruitment."
+      },
+      {
+        "text": "Explain company procedures, personnel policies and benefits to existing employees, new hires or job applicants.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "' Explain company procedures, personnel policies and benefits to existing employees, new hires or job applicants."
+      },
+      {
+        "text": "Collect and file personnel records from employees or other departments in both electronic and hard copy form.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "' Collect and file personnel records from employees or other departments in both electronic and hard copy form."
+      },
+      {
+        "text": "Record contact and other relevant information for each employee, including weekly earnings, supervisory performance reports, absences, addresses, sales or production amounts, and reasons for and dates of terminations.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "' Record contact and other relevant information for each employee, including weekly earnings, supervisory performance reports, absences, addresses, sales or production amounts, and reasons for and dates of terminations."
+      },
+      {
+        "text": "Compile, prepare, and/or present personnel activity reports at weekly, monthly or quarterly meetings.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "' Compile, prepare, and/or present personnel activity reports at weekly, monthly or quarterly meetings."
+      },
+      {
+        "text": "Answer pertinent questions regarding salaries, eligibility, benefits, examinations and other employee-related data.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "' Answer pertinent questions regarding salaries, eligibility, benefits, examinations and other employee-related data."
+      },
+      {
+        "text": "Provide information for actions taken by, for or against personnel, and answer inquiries with information taken from employee files.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "' Provide information for actions taken by, for or against personnel, and answer inquiries with information taken from employee files."
+      },
+      {
+        "text": "Request and file information that can be used to determine a job applicant's employment eligibility, including information from previous employers, law enforcement officials and other references.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "' Request and file information that can be used to determine a job applicant's employment eligibility, including information from previous employers, law enforcement officials and other references."
+      },
+      {
+        "text": "High school diploma or equivalent",
+        "tier": "tier_1",
+        "tier_reasoning": "heading: 'Required'",
+        "binary": true,
+        "source_text": "' High school diploma or equivalent"
+      },
+      {
+        "text": "Minimum of one year as an HR coordinator/associate",
+        "tier": "tier_1",
+        "tier_reasoning": "heading: 'Required'",
+        "binary": false,
+        "source_text": "' Minimum of one year as an HR coordinator/associate"
+      },
+      {
+        "text": "Ability to manage and handle sensitive materials and situations confidentially",
+        "tier": "tier_1",
+        "tier_reasoning": "heading: 'Required'",
+        "binary": false,
+        "source_text": "' Ability to manage and handle sensitive materials and situations confidentially"
+      },
+      {
+        "text": "Basic knowledge of HR compliance requirements, including state and federal labor laws",
+        "tier": "tier_1",
+        "tier_reasoning": "heading: 'Required'",
+        "binary": false,
+        "source_text": "' Basic knowledge of HR compliance requirements, including state and federal labor laws"
+      },
+      {
+        "text": "Proficiency in Microsoft Office",
+        "tier": "tier_1",
+        "tier_reasoning": "heading: 'Required'",
+        "binary": false,
+        "source_text": "' Proficiency in Microsoft Office"
+      },
+      {
+        "text": "Spanish language proficiency",
+        "tier": "tier_2",
+        "tier_reasoning": "heading: 'Preferred'",
+        "binary": false,
+        "source_text": "' Spanish language proficiency"
+      }
+    ]
+  }
+}

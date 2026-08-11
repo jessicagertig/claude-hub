@@ -1,0 +1,24 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 4,
+  "agent_index": 4,
+  "slice": "migration + enum + uniqueness invariant",
+  "findings": [],
+  "prior_finding_review": {
+    "r3-l1-a4-001": "FIX VERIFIED — 549039a0c adds one line (`SubscriptionEvent.last.update_column(:created_at, 10.minutes.ago)`) plus an explanatory comment between the two perform_invoice_paid deliveries. Traced against the committed interactor: the 5-minute dedupe is `organization.subscription_events.where(event_params).where('created_at >= ?', 5.minutes.ago)`, so a created_at of 10.minutes.ago exits the window and the second delivery is enforced only by conversion_duplicate_exists? / the partial unique index. StripeWebhookHandlerJob#perform has no event-id idempotency (Stripe::Event.retrieve is stubbed per delivery), so the second delivery genuinely reaches the writer. Falsifiability: deleting the guard AND index makes the second save succeed, count changes by 2, and both `change(...).by(1)` and the CONVERSION_EVENT_TYPES count==1 assertions fail; deleting the guard alone leaves the index+RecordNotUnique rescue backstop (invariant intact, example correctly still passes). update_column skips callbacks and the fan-out is `after_commit on: :create`, so no re-fire. Minimal: no other duplicate-delivery changes in the commit (the logger-assertion additions in the ledger-failure example are r3-l1-a9-001, agent 9's finding)."
+  },
+  "verified": [
+    "Migration 20260725033136_add_stripe_subscription_id_and_amount_to_subscription_events.rb: exactly two add_column calls — :stripe_subscription_id :string and :amount :integer, both nullable (no null: false, no defaults); single-column partial unique index on stripe_subscription_id with where: 'event_type IN (2, 8)' named idx_subscription_events_conversion_stripe_sub_id; no backfill, no currency column; ActiveRecord::Migration[6.1] per spec §3",
+    "Committed db/schema.rb hunks: exactly two column lines (t.string stripe_subscription_id, t.integer amount), one partial unique index line (where: '(event_type = ANY (ARRAY[2, 8]))' — Postgres normalization of IN (2,8)), and the version bump 2026_07_24_183711 -> 2026_07_25_033136; nothing else in the schema diff",
+    "Enum: trial_started: 7 and trial_converted_to_paid: 8 added; converted_to_paid: 2 unchanged (inter-hunk context, byte-identical); 0/1/3/4/5/6 untouched; grep of the full diff for downgraded_to_free/upgraded_plan/downgraded_plan shows only comment lines and unchanged enum lines — no writers for 4/5/6 anywhere in the diff",
+    "Comment block above the enum corrected: all nine value labels (0-8) now match the actual enum mapping (the old block mislabeled 0, duplicated 1, and off-by-one'd 2-5); D2 main-plan-only comment present naming OrganizationAiCreditPurchase / AiCreditBalanceTransaction",
+    "CONVERSION_EVENT_TYPES = %w[converted_to_paid trial_converted_to_paid].freeze on SubscriptionEvent — the enum names for 2 and 8 exactly",
+    "Interactor guard conversion_duplicate_exists? queries SubscriptionEvent.where(event_type: CONVERSION_EVENT_TYPES).where(stripe_subscription_id: ...) — by stripe_subscription_id alone, unscoped to organization, matching the single-column partial index per spec §3; check-first placement is before the 5-minute dedupe and before build per §6; guard applies only when event_type is conversion-type AND stripe_subscription_id present, per §6",
+    "RecordNotUnique backstop: method-level rescue in CreateSubscriptionEvent#call logs and context.fail!s with the same graceful message — raced index violation is a graceful no-op, never raised to callers",
+    "Guard-order fix (§6): return unless organization now precedes the two ap logging lines; nil-organization interactor spec asserts no raise and success",
+    "Interactor uniqueness tests non-vacuous: cross-type check-first tests (converted_to_paid blocking trial_converted_to_paid and vice versa) fail if guard+index are both deleted (second row would persist, failure? false, count 2); the RecordNotUnique backstop test stubs conversion_duplicate_exists? false to isolate the index+rescue path — it fails on rescue deletion (raise reaches the example) and on index deletion (save succeeds, failure? false)",
+    "Repaired duplicate-delivery webhook example at 549039a0c: backdate exits the dedupe window; guard+index deletion now fails both assertions (see prior_finding_review)",
+    "D11 glance (not my slice): the app/jobs/stripe_webhook_handler_job.rb diff contains exactly the two sanctioned additive rescue-isolated blocks at the ends of the invoice.paid main-plan else-branch and subscription.deleted main else-branch — nothing else in that file"
+  ]
+}

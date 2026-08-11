@@ -1,0 +1,87 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 5,
+  "agent_index": 10,
+  "slice": "reverse traceability",
+  "findings": [],
+  "hunk_map": [
+    {
+      "file": "app/jobs/stripe_webhook_handler_job.rb",
+      "hunk": "@@ -208,6 +208,20 @@ subscription.deleted else-branch: additive begin/rescue block appended after EngagementReport::GeneratorJob line",
+      "traces_to": "SPEC §5.3 (SANCTIONED INSERTION 2): if organization conditional, CreateSubscriptionEvent.call(organization:, event_type: 'canceled_subscription', to_plan: organization.plan, stripe_subscription_id:), own rescue StandardError with logged context. Zero deletion lines. D11 delicacy satisfied."
+    },
+    {
+      "file": "app/jobs/stripe_webhook_handler_job.rb",
+      "hunk": "@@ -295,6 +309,26 @@ invoice.paid main-plan else-branch: additive begin/rescue block appended after organization_ai_credit_balance&.reset_ai_credits",
+      "traces_to": "SPEC §5.2 (SANCTIONED INSERTION 1) + §4 predicate (object.amount_paid.to_i > 0; stripe_subscription.trial_end.present? if/else per D10), call args per §5.2 incl. amount: object.amount_paid, from_plan nil (SPEC-PROPOSED), own rescue. Zero deletion lines. Exactly two hunks in the file total — §11.5 delicacy audit passes."
+    },
+    {
+      "file": "app/models/organization.rb",
+      "hunk": "@@ -1128,7 +1128,7 @@ subscription_started_trial_after_commit? branch: Discord::NotifyFreeTrialStartedJob line replaced by CreateSubscriptionEvent.call",
+      "traces_to": "SPEC §5.1: add trial_started writer call, remove Discord enqueue (moves to fan-out); Notification::FreeTrialStartedJob and organization_ai_credit_balance&.reset_ai_credits byte-identical in context."
+    },
+    {
+      "file": "app/models/organization.rb",
+      "hunk": "@@ -1136,7 +1136,6 @@ trial_converted_to_paid_after_commit? branch: Discord::NotifyTrialConvertedToPaidJob line removed",
+      "traces_to": "SPEC §5.1 second paragraph: remove the Discord line only; Slack line stays. Nothing else in organization.rb changes — confirmed."
+    },
+    {
+      "file": "app/jobs/notification/paid_subscription_deleted_job.rb",
+      "hunk": "@@ -10,7 +10,6 @@ and @@ -18,10 +17,6 @@ discord(organization_id, ended_at) call + private discord method removed (5 deletions)",
+      "traces_to": "SPEC §2 removal shape verbatim: line-13 call AND private discord method (21–23) removed; ended_at param and @ended_at assignment stay (blocks/@ended_at Slack timestamp intact); slack method byte-identical."
+    },
+    {
+      "file": "app/interactors/create_subscription_event.rb",
+      "hunk": "guard-order fix (return unless organization moved above the two ap lines); optional stripe_subscription_id/amount merged into event_params when present; conversion_duplicate_exists? check-first guard before build with graceful context.fail!; ActiveRecord::RecordNotUnique rescue backstop; private conversion_duplicate_exists? querying by stripe_subscription_id alone",
+      "traces_to": "SPEC §6 all four bullets: guard-order fix, optional params, check-first uniqueness guard (single-column query matches §3 invariant), RecordNotUnique backstop treated as same graceful no-op; D10 style (return unless bail-outs). 5-minute dedupe and free-plan behavior untouched in context lines."
+    },
+    {
+      "file": "app/models/subscription_event.rb",
+      "hunk": "CONVERSION_EVENT_TYPES constant; main-plan-only comment; corrected enum comment block; enum gains trial_started: 7, trial_converted_to_paid: 8 (0/1 untouched); after_commit :handle_after_commit_on_create on: :create; if/elsif fan-out (PostHog all four types, Discord per table, canceled Discord gated on organization.subscription_canceled_at.present?); enqueue_posthog_track with return unless organization&.owner; posthog_properties (amount, stripe_subscription_id, stripe_customer_id, to_plan + 13 attribution fields, .compact); attribution_value if/elsif/else with explicit nil",
+      "traces_to": "SPEC §1.2/§3 (enum + comments + main-plan comment, D2/D3), §7 full table (incl. nil subscription_canceled_at → Discord skip, PostHog still fires; assigned_free_plan* → nothing via no-else), D9/D10 (owner-first attribution_value shape, no .presence), §7 helper placement SPEC-PROPOSED (private model methods, analog Organization#handle_after_commit_on_update style incl. ap line). email/organization_id/organization_name/plan not duplicated; billing_interval omitted per §7."
+    },
+    {
+      "file": "db/migrate/20260725033136_add_stripe_subscription_id_and_amount_to_subscription_events.rb",
+      "hunk": "new file: add_column stripe_subscription_id :string, add_column amount :integer, partial unique single-column index on stripe_subscription_id where event_type IN (2, 8), name idx_subscription_events_conversion_stripe_sub_id",
+      "traces_to": "SPEC §3 exactly (both columns nullable no defaults, single-column partial unique index; index name/syntax SPEC-PROPOSED; analog 20260723222212_add_adroll_click_id_to_users.rb shape + add_index)."
+    },
+    {
+      "file": "db/schema.rb",
+      "hunk": "version 2026_07_24_183711 → 2026_07_25_033136; t.string stripe_subscription_id; t.integer amount; partial unique index on subscription_events",
+      "traces_to": "SPEC §3 + §3 schema commit rule: exactly two column lines + one partial-index line + version bump, nothing else. Unstaged working-tree schema residue ignored per orchestrator directive."
+    },
+    {
+      "file": "spec/jobs/stripe_webhook_handler_subscription_events_spec.rb",
+      "hunk": "predicate matrix (amount_paid 0/positive × trial_end present/absent, Stripe::Subscription.retrieve stubbed); duplicate-delivery example with created_at backdate via update_column; event-sourced subscription-id examples (invoice.paid distinct id; subscription.deleted stale id skipping sync_with_stripe); success-path existing-behavior example; invoice.paid ledger-failure example (reset_ai_credits + have_received(:call) + insertion-specific logger regex); subscription.deleted row + intact-branch example (sync_with_stripe asserted); subscription.deleted ledger-failure example; nil-organization example with not_to have_received logger pin; Notification::PaidSubscriptionDeletedJob direct-perform Discord-not-enqueued example",
+      "traces_to": "SPEC §9.1 (analog stripe_webhook_handler_ai_credits_spec.rb, constructed events through the handler, predicate matrix, duplicate delivery → exactly one row, canceled_subscription row, existing branch behavior byte-identical incl. ledger-failure isolation) + QA findings l1-a2-001 (7574df408: reset_ai_credits in failure example), r2-l1-a3-001 (e850c74fe: sync_with_stripe have_received), r3-l1-a4-001 + r3-l1-a9-001 (549039a0c: backdate past 5-min dedupe; have_received(:call) + insertion-own logger message), r4-l1-a3-001 (nil-org logger pin), r4-l1-a9-002/a9-005 (subscription.deleted ledger-failure mirror), r4-l1-a9-004 (event-sourced id pins a+b; the 33dffbe3e helper-signature deletions parameterize subscription_id for this finding), r4-l1-a7-001 (direct PaidSubscriptionDeletedJob perform with Slack stub)."
+    },
+    {
+      "file": "spec/interactors/create_subscription_event_spec.rb",
+      "hunk": "two check-first uniqueness-guard examples (cross-type, with not_to have_received raced-index logger pin); RecordNotUnique backstop example (conversion_duplicate_exists? stubbed false); new-params-persisted example; params-absent nil-columns + dedupe-unchanged example; assigned_free_plan 5-min dedupe example; nil-organization guard-order example (:test queue adapter around-block)",
+      "traces_to": "SPEC §9.2 (uniqueness guard graceful fail no raise, new params persisted, free-plan + 5-min dedupe untouched) + §6 guard-order fix + r4-l1-a5-001 (33dffbe3e: check-first-vs-backstop logger discriminator in both guard examples). Pipeline rule 31 around-block present."
+    },
+    {
+      "file": "spec/models/subscription_event_fanout_spec.rb",
+      "hunk": "exact full enum-mapping example; per-event_type fan-out examples (trial_started, trial_converted_to_paid, converted_to_paid no-Discord-of-any-class, canceled_subscription with/without subscription_canceled_at); assigned_free_plan* enqueue-nothing; update!/destroy! no-fire (on: :create pin); no-owner → no PostHog (Discord still enqueues); all-13 attribution owner-wins/org-fallback example asserting every key + .compact + default_properties keys absent; amount present on conversion / absent on canceled",
+      "traces_to": "SPEC §9.3 full checklist (queue adapter :test per rule 31, no ghost tests) + r4-l1-a9-003 (33dffbe3e: exact enum mapping, one location only — confirmed absent from the interactor spec), r4-l1-a6-001 (on: :create pin), r4-l1-a6-002 (all-13 attribution matrix; the 33dffbe3e deletions replaced the prior 2-field example, i.e. 'extend the attribution example(s)' per the run-4 report)."
+    },
+    {
+      "file": "spec/models/organization_subscription_events_spec.rb",
+      "hunk": "nil→trialing example: trial_started row + Slack job + Discord exactly once via fan-out + reset_ai_credits have_received; trialing→active example: Slack only, no row, no trial-converted Discord",
+      "traces_to": "SPEC §9.4 (nil→trialing creates the row; removed Discord lines no longer enqueue from the callback; Slack jobs still do) + r4-l1-a9-001 (33dffbe3e: reset_ai_credits stub + have_received)."
+    }
+  ],
+  "verified": [
+    "Branch shape: git log --oneline a0d59115d..33dffbe3e = exactly 5 commits (89286fba8 feature + 7574df408, e850c74fe, 549039a0c, 33dffbe3e); each fix commit's --stat is spec-file-only (1, 1, 1, and 4 spec files respectively; zero app/db files).",
+    "Every hunk in the full diff walked and mapped; zero untraced hunks. The 33dffbe3e deletion lines (15) are all helper-signature parameterization for r4-l1-a9-004 and the r4-l1-a6-002 attribution-example replacement — no unrelated removals.",
+    "File list matches SPEC §2 exactly: 6 modified (subscription_event.rb, create_subscription_event.rb, stripe_webhook_handler_job.rb, organization.rb, paid_subscription_deleted_job.rb, db/schema.rb) + 1 created migration + 4 created spec files (per §9 names) = 11 files in --stat. No extras.",
+    "D11/§11.5 delicacy audit: app/jobs/stripe_webhook_handler_job.rb diff is exactly two hunks, both purely additive (0 deletion lines), both rescue-isolated, both appended at the sanctioned END-of-else-branch insertion points (§5.2 after reset_ai_credits; §5.3 after EngagementReport::GeneratorJob). No branch reordering, no attribute-access changes, no cleanup.",
+    "§10 out-of-scope sweep clean: no upgraded_plan/downgraded_plan/downgraded_to_free writers (only sanctioned enum-comment fixes and the r4-l1-a9-003 enum-pin test); no Slack job migrations (Notification::* enqueue sites untouched; paid_subscription_deleted_job.rb slack method byte-identical); no Discord job for converted_to_paid; no CAPI/ad-platform sends; no billing_interval property (grep clean); no currency column; no backfill; assigned_free_plan* behavior unchanged; sync_with_stripe untouched; no other webhook branch touched; no AI-credit path touched; Discord::Notify* job FILES untouched (git diff empty for app/jobs/discord).",
+    "db/schema.rb hunks: exactly two column additions (stripe_subscription_id string, amount integer) + the partial unique index (event_type = ANY (ARRAY[2, 8])) + version bump 2026_07_24_183711 → 2026_07_25_033136; nothing else.",
+    "Spec-file fix hunks all trace to qa-run-{1,2,3,4} FAILURE-REPORT finding ids or §9 requirements (per-finding mapping in hunk_map).",
+    "§11.6 rollout misclassification is a disclosed spec risk (OPEN QUESTION for Jessica) — not re-reported.",
+    "Migration matches §3 invariant precisely: single-column partial unique index on stripe_subscription_id where event_type IN (2, 8); interactor guard queries by stripe_subscription_id alone — index and guard agree.",
+    "D10 style verified at all new decision points: value selection via if/elsif/else (subscription_event_type assignment, attribution_value), bail-outs as return unless guards, no .presence anywhere in the diff."
+  ]
+}

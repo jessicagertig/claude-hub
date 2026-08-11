@@ -1,0 +1,29 @@
+{
+  "agent": 4,
+  "focus": "JobApplicationContainer + JobApplicationSidebar",
+  "findings": [],
+  "verified_requirements": [
+    "JobApplicationContainer: PlatoTab imported from @ats/src/views/jobApplications/PlatoTab (line 17)",
+    "JobApplicationContainer: Route path is ${match.path}/ai (line 276)",
+    "JobApplicationContainer: Route placed after /notes route (notes route ends at line 274, ai route at lines 275-284)",
+    "JobApplicationContainer: Route placed before redirector() call (line 286)",
+    "JobApplicationContainer: Route renders PlatoTab with jobApplication prop (line 281)",
+    "JobApplicationContainer: possiblePaths is static array ['overview', 'resume', 'messages', 'files', 'notes', 'ai'] -- user-approved override of spec sections 4 possiblePaths, FeatureFlipper wrapping, and useFeatureFlipper/Features imports",
+    "JobApplicationSidebar: PlatoChip imported from @ats/src/components/shared/PlatoMark (line 13)",
+    "JobApplicationSidebar: FeatureFlipper imported from @ats/src/components/shared/FeatureFlipper (line 14)",
+    "JobApplicationSidebar: isPropValid imported from @emotion/is-prop-valid (line 4)",
+    "JobApplicationSidebar: Box imported from @shared/components/Box (line 16)",
+    "JobApplicationSidebar: Text imported from @shared/components/Text (line 17)",
+    "JobApplicationSidebar: NavLink imported from react-router-dom (line 5)",
+    "JobApplicationSidebar: PlatoNavItem is styled(NavLink, { shouldForwardProp: isPropValid }) (line 471)",
+    "JobApplicationSidebar: Plato nav item wrapped in <FeatureFlipper feature='AI_APPLICANT_SUMMARY'> (lines 99-107)",
+    "JobApplicationSidebar: PlatoNavItem links to ${match.url}/ai (line 100)",
+    "JobApplicationSidebar: PlatoChip rendered with size={22} radius={6} (line 102)",
+    "JobApplicationSidebar: 'Plato' label text rendered inside <Text> (line 103)",
+    "JobApplicationSidebar: chevron-right icon rendered via <Icon name='chevron-right'> (line 105)",
+    "JobApplicationSidebar: platoNavLinkStyles copies linkStyles from NavItem.tsx lines 56-95 verbatim -- all properties match: height, border-radius, margins, paddings, flex, text-decoration, transition, > svg opacity transitions, .active state, ${breakpoint.sm} responsive hover gate with height:32px, loudText/loudHover/secondaryText tokens",
+    "JobApplicationSidebar: PlatoNavLabel replicates StyledLabel inner wrapper pattern from NavItem.tsx lines 103-118 -- display:flex, align-items:center, overflow:hidden, ${Text} truncation styles present; icon-slot adaptation uses '> span:first-of-type' instead of 'svg' (correct adaptation since PlatoChip renders as a <span>, not <svg>)",
+    "JobApplicationSidebar: Emotion label property present on PlatoNavItem styled component (label: JobApplicationSidebar_PlatoNavItem) and PlatoNavLabel (label: JobApplicationSidebar_PlatoNavLabel)",
+    "JobApplicationSidebar: Plato nav entry placed after last NavItem (Private notes, line 98) and before closing </Styled.Nav>"
+  ]
+}

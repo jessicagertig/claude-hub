@@ -1,0 +1,8 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 5,
+  "agent_index": 5,
+  "findings": [],
+  "notes": "Scenario: password signup Api::V1::RegistrationsController#create WITHOUT any attribution params => expect all four attribution columns nil, utm_data nil (never {}). Steps: (1) qa_harness cleanup + seed default-user-and-org.json (both succeeded, 29 seed steps). (2) POST http://app.lvh.me:5007/api/v1/sign_up (Content-Type: application/json), body ONLY {first_name:'NoAttr', last_name:'Tester', email:'noattr-1784596438@example.com', password:'password123'} -- NO utm_source/utm_campaign/utm_data/internal_ref/partner. HTTP RESULT: status 200, body returned created user id=39322 hash_id=4ovznzpd6ab9 created_via='created_via_signup' organization_id=null. (3) test_frr /tmp/agent5_verify.rb (bash -lic login-shell + cd repo form) loaded User.find_by(email:...). DB VALUES observed: user.id=39322; utm_source=nil; utm_campaign=nil; internal_ref=nil; utm_data=nil; utm_data.class=NilClass; utm_data.nil?=true; utm_data == {} => false. ALL_FOUR_NIL=true, empty-hash-fallback=false. Confirms utm_data is genuinely nil (NilClass) and NOT a fabricated {} empty-hash fallback; the sign_up_params `utm_data: {}` permit produces nil (not {}) when absent because the key is not present in the request. RESULT PASS -- correct spec-compliant behavior (absent => nil column, utm_data NEVER {}). No findings."
+}

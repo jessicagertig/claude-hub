@@ -1,0 +1,22 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 2,
+  "focus": "ga_session_id chain",
+  "findings": [],
+  "chain_verified": [
+    "1. sanitizeTrackingParams capture rule (utils.js) — PASS: gaSessionCookieEntries = cookieEntries.filter(name.indexOf('_ga_') === 0) — prefix match that excludes bare _ga; serialized name + '=' + value, joined '; '; assigned only when length > 0 so field ABSENT otherwise (no null/'' fabrication); getCookieEntries skips empty-value cookies (cookieValue.length === 0 return) and takes value as substring after the FIRST '=' (indexOf-based split); cap via sanitizeTrackingValue(joined, ATTRIBUTION_IDENTIFIER_MAX_LENGTH=1024) applied to the FINAL joined string with the surrogate-safe trailing-lone-high-surrogate rule; plain string, not jsonb",
+    "2. AuthForm.tsx — PASS: gaSessionId: trackingParams.gaSessionId in the magicLink payload and gaSessionId={trackingParams.gaSessionId} passed to GoogleSSOButton",
+    "3. SignupForm.tsx — PASS: gaSessionId: trackingParams.gaSessionId in the register mutation payload",
+    "4. GoogleSSOButton.tsx — PASS: gaSessionId?: string in Props; destructured; hidden input name='ga_session_id' under exact guard typeof gaSessionId === 'string' && gaSessionId.length > 0; plain single-value input, not the utm_data[<key>] nested form",
+    "5. useSession.ts — PASS: destructured in BOTH register and magicLink; gaSessionId?: string | null in the magicLink inline type; present in BOTH variables objects; apiPost → apiMutate runs allKeysToSnake(variables) with no modifyValues (app/javascript/shared/queryHooks/api.ts:52), so keys only are transformed — a string value is returned as-is by allKeysToSnake (not isPlainObject/isArray) and survives byte-exact; lodash snakeCase('gaSessionId') = 'ga_session_id'; no skipKeysToSnake on these two calls",
+    "6. sign_up_params — PASS: :ga_session_id plain scalar permit, before the trailing utm_data: {} which remains the last argument",
+    "7. #magic_create — PASS: ga_session_id: sign_up_params[:ga_session_id] in BOTH branches of the two-branch user_params conditional (verified in committed registrations_controller.rb)",
+    "8. omniauth.rb allowed_keys — PASS: ga_session_id present; setup lambda reads rack_request.params[key] and stores into session[:oauth_tracking] via `tracking_params[key] = value if value && !value.empty?` — no truncation or transformation of the value",
+    "9. User.from_omniauth — PASS: ga_session_id: nil keyword in the signature; omniauth_user.ga_session_id = ga_session_id assigned inside the first_or_create block only; post-block code (assign_attributes, names update, enqueue_complete_user_setup) untouched",
+    "10. OmniauthCallbacksController#google_oauth2 — PASS: ga_session_id: merged_tracking['ga_session_id'] in the from_omniauth call (string key, matching the session hash)",
+    "11. OrganizationsController#create — PASS: @organization.ga_session_id = current_user.ga_session_id in the copy block, before authorize @organization",
+    "12. Migrations — PASS: add_column :users, :ga_session_id, :string (20260724183710) and add_column :organizations, :ga_session_id, :string (20260724183711); string not jsonb, bare add_column (nullable, no default, no index); committed schema.rb (git show a0d59115d:db/schema.rb) shows t.string 'ga_session_id' on organizations (line 1096) and users (line 1299)",
+    "13. Four extended spec files — PASS: registrations_controller_spec.rb uses raw_ga_session_id = '_ga_ABC123XYZ=GS1.1.1699999999.5.1.1699999999.0.0.0; _ga_DEF456=GS1.1.2.3' (contains '=', '.', and ';') asserted byte-exact via eq in both magic_create and create paths, plus nil and existing-user-untouched cases; user_from_omniauth_spec.rb same '=' '.' ';' value asserted eq, omitted→nil, existing user untouched; omniauth_callbacks_controller_spec.rb seeds session ga_session_id and both exhaustive have_received(:from_omniauth) expectations include it (value and nil forms); organizations_controller_spec.rb asserts copied ga_session_id eq current_user's and nil→nil"
+  ]
+}

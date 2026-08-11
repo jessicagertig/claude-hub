@@ -1,0 +1,233 @@
+{
+  "criteria": [
+    {
+      "original": {
+        "text": "Strong programming experience in Go (Golang) for production backend systems.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"strong\"",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Strong programming experience in Go (Golang) for production backend systems."
+      },
+      "action": "keep",
+      "reasoning": "This criterion is a single requirement focused on programming experience in Go, with no distinct sub-requirements to decompose.",
+      "decomposed": [
+
+      ]
+    },
+    {
+      "original": {
+        "text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"solid\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+      },
+      "action": "decompose",
+      "reasoning": "This criterion contains multiple distinct requirements related to Kubernetes, which can be separated for clarity.",
+      "decomposed": [
+        {
+          "text": "Solid understanding of Kubernetes cluster design",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        },
+        {
+          "text": "Solid understanding of Kubernetes deployments",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        },
+        {
+          "text": "Solid understanding of Kubernetes autoscaling",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        },
+        {
+          "text": "Solid understanding of Kubernetes service mesh or networking",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        },
+        {
+          "text": "Solid understanding of stateful vs stateless workloads in Kubernetes",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"experience with\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers."
+      },
+      "action": "keep",
+      "reasoning": "This criterion is a single requirement focused on experience with Terraform or similar tools, with no distinct sub-requirements to decompose.",
+      "decomposed": [
+
+      ]
+    },
+    {
+      "original": {
+        "text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"experience in\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+      },
+      "action": "decompose",
+      "reasoning": "This criterion contains multiple distinct requirements related to cloud platforms, which can be separated for clarity.",
+      "decomposed": [
+        {
+          "text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"experience in\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+        },
+        {
+          "text": "Experience managing services in cloud platforms such as AWS, GCP, or Azure",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"experience in\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+        },
+        {
+          "text": "Experience managing network in cloud platforms such as AWS, GCP, or Azure",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"experience in\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+        },
+        {
+          "text": "Experience managing compute in cloud platforms such as AWS, GCP, or Azure",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"experience in\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+        },
+        {
+          "text": "Experience managing storage in cloud platforms such as AWS, GCP, or Azure",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"experience in\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+        },
+        {
+          "text": "Experience managing security in cloud platforms such as AWS, GCP, or Azure",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"experience in\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"understanding of\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control. (https://www.convox.com/product)"
+      },
+      "action": "keep",
+      "reasoning": "This criterion is a single requirement focused on understanding PaaS products, with no distinct sub-requirements to decompose.",
+      "decomposed": [
+
+      ]
+    },
+    {
+      "original": {
+        "text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"strong\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+      },
+      "action": "decompose",
+      "reasoning": "This criterion contains multiple distinct requirements related to CI/CD and developer tooling, which can be separated for clarity.",
+      "decomposed": [
+        {
+          "text": "Familiarity with CI/CD pipelines",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"strong\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+        },
+        {
+          "text": "Familiarity with developer tooling",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"strong\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+        },
+        {
+          "text": "Exposure to marketplace or cloud provider integrations",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"strong\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "Ability to work cross functionally",
+        "tier": "tier_1",
+        "tier_reasoning": "soft skills cap at tier_2",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+      },
+      "action": "keep",
+      "reasoning": "This criterion is a single requirement focused on the ability to work cross-functionally, with no distinct sub-requirements to decompose.",
+      "decomposed": [
+
+      ]
+    },
+    {
+      "original": {
+        "text": "Thrive within a fast moving product engineering environment",
+        "tier": "tier_1",
+        "tier_reasoning": "soft skills cap at tier_2",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+      },
+      "action": "keep",
+      "reasoning": "This criterion is a single requirement focused on thriving in a fast-moving environment, with no distinct sub-requirements to decompose.",
+      "decomposed": [
+
+      ]
+    }
+  ]
+}

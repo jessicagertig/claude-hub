@@ -1,0 +1,111 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has extensive experience building backend services in Go (MediaLab.la, Parser Digital, Cinemad.tv) and has worked on DBaaS projects (Theorem). While there is evidence of building services, there is no direct evidence of building a PaaS specifically."
+    },
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists Kubernetes, Terraform, AWS, GCP, and Azure in their skills and mentions working with Kubernetes-based infrastructure at Cinemad.tv and Terraform modules at Theorem."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience in multi-tenant SaaS (Tracetest.io) and managed infrastructure (Theorem DBaaS), but direct experience maintaining multi-cloud racks in customer accounts is not explicitly detailed."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has significant experience in CLI standardization (Tracetest.io), CI/CD workflows (Tracetest.io, Cinemad.tv), and observability (Grafana/OpenTelemetry at MediaLab.la and Tracetest.io)."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with monitoring and observability (Grafana, distributed tracing) and scaling, but does not explicitly detail multi-cloud failover strategy implementation."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has clear evidence of leadership, mentorship, and conducting code reviews throughout their career, including as an Engineering Manager and Technical Lead."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive Go experience across multiple companies, specifically mentioning Go microservices at Parser Digital, Theorem, and Cinemad.tv."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate includes Kubernetes in their core technical skills and has a history of managing Kubernetes-based infrastructure (Cinemad.tv, Theorem)."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Terraform in their skills and mentions working on Terraform modules at Theorem."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists AWS, GCP, and Azure in their technical skills."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate worked on a DBaaS (Database-as-a-Service) product at Theorem, which is a form of PaaS, but did not work on a general-purpose PaaS."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has deep experience with CI/CD (GitHub Actions, ArgoCD, custom pipelines) and developer tooling (CLI work at Tracetest.io)."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not mention experience with publishing or integrating into cloud marketplaces."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has worked in multi-cloud skill sets (AWS, GCP, Azure), but explicit experience managing hybrid/multi-cloud deployments is not clearly outlined."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate mentions leading the transition to multi-tenant SaaS at Tracetest.io and designing scalable backend systems for high-throughput platforms."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate worked on an OpenTelemetry-based platform at Tracetest.io and mentions distributed tracing and systems design throughout their career."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate specifically mentions introducing distributed tracing with Grafana and overall observability improvements."
+    }
+  ],
+  "computed_score": {
+    "points": 58.0,
+    "max": 72,
+    "percentage": 80.6
+  }
+}

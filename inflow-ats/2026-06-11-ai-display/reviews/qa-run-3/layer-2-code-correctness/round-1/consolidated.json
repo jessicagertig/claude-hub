@@ -1,0 +1,68 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "run": 3,
+  "findings": [
+    {
+      "id": "l2-001",
+      "severity": "HIGH",
+      "title": "Header Regenerate button and stale banner action have no zero-credits guard",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "lines": "349, 144",
+      "description": "When totalRemaining is 0, clicking Regenerate (header) or the stale banner action calls handleGenerate, which the backend rejects. The user sees a generic error toast with no path to buy credits. The empty/failed states correctly degrade to the buy-credits pattern via renderCreditsAction, but the succeeded state bypasses this. The spec says 'When credits are zero and a generate action would be shown, show the existing buy-credits pattern' -- Regenerate is a generate action.",
+      "recommendation": "Add a credit check to both the header Regenerate button and the stale banner action. When totalRemaining is 0, show the buy-credits pattern (admin link or non-admin modal) instead of the generate action.",
+      "agents": [1]
+    },
+    {
+      "id": "l2-002",
+      "severity": "HIGH",
+      "title": "Infinite redirect loop when feature flag toggles off while user is on /ai tab",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+      "lines": "154-162",
+      "description": "The useEffect sets currentViewPath to 'ai' when the user visits the AI tab. When isAiEnabled becomes false, the effect re-runs but does not clear currentViewPath (the if block doesn't execute because 'ai' is no longer in possiblePaths). currentViewPath stays 'ai'. The redirector redirects to /ai. The /ai Route is gone (conditional). No route matches. Infinite redirect loop.",
+      "recommendation": "Add an else branch: if currentView is not in possiblePaths, reset currentViewPath to 'overview'. This handles the flag-toggle and bookmark-with-disabled-flag edge cases.",
+      "agents": [2]
+    }
+  ],
+  "med_findings": [
+    {
+      "id": "l2-m1",
+      "severity": "MED",
+      "title": "Credit hint copy uses string comparison for branching",
+      "file": "PlatoTab.tsx",
+      "line": 86,
+      "agent": 1
+    },
+    {
+      "id": "l2-m2",
+      "severity": "MED",
+      "title": "Kebab button renders without functionality",
+      "file": "PlatoTab.tsx",
+      "line": 354,
+      "agent": 1
+    },
+    {
+      "id": "l2-m3",
+      "severity": "MED",
+      "title": "PlatoMark in FitHeader uses hardcoded gray[700] without dark mode variant",
+      "file": "PlatoTab.tsx",
+      "line": 171,
+      "agent": 5
+    },
+    {
+      "id": "l2-m4",
+      "severity": "MED",
+      "title": "PlatoOverviewCallout evaluates failed before generating (vs PlatoTab order)",
+      "file": "PlatoOverviewCallout.tsx",
+      "agent": 3
+    },
+    {
+      "id": "l2-m5",
+      "severity": "MED",
+      "title": "AiAssessment type marks careerNarrative/experienceClassifications optional but backend requires them",
+      "file": "aiJobApplicationSummary.ts",
+      "line": 22,
+      "agent": 4
+    }
+  ]
+}

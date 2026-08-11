@@ -1,0 +1,116 @@
+<h2>Unsubscribed State: What converts?</h2>
+<p class="subtitle">Three different approaches for the unsubscribed experience. Click to pick a direction.</p>
+
+<div style="display: flex; flex-direction: column; gap: 24px;">
+
+  <!-- Option A: Full takeover -->
+  <div class="option" data-choice="a" onclick="toggleSelect(this)" style="cursor: pointer; padding: 0; border-radius: 8px; overflow: hidden;">
+    <div style="display: flex; align-items: stretch;">
+      <div style="padding: 16px 20px; display: flex; align-items: center;">
+        <div class="letter">A</div>
+      </div>
+      <div style="flex: 1;">
+        <div class="mockup" style="margin: 12px 12px 12px 0; border-radius: 6px;">
+          <div class="mockup-header">A: Full page takeover — settings hidden until subscribed</div>
+          <div class="mockup-body" style="padding: 0;">
+            <div style="padding: 40px 32px; text-align: center; background: linear-gradient(180deg, rgba(99,102,241,0.04) 0%, transparent 100%);">
+              <div style="font-size: 28px; margin-bottom: 8px;">✦</div>
+              <div style="font-size: 18px; font-weight: 600; margin-bottom: 6px;">AI Candidate Summaries</div>
+              <div style="font-size: 13px; opacity: 0.5; max-width: 420px; margin: 0 auto 24px;">Instantly analyze every resume — get structured insights on experience, skills, gaps, and job fit. One credit per summary.</div>
+              <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 20px;">
+                <button class="mock-button" style="background: rgb(99,102,241); color: white; border: none; padding: 10px 24px; font-size: 13px; font-weight: 500;">Choose a plan</button>
+                <button class="mock-button" style="font-size: 13px; padding: 10px 20px;">Buy credits</button>
+              </div>
+              <div style="font-size: 11px; opacity: 0.35;">Settings and permissions available after activating</div>
+            </div>
+          </div>
+        </div>
+        <div style="padding: 0 12px 12px 0; font-size: 12px; opacity: 0.5;">Clean and focused. But hides settings — admin can't pre-configure permissions before subscribing.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: CTA hero + settings visible below -->
+  <div class="option" data-choice="b" onclick="toggleSelect(this)" style="cursor: pointer; padding: 0; border-radius: 8px; overflow: hidden;">
+    <div style="display: flex; align-items: stretch;">
+      <div style="padding: 16px 20px; display: flex; align-items: center;">
+        <div class="letter">B</div>
+      </div>
+      <div style="flex: 1;">
+        <div class="mockup" style="margin: 12px 12px 12px 0; border-radius: 6px;">
+          <div class="mockup-header">B: CTA banner at top, settings still accessible below</div>
+          <div class="mockup-body" style="padding: 0;">
+            <!-- CTA banner -->
+            <div style="padding: 24px; margin: 16px; background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.06)); border: 1px solid rgba(99,102,241,0.12); border-radius: 8px;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <div style="font-size: 15px; font-weight: 600; margin-bottom: 3px;">Get AI candidate summaries</div>
+                  <div style="font-size: 12px; opacity: 0.5;">Structured insights on every applicant — experience, skills, gaps, fit</div>
+                </div>
+                <div style="display: flex; gap: 8px; flex-shrink: 0;">
+                  <button class="mock-button" style="background: rgb(99,102,241); color: white; border: none; padding: 8px 18px; font-size: 12px; font-weight: 500;">Choose a plan</button>
+                  <button class="mock-button" style="font-size: 12px; padding: 8px 14px; opacity: 0.6;">Buy credits</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="border-top: 1px solid rgba(128,128,128,0.1); margin: 0 16px;"></div>
+
+            <!-- Settings still visible -->
+            <div style="padding: 16px 24px;">
+              <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.3; font-weight: 600; margin-bottom: 8px;">Summary Generation</div>
+              <div style="height: 8px; width: 60%; background: rgba(128,128,128,0.08); border-radius: 3px; margin-bottom: 6px;"></div>
+              <div style="height: 8px; width: 40%; background: rgba(128,128,128,0.08); border-radius: 3px; margin-bottom: 16px;"></div>
+              <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.3; font-weight: 600; margin-bottom: 8px;">Hiring Team Permissions</div>
+              <div style="height: 8px; width: 55%; background: rgba(128,128,128,0.08); border-radius: 3px; margin-bottom: 6px;"></div>
+              <div style="height: 8px; width: 45%; background: rgba(128,128,128,0.08); border-radius: 3px;"></div>
+            </div>
+          </div>
+        </div>
+        <div style="padding: 0 12px 12px 0; font-size: 12px; opacity: 0.5;">Admin can set up permissions before subscribing. CTA is prominent but doesn't hide the page.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option C: Inline where balance would be -->
+  <div class="option" data-choice="c" onclick="toggleSelect(this)" style="cursor: pointer; padding: 0; border-radius: 8px; overflow: hidden;">
+    <div style="display: flex; align-items: stretch;">
+      <div style="padding: 16px 20px; display: flex; align-items: center;">
+        <div class="letter">C</div>
+      </div>
+      <div style="flex: 1;">
+        <div class="mockup" style="margin: 12px 12px 12px 0; border-radius: 6px;">
+          <div class="mockup-header">C: CTA replaces balance section only — same page layout</div>
+          <div class="mockup-body" style="padding: 0;">
+            <!-- CTA where balance would be -->
+            <div style="padding: 20px 24px;">
+              <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.4; font-weight: 600; margin-bottom: 10px;">Credit Balance</div>
+              <div style="padding: 16px; border: 1px dashed rgba(99,102,241,0.25); border-radius: 6px; background: rgba(99,102,241,0.03);">
+                <div style="font-size: 13px; font-weight: 500; margin-bottom: 3px;">No active plan</div>
+                <div style="font-size: 11px; opacity: 0.5; margin-bottom: 12px;">Subscribe or buy credits to start generating AI summaries</div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="mock-button" style="background: rgb(99,102,241); color: white; border: none; padding: 6px 14px; font-size: 11px;">Choose a plan</button>
+                  <button class="mock-button" style="font-size: 11px; padding: 6px 12px; opacity: 0.6;">Buy credits</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="border-top: 1px solid rgba(128,128,128,0.1);"></div>
+
+            <!-- Rest of page unchanged -->
+            <div style="padding: 16px 24px;">
+              <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.3; font-weight: 600; margin-bottom: 8px;">Summary Generation</div>
+              <div style="height: 8px; width: 60%; background: rgba(128,128,128,0.08); border-radius: 3px; margin-bottom: 6px;"></div>
+              <div style="height: 8px; width: 40%; background: rgba(128,128,128,0.08); border-radius: 3px; margin-bottom: 16px;"></div>
+              <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.3; font-weight: 600; margin-bottom: 8px;">Hiring Team Permissions</div>
+              <div style="height: 8px; width: 55%; background: rgba(128,128,128,0.08); border-radius: 3px; margin-bottom: 6px;"></div>
+              <div style="height: 8px; width: 45%; background: rgba(128,128,128,0.08); border-radius: 3px;"></div>
+            </div>
+          </div>
+        </div>
+        <div style="padding: 0 12px 12px 0; font-size: 12px; opacity: 0.5;">Subtle. Same page structure subscribed or not — CTA swaps in where the balance cells would be. Least disruptive but least compelling.</div>
+      </div>
+    </div>
+  </div>
+
+</div>

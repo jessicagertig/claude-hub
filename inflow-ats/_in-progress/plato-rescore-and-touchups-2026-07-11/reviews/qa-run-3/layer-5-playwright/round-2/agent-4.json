@@ -1,0 +1,24 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 4,
+  "assignment": "Interview overestimate block + tooltip + shortfall at balance 16, and checked-state block removal (display only, no submit)",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc.). Clicked 'Senior Engineer' → candidates view opened on Inbox.",
+    "Clicked Interview stage link (badge 55). Page 1 rendered 50 rows (Aja Swaniawski … Linette Farrell). Did NOT scroll the list.",
+    "Clicked the stage-name Select-All checkbox next to the 'Interview' heading — all 50 visible row checkboxes became checked.",
+    "Opened the Bulk options three-dot menu at the top right of the candidate-list header → clicked 'Run Plato reviews'. 'Review candidates' modal opened.",
+    "UNCHECKED byte-assert PASS: paragraph textContent === \"Up to 55 of the 55 candidates selected from this hiring stage don't have a Plato review yet. Each successful review uses one AI credit. You are short 39 credits. The first 16 candidates will get reviews generated; the rest will be skipped.\" (55 − 16 = 39 vs displayed balance 16). innerHTML confirms shortfall bolded as <b>39</b>. Generate reviews button enabled (disabled=false).",
+    "Overestimate info block PASS: div with emotion label BulkGenerateAiSummariesConfirmModal_Info directly beneath the body copy, containing an alert-circle svg (circle r=10 + vertical lines, Icon_Icon class) and span 'This count may be an overestimate.'",
+    "HOVER tooltip byte-assert PASS: hovering the info block rendered tooltip text === \"This is not an exact count of candidates without a review. If fewer candidates than stated above are unreviewed, only those unreviewed candidates will be reviewed, and fewer credits will be consumed.\" (visible in screenshot).",
+    "CHECKED byte-assert PASS: after checking the 'Also re-review candidates that already have a review' checkbox (input name=rescore, checked=true), paragraph textContent === \"The 55 candidates selected from this hiring stage will be reviewed, including candidates that already have a review. Each successful review uses one AI credit. You are short 39 credits. The first 16 candidates will get reviews generated; the rest will be skipped.\" — 'Up to ' prefix GONE, overestimate info block GONE (span absent from DOM), <b>39</b> bold, Generate reviews enabled (disabled=false).",
+    "Clicked Cancel — modal closed. Did NOT submit at any point.",
+    "Console check: 7 total error-level entries, all known pre-existing noise (4× react-router history deprecation, 2× 'Store does not have a valid reducer', 1× heap-api.com 404). Zero feature-referencing errors (no rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summaries failures, no React errors)."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-4/agent-4-01-unchecked-overestimate.png",
+    "/tmp/qa-run-3-l5/agent-4/agent-4-02-overestimate-tooltip.png",
+    "/tmp/qa-run-3-l5/agent-4/agent-4-03-checked-state.png"
+  ],
+  "findings": []
+}

@@ -1,0 +1,21 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 5,
+  "assignment": "IN-FLIGHT (first extraction running) state, job 28058 'QA In Flight', SPEC §8.2 state 1. Latest AiJobCriteria is in_progress with no criteria. Verify never-extracted EmptyState underlying content with the action button in a backend-driven LOADING state, no View criteria button, and reload persistence of the loading state.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (org Acme Inc.). Jobs list rendered with 'QA In Flight' (28058) visible.",
+    "Clicked 'QA In Flight' heading → landed on /jobs/28058/stages/196351/applicants (job page).",
+    "Clicked 'Job setup' left-nav link → /jobs/28058/setup/details (setup sidebar appeared).",
+    "Clicked 'Plato AI settings' sidebar item → /jobs/28058/setup/ai. 'Plato AI settings' content shows 'Plato reviews' section then the 'Job criteria' section (heading level 4).",
+    "Job criteria section (pre-reload): intro paragraph with inline 'job description' link (→ /jobs/28058/setup/description). Body = EmptyState: file-text icon, heading 'No job criteria have been generated', message 'Plato extracts scoring criteria when you publish the job, or you can generate them now.' — the never-extracted underlying content (state 5). Action row: single button labeled 'Generate criteria' rendered [disabled] with a loading spinner (dots '· · ·' replacing the text). NO 'View criteria' button present. Right sidebar 'Criteria tiers' glossary (Core/Preferred/Bonus) present. Screenshot 01 captured.",
+    "RELOAD PERSISTENCE test: navigated again to http://app.lvh.me:5007/jobs/28058/setup/ai (full page load, re-fetches backend payload). After reload the same EmptyState 'No job criteria have been generated' rendered and the 'Generate criteria' button was STILL [disabled] with the loading spinner still showing — proving the loading state is driven by the fetched in_progress payload status, not ephemeral local mutation state. Still NO 'View criteria' button. Screenshot 02 captured.",
+    "Console (level error, all): 7 errors — 1 heap-api.com 404, 4 react-router history deprecation warnings, 2 'Store does not have a valid reducer' Redux warnings. All match the KNOWN pre-existing list in the nav map. No new feature-referencing errors (no aiJobCriteria / JobCriteria / useAiJobCriteria / /ai_job_criteria failures / criteria-section React errors).",
+    "Did NOT click the Generate/Regenerate button; did not open the confirm modal; no cleanup."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-5/01-inflight-criteria-section.png",
+    "/tmp/qa-run-3-l5/agent-5/02-inflight-after-reload.png"
+  ],
+  "findings": []
+}

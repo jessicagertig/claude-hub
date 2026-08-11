@@ -1,0 +1,80 @@
+{
+  "agent": 2,
+  "scope": "PlatoOverviewCallout card on Overview tab",
+  "run": "qa-run-6 / layer-5 / round-1",
+  "tested_url": "http://app.lvh.me:5007/jobs/17773/stages/124384/applicants/13501/overview",
+  "candidate": "Alonso Parker (applicant 13501)",
+  "job": "Software Engineer (job 17773)",
+  "screenshots": [
+    "/Users/jessica/claude-hub/inflow-ats/2026-06-11-ai-display/.playwright-mcp/agent-2-01-overview-tab-full.png",
+    "/Users/jessica/claude-hub/inflow-ats/2026-06-11-ai-display/.playwright-mcp/agent-2-02-callout-card.png",
+    "/Users/jessica/claude-hub/inflow-ats/2026-06-11-ai-display/.playwright-mcp/agent-2-03-plato-tab-after-click.png",
+    "/Users/jessica/claude-hub/inflow-ats/2026-06-11-ai-display/.playwright-mcp/agent-2-04-overview-after-return.png"
+  ],
+  "findings": {
+    "overall": "PASS",
+    "checks": [
+      {
+        "id": "C1",
+        "description": "Overview tab is selected by default on candidate view",
+        "result": "PASS",
+        "detail": "URL ended at /overview and Overview tab link was active on initial load"
+      },
+      {
+        "id": "C2",
+        "description": "PlatoOverviewCallout card present in activity feed",
+        "result": "PASS",
+        "detail": "Button 'Plato needs a resume Add one to this candidate and Plato can review them. View' found at top of activity feed (ref e359/e426)"
+      },
+      {
+        "id": "C3",
+        "description": "Callout card has PlatoChip gradient icon",
+        "result": "PASS",
+        "detail": "img element (ref e363/e430) present as first child of the callout button"
+      },
+      {
+        "id": "C4",
+        "description": "Callout card title is 'Plato needs a resume' (no-resume state)",
+        "result": "PASS",
+        "detail": "Title text 'Plato needs a resume' confirmed in snapshot (ref e367/e434)"
+      },
+      {
+        "id": "C5",
+        "description": "Callout card subtitle present",
+        "result": "PASS",
+        "detail": "Subtitle text 'Add one to this candidate and Plato can review them.' confirmed (ref e368/e435)"
+      },
+      {
+        "id": "C6",
+        "description": "Callout card CTA label on the right",
+        "result": "PASS",
+        "detail": "CTA text 'View' with trailing img confirmed in right-side container (ref e369/e436)"
+      },
+      {
+        "id": "C7",
+        "description": "Clicking callout card navigates to Plato tab (/ai route)",
+        "result": "PASS",
+        "detail": "URL changed from /overview to /jobs/17773/stages/124384/applicants/13501/ai after click"
+      },
+      {
+        "id": "C8",
+        "description": "Plato tab content visible after navigation",
+        "result": "PASS",
+        "detail": "Plato tab heading 'Plato' and 'Plato needs a resume' h2 with description text visible in snapshot"
+      },
+      {
+        "id": "C9",
+        "description": "Callout still present after returning to Overview tab",
+        "result": "PASS",
+        "detail": "Overview tab link showed [active] on return; callout button (ref e426) present in activity feed with identical content"
+      },
+      {
+        "id": "C10",
+        "description": "No console errors",
+        "result": "PASS",
+        "detail": "0 errors, 0 warnings across all 184 console messages for the full session"
+      }
+    ]
+  },
+  "issues": []
+}

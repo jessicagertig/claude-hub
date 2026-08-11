@@ -1,0 +1,171 @@
+{
+  "scores": [
+    {
+      "criterion_text": "[tier_2] Design, build, and maintain backend services in Go that power our PaaS",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience building Go-based APIs and backend services at Swif.ai, but does not explicitly mention experience building a PaaS (Platform as a Service)."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to develop APIs, scheduler and orchestrator logic in Go",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has strong experience developing APIs in Go but lacks explicit experience with orchestrator or scheduler logic."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to develop integrations with cloud providers using Go",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with cloud-native tooling and Prometheus, but no specific evidence of building integrations with cloud provider APIs (like AWS/GCP SDKs)."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to build internal tooling in Go",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly states they built a Go-based command-line tool for TSDB block upload/download during their time contributing to Prometheus."
+    },
+    {
+      "criterion_text": "[tier_2] Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate lists Kubernetes, AWS, and Terraform in their skill set and has used them in projects, but no specific experience working in a team to manage multi-cloud infrastructure."
+    },
+    {
+      "criterion_text": "[tier_2] Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of experience architecting or maintaining multi-cloud environments for customers."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to deliver features for developers to improve CLI usage",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate developed a Go-based command-line tool for TSDB block management and enhanced 'promtool' functionality."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to enhance CI/CD workflows",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate integrated JUnit-format XML test result support into promtool to improve CI integration and processing."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to enable marketplace and cloud provider integrations",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence provided regarding cloud marketplace integrations."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to create better observability and logging experiences",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate worked on Prometheus observability features and implemented a Wazuh API layer for vulnerability/alert data display."
+    },
+    {
+      "criterion_text": "[tier_2] Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate has experience with monitoring (Prometheus/Grafana) and security policies (Wazuh), but lacks experience with multi-cloud failover strategies."
+    },
+    {
+      "criterion_text": "[tier_2] Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate participated in open-source contributions (CNCF/Prometheus) which involves code review processes, but lacks explicit leadership or mentoring experience."
+    },
+    {
+      "criterion_text": "[tier_1] Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate was a Golang Backend Developer at a YC-backed startup and contributed Go code to the CNCF Prometheus project."
+    },
+    {
+      "criterion_text": "[tier_1] Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Candidate lists Kubernetes in skills and has used it in projects, but no evidence provided for advanced topics like cluster design or service mesh."
+    },
+    {
+      "criterion_text": "[tier_2] Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate lists Terraform as a skill, but does not provide details on its application to manage infrastructure."
+    },
+    {
+      "criterion_text": "[tier_2] Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate lists AWS as a skill but provides no specific context on managing services or networking within a cloud environment."
+    },
+    {
+      "criterion_text": "[tier_2] A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of knowledge regarding PaaS internal architecture."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with CI/CD pipelines",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Candidate lists GitHub Actions as a skill and demonstrated work enhancing CI integration for Prometheus."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with developer tooling",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Candidate has developed CLI tools for Prometheus and integrated developer-focused features."
+    },
+    {
+      "criterion_text": "[tier_2] Exposure to marketplace or cloud provider integrations",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence found."
+    },
+    {
+      "criterion_text": "[tier_2] Excellent communication skills",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Experience with open-source contributions and pull requests implies professional communication, but no direct evidence of communication skills (e.g., presentations, technical writing)."
+    },
+    {
+      "criterion_text": "[tier_2] Ability to work cross functionally",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Open-source work shows the ability to work within a community, but no direct evidence of cross-functional team experience in a corporate setting."
+    },
+    {
+      "criterion_text": "[tier_2] Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence found."
+    },
+    {
+      "criterion_text": "[tier_2] Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence found."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate has worked with TSDB blocks and query logic optimization, showing some exposure to system design, but no evidence of high availability or multi-tenant architecture experience."
+    },
+    {
+      "criterion_text": "[tier_2] Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Explicitly lists experience as a Prometheus Open Source Contributor and working on TSDB blocks."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Candidate has extensive experience with Prometheus, Grafana, and Elasticsearch (ELK stack) listed in skills and project experience."
+    }
+  ],
+  "computed_score": {
+    "points": 99.0,
+    "max": 164,
+    "percentage": 60.4
+  }
+}

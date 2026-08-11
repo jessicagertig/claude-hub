@@ -1,0 +1,31 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 6,
+  "focus_area": "Frontend display-state derivation, criteria card/count-rail, empty states, action row, button labels & loading/disabled guards, tier metadata, and JobSetupAiSettings wiring",
+  "files_reviewed": [
+    "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/jobCriteriaTiers.ts",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAiSettings.tsx"
+  ],
+  "findings": [
+    {
+      "id": "l2-a6-001",
+      "severity": "LOW",
+      "title": "Dead `history` prop declared, passed, and never used in JobCriteriaSection",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+      "line": 22,
+      "description": "Props declares `history: any` (line 22) and JobSetupAiSettings passes it (`<JobCriteriaSection job={passedJob} history={props.history} />`, JobSetupAiSettings.tsx:107), but the component destructures only `{ job }` (line 25) and never references `history`. Navigation to the job description is done via a react-router `<Link>` (line 40), not `history.push`. The prop is harmless dead code (no crash if `props.history` is undefined), but it is unused and slightly misleading.",
+      "recommendation": "Drop `history` from the Props interface and from the call site in JobSetupAiSettings.tsx:107, since the section navigates with `<Link>` and never touches the router prop."
+    },
+    {
+      "id": "l2-a6-002",
+      "severity": "LOW",
+      "title": "isInFlight includes react-query isFetching, so the Regenerate button briefly disables on any background refetch",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+      "line": 70,
+      "description": "`isInFlight = isPayloadStatusInFlight || isFetching` (line 70) drives both `loading` and `disabled` on the action button (lines 160-161). `isFetching` is true for ANY background refetch (e.g. react-query's default refetchOnWindowFocus), not only the post-regenerate refetch, so tabbing away and back momentarily shows the Regenerate/Generate button in a loading+disabled state even though no extraction is running. This is spec-sanctioned (SPEC 8.3 defines isInFlight as 'payload status in-flight OR ... the query is refetching'), so it is spec-compliant, not a defect — recording only as a minor UX observation. Note it also correctly prevents any double-submit, which is the important behavior.",
+      "recommendation": "No change required (spec-compliant). If the transient loading flash is undesirable, gate on the mutation's own refetch rather than global isFetching."
+    }
+  ]
+}

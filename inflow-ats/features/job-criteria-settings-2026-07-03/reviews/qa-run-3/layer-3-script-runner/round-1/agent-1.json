@@ -1,0 +1,20 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 1,
+  "focus": "Zero-criteria review guard in ValidateAiSummaryGeneration (manual single-review entry point -> 422). SPEC.md section 6.2.1; app/interactors/validate_ai_summary_generation.rb line 30.",
+  "scenarios_run": [
+    "Built a FULLY VALID job_application against RAILS_ENV=test: in-script org+user+job(with description)+candidate+job_application; enabled AI_APPLICANT_SUMMARY globally (Flipper.enable, non-destructive); stubbed only the two not-under-test preconditions has_resume (ActiveStorage-backed method, not a column) and ai_credits_available? (BRIEF-sanctioned). Verified all four pre-guard preconditions PASS so ONLY the zero-criteria guard can produce a failure.",
+    "FAIL case ZC#0: latest AiJobCriteria = failed + 'No criteria sections found in job description' -> ValidateAiSummaryGeneration.call returns failure? == true AND error == exact zero-criteria message.",
+    "FAIL case ZC#1: latest = failed + 'No criteria extracted from job description' -> failure? == true AND error == exact zero-criteria message.",
+    "FAIL case ZC#2: latest = failed + 'Criteria array is empty' -> failure? == true AND error == exact zero-criteria message.",
+    "CONTROL: latest = succeeded -> guard does NOT fire (error != zero-criteria msg; result.success? == true, proceeds past guard to textract branch).",
+    "CONTROL: latest = pending -> guard does NOT fire (success, error nil).",
+    "CONTROL: latest = in_progress -> guard does NOT fire (success, error nil).",
+    "CONTROL: latest = failed with non-zero-criteria message 'Job description is blank' -> guard does NOT fire (success, error nil).",
+    "CONTROL: no ai_job_criteria rows at all -> latest_ai_job_criteria nil, zero_criteria_extraction_failure? falsy -> guard does NOT fire (success).",
+    "CONTROL: in_progress row created AFTER (created_at newer than) a zero-criteria failed row -> latest resolves to in_progress -> guard does NOT fire (success).",
+    "Falsifiability proof: for a zero-criteria latest row the failure carries EXACTLY the zero-criteria message and NOT the description/credits/resume/flipper messages; and every control that would still pass if the guard line were deleted was paired with a FAIL case (zero-criteria latest) that flips failure? from false to true, so the FAIL assertions are falsifiable by deleting line 30."
+  ],
+  "findings": []
+}

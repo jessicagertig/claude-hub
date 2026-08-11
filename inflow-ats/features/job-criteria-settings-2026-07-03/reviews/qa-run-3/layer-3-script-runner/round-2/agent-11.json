@@ -1,0 +1,14 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 11,
+  "focus": "Re-verify zero-criteria error-message constants + writer wiring (SPEC §4.2): exact constant values, ZERO_CRITERIA_ERROR_MESSAGES membership/order/frozen, no stale duplicate literals, 3 writer sites reference constants, runtime falsifiability of zero_criteria_failure? membership set.",
+  "scenarios_run": [
+    "Read app/models/ai_job_criteria.rb: 3 constants (lines 7-9) hold exact spec values; ZERO_CRITERIA_ERROR_MESSAGES (lines 11-15) == [NO_SECTIONS, NONE_EXTRACTED, EMPTY_ARRAY].freeze; zero_criteria_failure? = status_failed? && ZERO_CRITERIA_ERROR_MESSAGES.include?(error_message) (line 18).",
+    "grep app/ + lib/ for the three raw literal strings 'No criteria sections found in job description', 'No criteria extracted from job description', 'Criteria array is empty' -> each appears ONLY at its constant DEFINITION in ai_job_criteria.rb (lines 7,8,9). Zero stale/duplicate literals anywhere a writer could use instead of the constant.",
+    "grep app/ + lib/ for all four constant-name references: definitions + composition (7-15) + guard (18) + 3 writers. Writers use CONSTANTS: extract_criteria.rb:62 NO_SECTIONS, extract_criteria.rb:122 NONE_EXTRACTED, score_job_application.rb:43 EMPTY_ARRAY.",
+    "Read extract_job_criteria_job.rb: exhaustion block (line 10) and StandardError rescue (line 33) write raw error&.message / e&.message (NOT constants) -> these land in generic failure, not zero-criteria. Also confirmed extract_criteria.rb:32 'Job description is blank', :151 parse-error, :155 raw e&.message are raw non-member literals.",
+    "test_frr script on isolated in-script org/job (no AI triggered; rows created directly): 19/19 PASS. Constant values exact; MESSAGES array order + frozen? true; each in-set message on a failed row -> zero_criteria_failure? true; one-char drift on each -> false; 6 non-members ('Job description is blank', parse-error msg, 'Scoring call failed', structured-data msg, arbitrary StandardError msg, nil) -> false; in-set message with status succeeded/in_progress -> false (proves the status_failed? half of the AND). Membership set cannot silently diverge from writers."
+  ],
+  "findings": []
+}

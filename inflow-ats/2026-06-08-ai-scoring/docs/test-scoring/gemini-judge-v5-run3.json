@@ -1,0 +1,95 @@
+{
+  "criteria": [
+    {
+      "original": {
+        "text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+      },
+      "action": "decompose",
+      "reasoning": "This criterion combines the general responsibility of building Go services with a list of distinct, complex feature areas (APIs, scheduler/orchestrator logic, cloud integrations, and internal tooling) that are separate technical tasks.",
+      "decomposed": [
+        {
+          "text": "Ability to design, build, and maintain backend services in Go for a PaaS",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": true,
+          "source_text": "Design, build, and maintain backend services in Go that power our PaaS"
+        },
+        {
+          "text": "Ability to develop APIs, scheduler, and orchestrator logic in Go",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": true,
+          "source_text": "APIs, scheduler and orchestrator logic"
+        },
+        {
+          "text": "Ability to build integrations with cloud providers",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "integrations with cloud providers"
+        },
+        {
+          "text": "Ability to build internal tooling",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "internal tooling"
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies."
+      },
+      "action": "decompose",
+      "reasoning": "The criterion lists specific implementations that cover distinct engineering domains (observability vs. reliability/failover strategy).",
+      "decomposed": [
+        {
+          "text": "Ability to implement monitoring, logging, and alerting systems",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "implementing monitoring, logging, alerting"
+        },
+        {
+          "text": "Ability to implement rollback capabilities and multi cloud failover strategies",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "rollback capabilities, and multi cloud failover strategies"
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"solid\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+      },
+      "action": "keep",
+      "reasoning": "The list elements are all features/concepts inherent to the operation and architecture of Kubernetes, not separate, independent skill sets.",
+      "decomposed": [
+
+      ]
+    }
+  ]
+}

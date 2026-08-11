@@ -1,0 +1,99 @@
+{
+  "scores": [
+    {
+      "criterion_text": "[tier_2] Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience deploying applications on cloud platforms like AWS, Azure, GCP, and OpenShift, but there is no specific evidence of architecting or maintaining 'multi-cloud racks' inside customer environments."
+    },
+    {
+      "criterion_text": "[tier_2] Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate shows experience enhancing CI/CD workflows using Jenkins, Tekton, and Harness, and experience with monitoring/logging tools. However, there is no mention of direct collaboration with UX teams or improving developer-facing CLI tools."
+    },
+    {
+      "criterion_text": "[tier_2] Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with monitoring and logging using Splunk, Prometheus, and Grafana, and has designed systems for high performance/scalability. There is no specific evidence for rollback capabilities or multi-cloud failover strategies."
+    },
+    {
+      "criterion_text": "[tier_2] Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate describes 'leading' strategic migrations and 'spearheading' development, which implies leadership, but there is no explicit mention of mentoring or defining best practices for others."
+    },
+    {
+      "criterion_text": "[tier_1] Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Golang as a core skill and details experience using it for high-performance backend systems, including the use of Mux, Gin, and Chi frameworks."
+    },
+    {
+      "criterion_text": "[tier_1] Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate lists Kubernetes and OpenShift as skills and mentions deploying applications onto OpenShift, but does not detail experience with cluster design, autoscaling, or service mesh."
+    },
+    {
+      "criterion_text": "[tier_1] Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with Ansible, which is a configuration management/IaC tool, but lacks mention of Terraform specifically."
+    },
+    {
+      "criterion_text": "[tier_1] Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists experience with AWS (ECS, S3, Lambda), Azure, and GCP, and mentions using IBM S3 for storage."
+    },
+    {
+      "criterion_text": "[tier_1] A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate's work with OpenShift (a PaaS) and building automation platforms for enterprise patching suggests familiarity, though the specific experience with designing platform abstractions for developers is not explicitly stated."
+    },
+    {
+      "criterion_text": "[tier_1] Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience with CI/CD tools (Jenkins, Tekton, Harness, Ansible) and integration experience (Courier Aggregation module integrating with external vendors)."
+    },
+    {
+      "criterion_text": "[tier_2] Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate demonstrates project leadership in enterprise environments, implying cross-functional work, but there is no explicit mention of communication skills in the text provided."
+    },
+    {
+      "criterion_text": "[tier_2] Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No mention of publishing or integrating with cloud marketplaces."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate mentions distributed microservices-based applications and scalable architectures, but does not explicitly detail multi-tenant or multi-region strategies."
+    },
+    {
+      "criterion_text": "[tier_2] Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists experience with distributed microservices-based applications and Kafka for processing and routing data."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists experience with Splunk, Prometheus, and Grafana."
+    }
+  ],
+  "computed_score": {
+    "points": 63.0,
+    "max": 92,
+    "percentage": 68.5
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "meta": {
+    "batch": 6,
+    "criteria_prompt_version": 10,
+    "job_id": 30045,
+    "title": "Air Cargo Sales Representative",
+    "organization": "Pelicargo",
+    "cost": 0.000765
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Air Cargo Sales Representative\n\nAbout Pelicargo\nAre you interested in building the future of air cargo?\nPelicargo is a logistics-tech company that revolutionizes air cargo with a marketplace that allows freight forwarders to instantly book available cargo capacity with airlines. Developed at MIT, our technology makes air cargo fast, easy, and affordable by automatically matching cargo with the best possible flight option. We remove the stress of air cargo bookings for freight forwarders, streamlining operations so they can focus on growing their business, while providing airlines a real-time digital sales channel and data-driven market visibility. Pelicargo is venture-backed and growing fast!"
+      },
+      {
+        "heading": "Job Description",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "As Pelicargo’s Sales Representative, you will be responsible for the expansion of our air cargo business in the U.S. Your role is key in identifying and forging new paths for our company's growth, especially through outbound sales to untapped customers. Your focus will be on winning customers, building solid relationships with freight forwarders, and serving as the pivotal liaison between our customers and technology team to lay the groundwork for our global expansion."
+      },
+      {
+        "heading": "Responsibilities",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "·         Drive our Air Cargo product expansion with proactive and energetic sales efforts, emphasizing continuous engagement in outbound sales to acquire new customers.\n·         Specifically target and pitch to freight forwarders, leveraging your rich experience and extensive network, preferably with contacts within the U.S. freight forwarding community (Having industry experience with airline or GSA is preferred).\n·         Cultivate strong relationships with freight forwarders and other key industry players, maximizing business opportunities.\n·         Travel to meet customers, demonstrate our technology, and close business deals, showcasing your ability to expand our business ambitiously.\n·         Collaborate with our sales & commercial team to define our sales strategy, explore new product offerings, and measure our results against industry benchmarks.\n·         Ensure our offerings remain competitive and work with our product team to evolve our platform to meet the changing needs of our customers."
+      },
+      {
+        "heading": "Applicants",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Ideal candidates will have:\n·         A minimum of 2-3 years of sales experience to freight forwarders, ideally at an airline or GSA, showing a proven track record of actively pursuing and securing new business through outbound sales.\n·         With a strong preference for candidates possessing a significant network of contacts within the U.S. freight forwarder community.\n·         An analytical mindset with a passion/interest for modern technology platforms and systems.\n·         A high level of energy; willingness to go the extra mile to get things done.\n·         An obsession with customer success: you understand that you succeed when they succeed.\n·         Excellent communication, interpersonal, and organizational skills.\n·         Fluency in English (proficiency in other languages is a plus but not required)."
+      },
+      {
+        "heading": "Remuneration",
+        "inferred_section_type": "compensation",
+        "type": "non_criteria",
+        "content": "A base salary ranging from $60k to $85k per annum, commensurate with qualifications, augmented by an incentive bonus equivalent to approximately 10% of sales contributions. Detailed terms shall be subject to negotiation upon commencement of employment."
+      },
+      {
+        "heading": "Working at Pelicargo",
+        "inferred_section_type": "culture",
+        "type": "non_criteria",
+        "content": "This is a fully remote position, providing full flexibility in your work day, along with the opportunity to be a part of a fast-growing company that is at the forefront of revolutionizing the air cargo industry."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Drive our Air Cargo product expansion with proactive and energetic sales efforts, emphasizing continuous engagement in outbound sales to acquire new customers.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "·         Drive our Air Cargo product expansion with proactive and energetic sales efforts, emphasizing continuous engagement in outbound sales to acquire new customers."
+      },
+      {
+        "text": "Specifically target and pitch to freight forwarders, leveraging your rich experience and extensive network",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "·         Specifically target and pitch to freight forwarders, leveraging your rich experience and extensive network, preferably with contacts within the U.S. freight forwarding community (Having industry experience with airline or GSA is preferred)."
+      },
+      {
+        "text": "Preference for contacts within the U.S. freight forwarding community",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"preferably\"",
+        "binary": false,
+        "source_text": "·         Specifically target and pitch to freight forwarders, leveraging your rich experience and extensive network, preferably with contacts within the U.S. freight forwarding community (Having industry experience with airline or GSA is preferred)."
+      },
+      {
+        "text": "Having industry experience with airline or GSA is preferred",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"preferred\"",
+        "binary": true,
+        "source_text": "·         Specifically target and pitch to freight forwarders, leveraging your rich experience and extensive network, preferably with contacts within the U.S. freight forwarding community (Having industry experience with airline or GSA is preferred)."
+      },
+      {
+        "text": "Cultivate strong relationships with freight forwarders and other key industry players, maximizing business opportunities.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "·         Cultivate strong relationships with freight forwarders and other key industry players, maximizing business opportunities."
+      },
+      {
+        "text": "Travel to meet customers, demonstrate our technology, and close business deals, showcasing your ability to expand our business ambitiously.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "·         Travel to meet customers, demonstrate our technology, and close business deals, showcasing your ability to expand our business ambitiously."
+      },
+      {
+        "text": "Collaborate with our sales & commercial team to define our sales strategy, explore new product offerings, and measure our results against industry benchmarks.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "·         Collaborate with our sales & commercial team to define our sales strategy, explore new product offerings, and measure our results against industry benchmarks."
+      },
+      {
+        "text": "Ensure our offerings remain competitive and work with our product team to evolve our platform to meet the changing needs of our customers.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "·         Ensure our offerings remain competitive and work with our product team to evolve our platform to meet the changing needs of our customers."
+      },
+      {
+        "text": "A minimum of 2-3 years of sales experience to freight forwarders",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"minimum\" is only considered with \"required\" in tier_1, defaults to tier_2 here",
+        "binary": false,
+        "source_text": "·         A minimum of 2-3 years of sales experience to freight forwarders, ideally at an airline or GSA, showing a proven track record of actively pursuing and securing new business through outbound sales."
+      },
+      {
+        "text": "Ideally at an airline or GSA",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"ideally\"",
+        "binary": true,
+        "source_text": "·         A minimum of 2-3 years of sales experience to freight forwarders, ideally at an airline or GSA, showing a proven track record of actively pursuing and securing new business through outbound sales."
+      },
+      {
+        "text": "Proven track record of actively pursuing and securing new business through outbound sales",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"proven track record\"",
+        "binary": false,
+        "source_text": "·         A minimum of 2-3 years of sales experience to freight forwarders, ideally at an airline or GSA, showing a proven track record of actively pursuing and securing new business through outbound sales."
+      },
+      {
+        "text": "Strong preference for candidates possessing a significant network of contacts within the U.S. freight forwarder community",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"strong preference\"",
+        "binary": false,
+        "source_text": "·         With a strong preference for candidates possessing a significant network of contacts within the U.S. freight forwarder community."
+      },
+      {
+        "text": "An analytical mindset with a passion/interest for modern technology platforms and systems",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "·         An analytical mindset with a passion/interest for modern technology platforms and systems."
+      },
+      {
+        "text": "A high level of energy; willingness to go the extra mile to get things done",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "·         A high level of energy; willingness to go the extra mile to get things done."
+      },
+      {
+        "text": "An obsession with customer success: you understand that you succeed when they succeed",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "·         An obsession with customer success: you understand that you succeed when they succeed."
+      },
+      {
+        "text": "Excellent communication, interpersonal, and organizational skills",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"excellent\"",
+        "binary": false,
+        "source_text": "·         Excellent communication, interpersonal, and organizational skills."
+      },
+      {
+        "text": "Fluency in English",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"fluency\" is considered similar to \"proficiency\"",
+        "binary": true,
+        "source_text": "·         Fluency in English (proficiency in other languages is a plus but not required)."
+      },
+      {
+        "text": "Proficiency in other languages is a plus but not required",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"is a plus but not required\"",
+        "binary": false,
+        "source_text": "·         Fluency in English (proficiency in other languages is a plus but not required)."
+      }
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agent_index": 1,
+  "files_reviewed": [
+    "app/javascript/ats/src/components/shared/PlatoMark.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationSidebar.tsx",
+    "app/javascript/shared/types/aiJobApplicationSummary.ts",
+    "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts"
+  ],
+  "findings": [
+    {
+      "id": "A1-H1",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 42,
+      "title": "|| 0 fallback violates Known Failure Pattern #13 and spec rule",
+      "description": "PlatoTab.tsx line 42 passes `aiJobApplicationSummaryId: (status === \"succeeded\" && aiSummary?.id) || 0` to `useAiJobApplicationSummary`. When no summary exists or status is not \"succeeded\", `aiSummary?.id` is undefined/falsy and the `|| 0` fabricates a real-looking ID of `0`. This is the exact antipattern documented in Known Failure Pattern #13 (core_critical_rules.md rule 10): the previous instance sent GET /ai_job_application_summaries/0 on every render. The `enabled: !!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0` guard in useAiJobApplicationSummary.ts line 44 happens to suppress the network request for the value 0, but the fabrication itself is the violation — the spec and KFP #13 prohibit `|| 0` regardless of downstream guards. The correct call pattern is to pass `undefined` (or omit the field) so the enabled guard works on a semantically null value rather than a fabricated integer.",
+      "fix": "Replace `(status === \"succeeded\" && aiSummary?.id) || 0` with `status === \"succeeded\" ? aiSummary?.id : undefined` (or equivalent). The enabled guard `!!aiJobApplicationSummaryId` already handles undefined correctly — no network request fires."
+    }
+  ]
+}

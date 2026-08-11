@@ -1,0 +1,285 @@
+{
+  "name": "lab-technician-or-engineer---dc-microgri",
+  "title": "Lab Technician or Engineer - DC Microgrid",
+  "call2_count": 33,
+  "final_count": 34,
+  "decomp_count": 1,
+  "t1": 4,
+  "t2": 30,
+  "t3": 0,
+  "soft_t1": 0,
+  "criteria": [
+    {
+      "text": "High school diploma or equivalent with minimum of 5 years’ experience",
+      "tier": "tier_1",
+      "tier_reasoning": "minimum",
+      "binary": true,
+      "contains_title_technology": false,
+      "source_text": "High school diploma or equivalent with minimum of 5 years’ experience; associate's degree or technical certification in electrical engineering, renewable energy, or a related field preferred.  Bachelor's degree preferred."
+    },
+    {
+      "text": "associate's degree or technical certification in electrical engineering, renewable energy, or a related field",
+      "tier": "tier_2",
+      "tier_reasoning": "preferred",
+      "binary": true,
+      "contains_title_technology": false,
+      "source_text": "High school diploma or equivalent with minimum of 5 years’ experience; associate's degree or technical certification in electrical engineering, renewable energy, or a related field preferred.  Bachelor's degree preferred."
+    },
+    {
+      "text": "Bachelor's degree",
+      "tier": "tier_2",
+      "tier_reasoning": "preferred",
+      "binary": true,
+      "contains_title_technology": false,
+      "source_text": "High school diploma or equivalent with minimum of 5 years’ experience; associate's degree or technical certification in electrical engineering, renewable energy, or a related field preferred.  Bachelor's degree preferred."
+    },
+    {
+      "text": "Prior experience working in a laboratory setting",
+      "tier": "tier_2",
+      "tier_reasoning": "is a plus",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Prior experience working in a laboratory setting, especially in the field of renewable energy or power systems, is a plus."
+    },
+    {
+      "text": "Prior experience in the field of renewable energy or power systems",
+      "tier": "tier_2",
+      "tier_reasoning": "is a plus",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Prior experience working in a laboratory setting, especially in the field of renewable energy or power systems, is a plus."
+    },
+    {
+      "text": "Strong understanding of electrical circuits, components, and instrumentation",
+      "tier": "tier_1",
+      "tier_reasoning": "strong",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Strong understanding of electrical circuits, components, and instrumentation."
+    },
+    {
+      "text": "Proficiency in the use of laboratory equipment and tools, including oscilloscopes, multimeters, and data acquisition systems",
+      "tier": "tier_1",
+      "tier_reasoning": "proficiency",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Proficiency in the use of laboratory equipment and tools, including oscilloscopes, multimeters, and data acquisition systems."
+    },
+    {
+      "text": "Basic knowledge of DC microgrid systems",
+      "tier": "tier_2",
+      "tier_reasoning": "basic knowledge",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Basic knowledge of DC microgrid systems, renewable energy sources (e.g., solar, wind), and energy storage technologies (e.g., batteries)."
+    },
+    {
+      "text": "Basic knowledge of renewable energy sources (e.g., solar, wind)",
+      "tier": "tier_2",
+      "tier_reasoning": "basic knowledge",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Basic knowledge of DC microgrid systems, renewable energy sources (e.g., solar, wind), and energy storage technologies (e.g., batteries)."
+    },
+    {
+      "text": "Basic knowledge of energy storage technologies (e.g., batteries)",
+      "tier": "tier_2",
+      "tier_reasoning": "basic knowledge",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Basic knowledge of DC microgrid systems, renewable energy sources (e.g., solar, wind), and energy storage technologies (e.g., batteries)."
+    },
+    {
+      "text": "Excellent problem-solving skills",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception (problem-solving)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Excellent problem-solving skills and the ability to troubleshoot electrical issues."
+    },
+    {
+      "text": "Ability to troubleshoot electrical issues",
+      "tier": "tier_2",
+      "tier_reasoning": "ability to",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Excellent problem-solving skills and the ability to troubleshoot electrical issues."
+    },
+    {
+      "text": "Detail-oriented",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception (attention to detail)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Detail-oriented with strong organizational and documentation skills."
+    },
+    {
+      "text": "Strong organizational skills",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception (organizational skills)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Detail-oriented with strong organizational and documentation skills."
+    },
+    {
+      "text": "Strong documentation skills",
+      "tier": "tier_1",
+      "tier_reasoning": "strong",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Detail-oriented with strong organizational and documentation skills."
+    },
+    {
+      "text": "Strong communication skills",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception (communication)",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Strong communication skills and the ability to work effectively in a team environment."
+    },
+    {
+      "text": "Ability to work effectively in a team environment",
+      "tier": "tier_2",
+      "tier_reasoning": "ability to",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Strong communication skills and the ability to work effectively in a team environment."
+    },
+    {
+      "text": "Commitment to safety and adherence to safety protocols",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Commitment to safety and adherence to safety protocols."
+    },
+    {
+      "text": "Experience with electrical schematic generation",
+      "tier": "tier_2",
+      "tier_reasoning": "preferred",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience with electrical schematic generation and controller programming preferred."
+    },
+    {
+      "text": "Experience with controller programming",
+      "tier": "tier_2",
+      "tier_reasoning": "preferred",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience with electrical schematic generation and controller programming preferred."
+    },
+    {
+      "text": "Residing in Charlotte, NC area or willing to relocate within driving distance to lab",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": true,
+      "contains_title_technology": false,
+      "source_text": "Residing in Charlotte, NC area or willing to relocate within driving distance to lab."
+    },
+    {
+      "text": "Ability to lift and move laboratory equipment and materials (up to 50 pounds)",
+      "tier": "tier_2",
+      "tier_reasoning": "ability to",
+      "binary": true,
+      "contains_title_technology": false,
+      "source_text": "Ability to lift and move laboratory equipment and materials (up to 50 pounds)."
+    },
+    {
+      "text": "Comfortable working in a laboratory environment with potential exposure to electrical hazards",
+      "tier": "tier_2",
+      "tier_reasoning": "comfortable with",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Comfortable working in a laboratory environment with potential exposure to electrical hazards."
+    },
+    {
+      "text": "Conduct a variety of experiments and tests on DC microgrid systems to assess their performance, efficiency, and reliability",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Microgrid Testing: Conduct a variety of experiments and tests on DC microgrid systems to assess their performance, efficiency, and reliability."
+    },
+    {
+      "text": "Install, operate, and maintain DC Microgrid laboratory equipment",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Equipment Setup and Maintenance: Install, operate, and maintain DC Microgrid laboratory equipment, including inverters, batteries, solar panels, and DC power sources, ensuring they are in optimal working condition."
+    },
+    {
+      "text": "Monitor and collect data during microgrid testing",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Data Collection and Analysis: Monitor and collect data during microgrid testing, analyze results, and prepare detailed reports to provide valuable insights for research and development efforts."
+    },
+    {
+      "text": "Analyze results from microgrid testing",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Data Collection and Analysis: Monitor and collect data during microgrid testing, analyze results, and prepare detailed reports to provide valuable insights for research and development efforts."
+    },
+    {
+      "text": "Prepare detailed reports to provide valuable insights for research and development efforts",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Data Collection and Analysis: Monitor and collect data during microgrid testing, analyze results, and prepare detailed reports to provide valuable insights for research and development efforts."
+    },
+    {
+      "text": "Identify and diagnose issues or malfunctions in the microgrid systems",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Troubleshooting: Identify and diagnose issues or malfunctions in the microgrid systems and work with engineers to develop and implement solutions."
+    },
+    {
+      "text": "Work with engineers to develop and implement solutions to microgrid issues",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Troubleshooting: Identify and diagnose issues or malfunctions in the microgrid systems and work with engineers to develop and implement solutions."
+    },
+    {
+      "text": "Adhere to safety protocols and guidelines while working in the lab",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Safety Compliance: Adhere to safety protocols and guidelines while working in the lab to ensure a safe working environment for yourself and colleagues."
+    },
+    {
+      "text": "Maintain accurate records of experiments, procedures, and equipment maintenance activities",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Documentation: Maintain accurate records of experiments, procedures, and equipment maintenance activities, ensuring that all data is well-organized and easily accessible."
+    },
+    {
+      "text": "Collaborate with cross-functional teams, including engineers, researchers, and project managers, to support the development and improvement of DC microgrid systems",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Collaboration: Collaborate with cross-functional teams, including engineers, researchers, and project managers, to support the development and improvement of DC microgrid systems."
+    },
+    {
+      "text": "Assist in the procurement and management of lab supplies and equipment",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Inventory Management: Assist in the procurement and management of lab supplies and equipment, ensuring that the lab is well-stocked and organized."
+    }
+  ]
+}

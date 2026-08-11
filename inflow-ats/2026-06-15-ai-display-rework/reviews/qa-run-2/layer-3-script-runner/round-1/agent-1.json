@@ -1,0 +1,57 @@
+{
+  "agent": "script-runner-1",
+  "round": 1,
+  "scenario": "Verify serializer output",
+  "timestamp": "2026-06-16T06:05:00Z",
+  "seed_plan": "paid-user-with-candidates.json",
+  "seed_note": "Flipper feature flag steps skipped (not in QA harness catalog); core data seeded manually via Cypress endpoints",
+  "scripts_run": [
+    {
+      "path": "/tmp/verify_serializer.rb",
+      "purpose": "Verify JobApplicationSerializer and ShallowJobApplicationSerializer include ai_job_application_summary_status and do NOT include ai_job_application_summary",
+      "result": "PASS",
+      "checks": [
+        {"check": "JobApplicationSerializer includes ai_job_application_summary_status key", "result": "PASS"},
+        {"check": "JobApplicationSerializer does NOT include ai_job_application_summary key", "result": "PASS"},
+        {"check": "ShallowJobApplicationSerializer includes ai_job_application_summary_status key", "result": "PASS"},
+        {"check": "ShallowJobApplicationSerializer does NOT include ai_job_application_summary key", "result": "PASS"}
+      ]
+    },
+    {
+      "path": "/tmp/verify_serializer_status_values.rb",
+      "purpose": "Verify that when AiJobApplicationSummary reaches succeeded status, the denormalized ai_job_application_summary_status record has status 'current' with correct field values",
+      "result": "PASS",
+      "checks": [
+        {"check": "Status record is 'current' when summary succeeded", "result": "PASS"},
+        {"check": "Serialized status value is 'current'", "result": "PASS"},
+        {"check": "Headline is correctly denormalized ('Senior Android Engineer')", "result": "PASS"},
+        {"check": "score_percentage is correctly denormalized (85.5)", "result": "PASS"},
+        {"check": "integrated_role_analysis is correctly denormalized", "result": "PASS"},
+        {"check": "ai_job_application_summary_id references the correct summary", "result": "PASS"},
+        {"check": "Job application without succeeded summary has status 'none'", "result": "PASS"}
+      ]
+    }
+  ],
+  "serializer_keys_verified": {
+    "JobApplicationSerializer": {
+      "has_ai_job_application_summary_status": true,
+      "has_ai_job_application_summary": false,
+      "serialized_status_fields": ["id", "ai_job_application_summary_id", "status", "score_percentage", "headline", "integrated_role_analysis", "updated_at"]
+    },
+    "ShallowJobApplicationSerializer": {
+      "has_ai_job_application_summary_status": true,
+      "has_ai_job_application_summary": false
+    }
+  },
+  "denormalization_verified": {
+    "callback_chain": "AiJobApplicationSummary.update(status: :succeeded) -> after_commit :update_summary_status_record -> update_columns on AiJobApplicationSummaryStatus",
+    "fields_copied": ["ai_job_application_summary_id", "status (set to 'current')", "score_percentage", "headline", "integrated_role_analysis", "updated_at"],
+    "initial_status": "none (0)",
+    "post_success_status": "current (1)"
+  },
+  "overall_result": "PASS",
+  "total_checks": 11,
+  "passed": 11,
+  "failed": 0,
+  "issues": []
+}

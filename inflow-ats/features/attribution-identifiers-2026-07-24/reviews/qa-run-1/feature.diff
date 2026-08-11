@@ -1,0 +1,1103 @@
+diff --git a/app/controllers/api/v1/organizations_controller.rb b/app/controllers/api/v1/organizations_controller.rb
+index e65d311bc..70499642a 100644
+--- a/app/controllers/api/v1/organizations_controller.rb
++++ b/app/controllers/api/v1/organizations_controller.rb
+@@ -34,6 +34,14 @@ class Api::V1::OrganizationsController < Api::V1::BaseController
+     @organization.utm_data = current_user.utm_data
+     @organization.internal_ref = current_user.internal_ref
+     @organization.adroll_click_id = current_user.adroll_click_id
++    @organization.ga_client_id = current_user.ga_client_id
++    @organization.ga_session_id = current_user.ga_session_id
++    @organization.fbclid = current_user.fbclid
++    @organization.fbp = current_user.fbp
++    @organization.fbc = current_user.fbc
++    @organization.li_fat_id = current_user.li_fat_id
++    @organization.google_click_id = current_user.google_click_id
++    @organization.adroll_first_party_cookie = current_user.adroll_first_party_cookie
+     @organization.is_claimed = true
+     authorize @organization
+ 
+@@ -117,7 +125,7 @@ class Api::V1::OrganizationsController < Api::V1::BaseController
+ 
+   # Only allow a trusted parameter "white list" through.
+   def organization_params
+-    sanitized_params = params.require(:organization).permit(:name, :default_from_email, :website_url, :logo, :social_share_image, :remoteness, :wwr_company_statement, :wwr_company_bio, :linkedin_company_id, :enable_x_hiring, :white_label_job_board_enabled, :hud_display_visibility, :google_click_id, :adroll_first_party_cookie, :heard_about_us_from, settings: [
++    sanitized_params = params.require(:organization).permit(:name, :default_from_email, :website_url, :logo, :social_share_image, :remoteness, :wwr_company_statement, :wwr_company_bio, :linkedin_company_id, :enable_x_hiring, :white_label_job_board_enabled, :hud_display_visibility, :heard_about_us_from, settings: [
+                                                               :brand_color,
+                                                               :career_has_custom_navigation,
+                                                               :career_custom_navigation_url,
+diff --git a/app/controllers/api/v1/registrations_controller.rb b/app/controllers/api/v1/registrations_controller.rb
+index 43bc28a7d..bfcd3b395 100644
+--- a/app/controllers/api/v1/registrations_controller.rb
++++ b/app/controllers/api/v1/registrations_controller.rb
+@@ -98,7 +98,15 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
+                       utm_campaign: sign_up_params[:utm_campaign],
+                       utm_data: sign_up_params[:utm_data],
+                       internal_ref: sign_up_params[:internal_ref],
+-                      adroll_click_id: sign_up_params[:adroll_click_id]
++                      adroll_click_id: sign_up_params[:adroll_click_id],
++                      ga_client_id: sign_up_params[:ga_client_id],
++                      ga_session_id: sign_up_params[:ga_session_id],
++                      fbclid: sign_up_params[:fbclid],
++                      fbp: sign_up_params[:fbp],
++                      fbc: sign_up_params[:fbc],
++                      li_fat_id: sign_up_params[:li_fat_id],
++                      google_click_id: sign_up_params[:google_click_id],
++                      adroll_first_party_cookie: sign_up_params[:adroll_first_party_cookie]
+                     )
+                   else
+                     {
+@@ -112,7 +120,15 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
+                       utm_campaign: sign_up_params[:utm_campaign],
+                       utm_data: sign_up_params[:utm_data],
+                       internal_ref: sign_up_params[:internal_ref],
+-                      adroll_click_id: sign_up_params[:adroll_click_id]
++                      adroll_click_id: sign_up_params[:adroll_click_id],
++                      ga_client_id: sign_up_params[:ga_client_id],
++                      ga_session_id: sign_up_params[:ga_session_id],
++                      fbclid: sign_up_params[:fbclid],
++                      fbp: sign_up_params[:fbp],
++                      fbc: sign_up_params[:fbc],
++                      li_fat_id: sign_up_params[:li_fat_id],
++                      google_click_id: sign_up_params[:google_click_id],
++                      adroll_first_party_cookie: sign_up_params[:adroll_first_party_cookie]
+                     )
+                   end
+ 
+@@ -309,7 +325,7 @@ class Api::V1::RegistrationsController < Devise::RegistrationsController
+ 
+   def sign_up_params
+     # params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation, :beta_token, :registration_stripe_plan)
+-    params.permit(:name, :first_name, :last_name, :email, :password, :beta_token, :registration_stripe_plan, :referral, :partner, :organization_slug, :login_intent, :utm_source, :utm_campaign, :internal_ref, :adroll_click_id, utm_data: {})
++    params.permit(:name, :first_name, :last_name, :email, :password, :beta_token, :registration_stripe_plan, :referral, :partner, :organization_slug, :login_intent, :utm_source, :utm_campaign, :internal_ref, :adroll_click_id, :ga_client_id, :ga_session_id, :fbclid, :fbp, :fbc, :li_fat_id, :google_click_id, :adroll_first_party_cookie, utm_data: {})
+   end
+ 
+   def sanitized_account_update_params
+diff --git a/app/controllers/api/v1/users/omniauth_callbacks_controller.rb b/app/controllers/api/v1/users/omniauth_callbacks_controller.rb
+index ce27e4273..9cb10291f 100644
+--- a/app/controllers/api/v1/users/omniauth_callbacks_controller.rb
++++ b/app/controllers/api/v1/users/omniauth_callbacks_controller.rb
+@@ -27,7 +27,15 @@ class Api::V1::Users::OmniauthCallbacksController < Devise::OmniauthCallbacksCon
+       utm_campaign: merged_tracking['utm_campaign'],
+       utm_data: merged_tracking['utm_data'],
+       internal_ref: merged_tracking['internal_ref'],
+-      adroll_click_id: merged_tracking['adroll_click_id']
++      adroll_click_id: merged_tracking['adroll_click_id'],
++      ga_client_id: merged_tracking['ga_client_id'],
++      ga_session_id: merged_tracking['ga_session_id'],
++      fbclid: merged_tracking['fbclid'],
++      fbp: merged_tracking['fbp'],
++      fbc: merged_tracking['fbc'],
++      li_fat_id: merged_tracking['li_fat_id'],
++      google_click_id: merged_tracking['google_click_id'],
++      adroll_first_party_cookie: merged_tracking['adroll_first_party_cookie']
+     )
+ 
+     if user.persisted?
+diff --git a/app/javascript/ats/src/views/sessions/components/AuthForm.tsx b/app/javascript/ats/src/views/sessions/components/AuthForm.tsx
+index 21567c88f..6a1d4d5ee 100644
+--- a/app/javascript/ats/src/views/sessions/components/AuthForm.tsx
++++ b/app/javascript/ats/src/views/sessions/components/AuthForm.tsx
+@@ -83,6 +83,14 @@ function AuthForm({
+           utmData: trackingParams.utmData,
+           internalRef: trackingParams.internalRef,
+           adrollClickId: trackingParams.adrollClickId,
++          gaClientId: trackingParams.gaClientId,
++          gaSessionId: trackingParams.gaSessionId,
++          fbclid: trackingParams.fbclid,
++          fbp: trackingParams.fbp,
++          fbc: trackingParams.fbc,
++          liFatId: trackingParams.liFatId,
++          googleClickId: trackingParams.googleClickId,
++          adrollFirstPartyCookie: trackingParams.adrollFirstPartyCookie,
+           loginIntent: "hire",
+           recaptchaToken: recaptchaToken,
+         },
+@@ -134,6 +142,14 @@ function AuthForm({
+           utmData={trackingParams.utmData}
+           internalRef={trackingParams.internalRef}
+           adrollClickId={trackingParams.adrollClickId}
++          gaClientId={trackingParams.gaClientId}
++          gaSessionId={trackingParams.gaSessionId}
++          fbclid={trackingParams.fbclid}
++          fbp={trackingParams.fbp}
++          fbc={trackingParams.fbc}
++          liFatId={trackingParams.liFatId}
++          googleClickId={trackingParams.googleClickId}
++          adrollFirstPartyCookie={trackingParams.adrollFirstPartyCookie}
+           darkModeAllowed={darkModeAllowed}
+         />
+       </Styled.GoogleSSOWrapper>
+diff --git a/app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx b/app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx
+index aa9f983a7..fb1228819 100644
+--- a/app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx
++++ b/app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx
+@@ -15,6 +15,14 @@ interface Props {
+   utmData?: Record<string, any>;
+   internalRef?: string;
+   adrollClickId?: string;
++  gaClientId?: string;
++  gaSessionId?: string;
++  fbclid?: string;
++  fbp?: string;
++  fbc?: string;
++  liFatId?: string;
++  googleClickId?: string;
++  adrollFirstPartyCookie?: string;
+   darkModeAllowed?: boolean;
+ }
+ 
+@@ -27,6 +35,14 @@ function GoogleSSOButton({
+   utmData,
+   internalRef,
+   adrollClickId,
++  gaClientId,
++  gaSessionId,
++  fbclid,
++  fbp,
++  fbc,
++  liFatId,
++  googleClickId,
++  adrollFirstPartyCookie,
+   darkModeAllowed = true,
+ }: Props) {
+   const { refreshCsrfToken } = useCsrfToken("/");
+@@ -76,6 +92,30 @@ function GoogleSSOButton({
+       {typeof adrollClickId === "string" && adrollClickId.length > 0 ? (
+         <input type="hidden" name="adroll_click_id" value={adrollClickId} />
+       ) : null}
++      {typeof gaClientId === "string" && gaClientId.length > 0 ? (
++        <input type="hidden" name="ga_client_id" value={gaClientId} />
++      ) : null}
++      {typeof gaSessionId === "string" && gaSessionId.length > 0 ? (
++        <input type="hidden" name="ga_session_id" value={gaSessionId} />
++      ) : null}
++      {typeof fbclid === "string" && fbclid.length > 0 ? (
++        <input type="hidden" name="fbclid" value={fbclid} />
++      ) : null}
++      {typeof fbp === "string" && fbp.length > 0 ? (
++        <input type="hidden" name="fbp" value={fbp} />
++      ) : null}
++      {typeof fbc === "string" && fbc.length > 0 ? (
++        <input type="hidden" name="fbc" value={fbc} />
++      ) : null}
++      {typeof liFatId === "string" && liFatId.length > 0 ? (
++        <input type="hidden" name="li_fat_id" value={liFatId} />
++      ) : null}
++      {typeof googleClickId === "string" && googleClickId.length > 0 ? (
++        <input type="hidden" name="google_click_id" value={googleClickId} />
++      ) : null}
++      {typeof adrollFirstPartyCookie === "string" && adrollFirstPartyCookie.length > 0 ? (
++        <input type="hidden" name="adroll_first_party_cookie" value={adrollFirstPartyCookie} />
++      ) : null}
+       {utmData != undefined
+         ? Object.keys(utmData).map((key) =>
+             typeof utmData[key] === "string" && utmData[key].length > 0 ? (
+diff --git a/app/javascript/ats/src/views/sessions/components/OrganizationForm.tsx b/app/javascript/ats/src/views/sessions/components/OrganizationForm.tsx
+index a4e9cb73b..d70ebdcc8 100644
+--- a/app/javascript/ats/src/views/sessions/components/OrganizationForm.tsx
++++ b/app/javascript/ats/src/views/sessions/components/OrganizationForm.tsx
+@@ -11,8 +11,6 @@ import { trackEvent } from "@shared/lib/posthog";
+ import { useCreateOrganization } from "@shared/queryHooks/useOrganization";
+ import breakpoint from "@shared/styles/breakpoints";
+ 
+-import { useCookieValue } from "@shared/hooks/useCookieValue";
+-
+ function OrganizationForm(props) {
+   const { onComplete, currentOrganization } = props;
+   const [name, setName] = React.useState("");
+@@ -21,20 +19,6 @@ function OrganizationForm(props) {
+   const theme: any = useTheme();
+   const { mutate: createOrganization, isLoading } = useCreateOrganization();
+ 
+-  const gclAwCookieValue = useCookieValue("_gcl_aw");
+-  const parsedArray = gclAwCookieValue ? gclAwCookieValue.split(".") : null;
+-  // Expected format for cookie value:  GCL.1719852261.actualGoogleClickIdHere
+-  // Since the beginning can be edited in GTM, get last element of array
+-  const googleClickId =
+-    parsedArray && parsedArray.length > 1 ? parsedArray[parsedArray.length - 1] : null;
+-
+-  window.logger("[OrganizationForm] get _gcl_aw cookie value", { gclAwCookieValue, googleClickId });
+-
+-  // AdRoll writes its first-party cookie on our own domain, so it reads like _gcl_aw
+-  const adrollFirstPartyCookie = useCookieValue("__adroll_fpc");
+-
+-  window.logger("[OrganizationForm] get __adroll_fpc cookie value", { adrollFirstPartyCookie });
+-
+   const handleNameChange = (name, value) => {
+     setName(value);
+   };
+@@ -69,7 +53,7 @@ function OrganizationForm(props) {
+         );
+       }
+       createOrganization(
+-        { name, googleClickId, heardAboutUsFrom, adrollFirstPartyCookie },
++        { name, heardAboutUsFrom },
+         {
+           onSuccess: (data) => {
+             window.logger("[OrganizationForm] createOrganization onSuccess", { data });
+diff --git a/app/javascript/ats/src/views/sessions/components/SignupForm.tsx b/app/javascript/ats/src/views/sessions/components/SignupForm.tsx
+index bfa9742b1..febf85fa5 100644
+--- a/app/javascript/ats/src/views/sessions/components/SignupForm.tsx
++++ b/app/javascript/ats/src/views/sessions/components/SignupForm.tsx
+@@ -69,6 +69,14 @@ function SignupForm(props) {
+           utmData: trackingParams.utmData,
+           internalRef: trackingParams.internalRef,
+           adrollClickId: trackingParams.adrollClickId,
++          gaClientId: trackingParams.gaClientId,
++          gaSessionId: trackingParams.gaSessionId,
++          fbclid: trackingParams.fbclid,
++          fbp: trackingParams.fbp,
++          fbc: trackingParams.fbc,
++          liFatId: trackingParams.liFatId,
++          googleClickId: trackingParams.googleClickId,
++          adrollFirstPartyCookie: trackingParams.adrollFirstPartyCookie,
+         },
+         {
+           onSuccess: (data) => {
+diff --git a/app/javascript/shared/lib/utils.js b/app/javascript/shared/lib/utils.js
+index 2f5513ac6..17615b13b 100644
+--- a/app/javascript/shared/lib/utils.js
++++ b/app/javascript/shared/lib/utils.js
+@@ -26,12 +26,13 @@ export function standardizeQueryParamsObject(queryObject) {
+ // from the raw location.search string. Key occurrence order is derived from the raw string
+ // because queryString.parse (v6.1.0) returns its keys alphabetically sorted.
+ const TRACKING_VALUE_MAX_LENGTH = 255;
++const ATTRIBUTION_IDENTIFIER_MAX_LENGTH = 1024;
+ const UTM_DATA_MAX_KEYS = 10;
+ 
+-function sanitizeTrackingValue(value) {
++function sanitizeTrackingValue(value, maxLength = TRACKING_VALUE_MAX_LENGTH) {
+   const firstValue = isArray(value) ? value[0] : value; // repeated param: keep first occurrence
+   if (!isString(firstValue)) return firstValue;
+-  const truncatedValue = firstValue.slice(0, TRACKING_VALUE_MAX_LENGTH); // truncate to 255
++  const truncatedValue = firstValue.slice(0, maxLength);
+   const lastCodeUnit = truncatedValue.charCodeAt(truncatedValue.length - 1);
+   // drop a trailing lone high surrogate left by the slice (would serialize as an unparsable \udXXX escape)
+   return lastCodeUnit >= 0xd800 && lastCodeUnit <= 0xdbff
+@@ -39,6 +40,24 @@ function sanitizeTrackingValue(value) {
+     : truncatedValue;
+ }
+ 
++function getCookieEntries() {
++  const cookieEntries = [];
++  document.cookie.split("; ").forEach((cookieEntry) => {
++    const separatorIndex = cookieEntry.indexOf("=");
++    if (separatorIndex === -1) return;
++    const cookieName = cookieEntry.substring(0, separatorIndex);
++    const cookieValue = cookieEntry.substring(separatorIndex + 1); // everything after the FIRST "="
++    if (cookieValue.length === 0) return; // cookie present with empty value = absent
++    cookieEntries.push({ name: cookieName, value: cookieValue });
++  });
++  return cookieEntries;
++}
++
++function getCookieValue(cookieEntries, cookieName) {
++  const matchingCookieEntry = cookieEntries.find((cookieEntry) => cookieEntry.name === cookieName);
++  return matchingCookieEntry ? matchingCookieEntry.value : undefined;
++}
++
+ export function sanitizeTrackingParams(search) {
+   const parsedParams = queryString.parse(search);
+ 
+@@ -69,6 +88,107 @@ export function sanitizeTrackingParams(search) {
+     trackingParams.adrollClickId = sanitizeTrackingValue(parsedParams.adct); // AdRoll appends adct on ad click
+   }
+ 
++  const cookieEntries = getCookieEntries();
++
++  // gaClientId — _ga cookie, format GA1.1.1234567890.1699999999: drop the first two
++  // dot-segments; store the raw value when the format is unexpected (<4 segments)
++  const gaCookieValue = getCookieValue(cookieEntries, "_ga");
++  if (gaCookieValue !== undefined) {
++    const gaSegments = gaCookieValue.split(".");
++    trackingParams.gaClientId = sanitizeTrackingValue(
++      gaSegments.length >= 4 ? gaSegments.slice(2).join(".") : gaCookieValue,
++      ATTRIBUTION_IDENTIFIER_MAX_LENGTH,
++    );
++  }
++
++  // gaSessionId — every _ga_* cookie (prefix match excludes the bare _ga), serialized raw
++  const gaSessionCookieEntries = cookieEntries.filter(
++    (cookieEntry) => cookieEntry.name.indexOf("_ga_") === 0,
++  );
++  if (gaSessionCookieEntries.length > 0) {
++    trackingParams.gaSessionId = sanitizeTrackingValue(
++      gaSessionCookieEntries
++        .map((cookieEntry) => cookieEntry.name + "=" + cookieEntry.value)
++        .join("; "),
++      ATTRIBUTION_IDENTIFIER_MAX_LENGTH,
++    );
++  }
++
++  // fbclid — URL param, same handling adct gets (first occurrence, cap)
++  if (parsedParams.fbclid !== undefined) {
++    trackingParams.fbclid = sanitizeTrackingValue(
++      parsedParams.fbclid,
++      ATTRIBUTION_IDENTIFIER_MAX_LENGTH,
++    );
++  }
++
++  // fbp — Meta pixel cookie, verbatim
++  const fbpCookieValue = getCookieValue(cookieEntries, "_fbp");
++  if (fbpCookieValue !== undefined) {
++    trackingParams.fbp = sanitizeTrackingValue(fbpCookieValue, ATTRIBUTION_IDENTIFIER_MAX_LENGTH);
++  }
++
++  // fbc — _fbc cookie verbatim; else Meta's documented construction from a genuinely
++  // present fbclid (?fbclid parses to null and ?fbclid= to "" — neither constructs)
++  const fbclidParamValue = isArray(parsedParams.fbclid) ? parsedParams.fbclid[0] : parsedParams.fbclid;
++  const fbcCookieValue = getCookieValue(cookieEntries, "_fbc");
++  if (fbcCookieValue !== undefined) {
++    trackingParams.fbc = sanitizeTrackingValue(fbcCookieValue, ATTRIBUTION_IDENTIFIER_MAX_LENGTH);
++  } else if (typeof fbclidParamValue === "string" && fbclidParamValue.length > 0) {
++    trackingParams.fbc = sanitizeTrackingValue(
++      "fb.1." + Date.now() + "." + fbclidParamValue,
++      ATTRIBUTION_IDENTIFIER_MAX_LENGTH,
++    );
++  }
++
++  // liFatId — li_fat_id URL param first, li_fat_id cookie (LinkedIn Insight Tag) fallback
++  const liFatIdParamValue = isArray(parsedParams.li_fat_id)
++    ? parsedParams.li_fat_id[0]
++    : parsedParams.li_fat_id;
++  if (typeof liFatIdParamValue === "string" && liFatIdParamValue.length > 0) {
++    trackingParams.liFatId = sanitizeTrackingValue(
++      liFatIdParamValue,
++      ATTRIBUTION_IDENTIFIER_MAX_LENGTH,
++    );
++  } else {
++    const liFatIdCookieValue = getCookieValue(cookieEntries, "li_fat_id");
++    if (liFatIdCookieValue !== undefined) {
++      trackingParams.liFatId = sanitizeTrackingValue(
++        liFatIdCookieValue,
++        ATTRIBUTION_IDENTIFIER_MAX_LENGTH,
++      );
++    }
++  }
++
++  // googleClickId — gclid URL param first; else the _gcl_aw cookie.
++  // Expected format for cookie value:  GCL.1719852261.actualGoogleClickIdHere
++  // Since the beginning can be edited in GTM, get last element of array
++  const gclidParamValue = isArray(parsedParams.gclid) ? parsedParams.gclid[0] : parsedParams.gclid;
++  if (typeof gclidParamValue === "string" && gclidParamValue.length > 0) {
++    trackingParams.googleClickId = sanitizeTrackingValue(
++      gclidParamValue,
++      ATTRIBUTION_IDENTIFIER_MAX_LENGTH,
++    );
++  } else {
++    const gclAwCookieValue = getCookieValue(cookieEntries, "_gcl_aw");
++    const gclAwSegments = gclAwCookieValue !== undefined ? gclAwCookieValue.split(".") : null;
++    if (gclAwSegments && gclAwSegments.length > 1) {
++      trackingParams.googleClickId = sanitizeTrackingValue(
++        gclAwSegments[gclAwSegments.length - 1],
++        ATTRIBUTION_IDENTIFIER_MAX_LENGTH,
++      );
++    }
++  }
++
++  // adrollFirstPartyCookie — __adroll_fpc verbatim (capture moves here from the org form)
++  const adrollFpcCookieValue = getCookieValue(cookieEntries, "__adroll_fpc");
++  if (adrollFpcCookieValue !== undefined) {
++    trackingParams.adrollFirstPartyCookie = sanitizeTrackingValue(
++      adrollFpcCookieValue,
++      ATTRIBUTION_IDENTIFIER_MAX_LENGTH,
++    );
++  }
++
+   const utmDataKeys = keysInOccurrenceOrder
+     .filter(
+       (key) =>
+diff --git a/app/javascript/shared/queryHooks/useSession.ts b/app/javascript/shared/queryHooks/useSession.ts
+index fa6584c11..07d87a766 100644
+--- a/app/javascript/shared/queryHooks/useSession.ts
++++ b/app/javascript/shared/queryHooks/useSession.ts
+@@ -36,6 +36,14 @@ const register = async ({
+   utmData,
+   internalRef,
+   adrollClickId,
++  gaClientId,
++  gaSessionId,
++  fbclid,
++  fbp,
++  fbc,
++  liFatId,
++  googleClickId,
++  adrollFirstPartyCookie,
+ }) => {
+   return await apiPost({
+     path: `/sign_up`,
+@@ -51,6 +59,14 @@ const register = async ({
+       utmData,
+       internalRef,
+       adrollClickId,
++      gaClientId,
++      gaSessionId,
++      fbclid,
++      fbp,
++      fbc,
++      liFatId,
++      googleClickId,
++      adrollFirstPartyCookie,
+     },
+   });
+ };
+@@ -69,6 +85,14 @@ const magicLink = async ({
+   utmData,
+   internalRef,
+   adrollClickId,
++  gaClientId,
++  gaSessionId,
++  fbclid,
++  fbp,
++  fbc,
++  liFatId,
++  googleClickId,
++  adrollFirstPartyCookie,
+ }: {
+   email: string;
+   loginIntent: string;
+@@ -83,6 +107,14 @@ const magicLink = async ({
+   utmData?: Record<string, any> | null;
+   internalRef?: string | null;
+   adrollClickId?: string | null;
++  gaClientId?: string | null;
++  gaSessionId?: string | null;
++  fbclid?: string | null;
++  fbp?: string | null;
++  fbc?: string | null;
++  liFatId?: string | null;
++  googleClickId?: string | null;
++  adrollFirstPartyCookie?: string | null;
+ }) => {
+   window.logger("%c[useSession] magicLink", "color: #1976D2", {
+     email,
+@@ -109,6 +141,14 @@ const magicLink = async ({
+       utmData,
+       internalRef,
+       adrollClickId,
++      gaClientId,
++      gaSessionId,
++      fbclid,
++      fbp,
++      fbc,
++      liFatId,
++      googleClickId,
++      adrollFirstPartyCookie,
+     },
+   });
+ };
+diff --git a/app/models/user.rb b/app/models/user.rb
+index 42ea4a1d5..202ede29f 100644
+--- a/app/models/user.rb
++++ b/app/models/user.rb
+@@ -376,7 +376,10 @@ class User < ApplicationRecord
+   # OMNIAUTH LOGIN/SIGNUP
+   ##################
+ 
+-  def self.from_omniauth(auth:, created_via:, partner_source: nil, utm_source: nil, utm_campaign: nil, utm_data: nil, internal_ref: nil, adroll_click_id: nil)
++  def self.from_omniauth(auth:, created_via:, partner_source: nil, utm_source: nil, utm_campaign: nil,
++                         utm_data: nil, internal_ref: nil, adroll_click_id: nil,
++                         ga_client_id: nil, ga_session_id: nil, fbclid: nil, fbp: nil, fbc: nil,
++                         li_fat_id: nil, google_click_id: nil, adroll_first_party_cookie: nil)
+     ap 'PARTNER SOURCE?'
+     ap partner_source
+     ap 'CREATED_VIA'
+@@ -391,6 +394,14 @@ class User < ApplicationRecord
+       omniauth_user.utm_data = utm_data
+       omniauth_user.internal_ref = internal_ref
+       omniauth_user.adroll_click_id = adroll_click_id
++      omniauth_user.ga_client_id = ga_client_id
++      omniauth_user.ga_session_id = ga_session_id
++      omniauth_user.fbclid = fbclid
++      omniauth_user.fbp = fbp
++      omniauth_user.fbc = fbc
++      omniauth_user.li_fat_id = li_fat_id
++      omniauth_user.google_click_id = google_click_id
++      omniauth_user.adroll_first_party_cookie = adroll_first_party_cookie
+       omniauth_user.sign_on_provider = 'google'
+       # Inflow requires user confirmation, so we skip it for omniauth users
+       # as Google has already verified their email.
+diff --git a/config/initializers/omniauth.rb b/config/initializers/omniauth.rb
+index d771582ce..6e06926d6 100644
+--- a/config/initializers/omniauth.rb
++++ b/config/initializers/omniauth.rb
+@@ -11,7 +11,8 @@ Rails.application.config.middleware.use OmniAuth::Builder do
+     callback_path: '/api/v1/users/auth/google_oauth2/callback',
+     setup: lambda { |env|
+       rack_request = Rack::Request.new(env)
+-      allowed_keys = %w[partner referral utm_source utm_campaign utm_data internal_ref adroll_click_id]
++      allowed_keys = %w[partner referral utm_source utm_campaign utm_data internal_ref adroll_click_id
++                        ga_client_id ga_session_id fbclid fbp fbc li_fat_id google_click_id adroll_first_party_cookie]
+ 
+       tracking_params = {}
+       allowed_keys.each do |key|
+diff --git a/db/migrate/20260724183710_add_attribution_identifier_columns_to_users.rb b/db/migrate/20260724183710_add_attribution_identifier_columns_to_users.rb
+new file mode 100644
+index 000000000..f388515d2
+--- /dev/null
++++ b/db/migrate/20260724183710_add_attribution_identifier_columns_to_users.rb
+@@ -0,0 +1,14 @@
++# frozen_string_literal: true
++
++class AddAttributionIdentifierColumnsToUsers < ActiveRecord::Migration[6.1]
++  def change
++    add_column :users, :ga_client_id, :string
++    add_column :users, :ga_session_id, :string
++    add_column :users, :fbclid, :string
++    add_column :users, :fbp, :string
++    add_column :users, :fbc, :string
++    add_column :users, :li_fat_id, :string
++    add_column :users, :google_click_id, :string
++    add_column :users, :adroll_first_party_cookie, :string
++  end
++end
+diff --git a/db/migrate/20260724183711_add_attribution_identifier_columns_to_organizations.rb b/db/migrate/20260724183711_add_attribution_identifier_columns_to_organizations.rb
+new file mode 100644
+index 000000000..7a097968a
+--- /dev/null
++++ b/db/migrate/20260724183711_add_attribution_identifier_columns_to_organizations.rb
+@@ -0,0 +1,12 @@
++# frozen_string_literal: true
++
++class AddAttributionIdentifierColumnsToOrganizations < ActiveRecord::Migration[6.1]
++  def change
++    add_column :organizations, :ga_client_id, :string
++    add_column :organizations, :ga_session_id, :string
++    add_column :organizations, :fbclid, :string
++    add_column :organizations, :fbp, :string
++    add_column :organizations, :fbc, :string
++    add_column :organizations, :li_fat_id, :string
++  end
++end
+diff --git a/db/schema.rb b/db/schema.rb
+index 5a94a80cd..f6e575d09 100644
+--- a/db/schema.rb
++++ b/db/schema.rb
+@@ -10,7 +10,7 @@
+ #
+ # It's strongly recommended that you check this file into your version control system.
+ 
+-ActiveRecord::Schema.define(version: 2026_07_23_222213) do
++ActiveRecord::Schema.define(version: 2026_07_24_183711) do
+ 
+   # These are extensions that must be enabled in order to support this database
+   enable_extension "fuzzystrmatch"
+@@ -1092,6 +1092,12 @@ ActiveRecord::Schema.define(version: 2026_07_23_222213) do
+     t.string "internal_ref"
+     t.string "adroll_click_id"
+     t.string "adroll_first_party_cookie"
++    t.string "ga_client_id"
++    t.string "ga_session_id"
++    t.string "fbclid"
++    t.string "fbp"
++    t.string "fbc"
++    t.string "li_fat_id"
+   end
+ 
+   create_table "process_templates", force: :cascade do |t|
+@@ -1289,6 +1295,14 @@ ActiveRecord::Schema.define(version: 2026_07_23_222213) do
+     t.jsonb "utm_data"
+     t.string "internal_ref"
+     t.string "adroll_click_id"
++    t.string "ga_client_id"
++    t.string "ga_session_id"
++    t.string "fbclid"
++    t.string "fbp"
++    t.string "fbc"
++    t.string "li_fat_id"
++    t.string "google_click_id"
++    t.string "adroll_first_party_cookie"
+     t.index ["current_organization_user_id"], name: "index_users_on_current_organization_user_id", unique: true
+     t.index ["discarded_at"], name: "index_users_on_discarded_at"
+     t.index ["email"], name: "index_users_on_email", unique: true
+diff --git a/spec/controllers/api/v1/organizations_controller_spec.rb b/spec/controllers/api/v1/organizations_controller_spec.rb
+index 1462c641d..ac37860c5 100644
+--- a/spec/controllers/api/v1/organizations_controller_spec.rb
++++ b/spec/controllers/api/v1/organizations_controller_spec.rb
+@@ -2,14 +2,14 @@
+ 
+ require 'rails_helper'
+ 
+-# Verifies #create copies the five attribution values (utm_source, utm_campaign,
+-# utm_data, internal_ref, adroll_click_id) from current_user onto the new Organization.
+-# Those values never come from the request body — organization_params does not permit
+-# them and the action never reads them from params.
+-#
+-# adroll_first_party_cookie is the exception: like google_click_id it is read in the
+-# browser at organization-creation time, so it IS permitted through organization_params
+-# and arrives in the request body rather than being copied off current_user.
++# Verifies #create copies the thirteen attribution values (utm_source, utm_campaign,
++# utm_data, internal_ref, adroll_click_id, ga_client_id, ga_session_id, fbclid, fbp,
++# fbc, li_fat_id, google_click_id, adroll_first_party_cookie) from current_user onto
++# the new Organization. Those values never come from the request body —
++# organization_params does not permit them and the action never reads them from
++# params. google_click_id and adroll_first_party_cookie used to arrive through the
++# request body from the organization form; that collection point is removed and they
++# are copied off current_user like every other attribution column.
+ RSpec.describe Api::V1::OrganizationsController, type: :controller do
+   around do |example|
+     original_adapter = ActiveJob::Base.queue_adapter
+@@ -38,11 +38,19 @@ RSpec.describe Api::V1::OrganizationsController, type: :controller do
+           utm_campaign: 'Camp01',
+           utm_data: { 'utm_medium' => 'email' },
+           internal_ref: 'ref-99',
+-          adroll_click_id: 'click123'
++          adroll_click_id: 'click123',
++          ga_client_id: '1234567890.1699999999',
++          ga_session_id: '_ga_ABC123XYZ=GS1.1.1699999999.5.1.1699999999.0.0.0',
++          fbclid: 'fbclid123',
++          fbp: 'fb.1.1699999999.987654321',
++          fbc: 'fb.1.1699999999.fbclid123',
++          li_fat_id: 'li-fat-123',
++          google_click_id: 'gclid-abc123',
++          adroll_first_party_cookie: 'fpc-abc123'
+         ).tap(&:confirm)
+       end
+ 
+-      it 'copies all five attribution values from current_user onto the organization' do
++      it 'copies all thirteen attribution values from current_user onto the organization' do
+         post :create, params: { organization: { name: 'Attributed Org' } }
+ 
+         expect(response).to have_http_status(:ok)
+@@ -54,18 +62,31 @@ RSpec.describe Api::V1::OrganizationsController, type: :controller do
+         expect(organization.utm_data).to eq({ 'utm_medium' => 'email' })
+         expect(organization.internal_ref).to eq 'ref-99'
+         expect(organization.adroll_click_id).to eq 'click123'
++        expect(organization.ga_client_id).to eq '1234567890.1699999999'
++        expect(organization.ga_session_id).to eq '_ga_ABC123XYZ=GS1.1.1699999999.5.1.1699999999.0.0.0'
++        expect(organization.fbclid).to eq 'fbclid123'
++        expect(organization.fbp).to eq 'fb.1.1699999999.987654321'
++        expect(organization.fbc).to eq 'fb.1.1699999999.fbclid123'
++        expect(organization.li_fat_id).to eq 'li-fat-123'
++        expect(organization.google_click_id).to eq 'gclid-abc123'
++        expect(organization.adroll_first_party_cookie).to eq 'fpc-abc123'
+       end
+ 
+-      it 'stores adroll_first_party_cookie from the request body' do
++      it 'ignores google_click_id and adroll_first_party_cookie sent in the request body' do
+         post :create, params: {
+-          organization: { name: 'Cookie Org', adroll_first_party_cookie: 'fpc-abc123' }
++          organization: {
++            name: 'Cookie Org',
++            google_click_id: 'from-body',
++            adroll_first_party_cookie: 'from-body'
++          }
+         }
+ 
+         expect(response).to have_http_status(:ok)
+ 
+         organization = Organization.find_by(name: 'Cookie Org')
+         expect(organization).to be_present
+-        expect(organization.adroll_first_party_cookie).to eq 'fpc-abc123'
++        expect(organization.google_click_id).to eq 'gclid-abc123' # current_user's value, not the body's
++        expect(organization.adroll_first_party_cookie).to eq 'fpc-abc123' # current_user's value, not the body's
+       end
+ 
+       it 'ignores attribution values sent in the request body' do
+@@ -92,7 +113,7 @@ RSpec.describe Api::V1::OrganizationsController, type: :controller do
+         ).tap(&:confirm)
+       end
+ 
+-      it 'creates an organization with nil in all five columns' do
++      it 'creates an organization with nil in all thirteen columns' do
+         post :create, params: { organization: { name: 'Plain Org' } }
+ 
+         expect(response).to have_http_status(:ok)
+@@ -104,6 +125,13 @@ RSpec.describe Api::V1::OrganizationsController, type: :controller do
+         expect(organization.utm_data).to be_nil
+         expect(organization.internal_ref).to be_nil
+         expect(organization.adroll_click_id).to be_nil
++        expect(organization.ga_client_id).to be_nil
++        expect(organization.ga_session_id).to be_nil
++        expect(organization.fbclid).to be_nil
++        expect(organization.fbp).to be_nil
++        expect(organization.fbc).to be_nil
++        expect(organization.li_fat_id).to be_nil
++        expect(organization.google_click_id).to be_nil
+         expect(organization.adroll_first_party_cookie).to be_nil
+       end
+     end
+diff --git a/spec/controllers/api/v1/registrations_controller_spec.rb b/spec/controllers/api/v1/registrations_controller_spec.rb
+index 8c1fd27fb..51aa95cb3 100644
+--- a/spec/controllers/api/v1/registrations_controller_spec.rb
++++ b/spec/controllers/api/v1/registrations_controller_spec.rb
+@@ -3,9 +3,11 @@
+ require 'rails_helper'
+ 
+ # Verifies attribution capture (utm_source, utm_campaign, utm_data, internal_ref,
+-# adroll_click_id) through sign_up_params and the magic_create user_params merge. Values are stored
+-# raw as sent (no downcasing/mapping), and absent params leave nil columns
+-# (utm_data stays nil, never {}).
++# adroll_click_id, ga_client_id, ga_session_id, fbclid, fbp, fbc, li_fat_id,
++# google_click_id, adroll_first_party_cookie) through sign_up_params and the
++# magic_create user_params merge. Values are stored raw as sent (no
++# downcasing/mapping, no server-side truncation), and absent params leave nil
++# columns (utm_data stays nil, never {}).
+ #
+ # Every magic_create POST includes login_intent: 'hire' (the value AuthForm.tsx
+ # always sends). Without it login_intent defaults to 'connect' and — with no
+@@ -27,7 +29,10 @@ RSpec.describe Api::V1::RegistrationsController, type: :controller do
+ 
+   describe 'POST #magic_create' do
+     context 'when the user does not exist yet' do
+-      it 'stores the five attribution values raw as sent' do
++      it 'stores the thirteen attribution values raw as sent' do
++        long_fbclid = 'fb' + ('x' * 300) # longer than 255 — the server stores what it receives
++        raw_ga_session_id = '_ga_ABC123XYZ=GS1.1.1699999999.5.1.1699999999.0.0.0; _ga_DEF456=GS1.1.2.3'
++
+         post :magic_create, params: {
+           email: 'new-magic@example.com',
+           login_intent: 'hire',
+@@ -35,7 +40,15 @@ RSpec.describe Api::V1::RegistrationsController, type: :controller do
+           utm_campaign: 'Camp01',
+           internal_ref: 'ref-99',
+           adroll_click_id: 'click123',
+-          utm_data: { utm_medium: 'email', utm_term: 'hiring' }
++          utm_data: { utm_medium: 'email', utm_term: 'hiring' },
++          ga_client_id: '1234567890.1699999999',
++          ga_session_id: raw_ga_session_id,
++          fbclid: long_fbclid,
++          fbp: 'fb.1.1699999999.987654321',
++          fbc: 'fb.1.1699999999.fbclid123',
++          li_fat_id: 'li-fat-123',
++          google_click_id: 'gclid-abc123',
++          adroll_first_party_cookie: 'fpc-abc123'
+         }
+ 
+         expect(response).to have_http_status(:ok)
+@@ -47,9 +60,17 @@ RSpec.describe Api::V1::RegistrationsController, type: :controller do
+         expect(user.internal_ref).to eq 'ref-99'
+         expect(user.adroll_click_id).to eq 'click123'
+         expect(user.utm_data).to eq({ 'utm_medium' => 'email', 'utm_term' => 'hiring' })
++        expect(user.ga_client_id).to eq '1234567890.1699999999'
++        expect(user.ga_session_id).to eq raw_ga_session_id
++        expect(user.fbclid).to eq long_fbclid
++        expect(user.fbp).to eq 'fb.1.1699999999.987654321'
++        expect(user.fbc).to eq 'fb.1.1699999999.fbclid123'
++        expect(user.li_fat_id).to eq 'li-fat-123'
++        expect(user.google_click_id).to eq 'gclid-abc123'
++        expect(user.adroll_first_party_cookie).to eq 'fpc-abc123'
+       end
+ 
+-      it 'leaves all five columns nil when none of the params are sent' do
++      it 'leaves all thirteen columns nil when none of the params are sent' do
+         post :magic_create, params: {
+           email: 'new-magic-no-utm@example.com',
+           login_intent: 'hire'
+@@ -64,6 +85,14 @@ RSpec.describe Api::V1::RegistrationsController, type: :controller do
+         expect(user.utm_data).to be_nil
+         expect(user.internal_ref).to be_nil
+         expect(user.adroll_click_id).to be_nil
++        expect(user.ga_client_id).to be_nil
++        expect(user.ga_session_id).to be_nil
++        expect(user.fbclid).to be_nil
++        expect(user.fbp).to be_nil
++        expect(user.fbc).to be_nil
++        expect(user.li_fat_id).to be_nil
++        expect(user.google_click_id).to be_nil
++        expect(user.adroll_first_party_cookie).to be_nil
+       end
+     end
+ 
+@@ -83,7 +112,15 @@ RSpec.describe Api::V1::RegistrationsController, type: :controller do
+           utm_source: 'SomeRawValue',
+           utm_campaign: 'Camp01',
+           internal_ref: 'ref-99',
+-          utm_data: { utm_medium: 'email' }
++          utm_data: { utm_medium: 'email' },
++          ga_client_id: '1234567890.1699999999',
++          ga_session_id: '_ga_ABC123XYZ=GS1.1.1699999999.5.1.1699999999.0.0.0',
++          fbclid: 'fbclid123',
++          fbp: 'fb.1.1699999999.987654321',
++          fbc: 'fb.1.1699999999.fbclid123',
++          li_fat_id: 'li-fat-123',
++          google_click_id: 'gclid-abc123',
++          adroll_first_party_cookie: 'fpc-abc123'
+         }
+ 
+         expect(response).to have_http_status(:ok)
+@@ -94,6 +131,14 @@ RSpec.describe Api::V1::RegistrationsController, type: :controller do
+         expect(user.utm_data).to be_nil
+         expect(user.internal_ref).to be_nil
+         expect(user.adroll_click_id).to be_nil
++        expect(user.ga_client_id).to be_nil
++        expect(user.ga_session_id).to be_nil
++        expect(user.fbclid).to be_nil
++        expect(user.fbp).to be_nil
++        expect(user.fbc).to be_nil
++        expect(user.li_fat_id).to be_nil
++        expect(user.google_click_id).to be_nil
++        expect(user.adroll_first_party_cookie).to be_nil
+       end
+     end
+ 
+@@ -113,7 +158,15 @@ RSpec.describe Api::V1::RegistrationsController, type: :controller do
+           utm_source: 'SomeRawValue',
+           utm_campaign: 'Camp01',
+           internal_ref: 'ref-99',
+-          utm_data: { utm_medium: 'email' }
++          utm_data: { utm_medium: 'email' },
++          ga_client_id: '1234567890.1699999999',
++          ga_session_id: '_ga_ABC123XYZ=GS1.1.1699999999.5.1.1699999999.0.0.0',
++          fbclid: 'fbclid123',
++          fbp: 'fb.1.1699999999.987654321',
++          fbc: 'fb.1.1699999999.fbclid123',
++          li_fat_id: 'li-fat-123',
++          google_click_id: 'gclid-abc123',
++          adroll_first_party_cookie: 'fpc-abc123'
+         }
+ 
+         expect(response).to have_http_status(:ok)
+@@ -124,12 +177,23 @@ RSpec.describe Api::V1::RegistrationsController, type: :controller do
+         expect(user.utm_data).to be_nil
+         expect(user.internal_ref).to be_nil
+         expect(user.adroll_click_id).to be_nil
++        expect(user.ga_client_id).to be_nil
++        expect(user.ga_session_id).to be_nil
++        expect(user.fbclid).to be_nil
++        expect(user.fbp).to be_nil
++        expect(user.fbc).to be_nil
++        expect(user.li_fat_id).to be_nil
++        expect(user.google_click_id).to be_nil
++        expect(user.adroll_first_party_cookie).to be_nil
+       end
+     end
+   end
+ 
+   describe 'POST #create' do
+-    it 'persists the five attribution values raw via sign_up_params' do
++    it 'persists the thirteen attribution values raw via sign_up_params' do
++      long_fbclid = 'fb' + ('x' * 300) # longer than 255 — the server stores what it receives
++      raw_ga_session_id = '_ga_ABC123XYZ=GS1.1.1699999999.5.1.1699999999.0.0.0; _ga_DEF456=GS1.1.2.3'
++
+       post :create, params: {
+         first_name: 'Pat',
+         last_name: 'Tester',
+@@ -139,7 +203,15 @@ RSpec.describe Api::V1::RegistrationsController, type: :controller do
+         utm_campaign: 'Camp01',
+         internal_ref: 'ref-99',
+         adroll_click_id: 'click123',
+-        utm_data: { utm_medium: 'cpc' }
++        utm_data: { utm_medium: 'cpc' },
++        ga_client_id: '1234567890.1699999999',
++        ga_session_id: raw_ga_session_id,
++        fbclid: long_fbclid,
++        fbp: 'fb.1.1699999999.987654321',
++        fbc: 'fb.1.1699999999.fbclid123',
++        li_fat_id: 'li-fat-123',
++        google_click_id: 'gclid-abc123',
++        adroll_first_party_cookie: 'fpc-abc123'
+       }
+ 
+       user = User.find_by(email: 'pw@example.com')
+@@ -149,9 +221,17 @@ RSpec.describe Api::V1::RegistrationsController, type: :controller do
+       expect(user.internal_ref).to eq 'ref-99'
+       expect(user.adroll_click_id).to eq 'click123'
+       expect(user.utm_data).to eq({ 'utm_medium' => 'cpc' })
++      expect(user.ga_client_id).to eq '1234567890.1699999999'
++      expect(user.ga_session_id).to eq raw_ga_session_id
++      expect(user.fbclid).to eq long_fbclid
++      expect(user.fbp).to eq 'fb.1.1699999999.987654321'
++      expect(user.fbc).to eq 'fb.1.1699999999.fbclid123'
++      expect(user.li_fat_id).to eq 'li-fat-123'
++      expect(user.google_click_id).to eq 'gclid-abc123'
++      expect(user.adroll_first_party_cookie).to eq 'fpc-abc123'
+     end
+ 
+-    it 'leaves all five columns nil when none of the params are sent' do
++    it 'leaves all thirteen columns nil when none of the params are sent' do
+       post :create, params: {
+         first_name: 'Pat',
+         last_name: 'Tester',
+@@ -166,6 +246,14 @@ RSpec.describe Api::V1::RegistrationsController, type: :controller do
+       expect(user.utm_data).to be_nil
+       expect(user.internal_ref).to be_nil
+       expect(user.adroll_click_id).to be_nil
++      expect(user.ga_client_id).to be_nil
++      expect(user.ga_session_id).to be_nil
++      expect(user.fbclid).to be_nil
++      expect(user.fbp).to be_nil
++      expect(user.fbc).to be_nil
++      expect(user.li_fat_id).to be_nil
++      expect(user.google_click_id).to be_nil
++      expect(user.adroll_first_party_cookie).to be_nil
+     end
+   end
+ end
+diff --git a/spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb b/spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb
+index eed9e2e8c..f0ea8866b 100644
+--- a/spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb
++++ b/spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb
+@@ -48,7 +48,15 @@ RSpec.describe Api::V1::Users::OmniauthCallbacksController, type: :controller do
+         'utm_campaign' => 'Camp01',
+         'utm_data' => { 'utm_medium' => 'cpc' },
+         'internal_ref' => 'ref-99',
+-        'adroll_click_id' => 'click123'
++        'adroll_click_id' => 'click123',
++        'ga_client_id' => '1234567890.1699999999',
++        'ga_session_id' => '_ga_ABC123XYZ=GS1.1.1699999999.5.1.1699999999.0.0.0',
++        'fbclid' => 'fbclid123',
++        'fbp' => 'fb.1.1699999999.987654321',
++        'fbc' => 'fb.1.1699999999.fbclid123',
++        'li_fat_id' => 'li-fat-123',
++        'google_click_id' => 'gclid-abc123',
++        'adroll_first_party_cookie' => 'fpc-abc123'
+       }
+ 
+       get :google_oauth2
+@@ -61,12 +69,20 @@ RSpec.describe Api::V1::Users::OmniauthCallbacksController, type: :controller do
+         utm_campaign: 'Camp01',
+         utm_data: { 'utm_medium' => 'cpc' },
+         internal_ref: 'ref-99',
+-        adroll_click_id: 'click123'
++        adroll_click_id: 'click123',
++        ga_client_id: '1234567890.1699999999',
++        ga_session_id: '_ga_ABC123XYZ=GS1.1.1699999999.5.1.1699999999.0.0.0',
++        fbclid: 'fbclid123',
++        fbp: 'fb.1.1699999999.987654321',
++        fbc: 'fb.1.1699999999.fbclid123',
++        li_fat_id: 'li-fat-123',
++        google_click_id: 'gclid-abc123',
++        adroll_first_party_cookie: 'fpc-abc123'
+       )
+       expect(response).to redirect_to("#{Variables::AtsRootUrl}/")
+     end
+ 
+-    it 'passes nil for all five attribution values when no tracking rode the session' do
++    it 'passes nil for all thirteen attribution values when no tracking rode the session' do
+       get :google_oauth2
+ 
+       expect(User).to have_received(:from_omniauth).with(
+@@ -77,7 +93,15 @@ RSpec.describe Api::V1::Users::OmniauthCallbacksController, type: :controller do
+         utm_campaign: nil,
+         utm_data: nil,
+         internal_ref: nil,
+-        adroll_click_id: nil
++        adroll_click_id: nil,
++        ga_client_id: nil,
++        ga_session_id: nil,
++        fbclid: nil,
++        fbp: nil,
++        fbc: nil,
++        li_fat_id: nil,
++        google_click_id: nil,
++        adroll_first_party_cookie: nil
+       )
+       expect(response).to redirect_to("#{Variables::AtsRootUrl}/")
+     end
+diff --git a/spec/models/user_from_omniauth_spec.rb b/spec/models/user_from_omniauth_spec.rb
+index f5d9a12f6..ddd11291d 100644
+--- a/spec/models/user_from_omniauth_spec.rb
++++ b/spec/models/user_from_omniauth_spec.rb
+@@ -3,10 +3,11 @@
+ require 'rails_helper'
+ 
+ # Pins the all-keyword User.from_omniauth interface and the creation-time-only
+-# assignment of the five attribution values (utm_source, utm_campaign, utm_data,
+-# internal_ref, adroll_click_id). Values are stored raw as sent; partner_source keeps
+-# its existing downcasing behavior. Existing users are never modified — assignment
+-# happens only inside the first_or_create block.
++# assignment of the thirteen attribution values (utm_source, utm_campaign, utm_data,
++# internal_ref, adroll_click_id, ga_client_id, ga_session_id, fbclid, fbp, fbc,
++# li_fat_id, google_click_id, adroll_first_party_cookie). Values are stored raw as
++# sent; partner_source keeps its existing downcasing behavior. Existing users are
++# never modified — assignment happens only inside the first_or_create block.
+ RSpec.describe User, type: :model do
+   around do |example|
+     original_adapter = ActiveJob::Base.queue_adapter
+@@ -22,7 +23,9 @@ RSpec.describe User, type: :model do
+       )
+     end
+ 
+-    it 'creates a user with the five attribution values stored raw' do
++    it 'creates a user with the thirteen attribution values stored raw' do
++      raw_ga_session_id = '_ga_ABC123XYZ=GS1.1.1699999999.5.1.1699999999.0.0.0; _ga_DEF456=GS1.1.2.3'
++
+       user = User.from_omniauth(
+         auth: auth_hash,
+         created_via: 'created_via_signup',
+@@ -31,7 +34,15 @@ RSpec.describe User, type: :model do
+         utm_campaign: 'Camp01',
+         utm_data: { 'utm_medium' => 'cpc' },
+         internal_ref: 'ref-99',
+-        adroll_click_id: 'click123'
++        adroll_click_id: 'click123',
++        ga_client_id: '1234567890.1699999999',
++        ga_session_id: raw_ga_session_id,
++        fbclid: 'fbclid123',
++        fbp: 'fb.1.1699999999.987654321',
++        fbc: 'fb.1.1699999999.fbclid123',
++        li_fat_id: 'li-fat-123',
++        google_click_id: 'gclid-abc123',
++        adroll_first_party_cookie: 'fpc-abc123'
+       )
+ 
+       expect(user).to be_persisted
+@@ -40,10 +51,18 @@ RSpec.describe User, type: :model do
+       expect(user.utm_data).to eq({ 'utm_medium' => 'cpc' })
+       expect(user.internal_ref).to eq 'ref-99'
+       expect(user.adroll_click_id).to eq 'click123'
++      expect(user.ga_client_id).to eq '1234567890.1699999999'
++      expect(user.ga_session_id).to eq raw_ga_session_id
++      expect(user.fbclid).to eq 'fbclid123'
++      expect(user.fbp).to eq 'fb.1.1699999999.987654321'
++      expect(user.fbc).to eq 'fb.1.1699999999.fbclid123'
++      expect(user.li_fat_id).to eq 'li-fat-123'
++      expect(user.google_click_id).to eq 'gclid-abc123'
++      expect(user.adroll_first_party_cookie).to eq 'fpc-abc123'
+       expect(user.partner_source).to eq 'wwr' # existing downcasing behavior, unchanged
+     end
+ 
+-    it 'leaves all five columns nil when the keywords are omitted' do
++    it 'leaves all thirteen columns nil when the keywords are omitted' do
+       user = User.from_omniauth(auth: auth_hash, created_via: 'created_via_signup')
+ 
+       expect(user).to be_persisted
+@@ -52,6 +71,14 @@ RSpec.describe User, type: :model do
+       expect(user.utm_data).to be_nil
+       expect(user.internal_ref).to be_nil
+       expect(user.adroll_click_id).to be_nil
++      expect(user.ga_client_id).to be_nil
++      expect(user.ga_session_id).to be_nil
++      expect(user.fbclid).to be_nil
++      expect(user.fbp).to be_nil
++      expect(user.fbc).to be_nil
++      expect(user.li_fat_id).to be_nil
++      expect(user.google_click_id).to be_nil
++      expect(user.adroll_first_party_cookie).to be_nil
+     end
+ 
+     it 'does not assign attribution values to an existing user' do
+@@ -72,7 +99,15 @@ RSpec.describe User, type: :model do
+           utm_campaign: 'ShouldNotStick',
+           utm_data: { 'utm_medium' => 'ShouldNotStick' },
+           internal_ref: 'ShouldNotStick',
+-          adroll_click_id: 'ShouldNotStick'
++          adroll_click_id: 'ShouldNotStick',
++          ga_client_id: 'ShouldNotStick',
++          ga_session_id: 'ShouldNotStick',
++          fbclid: 'ShouldNotStick',
++          fbp: 'ShouldNotStick',
++          fbc: 'ShouldNotStick',
++          li_fat_id: 'ShouldNotStick',
++          google_click_id: 'ShouldNotStick',
++          adroll_first_party_cookie: 'ShouldNotStick'
+         )
+       end.not_to change(User, :count)
+ 
+@@ -81,6 +116,14 @@ RSpec.describe User, type: :model do
+       expect(existing_user.utm_data).to be_nil
+       expect(existing_user.internal_ref).to be_nil
+       expect(existing_user.adroll_click_id).to be_nil
++      expect(existing_user.ga_client_id).to be_nil
++      expect(existing_user.ga_session_id).to be_nil
++      expect(existing_user.fbclid).to be_nil
++      expect(existing_user.fbp).to be_nil
++      expect(existing_user.fbc).to be_nil
++      expect(existing_user.li_fat_id).to be_nil
++      expect(existing_user.google_click_id).to be_nil
++      expect(existing_user.adroll_first_party_cookie).to be_nil
+     end
+ 
+     it 'requires the auth and created_via keywords' do

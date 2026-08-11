@@ -1,0 +1,38 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 7,
+  "focus_area": "JobApplicationSidebar.tsx modifications -- the custom PlatoNavItem",
+  "findings": [
+    {
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationSidebar.tsx",
+      "line": 429,
+      "requirement": "Every styled component must have a `label` property for debugging. The label format is `ParentComponentName_StyledElementName` (spec section 'Emotion styled component conventions', lines 218-230)",
+      "actual": "The `platoNavLinkStyles` function (lines 429-468) produces CSS with no `label:` property. When this is applied to `PlatoNavItem` at line 470, the resulting styled component has no debugging label. By contrast, `PlatoNavLabel` (line 472) correctly includes `label: JobApplicationSidebar_PlatoNavLabel`. The `PlatoNavItem` styled component is missing its required `label: JobApplicationSidebar_PlatoNavItem` declaration.",
+      "fix": "Add `label: JobApplicationSidebar_PlatoNavItem;` as the first line inside the template literal returned by `platoNavLinkStyles`, immediately before `height: 40px;`."
+    }
+  ],
+  "spec_coverage": {
+    "total_requirements": 12,
+    "implemented": 11,
+    "missing": 0,
+    "deviating": 1,
+    "details": [
+      { "requirement": "Import PlatoChip from PlatoMark", "status": "implemented", "location": "line 13" },
+      { "requirement": "Import FeatureFlipper from FeatureFlipper", "status": "implemented", "location": "line 14" },
+      { "requirement": "Import isPropValid from @emotion/is-prop-valid", "status": "implemented", "location": "line 4" },
+      { "requirement": "Import Box from @shared/components/Box", "status": "implemented", "location": "line 15" },
+      { "requirement": "Import Text from @shared/components/Text", "status": "implemented", "location": "line 16" },
+      { "requirement": "After last NavItem (Private notes), add Plato nav entry wrapped in FeatureFlipper feature='AI_APPLICANT_SUMMARY'", "status": "implemented", "location": "lines 96-105" },
+      { "requirement": "Wrap NavLink via styled(NavLink, { shouldForwardProp: isPropValid })", "status": "implemented", "location": "line 470" },
+      { "requirement": "Link to ${match.url}/ai", "status": "implemented", "location": "line 97" },
+      { "requirement": "Render PlatoChip (size 22, radius 6) in icon slot", "status": "implemented", "location": "line 100" },
+      { "requirement": "Render 'Plato' as label text", "status": "implemented", "location": "line 101" },
+      { "requirement": "Render chevron-right icon on the right", "status": "implemented", "location": "line 103" },
+      { "requirement": "Copy linkStyles from NavItem.tsx lines 56-95 verbatim and adapt only the icon slot", "status": "implemented", "location": "lines 429-468 match NavItem.tsx linkStyles lines 56-95 verbatim (height, border-radius, margins, padding, flex, text-decoration, transition, > svg block, &.active block, breakpoint.sm responsive hover gate with stroke and opacity)" },
+      { "requirement": "Replicate StyledLabel inner wrapper pattern from NavItem.tsx lines 103-118", "status": "implemented", "location": "PlatoNavLabel (lines 472-488) replicates: display:flex, align-items:center, overflow:hidden, Text truncation styles, and icon spacing. Icon selector adapted from `svg` to `> span:first-of-type` to target PlatoChip's span output -- this is the expected 'adapt only the icon slot' change." },
+      { "requirement": "Every styled component must have a label property (spec 'Emotion styled component conventions')", "status": "deviating", "location": "PlatoNavLabel has label (line 473). PlatoNavItem/platoNavLinkStyles has no label. See finding." }
+    ]
+  }
+}

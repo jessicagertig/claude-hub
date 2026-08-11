@@ -1,0 +1,141 @@
+{
+  "meta": {
+    "batch": 12,
+    "criteria_prompt_version": 8,
+    "job_id": 22407,
+    "title": "Software Engineer, Mid-Sr",
+    "organization": "CompSci, LLC",
+    "cost": 0.000483
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "We are looking for Engineers with experience designing and building cloud-based solutions. We work with our enterprise customer to design, implement and enhance custom software solutions. The ideal candidate will be able to participate in the planning, presentation and delivery of new or existing software solutions.\n\nWe have a dynamic and fast-paced environment. We are crafting custom solutions, so you won’t stagnate building one product. This requires you to have a desire to adapt quickly to new tools and languages. Our team has a highly technical background that provides us the opportunity to produce solutions to a diverse set of problems in a wide variety of regulated and non-regulated industries. We currently have active projects in:  FinTech, Transportation, Biomedical/Pharmaceutical, Energy, Education and Marketing."
+      },
+      {
+        "heading": "Required Qualifications",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "A passion for crafting software solutions and a desire to grow your knowledge and skill\nB.S. level technical degree or related experience\nStrong verbal and written communication skills\nStrong organizational, planning, and analytical skills\nHighly collaborative and team oriented\nAbility to lead a small team\nAbility to keep to production schedules and work effectively with colleagues\nDiverse knowledge of Operating Systems: Linux, Windows, OS X\nAbility to work productively in Linux and Windows\n3+ years’ experience and comfort across a combination of Python, C#, JavaScript, node.js, HTML, CSS, Vue, React and Angular\n3+ years’ experience with SQL Server and/or Postgres"
+      },
+      {
+        "heading": "Desired Qualifications",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Experience with enterprise systems and their deployment\nExperience assessing, optimizing, automating IT service processes\nAbility to perform as full-stack developer\nExperience with AWS and Azure services"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "A passion for crafting software solutions and a desire to grow your knowledge and skill",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "A passion for crafting software solutions and a desire to grow your knowledge and skill"
+      },
+      {
+        "text": "B.S. level technical degree or related experience",
+        "tier": "tier_1",
+        "tier_reasoning": "default tier_1 due to 'Required Qualifications' heading",
+        "binary": false,
+        "source_text": "B.S. level technical degree or related experience"
+      },
+      {
+        "text": "Strong verbal and written communication skills",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 due to signal word 'Strong'",
+        "binary": false,
+        "source_text": "Strong verbal and written communication skills"
+      },
+      {
+        "text": "Strong organizational, planning, and analytical skills",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 due to signal word 'Strong'",
+        "binary": false,
+        "source_text": "Strong organizational, planning, and analytical skills"
+      },
+      {
+        "text": "Highly collaborative and team oriented",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 due to signal word 'Highly'",
+        "binary": false,
+        "source_text": "Highly collaborative and team oriented"
+      },
+      {
+        "text": "Ability to lead a small team",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: 'Ability to', which is a tier_2 signal",
+        "binary": false,
+        "source_text": "Ability to lead a small team"
+      },
+      {
+        "text": "Ability to keep to production schedules and work effectively with colleagues",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: 'Ability to', which is a tier_2 signal",
+        "binary": false,
+        "source_text": "Ability to keep to production schedules and work effectively with colleagues"
+      },
+      {
+        "text": "Diverse knowledge of Operating Systems: Linux, Windows, OS X",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: 'knowledge of' is a tier_2 signal",
+        "binary": false,
+        "source_text": "Diverse knowledge of Operating Systems: Linux, Windows, OS X"
+      },
+      {
+        "text": "Ability to work productively in Linux and Windows",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: 'Ability to', which is a tier_2 signal",
+        "binary": false,
+        "source_text": "Ability to work productively in Linux and Windows"
+      },
+      {
+        "text": "3+ years’ experience and comfort across a combination of Python, C#, JavaScript, node.js, HTML, CSS, Vue, React and Angular",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: 'experience with', which is a tier_2 signal",
+        "binary": false,
+        "source_text": "3+ years’ experience and comfort across a combination of Python, C#, JavaScript, node.js, HTML, CSS, Vue, React and Angular"
+      },
+      {
+        "text": "3+ years’ experience with SQL Server and/or Postgres",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: 'experience with', which is a tier_2 signal",
+        "binary": false,
+        "source_text": "3+ years’ experience with SQL Server and/or Postgres"
+      },
+      {
+        "text": "Experience with enterprise systems and their deployment",
+        "tier": "tier_2",
+        "tier_reasoning": "default tier_2 due to 'Desired Qualifications' heading",
+        "binary": false,
+        "source_text": "Experience with enterprise systems and their deployment"
+      },
+      {
+        "text": "Experience assessing, optimizing, automating IT service processes",
+        "tier": "tier_2",
+        "tier_reasoning": "default tier_2 due to 'Desired Qualifications' heading",
+        "binary": false,
+        "source_text": "Experience assessing, optimizing, automating IT service processes"
+      },
+      {
+        "text": "Ability to perform as full-stack developer",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: 'Ability to', which is a tier_2 signal",
+        "binary": false,
+        "source_text": "Ability to perform as full-stack developer"
+      },
+      {
+        "text": "Experience with AWS and Azure services",
+        "tier": "tier_2",
+        "tier_reasoning": "default tier_2 due to 'Desired Qualifications' heading",
+        "binary": false,
+        "source_text": "Experience with AWS and Azure services"
+      }
+    ]
+  }
+}

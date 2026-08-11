@@ -1,0 +1,34 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agent_index": 1,
+  "focus_area": "Background jobs + textract trigger (ExtractJobCriteriaJob, BulkGenerateAiSummariesJob#each_iteration, TextractResult zero-criteria funnel guard), structurally diffed against analog GenerateAiJobApplicationSummaryJob",
+  "files_reviewed": [
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/jobs/bulk_generate_ai_summaries_job.rb",
+    "app/models/textract_result.rb",
+    "app/jobs/generate_ai_job_application_summary_job.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/models/job.rb"
+  ],
+  "findings": [
+    {
+      "id": "l2-a1-001",
+      "severity": "MED",
+      "title": "l2-a3-001 (round 1) re-adjudication: two claim-row-stuck-:processing paths are REAL but PRE-EXISTING (out of feature scope) — MED is correct, do not escalate",
+      "file": "app/jobs/bulk_generate_ai_summaries_job.rb",
+      "line": 33,
+      "description": "Independent verification of round-1 finding l2-a3-001. The factual claim is CORRECT: (a) `return unless job_application` (line 32-33) returns before the claim row is ever fetched (fetch is at line 37), leaving that job_application's BulkAiSummaryJobApplication row at its initial :processing forever; (b) the `rescue StandardError => e` catch-all (lines 95-98) only logs and `ap e` — it never sets the claim row to :failed, so a per-iteration exception leaves the row :processing. Neither on_complete (only COUNTS rows, does not rewrite them: line 117 `failed = size - done - deferred`) nor update_remaining_statuses_to_failed (fires only on whole-job discard_on/retry_on exhaustion, lines 12-21) rescues these rows, so QueueBulkAiSummaryJobs treats them as permanently claimed. HOWEVER both paths are PRE-EXISTING and NOT touched by this feature: `git diff <merge-base develop>...HEAD` on this file is a single +5/-1 hunk (the validation-failure :failed path only); `git blame` dates lines 32-33 and 95-98 to commit a5c0e1f823 (2026-04-15), well before the branch. The feature's new zero-criteria guard flows through ValidateAiSummaryGeneration (the validation-failure path, which WAS fixed to :failed), NOT through the not-found or StandardError paths, so it does not make either path more common. My independent verdict: VALIDATED as accurate, correctly classified MED (pre-existing latent gap, out of scope). Do not raise above MED.",
+      "recommendation": "Keep as MED / do-not-fix in feature scope. If desired, the not-found and catch-all paths could set `job_application_bulk_job_status&.update_columns(status: :failed)` before returning, but that is a separate pre-existing-infrastructure change requiring its own spec (pipeline rules 10/23) and is not this feature's responsibility."
+    },
+    {
+      "id": "l2-a1-002",
+      "severity": "LOW",
+      "title": "extract_job_criteria_if_needed can enqueue duplicate ExtractJobCriteriaJobs during the pending window (bulk amplification) — pre-existing AND spec-accepted (SPEC §4.1)",
+      "file": "app/models/job.rb",
+      "line": 730,
+      "description": "Verifying brief item 4 'does not double-fire': neither `extract_job_criteria_if_needed` (job.rb:743, guards only :succeeded) nor `extract_job_criteria_immediately` (job.rb:730, guards :in_progress and :retrying but NOT :pending) blocks a freshly-created :pending AiJobCriteria row. `TextractResult#generate_ai_summary_with_credit_flow` calls `extract_job_criteria_if_needed` at textract_result.rb:72, and in the bulk path that runs once per applicant (each_iteration -> credit flow). For a single job whose criteria have not yet reached :succeeded/:in_progress, each sequential iteration sees the prior iteration's still-:pending row (perform_later is async), passes all guards, and creates ANOTHER :pending row + enqueues ANOTHER paid ExtractJobCriteriaJob — potentially many before the first extraction sets :in_progress. This exceeds SPEC §4.1's stated 'two rapid POSTs' framing, BUT: (1) it is UNCHANGED by this feature — `git diff develop...HEAD` shows _if_needed never guarded :pending pre-refactor either (the moved in_progress/retrying guards do not affect this), and (2) SPEC §4.1 explicitly documents and accepts it ('_immediately does NOT guard pending ... residual double-enqueue is wasteful but harmless, latest row wins'). Recorded so the check is on record; not a feature defect.",
+      "recommendation": "No change required (spec-accepted, pre-existing). If the owner later wants to curb wasted paid extractions in bulk, add `return if latest_ai_job_criteria&.status_pending?` to extract_job_criteria_immediately — but that is an owner decision against SPEC §4.1, not a fix."
+    }
+  ]
+}

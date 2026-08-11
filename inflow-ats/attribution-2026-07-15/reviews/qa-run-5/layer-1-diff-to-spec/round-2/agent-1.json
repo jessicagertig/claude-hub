@@ -1,0 +1,34 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 1,
+  "focus_area": "Data model — two migrations (20260715233505 users, 20260715233506 organizations), db/schema.rb hunks, no-model-edit rule, §7 constraints 2-3, schema version line",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "SPEC.md §3: two migrations, one per table, spec-proposed file names add_attribution_columns_to_users / add_attribution_columns_to_organizations, class names matching",
+      "SPEC.md §3 table: utm_source string, utm_campaign string, utm_data jsonb, internal_ref string — no defaults, no null constraints, no indexes",
+      "SPEC.md §3: no-defaults contrast with existing settings jsonb (default: {}, null: false)",
+      "SPEC.md §3: no backfill, no data migration (D6)",
+      "SPEC.md §3: no model changes — no validations, enums, attr_accessor; organization.rb needs no edit",
+      "SPEC.md §3 + §8: migration shape follows analog db/migrate/20260622182504_add_ai_summary_and_criteria_columns_to_jobs.rb",
+      "SPEC.md §7 constraint 2: no jsonb default at the schema layer",
+      "SPEC.md §7 constraint 3: existing rows keep nil — no backfill",
+      "user.rb diff limited to the §4.6 from_omniauth change; organization.rb zero diff",
+      "db/schema.rb version line consistent with the new migrations"
+    ],
+    "verified": [
+      "Migration file names/class names match spec-proposed names: diff lines 503-534 of diff-62dd55867-fc3f047f9.txt — db/migrate/20260715233505_add_attribution_columns_to_users.rb defines AddAttributionColumnsToUsers; db/migrate/20260715233506_add_attribution_columns_to_organizations.rb defines AddAttributionColumnsToOrganizations. Re-confirmed via git show fc3f047f9:<path> (byte-identical to diff).",
+      "Column set, types, and order per §3 table in BOTH migrations: add_column :<table>, :utm_source, :string / :utm_campaign, :string / :utm_data, :jsonb / :internal_ref, :string — in exactly that order, no options hash on any add_column, therefore no defaults, no null: false, no indexes. Spec lists the users migration first and its timestamp (233505) precedes organizations (233506).",
+      "Analog shape match (§8 row 'Add-columns migration shape'): 20260622182504_add_ai_summary_and_criteria_columns_to_jobs.rb read at HEAD — same skeleton (# frozen_string_literal: true, class < ActiveRecord::Migration[6.1], def change, bare add_column lines). New migrations replicate the skeleton; the analog's default:/null: options are correctly ABSENT per §3's explicit no-defaults rule.",
+      "schema.rb hunks (diff lines 535-569, exactly 3 hunks confirmed via git diff | grep -c '^@@' = 3): (1) version line 2026_06_11_120003 -> 2026_07_15_233506; (2) four bare column lines appended at end of create_table \"organizations\" (HEAD schema.rb lines 1089-1092, block spans 1033-1094); (3) four bare column lines appended in create_table \"users\" (HEAD lines 1285-1288, block spans 1248-1295, before the index lines). All eight are t.string / t.jsonb with NO default, NO null constraint; no t.index lines added anywhere (grep for quoted column names in schema.rb returns only the 8 new column lines plus pre-existing ahoy_visits utm columns at lines 104/108, untouched by the diff).",
+      "Settings-jsonb contrast (§3 bullet 1 / §7 constraint 2): HEAD schema.rb line 1039 (organizations) and line 1266 (users) both read t.jsonb \"settings\", default: {}, null: false — while the new t.jsonb \"utm_data\" lines (1091, 1287) carry no default and no null constraint. Contrast holds exactly as specified.",
+      "Schema version line correct: max timestamp in db/migrate/ at HEAD is 20260715233506 (ls | sort | tail), matching version: 2026_07_15_233506. Chased the suspicious base state (base version 2026_06_11_120003 while 20260622182504/20260622204646 exist in db/migrate): git show 62dd55867:db/schema.rb already contains ai_job_application_summaries_count and the non-unique index_ai_job_criteria_on_job_id — the June-22 effects were in the base schema body with only the version line stale (pre-existing, outside the diff); the bump in this diff is therefore accurate, not papering over missing schema content.",
+      "§7 constraint 3 / §3 no-backfill: git diff --stat 62dd55867..fc3f047f9 -- db/ shows only the two migrations + schema.rb; db/data/ diff in range is empty; neither migration contains any data statement (add_column only).",
+      "No model edits for the columns: git diff --stat 62dd55867..fc3f047f9 -- app/models/organization.rb is empty (zero diff). app/models/user.rb diff is 5 insertions + 1 deletion in two hunks (diff lines 466-489): the from_omniauth keyword-signature line and the four omniauth_user.utm_* / internal_ref assignments inside the first_or_create block — exactly the §4.6 change, nothing else. git grep for the four column names across app/models/ returns only user.rb:379,389-392 plus pre-existing unrelated URL strings in board_what_jobs_listing.rb/board_wwr_listing.rb; no validations, no enums, no attr_accessor, no store_accessor anywhere.",
+      "No other db/ references to the new columns: git grep utm_source/internal_ref in db/ matches only schema.rb, the two new migrations, and the pre-existing 20181225151206 ahoy migration."
+    ],
+    "missing": []
+  },
+  "notes": "Both directions traced. Spec-to-diff: every §3 row (4 columns x name/type/no-default/no-null/no-index, both tables), the file/class naming rule, the analog shape, the settings contrast, §7 constraints 2-3, the no-model-edit rule, and the schema version line each map to concrete diff lines (cited above). Diff-to-spec: the diff range contains exactly four data-model artifacts in my area — the two migration files, the 3-hunk schema.rb change, and the user.rb §4.6 hunks — and every added line traces to §3/§4.6; nothing extra (no indexes, no data migration, no extra columns, no organization.rb or other model edits). Prior finding l1-run4-001 concerns §5.1 rule 2 / §7 constraint 1 / §11 note 4 (sanitizer truncation wording) — outside this agent's data-model area; not evaluated here. Round-2 verification was done from scratch against the pre-dumped diff, the live repo at fc3f047f9 (HEAD confirmed), and git show of base 62dd55867; no round-1 outputs were read."
+}

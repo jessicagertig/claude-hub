@@ -1,0 +1,111 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The candidate's resume shows extensive experience in Python, Node.js, and Java, but does not list Go as a language they have used in their professional experience."
+    },
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has demonstrated experience working with Kubernetes (EKS/ECS) and Terraform across AWS and GCP in multiple roles, specifically at Klaviyo, Flowcode, and Capital One."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with cloud-managed environments (AWS, GCP) and infrastructure orchestration, but there is no specific evidence of managing multi-cloud 'racks' or dedicated customer-account-embedded infrastructure."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has a strong track record of collaborating with product managers, enhancing CI/CD pipelines, and creating observability and logging improvements in their roles at Klaviyo and Capital One."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has experience with monitoring, zero-downtime deployments, automated rollbacks, and improving system performance/reliability across multiple companies."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has demonstrated strong mentorship and code review experience, but the criterion specifically mentions Go services, which the candidate has no reported experience with."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "Go is not listed in the candidate's skills section or mentioned anywhere in their professional experience."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists experience with Kubernetes/EKS, deployments, and container orchestration in their professional history at Klaviyo and Capital One."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists Terraform and CDK as key tools used at both Klaviyo and Capital One for infrastructure provisioning."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has deep experience with AWS and GCP, including managing compute, RDS, and API gateways."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has built internal platform tooling and CI/CD pipelines at Capital One, which involves abstracting infrastructure, though they have not worked at a dedicated PaaS company."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has significant experience building CI/CD pipelines and integrating various services in their roles at Klaviyo and Flowcode."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no mention of publishing or integrating with cloud marketplaces in the resume."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has experience across multiple clouds (AWS and GCP) and has worked in customer-facing roles where they gathered requirements for features used by merchants."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate's work at Klaviyo and Flowcode involved scaling microservices, ensuring >99.9% uptime/SLA, and handling event-driven processing, demonstrating high availability design skills."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience with distributed systems via Kafka for event streaming and microservices architectures."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate mentions 'monitoring' and 'logging' as core competencies and operational requirements in their roles, though they do not explicitly name Prometheus, Grafana, or ELK."
+    }
+  ],
+  "computed_score": {
+    "points": 50.0,
+    "max": 72,
+    "percentage": 69.4
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "agent": "layer-3-script-runner/round-2/agent-1",
+  "scenario": "Edge case verification",
+  "round": 2,
+  "convergence_round": true,
+  "prior_round_findings": 0,
+  "timestamp": "2026-06-16T01:20:00Z",
+  "seed_plan": "paid-user-with-candidates.json",
+  "seed_status": "success",
+  "test_environment": {
+    "server": "http://app.lvh.me:5007",
+    "rails_env": "test",
+    "job_applications_used": [14035, 14036, 14037]
+  },
+  "scenarios": [
+    {
+      "id": "regenerating_state",
+      "title": "Status record regenerating state when second summary created",
+      "result": "FINDING",
+      "severity": "medium",
+      "description": "AiJobApplicationSummaryStatus does NOT transition to 'regenerating' when a second AiJobApplicationSummary is created on a job_application that already has a 'current' status record.",
+      "evidence": {
+        "steps": [
+          "Created summary1 on JA #14035, status=pending",
+          "create_status_record callback created AiJobApplicationSummaryStatus with status=none",
+          "Updated summary1 to succeeded — status record transitioned to current (via update_summary_status_record callback)",
+          "Created summary2 on same JA #14035, status=pending",
+          "Status record remained at status=current — NOT regenerating"
+        ],
+        "root_cause": "AiJobApplicationSummary#create_status_record uses find_or_create_by(job_application: job_application). When the status record already exists, find_or_create_by returns it without executing the block. The block (status_record.regenerating = false) only runs on CREATE, not FIND. No other code path sets the status to 'regenerating' when a new summary is created.",
+        "code_trace": [
+          "app/models/ai_job_application_summary.rb:48-49 — create_status_record callback: AiJobApplicationSummaryStatus.find_or_create_by(job_application: job_application)",
+          "app/interactors/create_ai_summary_generation.rb:72-74 — same pattern: find_or_create_by with block that sets regenerating=false (block only runs on create)",
+          "No code in the codebase sets status to 'regenerating' — the enum value exists but is never assigned"
+        ],
+        "actual_status_after_second_create": "current",
+        "expected_status_after_second_create": "regenerating"
+      },
+      "impact": "The 'regenerating' enum value on AiJobApplicationSummaryStatus is defined but dead — no code path ever sets it. Frontend code checking for status_regenerating will never see that state. If the UI is supposed to show a 'regenerating' indicator when a re-analysis is in progress, it will not work."
+    },
+    {
+      "id": "broadcast_rescue_safety",
+      "title": "Broadcast callback rescue handles JobChannel.broadcast_to failures",
+      "result": "PASS",
+      "severity": null,
+      "description": "The rescue StandardError block in AiJobApplicationSummary#broadcast_status_change correctly catches broadcast failures without preventing the status update from persisting.",
+      "evidence": {
+        "steps": [
+          "Created summary on JA #14036, status=pending",
+          "Monkey-patched JobChannel.broadcast_to to raise StandardError",
+          "Updated summary to extracting — update returned true",
+          "Reloaded summary — status confirmed as extracting",
+          "Updated summary to summarizing — also persisted correctly",
+          "Both transitions persisted despite broadcast raising"
+        ],
+        "mechanism": "broadcast_status_change is a before_update callback. The rescue block (lines 86-88 of ai_job_application_summary.rb) catches StandardError, logs via Rails.logger.error and ap, then execution continues. Since the exception is caught, the before_update callback returns normally and ActiveRecord proceeds with the update."
+      }
+    },
+    {
+      "id": "serializer_null_safety",
+      "title": "JobApplicationSerializer returns null for missing AiJobApplicationSummaryStatus",
+      "result": "PASS",
+      "severity": null,
+      "description": "When a job application has no AiJobApplicationSummaryStatus record, Api::V1::JobApplicationSerializer correctly returns nil for the ai_job_application_summary_status association.",
+      "evidence": {
+        "steps": [
+          "Confirmed JA #14037 has no ai_job_application_summary_status record",
+          "Serialized with Api::V1::JobApplicationSerializer",
+          "ai_job_application_summary_status key present in output with value nil",
+          "Positive control: created a status record, re-serialized, got correct id"
+        ],
+        "serialized_value_when_missing": null,
+        "serialized_value_when_present": "object with correct id"
+      }
+    }
+  ],
+  "findings_summary": {
+    "total_scenarios": 3,
+    "passed": 2,
+    "findings": 1,
+    "finding_list": [
+      {
+        "id": "regenerating_state",
+        "severity": "medium",
+        "one_liner": "AiJobApplicationSummaryStatus 'regenerating' enum value is dead code — no code path ever sets it. Status remains 'current' when a second summary is created."
+      }
+    ]
+  }
+}

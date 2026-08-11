@@ -1,0 +1,32 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 1,
+  "focus_area": "data layer + omniauth chain",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "SPEC §3 (D6) — migrations: exact column sets, no defaults (esp. utm_data jsonb), nullable, no index, no backfill, organization.rb untouched",
+      "SPEC §4.5 (D8) — omniauth.rb allowed_keys exactly %w[partner referral utm_source utm_campaign utm_data internal_ref], nothing else changed in the setup lambda",
+      "SPEC §4.6 (D9) — from_omniauth exact keyword signature/order; four assignments inside first_or_create only; raw values; partner_source keeps &.downcase; post-block unchanged; call-site grep all keyword form",
+      "SPEC §4.7 (D9) — omniauth_callbacks_controller keyword call verbatim from merged_tracking string keys; nothing else changed in the action",
+      "SPEC §9.2 — spec/models/user_from_omniauth_spec.rb present and falsifiable",
+      "SPEC §9.3 — spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb present and falsifiable",
+      "SPEC §7 constraints 2/3/4/5 (nil for absent, no backfill, raw storage, creation-time only) as they apply to this file group",
+      "diff-to-spec: every hunk in the 8 assigned files traceable to the spec"
+    ],
+    "verified": [
+      "§3: db/migrate/20260715233505_add_attribution_columns_to_users.rb and 20260715233506_add_attribution_columns_to_organizations.rb each add exactly utm_source (string), utm_campaign (string), utm_data (jsonb), internal_ref (string) — no default, no null: false, no index; class names match file names; no db/data/ migration in the diff; app/models/organization.rb has zero diff",
+      "§3: db/schema.rb hunks are exactly the version bump to 2026_07_15_233506 plus the four bare columns on organizations (lines 1089-1092) and users (lines 1285-1288); the utm columns at schema lines 104/108 are pre-existing ahoy_visits columns present at base commit 62dd55867, not part of this diff",
+      "§4.5: config/initializers/omniauth.rb line 14 is exactly allowed_keys = %w[partner referral utm_source utm_campaign utm_data internal_ref]; the rest of the setup lambda (loop, empty? guard, session write, log line) is byte-identical to base",
+      "§4.6: app/models/user.rb line 379 signature is exactly def self.from_omniauth(auth:, created_via:, partner_source: nil, utm_source: nil, utm_campaign: nil, utm_data: nil, internal_ref: nil); the four assignments sit inside the first_or_create block (lines 389-392) between partner_source and sign_on_provider, assigned raw with no downcase; partner_source&.downcase retained; post-block (assign_attributes remember_me, update first_name/last_name, enqueue_complete_user_setup) unchanged",
+      "§4.6: git grep -ln from_omniauth re-run at 299cf9465 returns 4 files — app/models/user.rb (definition), app/controllers/api/v1/users/omniauth_callbacks_controller.rb (keyword call), spec/models/user_from_omniauth_spec.rb (all 5 invocations keyword form), spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb (stub/have_received only, keyword matchers) — no positional call site remains",
+      "§4.7: omniauth_callbacks_controller.rb lines 22-30 match the spec's call verbatim (auth:, created_via:, partner_source:, then the four from merged_tracking['utm_source'|'utm_campaign'|'utm_data'|'internal_ref'] string keys); the rest of google_oauth2 (session.delete, merged_tracking construction, PosthogIdentifyJob/PosthogTrackJob, redirect) is unchanged from base",
+      "§9.2: user_from_omniauth_spec.rb covers all four required behaviors — four values persisted raw ('SomeRawValue' verbatim, partner_source 'WWR' → 'wwr'), omitted keywords → all four nil (including utm_data nil not {}), existing user untouched (assignment only inside first_or_create, User.count unchanged), auth:/created_via: required raise ArgumentError. Falsifiable: removing the block assignments fails test 1; assigning outside the block fails test 3; reverting to positional signature fails test 4",
+      "§9.3: callbacks spec is type: :controller with include Devise::Test::ControllerHelpers, stubs request.env['omniauth.auth'], seeds session[:oauth_tracking] with all six tracking keys, and asserts from_omniauth received keyword args with the four merged-tracking values plus a no-tracking case asserting all four nil. Falsifiable: a positional call site would fail the keyword have_received(...).with matcher under Ruby 3 keyword-args semantics",
+      "§7 constraint 2: keyword defaults are nil and merged_tracking[...] is nil for absent keys — no || fallbacks anywhere in the assigned files; constraint 3: no backfill/data migration; constraint 4: raw assignment, no mapping, no downcase on the four; constraint 5: assignment exists only inside the first_or_create block, nothing touches the columns for existing users",
+      "diff-to-spec: every hunk in the 8 assigned files traces to §3/§4.5/§4.6/§4.7/§9.2/§9.3; the spec files' test infrastructure (queue_adapter :test around hooks for enqueue_complete_user_setup, devise.mapping assignment with its documented devise 4.8.1 assert_is_devise_resource! rationale) is required to execute the spec'd coverage; QA fix commit 299cf9465 touches only utils.js/utils.test.js, outside this group"
+    ],
+    "missing": []
+  }
+}

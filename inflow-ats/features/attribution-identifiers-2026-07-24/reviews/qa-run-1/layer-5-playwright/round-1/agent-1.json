@@ -1,0 +1,69 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 1,
+  "scenario_steps": [
+    {
+      "step": 1,
+      "name": "cleanup+seed",
+      "status": "PASS",
+      "evidence": "qa-harness cleanup exit 0 ('Cleanup complete'); qa-harness seed with attribution-flags.json executed 28/28 steps, every POST returned 200."
+    },
+    {
+      "step": 2,
+      "name": "set first-party cookies",
+      "status": "PASS",
+      "evidence": "Navigated to http://app.lvh.me:5007 (redirected to /auth), set the six cookies via document.cookie with path=/. Verified document.cookie contains _ga=GA1.1.1234567890.1699999999, _ga_TESTCONT=GS1.1.1699999999.5.1.1699999999.0.0.0, _fbp=fb.1.1699999999.12345, _gcl_aw=GCL.1719852261.TestGclidFromCookie, __adroll_fpc=test-adroll-fpc-value, li_fat_id=test-li-cookie. No _fbc cookie set (deliberate)."
+    },
+    {
+      "step": 3,
+      "name": "magic-link signup (user 1)",
+      "status": "PASS",
+      "evidence": "Navigated /auth?fbclid=TestFbclid123&gclid=TestGclidFromUrl&li_fat_id=test-li-url&adct=TestAdct&utm_source=qa_test; filled email qa-attribution-1@example.com; clicked 'Continue with email'. POST /api/v1/magic_login returned 200 with all eight attribution fields in the body (network-magic-login-post-body.json): ga_client_id=1234567890.1699999999, ga_session_id=_ga_TESTCONT=GS1.1.1699999999.5.1.1699999999.0.0.0, fbclid=TestFbclid123, fbp=fb.1.1699999999.12345, fbc=fb.1.1784941195091.TestFbclid123 (constructed, 13-digit ms), li_fat_id=test-li-url, google_click_id=TestGclidFromUrl, adroll_first_party_cookie=test-adroll-fpc-value, plus adroll_click_id=TestAdct and utm_source=qa_test. NOTE (non-blocking, flow deviation from the task script, not from the spec): for a NEW email the dev workaround link is /email_confirmation?confirmation_token=..., not magic_links/validate; followed the actual link, which confirmed the user and landed on /onboarding/profile. Console errors are pre-existing app noise (history deprecation warnings, redux combineReducers warning, heap-.js 404, 401 /api/v1/me while signed out, darkModeAllowed React prop warning) - none attribution-related."
+    },
+    {
+      "step": 4,
+      "name": "verify user 1 row",
+      "status": "PASS",
+      "evidence": "script-user1-verification.txt, user_id=40390: ga_client_id=\"1234567890.1699999999\" (GA1.1. stripped), ga_session_id=\"_ga_TESTCONT=GS1.1.1699999999.5.1.1699999999.0.0.0\" (raw serialization), fbclid=\"TestFbclid123\", fbp=\"fb.1.1699999999.12345\" (verbatim), fbc=\"fb.1.1784941195091.TestFbclid123\" (regex /\\Afb\\.1\\.\\d{13}\\.TestFbclid123\\z/ match=true), li_fat_id=\"test-li-url\" (URL beat cookie test-li-cookie), google_click_id=\"TestGclidFromUrl\" (URL beat _gcl_aw cookie), adroll_first_party_cookie=\"test-adroll-fpc-value\", adroll_click_id=\"TestAdct\", utm_source=\"qa_test\". All ten match SPEC section 4 exactly."
+    },
+    {
+      "step": 5,
+      "name": "organization creation (user 1)",
+      "status": "PASS",
+      "evidence": "Email confirmation happened in-UI via the dev workaround link (no script-runner confirmation needed). Completed /onboarding/profile (QA Attribution), created org 'QA Attribution Org' at /organization/new. POST /api/v1/organizations body was exactly {\"organization\":{\"name\":\"QA Attribution Org\",\"heard_about_us_from\":\"QA test run\"}} - google_click_id and adroll_first_party_cookie (and all other attribution fields) absent from the request body as required. script-org-verification.txt, organization_id=36489: all ten columns identical to user 40390's values (ALL_TEN_COLUMNS_IDENTICAL=true)."
+    },
+    {
+      "step": 6,
+      "name": "password-path signup (user 2, /register)",
+      "status": "PASS",
+      "evidence": "Cleared ALL cookies via Playwright context.clearCookies() (verified empty), re-set the same six tracking cookies, navigated /register with the same five URL params - page rendered the signup form (no server-side bounce). Signed up qa-attribution-2@example.com. POST /api/v1/sign_up body (network-sign-up-post-body.json) carried all eight fields with the same expected values, fbc=fb.1.1784941349666.TestFbclid123 (freshly constructed, distinct timestamp from user 1). script-user2-verification.txt, user_id=40391: all ten columns match SPEC section 4 exactly, fbc_regex_match=true."
+    },
+    {
+      "step": 7,
+      "name": "evidence collection",
+      "status": "PASS",
+      "evidence": "All artifacts saved to /tmp/qa-run-1/layer-5/agent-1/ (list in evidence_files). No JS errors attributable to the attribution capture in the full-session console log."
+    }
+  ],
+  "findings": [],
+  "evidence_files": [
+    "/tmp/qa-run-1/layer-5/agent-1/network-magic-login-post-body.json",
+    "/tmp/qa-run-1/layer-5/agent-1/network-organization-create-post-body.json",
+    "/tmp/qa-run-1/layer-5/agent-1/network-sign-up-post-body.json",
+    "/tmp/qa-run-1/layer-5/agent-1/script-user1-verification.txt",
+    "/tmp/qa-run-1/layer-5/agent-1/script-org-verification.txt",
+    "/tmp/qa-run-1/layer-5/agent-1/script-user2-verification.txt",
+    "/tmp/qa-run-1/layer-5/agent-1/qa1-agent1-01-auth-page-with-params.png",
+    "/tmp/qa-run-1/layer-5/agent-1/qa1-agent1-02-onboarding-profile.png",
+    "/tmp/qa-run-1/layer-5/agent-1/qa1-agent1-03-org-created-jobs-page.png",
+    "/tmp/qa-run-1/layer-5/agent-1/qa1-agent1-04-register-page-with-params.png",
+    "/tmp/qa-run-1/layer-5/agent-1/qa1-agent1-05-user2-needs-confirmation.png",
+    "/tmp/qa-run-1/layer-5/agent-1/qa1-agent1-console-errors-user1.log",
+    "/tmp/qa-run-1/layer-5/agent-1/qa1-agent1-console-all-session.log",
+    "/tmp/qa-run-1/layer-5/agent-1/qa1-agent1-network-requests-user2-session.txt",
+    "/tmp/qa-run-1/layer-5/agent-1/verify_user1_attribution.rb",
+    "/tmp/qa-run-1/layer-5/agent-1/verify_org_attribution.rb",
+    "/tmp/qa-run-1/layer-5/agent-1/verify_user2_attribution.rb"
+  ]
+}

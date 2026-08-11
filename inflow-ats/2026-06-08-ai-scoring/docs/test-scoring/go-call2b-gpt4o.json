@@ -1,0 +1,689 @@
+[
+  {
+    "original": {
+      "text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": true,
+      "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+    },
+    "action": "decompose",
+    "reasoning": "The criterion involves multiple distinct actions: designing, building, and maintaining services. It also covers several distinct aspects of a PaaS, such as APIs, scheduler logic, cloud provider integrations, and internal tooling. These should be decomposed for clarity.",
+    "decomposed": [
+      {
+        "text": "Ability to design backend services in Go for PaaS",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+      },
+      {
+        "text": "Ability to build backend services in Go for PaaS",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+      },
+      {
+        "text": "Ability to maintain backend services in Go for PaaS",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+      },
+      {
+        "text": "Ability to work with APIs within Go backend services for PaaS",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+      },
+      {
+        "text": "Ability to manage scheduler and orchestrator logic within Go backend services for PaaS",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+      },
+      {
+        "text": "Ability to integrate Go backend services with cloud providers for PaaS",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+      },
+      {
+        "text": "Ability to create internal tooling within Go backend services for PaaS",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+      }
+    ]
+  },
+  {
+    "original": {
+      "text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds."
+    },
+    "action": "decompose",
+    "reasoning": "The criterion includes multiple distinct technologies (Kubernetes and Terraform) and activities (integrate with clusters, deployments, autoscaling in Kubernetes; using Terraform across multiple cloud platforms). These can reasonably be separated for clarity.",
+    "decomposed": [
+      {
+        "text": "Work with infrastructure team to integrate Kubernetes clusters, deployments, and autoscaling",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) across AWS, GCP, Azure and other clouds."
+      },
+      {
+        "text": "Work with infrastructure team to integrate Terraform for infrastructure as code across AWS, GCP, Azure, and other clouds",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Work closely with our infrastructure team to integrate with Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds."
+      }
+    ]
+  },
+  {
+    "original": {
+      "text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment."
+    },
+    "action": "decompose",
+    "reasoning": "This criterion covers multiple distinct actions: architecting, deploying, and maintaining multi-cloud environments. These actions can be separated to clarify expectations.",
+    "decomposed": [
+      {
+        "text": "Ability to architect multi cloud racks and environments",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Help architect multi cloud racks and environments inside customers' accounts or in our managed environment."
+      },
+      {
+        "text": "Ability to deploy multi cloud racks and environments",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Help deploy multi cloud racks and environments inside customers' accounts or in our managed environment."
+      },
+      {
+        "text": "Ability to maintain multi cloud racks and environments",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Help maintain multi cloud racks and environments inside customers' accounts or in our managed environment."
+      }
+    ]
+  },
+  {
+    "original": {
+      "text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences."
+    },
+    "action": "decompose",
+    "reasoning": "The criterion describes collaboration on a set of distinctly different features for developers, including CLI usage, CI/CD workflows, integrations, and observability improvements. These should be separated to clarify each item.",
+    "decomposed": [
+      {
+        "text": "Collaborate to improve CLI usage for developers",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage."
+      },
+      {
+        "text": "Collaborate to enhance CI/CD workflows for developers",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Collaborate with product and UX teams to deliver features for developers such as enhancing CI/CD workflows."
+      },
+      {
+        "text": "Collaborate to enable marketplace and cloud provider integrations",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Collaborate with product and UX teams to enable marketplace and cloud provider integrations."
+      },
+      {
+        "text": "Collaborate to create better observability and logging experiences for developers",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Collaborate with product and UX teams to deliver features for developers such as creating better observability and logging experiences."
+      }
+    ]
+  },
+  {
+    "original": {
+      "text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies."
+    },
+    "action": "decompose",
+    "reasoning": "The criterion details multiple specific strategies for ensuring platform performance, each of which is a separate component—monitoring, logging, alerting, etc. These should be decomposed for clarity.",
+    "decomposed": [
+      {
+        "text": "Implement monitoring to ensure platform high reliability, scalability, and security",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring."
+      },
+      {
+        "text": "Implement logging to ensure platform high reliability, scalability, and security",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Ensure high reliability, scalability, and security of the platform by implementing logging."
+      },
+      {
+        "text": "Implement alerting to ensure platform high reliability, scalability, and security",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Ensure high reliability, scalability, and security of the platform by implementing alerting."
+      },
+      {
+        "text": "Implement rollback capabilities to ensure platform high reliability, scalability, and security",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Ensure high reliability, scalability, and security of the platform by implementing rollback capabilities."
+      },
+      {
+        "text": "Implement multi cloud failover strategies to ensure platform high reliability, scalability, and security",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Ensure high reliability, scalability, and security of the platform by implementing multi cloud failover strategies."
+      }
+    ]
+  },
+  {
+    "original": {
+      "text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": true,
+      "source_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments."
+    },
+    "action": "decompose",
+    "reasoning": "This criterion covers several activities: participating in code reviews, mentoring, and defining best practices for multiple aspects including backend infrastructure, Go services, and cloud deployments. These actions and responsibilities should be separated.",
+    "decomposed": [
+      {
+        "text": "Participate in code reviews",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments."
+      },
+      {
+        "text": "Mentor others",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments."
+      },
+      {
+        "text": "Help define best practices for backend infrastructure",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments."
+      },
+      {
+        "text": "Help define best practices for Go services",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments."
+      },
+      {
+        "text": "Help define best practices for cloud deployments",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments."
+      }
+    ]
+  },
+  {
+    "original": {
+      "text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "tier_reasoning": "signal: \"strong\"",
+      "binary": false,
+      "contains_title_technology": true,
+      "source_text": "Strong programming experience in Go (Golang) for production backend systems."
+    },
+    "action": "keep",
+    "reasoning": "This is a single requirement stating strong programming experience in Go for backend systems. No decomposition is needed.",
+    "decomposed": [
+
+    ]
+  },
+  {
+    "original": {
+      "text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "tier_reasoning": "signal: \"solid\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+    },
+    "action": "decompose",
+    "reasoning": "This criterion includes multiple aspects of understanding Kubernetes, each distinct: cluster design, deployments, etc. These should be separated for clarity.",
+    "decomposed": [
+      {
+        "text": "Solid understanding of Kubernetes cluster design",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"solid\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Solid understanding of Kubernetes including cluster design."
+      },
+      {
+        "text": "Solid understanding of Kubernetes deployments",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"solid\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Solid understanding of Kubernetes including deployments."
+      },
+      {
+        "text": "Solid understanding of Kubernetes autoscaling",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"solid\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Solid understanding of Kubernetes including autoscaling."
+      },
+      {
+        "text": "Solid understanding of Kubernetes service mesh or networking",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"solid\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Solid understanding of Kubernetes including service mesh or networking."
+      },
+      {
+        "text": "Solid understanding of Kubernetes stateful vs stateless workloads",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"solid\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Solid understanding of Kubernetes including stateful vs stateless workloads."
+      }
+    ]
+  },
+  {
+    "original": {
+      "text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "tier_reasoning": "tier_1 header \"Required Experience and Skills\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers."
+    },
+    "action": "keep",
+    "reasoning": "This criterion is a single requirement focusing on experience with Terraform or similar tools for managing cloud infrastructure. It doesn't need decomposition.",
+    "decomposed": [
+
+    ]
+  },
+  {
+    "original": {
+      "text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "tier_reasoning": "tier_1 header \"Required Experience and Skills\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+    },
+    "action": "decompose",
+    "reasoning": "This criterion involves distinct activities within cloud platforms: managing services, network, compute, storage, and security. These can be separated to clarify expectations.",
+    "decomposed": [
+      {
+        "text": "Hands on experience managing services on major cloud platforms such as AWS, GCP, or Azure",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 header \"Required Experience and Skills\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services."
+      },
+      {
+        "text": "Hands on experience managing network on major cloud platforms such as AWS, GCP, or Azure",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 header \"Required Experience and Skills\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing network."
+      },
+      {
+        "text": "Hands on experience managing compute on major cloud platforms such as AWS, GCP, or Azure",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 header \"Required Experience and Skills\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing compute."
+      },
+      {
+        "text": "Hands on experience managing storage on major cloud platforms such as AWS, GCP, or Azure",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 header \"Required Experience and Skills\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing storage."
+      },
+      {
+        "text": "Hands on experience managing security on major cloud platforms such as AWS, GCP, or Azure",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 header \"Required Experience and Skills\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing security."
+      }
+    ]
+  },
+  {
+    "original": {
+      "text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "tier_reasoning": "tier_1 header \"Required Experience and Skills\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control."
+    },
+    "action": "keep",
+    "reasoning": "This is a single coherent requirement focusing on understanding PaaS products and infrastructure abstractions. It does not need decomposition.",
+    "decomposed": [
+
+    ]
+  },
+  {
+    "original": {
+      "text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "tier_reasoning": "signal: \"strong\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+    },
+    "action": "decompose",
+    "reasoning": "The criterion mentions three distinct aspects: CI/CD pipelines, developer tooling, and marketplace integrations. These can be separated for greater specificity.",
+    "decomposed": [
+      {
+        "text": "Familiarity with CI/CD pipelines",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"strong\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+      },
+      {
+        "text": "Familiarity with developer tooling",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"strong\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+      },
+      {
+        "text": "Exposure to marketplace or cloud provider integrations",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"strong\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+      }
+    ]
+  },
+  {
+    "original": {
+      "text": "Excellent communication skills",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skill cap",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+    },
+    "action": "keep",
+    "reasoning": "This criterion represents a single distinct soft skill requirement. It was appropriately decomposed from a conjunction and needs no further changes.",
+    "decomposed": [
+
+    ]
+  },
+  {
+    "original": {
+      "text": "Ability to work cross functionally",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skill cap",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+    },
+    "action": "keep",
+    "reasoning": "This is a single soft skill requirement about collaborating across functions. It was already correctly decomposed and stands independently.",
+    "decomposed": [
+
+    ]
+  },
+  {
+    "original": {
+      "text": "Thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skill cap",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+    },
+    "action": "keep",
+    "reasoning": "This criterion stands alone as a distinct requirement about thriving in an agile environment. It was properly decomposed from a conjunction.",
+    "decomposed": [
+
+    ]
+  },
+  {
+    "original": {
+      "text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "tier_reasoning": "tier_2 header \"Nice to Have\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace."
+    },
+    "action": "keep",
+    "reasoning": "This is a single requirement focused on experience with cloud marketplaces without additional decomposition needs.",
+    "decomposed": [
+
+    ]
+  },
+  {
+    "original": {
+      "text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "tier_reasoning": "tier_2 header \"Nice to Have\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios."
+    },
+    "action": "keep",
+    "reasoning": "The criterion is a single requirement with alternatives for environments or deployment scenarios. An 'or' does not necessitate decomposition.",
+    "decomposed": [
+
+    ]
+  },
+  {
+    "original": {
+      "text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "tier_reasoning": "tier_2 header \"Nice to Have\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures."
+    },
+    "action": "decompose",
+    "reasoning": "The criterion covers multiple distinct design aspects for system architecture: high availability, multi-region, and multi-tenant. These should be decomposed to explicitly address each distinct design aspect.",
+    "decomposed": [
+      {
+        "text": "Familiarity with system design for high availability architectures",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 header \"Nice to Have\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with system design for high availability architectures."
+      },
+      {
+        "text": "Familiarity with system design for multi region architectures",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 header \"Nice to Have\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with system design for multi region architectures."
+      },
+      {
+        "text": "Familiarity with system design for multi tenant architectures",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 header \"Nice to Have\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with system design for multi tenant architectures."
+      }
+    ]
+  },
+  {
+    "original": {
+      "text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "tier_reasoning": "tier_2 header \"Nice to Have\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience with open source projects or distributed systems."
+    },
+    "action": "keep",
+    "reasoning": "The use of 'or' suggests any of the two experiences suffices, forming a valid singular criterion covering two options without need for decomposition.",
+    "decomposed": [
+
+    ]
+  },
+  {
+    "original": {
+      "text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "tier_reasoning": "tier_2 header \"Nice to Have\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack."
+    },
+    "action": "decompose",
+    "reasoning": "This criterion mentions distinct aspects of technical skills related to monitoring, logging, and observability. Each should be individually addressed for clarity.",
+    "decomposed": [
+      {
+        "text": "Familiarity with monitoring tools such as Prometheus or Grafana",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 header \"Nice to Have\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with monitoring tools such as Prometheus, Grafana."
+      },
+      {
+        "text": "Familiarity with logging tools such as ELK stack",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 header \"Nice to Have\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with logging tools such as ELK stack."
+      },
+      {
+        "text": "Familiarity with observability concepts",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 header \"Nice to Have\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with observability such as Prometheus, Grafana, or ELK stack."
+      }
+    ]
+  },
+  {
+    "original": {
+      "text": "Observability",
+      "tier": "tier_2",
+      "tier_reasoning": "tier_2 header \"Nice to Have\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack."
+    },
+    "action": "decompose",
+    "reasoning": "This criterion mentions distinct aspects of technical skills related to monitoring, logging, and observability. Each should be individually addressed for clarity.",
+    "decomposed": [
+      {
+        "text": "Familiarity with monitoring tools such as Prometheus or Grafana",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 header \"Nice to Have\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with monitoring tools such as Prometheus, Grafana."
+      },
+      {
+        "text": "Familiarity with logging tools such as ELK stack",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 header \"Nice to Have\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with logging tools such as ELK stack."
+      },
+      {
+        "text": "Familiarity with observability concepts",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 header \"Nice to Have\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with observability such as Prometheus, Grafana, or ELK stack."
+      }
+    ]
+  }
+]

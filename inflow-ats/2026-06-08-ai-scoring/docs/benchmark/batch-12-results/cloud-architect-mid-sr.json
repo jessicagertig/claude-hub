@@ -1,0 +1,183 @@
+{
+  "meta": {
+    "batch": 12,
+    "criteria_prompt_version": 8,
+    "job_id": 22408,
+    "title": "Cloud Architect, Mid-Sr",
+    "organization": "CompSci, LLC",
+    "cost": 0.000466
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": "Job Description",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "We are looking for Engineers with experience designing and building cloud solutions to work with us and our enterprise customers to plan, adopt and operate their infrastructure utilizing Amazon and Azure Web Services.  The ideal candidate will be able to participate in the planning, presentation and delivery of new or existing Cloud Operations.  Most of our customers are medium to large enterprises with existing on-prem solutions and have on-going or new Cloud efforts that include Migration and Hybrid solutions."
+      },
+      {
+        "heading": "Required Qualifications",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "B.S. level technical degree or related experience\nStrong verbal and written communication skills\nStrong organizational, planning, and analytical skills\nHighly collaborative and team oriented\nAbility to keep to production schedules and work effectively with colleagues\nHands-on practitioner\nExperience with integration of AWS services to on-premises infrastructure\nUnderstanding of networking protocols and network topology\nUnderstanding of hypervisor/virtualization\nExperience with Linux and Windows administration\nExperience with CI/CD Pipelines\n2-3 years’ experience with Python/JavaScript\n2-3 years’ experience with Terraform and/or Cloud Formation\n3+ years’ experience with AWS (IAM, VPC, EC2, ECS, EKS, Lambda, S3, EFS, etc)\n2+ years experience with AWS Control Tower\nExperience with AWS CLI, AWS SAM and AWS SDK"
+      },
+      {
+        "heading": "Desired Qualifications",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Experience with Azure Cloud technologies\nExperience with AWS Landing Zone\nExperience with enterprise systems and their deployment\nExperience assessing, optimizing, automating IT service processes\nExperience as full-stack developer"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "B.S. level technical degree or related experience",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 signal word: 'required' inferred from section heading 'Required Qualifications'",
+        "binary": true,
+        "source_text": "B.S. level technical degree or related experience"
+      },
+      {
+        "text": "Strong verbal and written communication skills",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 signal word: 'Strong'",
+        "binary": false,
+        "source_text": "Strong verbal and written communication skills"
+      },
+      {
+        "text": "Strong organizational, planning, and analytical skills",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 signal word: 'Strong'",
+        "binary": false,
+        "source_text": "Strong organizational, planning, and analytical skills"
+      },
+      {
+        "text": "Highly collaborative and team oriented",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 signal word: 'Highly'",
+        "binary": false,
+        "source_text": "Highly collaborative and team oriented"
+      },
+      {
+        "text": "Ability to keep to production schedules and work effectively with colleagues",
+        "tier": "tier_2",
+        "tier_reasoning": "Default — no signal word",
+        "binary": false,
+        "source_text": "Ability to keep to production schedules and work effectively with colleagues"
+      },
+      {
+        "text": "Hands-on practitioner",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 signal word: 'Hands-on practitioner' interpreted as 'Hands-on' skill",
+        "binary": false,
+        "source_text": "Hands-on practitioner"
+      },
+      {
+        "text": "Experience with integration of AWS services to on-premises infrastructure",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: 'Experience with'",
+        "binary": false,
+        "source_text": "Experience with integration of AWS services to on-premises infrastructure"
+      },
+      {
+        "text": "Understanding of networking protocols and network topology",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: 'Understanding of'",
+        "binary": false,
+        "source_text": "Understanding of networking protocols and network topology"
+      },
+      {
+        "text": "Understanding of hypervisor/virtualization",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: 'Understanding of'",
+        "binary": false,
+        "source_text": "Understanding of hypervisor/virtualization"
+      },
+      {
+        "text": "Experience with Linux and Windows administration",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: 'Experience with'",
+        "binary": false,
+        "source_text": "Experience with Linux and Windows administration"
+      },
+      {
+        "text": "Experience with CI/CD Pipelines",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: 'Experience with'",
+        "binary": false,
+        "source_text": "Experience with CI/CD Pipelines"
+      },
+      {
+        "text": "2-3 years’ experience with Python/JavaScript",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: 'experience with'",
+        "binary": false,
+        "source_text": "2-3 years’ experience with Python/JavaScript"
+      },
+      {
+        "text": "2-3 years’ experience with Terraform and/or Cloud Formation",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: 'experience with'",
+        "binary": false,
+        "source_text": "2-3 years’ experience with Terraform and/or Cloud Formation"
+      },
+      {
+        "text": "3+ years’ experience with AWS (IAM, VPC, EC2, ECS, EKS, Lambda, S3, EFS, etc)",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: 'experience with'",
+        "binary": false,
+        "source_text": "3+ years’ experience with AWS (IAM, VPC, EC2, ECS, EKS, Lambda, S3, EFS, etc)"
+      },
+      {
+        "text": "2+ years experience with AWS Control Tower",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: 'experience with'",
+        "binary": false,
+        "source_text": "2+ years experience with AWS Control Tower"
+      },
+      {
+        "text": "Experience with AWS CLI, AWS SAM and AWS SDK",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: 'Experience with'",
+        "binary": false,
+        "source_text": "Experience with AWS CLI, AWS SAM and AWS SDK"
+      },
+      {
+        "text": "Experience with Azure Cloud technologies",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal word: 'Experience with'",
+        "binary": false,
+        "source_text": "Experience with Azure Cloud technologies"
+      },
+      {
+        "text": "Experience with AWS Landing Zone",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal word: 'Experience with'",
+        "binary": false,
+        "source_text": "Experience with AWS Landing Zone"
+      },
+      {
+        "text": "Experience with enterprise systems and their deployment",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal word: 'Experience with'",
+        "binary": false,
+        "source_text": "Experience with enterprise systems and their deployment"
+      },
+      {
+        "text": "Experience assessing, optimizing, automating IT service processes",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal word: 'Experience'",
+        "binary": false,
+        "source_text": "Experience assessing, optimizing, automating IT service processes"
+      },
+      {
+        "text": "Experience as full-stack developer",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal word: 'Experience as'",
+        "binary": false,
+        "source_text": "Experience as full-stack developer"
+      }
+    ]
+  }
+}

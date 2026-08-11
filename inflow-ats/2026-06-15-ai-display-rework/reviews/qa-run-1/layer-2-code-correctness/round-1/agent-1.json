@@ -1,0 +1,125 @@
+{
+  "agent": "code-correctness-reviewer-1",
+  "round": 1,
+  "files_reviewed": [
+    "app/models/ai_job_application_summary.rb",
+    "app/services/ai_job_application_action/orchestrate.rb",
+    "app/services/ai_job_application_action/scoring/score_job_application.rb",
+    "app/services/ai_job_application_action/scoring/integrate_analysis.rb"
+  ],
+  "analog_files_read": [
+    "app/services/ai_job_application_action/summary/generate.rb",
+    "app/models/ai_job_application_summary_status.rb",
+    "app/channels/job_channel.rb",
+    "app/models/board_wwr_listing.rb (broadcast_to pattern)",
+    "db/schema.rb (lines 148-180)"
+  ],
+  "findings": [
+    {
+      "id": "CC1-01",
+      "severity": "MED",
+      "file": "app/services/ai_job_application_action/scoring/score_job_application.rb",
+      "lines": "115, 120, 124",
+      "title": "Rescue blocks use update() instead of update_columns() -- inconsistent with generate.rb pattern",
+      "description": "The rescue blocks in score_job_application.rb use `@ai_job_application_summary&.update(status: :failed, ...)` which triggers the model's `before_update :broadcast_status_change` callback. The analog file generate.rb (lines 175, 180, 184) uses `update_columns` in its rescue blocks, which skips callbacks. This inconsistency means: (1) A `failed` status set from score_job_application.rb triggers a websocket broadcast, while a `failed` status set from generate.rb does NOT. (2) A `retrying` status from score_job_application.rb triggers the `before_update` callback (though `retrying` is not in BROADCAST_STATUSES, so the broadcast is a no-op). The spec explicitly lists score_job_application.rb for the update_columns-to-update switch, so this may be intentional. But it creates an observable behavioral difference: users get a websocket push for scoring failures but not for summary generation failures. If intentional, this is fine. If not, generate.rb rescue blocks should also switch to update().",
+      "recommendation": "Confirm with spec author whether generate.rb rescue blocks should also use update() for consistent broadcast behavior on failure/retry statuses. If the intent is that all status changes broadcast, generate.rb needs the same change."
+    },
+    {
+      "id": "CC1-02",
+      "severity": "MED",
+      "file": "app/services/ai_job_application_action/scoring/integrate_analysis.rb",
+      "lines": "59, 64, 68",
+      "title": "Same inconsistency as CC1-01 in integrate_analysis.rb rescue blocks",
+      "description": "integrate_analysis.rb rescue blocks also use `update()` for setting failed/retrying status, creating the same inconsistency with generate.rb as described in CC1-01. The spec includes integrate_analysis.rb in the update_columns-to-update migration, so this is spec-compliant. Same observable difference: integrate_analysis failures broadcast, generate failures do not.",
+      "recommendation": "Same as CC1-01 -- confirm intent."
+    },
+    {
+      "id": "CC1-03",
+      "severity": "LOW",
+      "file": "app/models/ai_job_application_summary.rb",
+      "lines": "78-89",
+      "title": "broadcast_status_change rescue safely prevents broadcast failures from halting updates",
+      "description": "The `rescue StandardError => e` in `broadcast_status_change` (a `before_update` callback) correctly prevents ActionCable failures from aborting the update. On Rails 6.1, only `throw :abort` halts callbacks -- a rescued exception returns the rescue block's last expression (`ap e`, which returns the exception object, not false), so the callback chain continues. This is correct and intentional behavior. Verified that `job_application.job` cannot be nil: `AiJobApplicationSummary` has `belongs_to :job_application` (required by default in Rails 5+), and `JobApplication` has `belongs_to :job` (also required, no `optional: true`). So `job_application.job` will always return a Job record for any persisted AiJobApplicationSummary.",
+      "recommendation": "No action needed. This is a confirmation of correct behavior."
+    },
+    {
+      "id": "CC1-04",
+      "severity": "LOW",
+      "file": "app/models/ai_job_application_summary.rb",
+      "lines": "62-76",
+      "title": "update_summary_status_record uses update_columns, correctly avoiding infinite callback loop",
+      "description": "The `after_commit :update_summary_status_record` callback writes to `AiJobApplicationSummaryStatus` using `update_columns`, which skips validations and callbacks on the status record. This is correct because: (1) It avoids any potential callback loops, and (2) The AiJobApplicationSummaryStatus model has `validates :job_application_id, uniqueness: true` which would pass anyway, but skipping it saves a query. The guard `return unless saved_change_to_status? && status_succeeded?` correctly uses `saved_change_to_status?` (appropriate for after_commit) rather than `status_changed?` (which is for before_* callbacks).",
+      "recommendation": "No action needed."
+    },
+    {
+      "id": "CC1-05",
+      "severity": "LOW",
+      "file": "app/models/ai_job_application_summary.rb",
+      "lines": "79",
+      "title": "broadcast_status_change correctly uses status_changed? for before_update context",
+      "description": "The `before_update` callback uses `status_changed?` which is the correct ActiveModel dirty-tracking method for `before_*` callbacks (the change hasn't been persisted yet). The `after_commit` callbacks (lines 54, 63) correctly use `saved_change_to_status?`. This is proper Rails dirty-tracking usage.",
+      "recommendation": "No action needed."
+    },
+    {
+      "id": "CC1-06",
+      "severity": "LOW",
+      "file": "app/services/ai_job_application_action/orchestrate.rb",
+      "lines": "59-65, 86, 93, 97",
+      "title": "reload usage is documented and justified",
+      "description": "orchestrate.rb uses `reload` in four places. The comment on lines 59-61 explains the deviation from CLAUDE.md rule 17: Summary::Generate loads and updates the summary via its own reference, making the orchestrator's reference stale. This is a legitimate use case -- the data flow genuinely cannot be fixed because Generate operates on a separately-fetched instance. The reload after run_scoring (line 93) and run_integration precheck (line 97) follow the same pattern. All reloads are documented.",
+      "recommendation": "No action needed -- documented deviation."
+    },
+    {
+      "id": "CC1-07",
+      "severity": "LOW",
+      "file": "app/services/ai_job_application_action/scoring/score_job_application.rb",
+      "lines": "48",
+      "title": "ap log uses string interpolation instead of separate ap calls",
+      "description": "Line 48: `ap \"[ScoreJobApplication] initial score: #{first_score}%\"` interpolates a variable into the ap log string. Per memory file feedback_ap_logging_style.md, the convention is plain text label on one ap call, variables on separate ap calls. Similar violations on lines 60, 69. However, these are debug logs and the pattern is used consistently within this file. The analog file generate.rb also mixes styles (e.g., line 10-11 uses separate calls, but this file favors inline).",
+      "recommendation": "Minor style inconsistency. Could be normalized but low priority."
+    },
+    {
+      "id": "CC1-08",
+      "severity": "LOW",
+      "file": "app/services/ai_job_application_action/scoring/score_job_application.rb",
+      "lines": "99",
+      "title": "Fallback to empty string for missing display_sentence",
+      "description": "Line 99: `score_entry.merge('display_sentence' => display_entry&.dig('display_sentence') || '')` uses `|| ''` as a fallback when display_entry is nil or display_sentence is missing. Per CLAUDE.md rule 9 (never deliberately set undefined), `|| ''` is acceptable for defaulting in non-boolean contexts. This is fine.",
+      "recommendation": "No action needed."
+    },
+    {
+      "id": "CC1-09",
+      "severity": "LOW",
+      "file": "app/services/ai_job_application_action/scoring/integrate_analysis.rb",
+      "lines": "8",
+      "title": "Safe navigation chain in initialize is correct defensive coding",
+      "description": "Line 8: `@organization = @ai_job_application_summary&.job_application&.job&.organization` uses safe navigation throughout the chain. This is correct because the method guard on line 14 (`return unless @ai_job_application_summary`) handles the nil case. The safe navigation prevents NoMethodError during initialization if a nil summary is passed. The same pattern appears in generate.rb line 20.",
+      "recommendation": "No action needed."
+    },
+    {
+      "id": "CC1-10",
+      "severity": "LOW",
+      "file": "app/services/ai_job_application_action/scoring/score_job_application.rb",
+      "lines": "112-125",
+      "title": "Rescue pattern follows codebase conventions correctly",
+      "description": "The three-tier rescue pattern (CustomErrorAiSummary -> JSON::ParserError -> StandardError) matches the analog in generate.rb (lines 172-184) and integrate_analysis.rb (lines 56-68). Variables use `=> e` per CLAUDE.md rule 16. Method-level rescue (not begin block) per rule 1. CustomErrorAiSummary rescue re-raises to trigger Sidekiq retry. JSON and StandardError rescues do not re-raise, allowing the job to complete. All correct.",
+      "recommendation": "No action needed."
+    },
+    {
+      "id": "CC1-11",
+      "severity": "LOW",
+      "file": "app/models/ai_job_application_summary.rb",
+      "lines": "25",
+      "title": "Only validation is status presence -- update() in rescue blocks will always pass validation",
+      "description": "The model has a single validation: `validates :status, presence: true`. Setting `status: :failed` or `status: :retrying` always satisfies this. The `error_message` column (text type, nullable in schema line 155) has no validation. So `update(status: :failed, error_message: ...)` in rescue blocks will never fail due to validation. The switch from update_columns to update is safe from a validation perspective.",
+      "recommendation": "No action needed -- confirmed safe."
+    }
+  ],
+  "summary": {
+    "blockers": 0,
+    "high": 0,
+    "med": 2,
+    "low": 9,
+    "verdict": "No blockers or high-severity issues. The two MED findings (CC1-01, CC1-02) identify an inconsistency between generate.rb (still uses update_columns in rescue blocks) and score_job_application.rb / integrate_analysis.rb (switched to update in rescue blocks). This is spec-compliant -- the spec explicitly lists only the scoring files for the switch -- but creates an observable behavioral difference: scoring/integration failures broadcast to the frontend, while summary generation failures do not. If the intent is that ALL failure statuses broadcast, generate.rb rescue blocks should also switch. The broadcast_status_change callback is safe: the rescue prevents ActionCable errors from halting the update, job_application.job cannot be nil (both are required belongs_to associations), and retrying is correctly excluded from BROADCAST_STATUSES. The dirty-tracking methods are correctly paired: status_changed? for before_update, saved_change_to_status? for after_commit. The update_columns-to-update migration will not cause validation failures since the only validation is status presence."
+  }
+}

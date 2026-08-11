@@ -1,0 +1,24 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 1,
+  "focus_area": "backend data layer",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": ["§3", "§4.6", "§7.2", "§7.3", "§7.4", "§7.5"],
+    "verified": ["§3", "§4.6", "§7.2", "§7.3", "§7.4", "§7.5"],
+    "missing": []
+  },
+  "verification_notes": {
+    "§3 (D6) migrations": "db/migrate/20260715233505_add_attribution_columns_to_users.rb and db/migrate/20260715233506_add_attribution_columns_to_organizations.rb: identical column sets utm_source(string)/utm_campaign(string)/utm_data(jsonb)/internal_ref(string); plain add_column, NO defaults, no null constraints (nullable), no add_index; ActiveRecord::Migration[6.1] + frozen_string_literal matching analog 20260622182504_add_ai_summary_and_criteria_columns_to_jobs.rb (correctly omitting the analog's default: 0/null: false per D6). Class names AddAttributionColumnsToUsers / AddAttributionColumnsToOrganizations match file names.",
+    "§3 schema.rb": "Diff contains exactly the version bump (2026_06_11_120003 → 2026_07_15_233506, matching the newest migration) plus the 4 columns in the organizations table block (create_table line 1033, hunk at ~1086) and the 4 in the users table block (create_table line 1248, hunk at ~1282). t.jsonb \"utm_data\" has no default — deliberate contrast with settings jsonb. No stray schema changes.",
+    "§3 model scope": "git diff --name-only over app/models/ shows only user.rb; organization.rb untouched. user.rb diff is exactly the from_omniauth signature line + 4 in-block assignments — no validations, no enums, no attr_accessor. The only other utm_* strings in app/models/ (board_what_jobs_listing.rb:385, board_wwr_listing.rb:250) are pre-existing URL literals outside the diff. No db/data/ files in the diff (no backfill data migration).",
+    "§4.6 (D9) signature": "app/models/user.rb:379 — def self.from_omniauth(auth:, created_via:, partner_source: nil, utm_source: nil, utm_campaign: nil, utm_data: nil, internal_ref: nil) — exact keyword order per D9; auth:/created_via: required, rest default nil.",
+    "§4.6 in-block assignment": "Lines 389-392 assign the four values raw (no &.downcase, no mapping) inside the first_or_create block, directly after the existing created_via/partner_source&.downcase lines. No assignment outside the block; existing SSO users untouched. Post-block behavior byte-identical: assign_attributes(remember_me: true), update(first_name:, last_name:), enqueue_complete_user_setup('organization_user'), return user.",
+    "§4.6 call-site search re-run": "git grep -ln from_omniauth at 8dcc2f06f returns 4 files: app/models/user.rb (definition), app/controllers/api/v1/users/omniauth_callbacks_controller.rb:22 (keyword-form call matching SPEC §4.7 verbatim, values from merged_tracking string keys), spec/models/user_from_omniauth_spec.rb (lines 26, 45, 65, 82-83 — all keyword form), spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb (stub/have_received with keyword hash). Zero positional call sites remain.",
+    "§7.2 nil-for-absent (data layer)": "No column defaults in migrations or schema; from_omniauth keywords default to nil and are assigned raw, so an absent value yields a nil column (utm_data nil, not {}).",
+    "§7.3 no backfill": "No data migration, no backfill code anywhere in the diff.",
+    "§7.4 raw storage": "from_omniauth assigns utm_source/utm_campaign/utm_data/internal_ref verbatim — no downcase, no get_created_via-style mapping; the adjacent partner_source&.downcase is unchanged.",
+    "§7.5 creation-time only": "Data-layer scope: assignment exists solely inside the first_or_create block, which runs only when the User row is created."
+  }
+}

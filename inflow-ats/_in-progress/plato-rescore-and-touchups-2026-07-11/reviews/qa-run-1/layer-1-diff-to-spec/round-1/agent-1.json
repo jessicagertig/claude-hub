@@ -1,0 +1,46 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 1,
+  "focus": "SPEC 1.1 (BulkGenerateAiSummariesConfirmModal checkbox) + 1.2 (5-state precedence copy machine)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "1.1a Import FormCheckbox from @ats/src/components/forms/FormCheckbox",
+      "1.1b const [rescore, setRescore] = React.useState(false)",
+      "1.1c Checkbox block between body copy and FormContainer, structure from RunPlatoReviewAllModal analog: Styled.RescoreCheckbox div wrapping FormCheckbox name=rescore, exact label + description, checked={rescore}, onChange toggles",
+      "1.1d Styled.RescoreCheckbox = styled.div with only ${t.mt(4)}, emotion label BulkGenerateAiSummariesConfirmModal_RescoreCheckbox",
+      "1.1e Checkbox disabled when candidatesCount === 0 (same disabled condition as submit button in that state)",
+      "1.1f rescoreRequested: rescore replaces literal rescoreRequested: false in bulkGenerate call",
+      "1.2a Delete old four-branch instructions block, shortfallText fragment, Styled.Caveat, Styled.Callout",
+      "1.2b candidatesToScoreCount = rescore ? candidatesCount : processableCount; shortfall = Math.max(0, candidatesToScoreCount - available)",
+      "1.2c State 1 (candidatesCount===0): today's verbatim copy; submit disabled; checkbox disabled",
+      "1.2d State 2 (!rescore && processableCount===0): exact string, numeric 0, no credit sentence, submit disabled",
+      "1.2e State 3 (!rescore && processableCount>0): lead with 'Up to ' prefix only when isProcessableCountExact false, then creditCopy shortfall/normal variants, submit enabled",
+      "1.2f State 4 (rescore): leading 'The' lead sentence, creditCopy with candidatesToScoreCount=candidatesCount, no 'Up to', no info block, submit enabled",
+      "1.2g Precedence order 1->2->3->4",
+      "1.2h creditCopy exact strings: 'Each successful review uses one AI credit' + shortfall variant + normal variant with bold interpolation",
+      "1.2i Submit button disabled condition = isLoading || state1 || state2",
+      "1.2j Singular/plural interpolation follows analog {count === 1 ? ...} pattern"
+    ],
+    "implemented": [
+      "1.1a Import FormCheckbox from @ats/src/components/forms/FormCheckbox",
+      "1.1b const [rescore, setRescore] = React.useState(false)",
+      "1.1c Checkbox block between body copy and FormContainer, structure from RunPlatoReviewAllModal analog: Styled.RescoreCheckbox div wrapping FormCheckbox name=rescore, exact label + description, checked={rescore}, onChange toggles",
+      "1.1d Styled.RescoreCheckbox = styled.div with only ${t.mt(4)}, emotion label BulkGenerateAiSummariesConfirmModal_RescoreCheckbox",
+      "1.1e Checkbox disabled when candidatesCount === 0 (same disabled condition as submit button in that state)",
+      "1.1f rescoreRequested: rescore replaces literal rescoreRequested: false in bulkGenerate call",
+      "1.2a Delete old four-branch instructions block, shortfallText fragment, Styled.Caveat, Styled.Callout",
+      "1.2b candidatesToScoreCount = rescore ? candidatesCount : processableCount; shortfall = Math.max(0, candidatesToScoreCount - available)",
+      "1.2c State 1 (candidatesCount===0): today's verbatim copy; submit disabled; checkbox disabled",
+      "1.2d State 2 (!rescore && processableCount===0): exact string, numeric 0, no credit sentence, submit disabled",
+      "1.2e State 3 (!rescore && processableCount>0): lead with 'Up to ' prefix only when isProcessableCountExact false, then creditCopy shortfall/normal variants, submit enabled",
+      "1.2f State 4 (rescore): leading 'The' lead sentence, creditCopy with candidatesToScoreCount=candidatesCount, no 'Up to', no info block, submit enabled",
+      "1.2g Precedence order 1->2->3->4",
+      "1.2h creditCopy exact strings: 'Each successful review uses one AI credit' + shortfall variant + normal variant with bold interpolation",
+      "1.2i Submit button disabled condition = isLoading || state1 || state2",
+      "1.2j Singular/plural interpolation follows analog {count === 1 ? ...} pattern"
+    ],
+    "missing": []
+  }
+}

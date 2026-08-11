@@ -1,0 +1,34 @@
+{
+  "agent": 4,
+  "round": 1,
+  "focus": "Frontend type definitions and WebSocket handler",
+  "assigned_specs": ["S9", "S18", "S19"],
+  "findings": [],
+  "spec_to_diff_mapping": {
+    "S9": {
+      "status": "PASS",
+      "diff_location": "app/javascript/ats/src/websockets/WebsocketJobChannelHandler.tsx lines 73-76",
+      "analysis": "The spec (WebsocketJobChannelHandler section) says: new case 'ai_summary_status_change' -> queryClient.invalidateQueries([\"aiJobApplicationSummary\"]). The plan (C.1.1) also calls for invalidating [\"jobApplication\"]. The diff adds exactly: case \"ai_summary_status_change\" with queryClient.invalidateQueries([\"jobApplication\"]) followed by queryClient.invalidateQueries([\"aiJobApplicationSummary\"]), then return. Both invalidations are present. The case is placed before the default case, following the same pattern as existing cases (wwr_listing_published, docx_to_pdf_conversion_complete). Matches spec and plan."
+    },
+    "S18": {
+      "status": "PASS",
+      "diff_location": "app/javascript/shared/types/jobApplication.ts lines 1-21",
+      "analysis": "The spec says: remove aiJobApplicationSummary from JobApplication type, add AiJobApplicationSummaryStatus with id, aiJobApplicationSummaryId, status, scorePercentage, headline, integratedRoleAnalysis, updatedAt. The serializer attributes (id, ai_job_application_summary_id, status, score_percentage, headline, integrated_role_analysis, updated_at) map to camelCase as: id (number), aiJobApplicationSummaryId (number | null), status (\"none\" | \"current\" | \"regenerating\"), scorePercentage (number | null), headline (string | null), integratedRoleAnalysis (string | null), updatedAt (string | null). The diff: (1) removes the import of AiJobApplicationSummary, (2) adds the AiJobApplicationSummaryStatus interface with all 7 fields matching the serializer exactly, (3) replaces aiJobApplicationSummary: AiJobApplicationSummary | null with aiJobApplicationSummaryStatus: AiJobApplicationSummaryStatus | null. All fields, types, and nullability match the serializer output."
+    },
+    "S19": {
+      "status": "PASS",
+      "diff_location": "app/javascript/shared/types/aiJobApplicationSummary.ts line 3",
+      "analysis": "The spec says the status union should match the Ruby enum: pending: 0, textract_processing: 1, extracting: 2, summarizing: 3, awaiting_job_criteria: 4, scoring: 5, integrating: 6, succeeded: 7, retrying: 8, failed: 9. The diff changes the status type from '\"pending\" | \"in_progress\" | \"extracted\" | \"succeeded\" | \"failed\" | \"textract_processing\"' to '\"pending\" | \"textract_processing\" | \"extracting\" | \"summarizing\" | \"awaiting_job_criteria\" | \"scoring\" | \"integrating\" | \"succeeded\" | \"retrying\" | \"failed\"'. This is exactly 10 values matching the Ruby enum. The ordering matches the enum integer ordering (0-9). All old statuses that were removed (in_progress, extracted) are replaced by the correct new granular statuses."
+    }
+  },
+  "diff_to_spec_mapping": {
+    "WebsocketJobChannelHandler.tsx new case block": "S9 - new ai_summary_status_change case with both invalidations",
+    "jobApplication.ts AiJobApplicationSummaryStatus interface": "S18 - new type definition with all serializer fields",
+    "jobApplication.ts import removal": "S18 - removal of old AiJobApplicationSummary import",
+    "jobApplication.ts property replacement": "S18 - aiJobApplicationSummary replaced by aiJobApplicationSummaryStatus",
+    "aiJobApplicationSummary.ts status union change": "S19 - status union updated to match Ruby enum"
+  },
+  "unmatched_diff_changes": [],
+  "unmatched_spec_requirements": [],
+  "summary": "All three assigned spec requirements (S9, S18, S19) are fully and correctly implemented. No discrepancies found. S9: WebSocket handler invalidates both [\"jobApplication\"] and [\"aiJobApplicationSummary\"] query caches on ai_summary_status_change events. S18: AiJobApplicationSummaryStatus type has all 7 fields matching the serializer output with correct camelCase naming and nullability. S19: AiJobApplicationSummary status union has all 10 values matching the Ruby enum exactly."
+}

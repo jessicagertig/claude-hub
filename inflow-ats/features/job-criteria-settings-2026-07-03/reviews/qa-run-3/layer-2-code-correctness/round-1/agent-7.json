@@ -1,0 +1,22 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 7,
+  "focus_area": "Frontend regenerate confirm modal, read-only view slide-over, and the useAiJobCriteria query+mutation hook (mutation ownership, loading/disabled double-submit protection, frozen-prop trap, query-key/invalidation shape)",
+  "files_reviewed": [
+    "app/javascript/ats/src/views/jobApplications/jobSetup/RegenerateJobCriteriaConfirmModal.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/JobCriteriaViewModal.tsx",
+    "app/javascript/shared/queryHooks/useAiJobCriteria.ts"
+  ],
+  "findings": [
+    {
+      "id": "l2-a7-001",
+      "severity": "LOW",
+      "title": "JobCriteriaViewModal criterion rows keyed by array index",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/JobCriteriaViewModal.tsx",
+      "line": 43,
+      "description": "Criterion rows use `key={index}` (`<Styled.Row key={index}>`). The `criteria` prop is frozen at openModal time (ModalContext captures the element) and the list is display-only, never reordered or filtered after render, so index keys are stable and there is no reconciliation bug. Purely a stylistic observation with no actionable consequence.",
+      "recommendation": "Optional: key on a stable field (e.g. `criterion.text`) if duplicate-text criteria are ever possible. No functional change required."
+    }
+  ]
+}

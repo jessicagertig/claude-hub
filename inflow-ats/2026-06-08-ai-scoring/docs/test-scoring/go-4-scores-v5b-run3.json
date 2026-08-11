@@ -1,0 +1,147 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has experience with Kubernetes, having deployed applications on OpenShift, which is built on Kubernetes. They also have experience with AWS, Azure, and GCP, indicating familiarity with multiple cloud environments."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience architecting and deploying applications in cloud environments (AWS, Azure, GCP) but does not explicitly mention multi-cloud racks or environments."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not provide any evidence of participating in code reviews, mentoring, or defining best practices."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience in Golang, specifically mentioning its use for high-performance backend systems and RESTful APIs."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has experience deploying applications on OpenShift, which involves Kubernetes, and has worked with Docker and Kubernetes, indicating a solid understanding of its concepts."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The resume does not mention Terraform or any similar Infrastructure as Code (IaC) tools."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has hands-on experience with AWS, Azure, and GCP, managing various services and deployments."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with PaaS-like environments (OpenShift) but does not explicitly mention understanding the abstraction of infrastructure for developers."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has built CI/CD pipelines using Jenkins, Ansible, and Harness, indicating familiarity with developer tooling."
+    },
+    {
+      "criterion_text": "Excellent communication skills",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not provide evidence of communication skills in a professional context."
+    },
+    {
+      "criterion_text": "Ability to work cross functionally",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The resume does not mention any experience or evidence of working cross-functionally."
+    },
+    {
+      "criterion_text": "Thrive within a fast moving product engineering environment",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience in a fast-paced environment but does not explicitly state their ability to thrive in such settings."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not mention any experience with cloud marketplaces."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with multiple cloud platforms but does not explicitly mention hybrid cloud environments or customer-facing deployments."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not provide evidence of familiarity with these specific system design principles."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not mention any experience with open source projects or distributed systems."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has experience with Prometheus and Grafana for monitoring and logging."
+    },
+    {
+      "criterion_text": "Ability to design, build, and maintain backend services in Go that power our PaaS",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has designed and built backend services in Go, specifically mentioning their use in production systems."
+    },
+    {
+      "criterion_text": "Experience with backend service components including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has experience with backend service components, including RESTful APIs and orchestration logic using Kubernetes."
+    },
+    {
+      "criterion_text": "Ability to collaborate with product and UX teams to deliver features for developers",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not provide evidence of collaboration with product and UX teams."
+    },
+    {
+      "criterion_text": "Experience improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience enhancing CI/CD workflows but does not mention CLI usage or marketplace integrations."
+    },
+    {
+      "criterion_text": "Ability to ensure high reliability, scalability, and security of the platform",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with high-performance systems but does not explicitly mention reliability, scalability, or security."
+    },
+    {
+      "criterion_text": "Experience implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with monitoring and logging but does not mention alerting, rollback capabilities, or multi-cloud failover strategies."
+    }
+  ],
+  "computed_score": {
+    "points": 84.0,
+    "max": 144,
+    "percentage": 58.3
+  }
+}

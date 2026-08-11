@@ -1,0 +1,80 @@
+{
+  "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+  "agentId": "agent-5",
+  "round": 1,
+  "findings": [
+    {
+      "id": "PT-1",
+      "severity": "HIGH",
+      "category": "data-flow",
+      "line": 49,
+      "title": "structuredData is null during 'regenerating', causing renderSucceeded() to lose data",
+      "description": "Line 49: `const structuredData = statusValue === \"current\" ? fullSummary?.structuredData : null;`. When statusValue is \"regenerating\" and renderSucceeded() is called (line 122-124), structuredData is null. This means applicableExperience, gaps, skills, roleAnalysis (from structuredData), standoutAccomplishments, keySkills, primaryDomain, secondaryDomain (from assessment) all become empty/missing. The 'regenerating' state is supposed to show the existing review (per spec: 'render PlatoGeneratedReviewCallout with refreshing indicator'). It will show a partial/empty view. The roleFit fallback chain (line 96) still works via fullSummary?.integratedRoleAnalysis || ... || fullSummary?.summaryText, but the structured data sections (skills, gaps, experience, achievements, domains) are silently lost.",
+      "suggestion": "Change line 49 to: `const structuredData = (statusValue === \"current\" || statusValue === \"regenerating\") ? fullSummary?.structuredData : null;`"
+    },
+    {
+      "id": "PT-2",
+      "severity": "HIGH",
+      "category": "data-flow",
+      "line": 98,
+      "title": "distanceInWords(summaryStatus?.updatedAt) throws on null/undefined input",
+      "description": "Line 98: `generatedAgo: distanceInWords(summaryStatus?.updatedAt)`. If summaryStatus is null or updatedAt is null, this passes null/undefined to distanceInWords, which calls `new Date(undefined)` => Invalid Date, then `formatDistanceToNow(Invalid Date)` which throws a RangeError ('Invalid time value'). This is reached when renderSucceeded() is called. While summaryStatus should exist when statusValue is 'current'/'regenerating', the updatedAt field is typed as `string | null`, so a null updatedAt would crash.",
+      "suggestion": "Guard with: `generatedAgo: summaryStatus?.updatedAt ? distanceInWords(summaryStatus.updatedAt) : \"\"`"
+    },
+    {
+      "id": "PT-3",
+      "severity": "MED",
+      "category": "state-machine",
+      "line": 119,
+      "title": "statusValue 'current' but fullSummary not yet loaded shows wrong empty state",
+      "description": "Lines 119-121: `if (statusValue === \"current\" && fullSummary)` -- when statusValue is 'current' but the useAiJobApplicationSummary query is still loading (fullSummary is undefined), the code falls through all guards and reaches the default empty state (line 154-163) which renders 'ready' or 'noCredits'. The user sees a 'Generate review' button for an application that already has a completed summary. This is a transient flash between the job application load and the summary load.",
+      "suggestion": "Add a loading guard: if statusValue is 'current' or 'regenerating' and fullSummary is undefined (query still loading), show a loading indicator or return null from renderBody() instead of falling through to the empty state."
+    },
+    {
+      "id": "PT-4",
+      "severity": "MED",
+      "category": "state-machine",
+      "line": 122,
+      "title": "statusValue 'regenerating' but fullSummary not loaded shows wrong empty state",
+      "description": "Same issue as PT-3 but for the 'regenerating' path. Lines 122-124: `if (statusValue === \"regenerating\" && fullSummary)` -- when fullSummary hasn't loaded yet, the code falls through. It won't hit isGeneratingPipeline (fullSummary is falsy, so line 48 evaluates to false), won't hit failed (same reason), won't hit noResume (statusValue is 'regenerating', not none/falsy), and lands on the default empty state showing 'ready' or 'noCredits'. Worse than PT-3 because during regeneration, the old summary should be visible while the new one generates.",
+      "suggestion": "Same fix as PT-3 -- handle the loading gap explicitly."
+    },
+    {
+      "id": "PT-5",
+      "severity": "MED",
+      "category": "state-machine",
+      "line": 132,
+      "title": "Failed status only detected via fullSummary, not via summaryStatus",
+      "description": "Lines 132-142: The failed state is detected by `fullSummary && fullSummaryStatus === \"failed\"`. But the spec defines summaryStatus.status as `none | current | regenerating` -- there is no 'failed' value in the summary status record. A failed summary would have summaryStatus.status = 'none' (or the status record might not exist). The fullSummary detection path requires: (a) a summary record with aiJobApplicationSummaryId populated in the status record, and (b) that summary to have status 'failed'. If the summary fails and the status record reverts to 'none' with aiJobApplicationSummaryId = null, the query is disabled and failed state is never detected. The user sees 'ready' instead of 'failed'.",
+      "suggestion": "Verify backend behavior: when a summary fails, does the status record retain the aiJobApplicationSummaryId? If not, the failed state is unreachable and needs a different detection mechanism."
+    },
+    {
+      "id": "PT-6",
+      "severity": "LOW",
+      "category": "state-machine",
+      "line": 167,
+      "title": "renderHeaderRight stale check depends on async fullSummary load",
+      "description": "Line 167: `if (statusValue === \"current\" && fullSummary?.stale)`. When statusValue is 'current' but fullSummary hasn't loaded yet, fullSummary?.stale is undefined (falsy), so no Regenerate button is shown. This is a minor flash: header initially shows no action, then the Regenerate button appears once the full summary loads. Functionally correct but causes a layout shift.",
+      "suggestion": "Consider using a stale flag from summaryStatus if available, or accept the layout shift as minor."
+    },
+    {
+      "id": "PT-7",
+      "severity": "LOW",
+      "category": "data-flow",
+      "line": 97,
+      "title": "scorePct defaults to 0 via || which treats legitimate 0 as falsy",
+      "description": "Line 97: `scorePct: summaryStatus?.scorePercentage || 0`. If scorePercentage is legitimately 0, this works as intended (0 || 0 = 0). However, if scorePercentage were ever null/undefined when a summary exists, it defaults to 0 rather than indicating 'no score'. This is a non-issue in practice since a succeeded summary should always have a score, and 0 is an acceptable default. Just noting it for completeness.",
+      "suggestion": "No change needed."
+    },
+    {
+      "id": "PT-8",
+      "severity": "LOW",
+      "category": "pattern-violation",
+      "line": 51,
+      "title": "buttonLoading variable is only used for Regenerate button disabled state, not for the empty state generate button",
+      "description": "Line 51: `const buttonLoading = isLoadingCredits || isGenerating;` is used in renderHeaderRight (line 170) for the Regenerate button's loading/disabled state. But the empty state generate button (via PlatoTabEmptyState -> handleGenerate) does not pass any loading state. When the user clicks 'Generate review' from the empty state, there's no visual loading feedback on that button while the mutation runs.",
+      "suggestion": "Pass isGenerating or buttonLoading through to PlatoTabEmptyState so the generate button shows loading state."
+    }
+  ],
+  "summary": "Two HIGH findings (structuredData null during regenerating state, distanceInWords crash on null updatedAt), three MED findings (loading flash showing wrong empty state for current/regenerating, failed state potentially unreachable), and three LOW findings (header layout shift, scorePct falsy handling, empty state button has no loading state). The most impactful is PT-1: during regeneration, the user sees a stripped-down summary missing skills, achievements, domains, gaps, and experience because structuredData is gated only on 'current'."
+}

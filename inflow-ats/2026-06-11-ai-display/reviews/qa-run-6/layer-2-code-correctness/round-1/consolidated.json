@@ -1,0 +1,44 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "run": 6,
+  "findings": [
+    {
+      "id": "l2-h1",
+      "severity": "HIGH",
+      "title": "Dark mode: PlatoMark icon hardcoded to colors.gray[700], invisible on dark backgrounds",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 182,
+      "agents": [3],
+      "description": "PlatoMark in Fit card header uses colors.gray[700] (#404040) directly. In dark mode this is near-invisible against dark card backgrounds. The analog in the same file (AchievementIcon line 723) correctly uses t.dark ? t.color.gray[400] : t.color.gray[700].",
+      "fix": "Import useTheme from @emotion/react, call at component top level, pass theme-aware color to PlatoMark. Remove unused colors import.",
+      "status": "FIXED"
+    }
+  ],
+  "dismissed": [
+    {
+      "id": "l2-d1",
+      "title": "Static possiblePaths with unconditional 'ai'",
+      "agents": [5],
+      "reason": "User-directed override from prior conversation. User explicitly said to use static possiblePaths and unconditional Route, matching AccountIntegrationsContainer pattern."
+    },
+    {
+      "id": "l2-d2",
+      "title": "match.url.replace() deviates from spec formula",
+      "agents": [4],
+      "reason": "Spec bug. match.url at the /overview route includes /overview, so spec formula match.url + '/ai' would produce /overview/ai (wrong). Implementation correctly strips last segment. Already documented as known non-issue in Layer 1."
+    }
+  ],
+  "downgraded_to_med": [
+    {
+      "id": "l2-m6",
+      "title": "|| 0 fabricated fallback for aiJobApplicationSummaryId",
+      "agents": [2, 5],
+      "reason": "Hook enabled guard (!!id && id > 0) prevents any HTTP request when ID is 0. No runtime impact. Code smell per Known Failure Pattern #13 but not a bug. Cleaner fix would accept undefined but ripples to all callers of the hook."
+    }
+  ],
+  "user_directed_overrides": [
+    "Spec section 4 route gating overridden: unconditional Route, static possiblePaths",
+    "Spec section 6 onOpen URL: match.url.replace() is correct (spec bug)"
+  ]
+}

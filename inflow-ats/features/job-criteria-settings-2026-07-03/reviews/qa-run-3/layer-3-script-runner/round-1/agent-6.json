@@ -1,0 +1,21 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 6,
+  "focus": "Job#extract_job_criteria_if_needed and its interaction with the guards moved into extract_job_criteria_immediately (SPEC §4.1 / §6.4). Verified against committed code (git status clean, git diff HEAD empty for app/models/job.rb; HEAD=859c85ead).",
+  "scenarios_run": [
+    "Env: ActiveJob::Base.queue_adapter=:test (confirmed ExtractJobCriteriaJob.queue_adapter is TestAdapter, so perform_later only enqueues -- NO real AI). Built a fresh uniquely-suffixed org+job per scenario; inspected AiJobCriteria row counts and enqueued_jobs. 23 assertions, all PASS.",
+    "S1 latest succeeded -> NO-OP: no new row (1->1), no enqueue. (succeeded guard in _if_needed)",
+    "S2 latest failed (non-zero-criteria msg 'Job description is blank') -> delegates to _immediately -> new pending row (1->2), 1 enqueue, args == [new_row.id, nil]",
+    "S2b latest failed with ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE -> still re-extracts: new row (1->2), 1 enqueue (any failed re-extracts per SPEC §6.4)",
+    "S3 no rows at all -> delegates -> new pending row (0->1), 1 enqueue, args == [new_row.id, nil]",
+    "S4 latest in_progress -> NET no-op: _if_needed no longer guards it, delegates to _immediately whose in_progress guard suppresses creation -> no new row (1->1), no enqueue",
+    "S5 latest retrying -> NET no-op via _immediately retrying guard -> no new row (1->1), no enqueue",
+    "S6 latest pending -> delegates (no pending guard) -> new row (1->2), 1 enqueue",
+    "S7 auto path confirms _if_needed calls _immediately WITHOUT requesting_organization_user_id: enqueued args are 2-element with second element nil ([id, nil])",
+    "F1 falsifiability: calling _immediately directly on a succeeded-latest job (== succeeded guard removed) DOES create a row (1->2) -> the S1 no-op is caused by _if_needed's succeeded guard, not tautological",
+    "F2 falsifiability: _immediately creates a row when latest is failed (guard N/A) (1->2) -> S4/S5 no-row assertions are falsifiable",
+    "F2b guard load-bearing: _immediately on in_progress-latest creates NO row (1->1) -> the in_progress net-no-op is caused by _immediately's in_progress guard"
+  ],
+  "findings": []
+}

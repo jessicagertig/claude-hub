@@ -1,0 +1,32 @@
+{
+  "agent": 3,
+  "round": 1,
+  "qa_run": 6,
+  "layer": "layer-1-diff-to-spec",
+  "focus_area": "PlatoTab succeeded layout (all 10 sections), eyebrow style, stale banner",
+  "spec_section": "Section 2 -- Succeeded layout items 1-10, eyebrow style, stale banner",
+  "findings": [
+    {
+      "id": "A3-H1",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 41,
+      "description": "useAiJobApplicationSummary called with || 0 fallback, fabricating a non-nil ID when no succeeded summary exists.",
+      "detail": "Line 41: `aiJobApplicationSummaryId: (status === \"succeeded\" && aiSummary?.id) || 0`. When status is not 'succeeded' or no summary exists, the expression `(status === \"succeeded\" && aiSummary?.id)` evaluates to false/null/undefined, and `|| 0` substitutes 0. This fires a GET request to `/ai_job_application_summaries/0` on every render when no succeeded summary exists, producing a guaranteed 404. The spec states the full structured data should be fetched 'only when a summary exists and status is succeeded'. The correct fix is conditional invocation -- e.g., pass `undefined` or use a disabled flag so the query does not fire at all when the guard fails. Known Failure Pattern #13 in the pipeline CLAUDE.md explicitly prohibits || 0 fallbacks and cites this exact symptom as the motivating failure."
+    }
+  ],
+  "section_verdicts": {
+    "section_1_provenance": "PASS -- distanceInWords used, secondaryText color, border dot color all correct",
+    "section_2_stale_banner": "PASS -- wellCanvas background, alert-triangle icon, correct text, admin link uses react-router-dom Link (not raw anchor)",
+    "section_3_headline": "PASS -- h1, 23px, 1.28 lh, 600 weight, -0.02em letter-spacing, loudText, text-wrap:pretty, aiSummary.headline source",
+    "section_4_domain_label": "PASS -- primary loudText, secondary secondaryText, 3px filled circle gray[500] separator, 16px bottom margin",
+    "section_5_fit_card": "PASS -- 1px border, 9px radius, 16px 20px 20px padding, 3px gradient bar absolutely positioned, PlatoMark 15px gray[700], FitLabel 13.5px/600/loudText, FitBody 15px/24px/primaryText, roleAnalysis fallback to summaryText",
+    "section_6_notable_achievements": "PASS -- standoutAccomplishments source, award icon, 14px/21px/primaryText text, 9px gap, omit-if-empty guard",
+    "section_7_relevant_experience": "PASS -- applicableExperience source, Prose 14.5px/23px/primaryText, max-width 66ch, omit-if-falsy guard",
+    "section_8_gaps_to_probe": "PASS -- gaps source, same Prose styling, omit-if-falsy guard",
+    "section_9_skills": "PASS -- key skills sorted front, loudText + dark ternary fill, non-key primaryText + transparent, 13px/chipBorder/4px radius/3px 10px padding, omit-if-empty guard",
+    "section_10_footer": "PASS -- 30px top margin, 14px top padding, border-top, info icon 13px gray[400], 12px placeholderText",
+    "eyebrow_style": "PASS -- ${[t.text.xs]} spread in array (not inside font-size property), uppercase, 0.05em tracking, 600 weight, secondaryText color",
+    "stale_banner_admin_link": "PASS -- uses react-router-dom Link via as={Link} to='/hire/settings/ai-billing', not a raw <a> anchor"
+  }
+}

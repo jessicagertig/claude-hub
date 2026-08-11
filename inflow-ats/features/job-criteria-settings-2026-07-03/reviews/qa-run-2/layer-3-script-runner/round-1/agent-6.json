@@ -1,0 +1,21 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 6,
+  "focus": "QueueBulkAiSummaryJobs runtime: zero-criteria fail-fast placement (before any claim-row creation / enqueue) and the optional `context.job&.` safe-nav for legacy callers.",
+  "scenarios_run": [
+    "ai-org-with-candidates.json seed (org Acme Inc. 32263, user rezu.may 35262, job 'Senior Engineer' 27284, 3 job_applications [20180,20181,20182]); granted 100 credits via GrantAiCredits interactor so line-18 credit guard passes and line-19 is reachable; queue_adapter forced to :test in-script to capture perform_later without running jobs (test env default is :inline).",
+    "S1 FAIL-FAST WITH JOB: built a `failed` zero-criteria latest AiJobCriteria (error_message 'Criteria array is empty'), called interactor with job: set.",
+    "S2 ALLOW WITH JOB: built a `succeeded` latest AiJobCriteria with non-empty criteria, called interactor with job: set.",
+    "S3 LEGACY SAFE-NAV: put job back into failed zero-criteria state, called interactor WITHOUT a job: context key (as pre-feature legacy callers do).",
+    "Grepped Api::V1::BulkAiJobApplicationSummariesController to confirm which actions pass job: @job."
+  ],
+  "findings": [],
+  "verifications_passed": [
+    "S1: fail-fast fires with job: context — context.failure? == true and context.error is the exact spec message 'No scoring criteria were found in the job description. Regenerate job criteria in Plato AI settings before running reviews.'",
+    "S1: fail-fast sits BEFORE any side effects — BulkAiSummaryJobApplication claim-row count unchanged (0 -> 0), zero jobs enqueued (no BulkGenerateAiSummariesJob, no SubmitResumeToTextractJob), and queued_count was never set (short-circuited at line 19 before scope/claim/enqueue). No claim-row poisoning; the missing-fail-fast HIGH is not present.",
+    "S2: succeeded-with-criteria latest -> job.zero_criteria_extraction_failure? == false -> fail-fast does NOT fire; interactor proceeded past line 19 (context.success? == true, queued_count set to 0 / skipped_count 3 because the seeded candidates have no resume+textract, which is correct downstream filtering, not the criteria guard).",
+    "S3 (critical regression): legacy caller with NO job: key does NOT raise — context.job is nil, `context.job&.zero_criteria_extraction_failure?` safe-navs to nil, guard is skipped, and the interactor runs its full body normally (context.success? == true, skipped_count 3). No NoMethodError-on-nil. Verified even while the job itself was in a failed zero-criteria state (a legacy caller correctly bypasses the check).",
+    "Both bulk controller actions reach the fail-fast in production: Api::V1::BulkAiJobApplicationSummariesController#create (line 17) and #all_stages (line 43) both pass job: @job into QueueBulkAiSummaryJobs, so the zero-criteria fail-fast is reachable for both bulk-review entry points."
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "version": 7,
+    "call": 2,
+    "model": "gpt-4o-mini",
+    "job_id": 13033,
+    "title": "Elixir Developer",
+    "organization": "Select",
+    "input_tokens": 2346,
+    "output_tokens": 346,
+    "cost": 0.00056,
+    "criteria_count": 7,
+    "tier_counts": {
+      "tier_1": 0,
+      "tier_2": 5,
+      "tier_3": 2
+    },
+    "binary_count": 0,
+    "decomposed_count": 2
+  },
+  "result": {
+    "criteria": [
+      {
+        "text": "Knowledge of Elixir and OTP at the level that allows you to write working, high-quality code",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Knowledge of Elixir and OTP at the level that allows you to write working, high-quality code"
+      },
+      {
+        "text": "Able to fine-tune Postgres queries with Ecto or SQL",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Able to fine-tune Postgres queries with Ecto or SQL"
+      },
+      {
+        "text": "Ability to write clear and maintainable tests",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Ability to write clear and maintainable tests"
+      },
+      {
+        "text": "Good understanding of common architectural patterns and design principles",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Good understanding of common architectural patterns and design principles"
+      },
+      {
+        "text": "Solid understanding of modern web applications and API deisgn",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Solid understanding of modern web applications and API deisgn"
+      },
+      {
+        "text": "Experience with mentoring or pair programming",
+        "tier": "tier_3",
+        "tier_reasoning": "bonus",
+        "binary": false,
+        "source_text": "(bonus) Experience with mentoring or pair programming"
+      },
+      {
+        "text": "DevOps understanding and ability to set up CI pipeline and deployment",
+        "tier": "tier_3",
+        "tier_reasoning": "bonus",
+        "binary": false,
+        "source_text": "(bonus) DevOps understanding and ability to set up CI pipeline and deployment"
+      }
+    ]
+  }
+}

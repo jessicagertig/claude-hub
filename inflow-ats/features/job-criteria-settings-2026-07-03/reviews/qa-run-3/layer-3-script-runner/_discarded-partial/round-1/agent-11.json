@@ -1,0 +1,28 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 11,
+  "focus_area": "ValidateAutoAiSummaryGeneration zero-criteria review guard (SPEC §6.2.2) — AUTO path entry points 3 (new applicant) and 4 (resume upload)",
+  "files_reviewed": [
+    "app/interactors/validate_auto_ai_summary_generation.rb",
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/models/job_application.rb"
+  ],
+  "scenarios_executed": [
+    "Call signature: caller job_application.rb#auto_generate_ai_summary_if_enabled invokes ValidateAutoAiSummaryGeneration.call(job_application: self); interactor reads context.job_application and guards on @job_application.job&.zero_criteria_extraction_failure? — verified in-code and at runtime (same-object identity confirmed for job and organization association traversal).",
+    "1a no AiJobCriteria rows -> guard silent, context.success? true, error nil",
+    "1b latest succeeded -> guard silent, success",
+    "1c latest pending -> guard silent, success",
+    "2.1 latest failed + 'No criteria sections found in job description' -> context.failure?, error == guard message exactly",
+    "2.2 latest failed + 'No criteria extracted from job description' -> failure, exact guard message",
+    "2.3 latest failed + 'Criteria array is empty' -> failure, exact guard message",
+    "3 latest failed + 'Job description is blank' (non-zero-criteria) -> guard silent, success",
+    "4a newer pending over older failed+zero (created_at gap) -> guard silent, latest predicate reads newest, success",
+    "4b newer in_progress over older failed+zero -> guard silent, success",
+    "5a ORDERING: blank description (line 18 precondition) + zero-criteria row present -> returns 'This job needs a description before Plato can review candidates. Add one in Job Setup.' NOT the zero-criteria message (proves guard placed after has_job_description?)",
+    "5b ORDERING: credits unavailable (line 17 precondition) + zero-criteria row present -> returns out-of-credits message, not the zero-criteria message (proves guard placed after credits check)"
+  ],
+  "result": "ALL_PASS (11/11 runtime assertions). Unrelated upstream preconditions neutralized to mirror the interactor's own spec stubs (Flipper.enable, has_resume->true, ai_credits_available?->true, description via update_columns) so the latest AiJobCriteria state was the sole variable. AiJobCriteria rows cleaned up via delete_all; verified 0 leftover rows and job description restored.",
+  "findings": []
+}

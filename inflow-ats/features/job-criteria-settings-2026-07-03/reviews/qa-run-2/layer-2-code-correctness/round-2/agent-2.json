@@ -1,0 +1,39 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agent_index": 2,
+  "focus_area": "AiJobCriteria model + Job criteria methods + the entire zero-criteria guard chain end-to-end (model constant -> writer sites -> predicate -> validators -> bulk queue -> scoring funnel -> completion broadcast)",
+  "files_reviewed": [
+    "app/models/ai_job_criteria.rb",
+    "app/models/job.rb",
+    "app/interactors/validate_ai_summary_generation.rb",
+    "app/interactors/validate_auto_ai_summary_generation.rb",
+    "app/interactors/queue_bulk_ai_summary_jobs.rb",
+    "app/services/ai_job_application_action/scoring/extract_criteria.rb",
+    "app/services/ai_job_application_action/scoring/score_job_application.rb",
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/jobs/generate_ai_job_application_summary_job.rb",
+    "app/models/textract_result.rb",
+    "app/jobs/bulk_generate_ai_summaries_job.rb"
+  ],
+  "findings": [
+    {
+      "id": "l2-a2-001",
+      "severity": "LOW",
+      "title": "latest_ai_job_criteria / latest_succeeded_ai_job_criteria order by created_at with no id tiebreak (non-deterministic on exact ties)",
+      "file": "app/models/job.rb",
+      "line": 688,
+      "description": "latest_ai_job_criteria (job.rb:688 `ai_job_criteria.order(created_at: :desc).first`) and latest_succeeded_ai_job_criteria (job.rb:692-693) sort only by created_at. When two rows share an identical created_at timestamp, Postgres row order among the tied rows is undefined, so the 'latest' row is not deterministic. The one realistic tie is the documented double-POST case (SPEC 4.1: extract_job_criteria_immediately does NOT guard pending, so two rapid POSTs can create two pending rows in the same instant) — but both tied rows are `pending`, so zero_criteria_extraction_failure? returns false either way and no behavior changes. This is NOT actionable: it exactly matches the established codebase/analog pattern (generate_ai_job_application_summary_job.rb:18,60 and textract_result.rb:81 all use `.order(created_at: :desc).first` with no id tiebreak; job.rb:808-810 most_recent_what_jobs_listing too). Recorded only as an observation.",
+      "recommendation": "No action required — matches the analog and has no reachable wrong-result path. If ever hardened, add a secondary `.order(created_at: :desc, id: :desc)` uniformly across the latest-row helpers, but only alongside the analog."
+    },
+    {
+      "id": "l2-a2-002",
+      "severity": "LOW",
+      "title": "extract_job_criteria_immediately issues two identical latest_ai_job_criteria queries",
+      "file": "app/models/job.rb",
+      "line": 732,
+      "description": "extract_job_criteria_immediately calls latest_ai_job_criteria twice (job.rb:732 `latest_ai_job_criteria&.status_in_progress?` and job.rb:733 `latest_ai_job_criteria&.status_retrying?`), firing two identical SELECTs, whereas the sibling methods auto_extract_job_criteria (job.rb:703) and extract_job_criteria (job.rb:720) cache the row once into existing_ai_job_criteria and reuse it. Pure micro-inefficiency on a single-record code path; no correctness impact. Also note this is verbatim the SPEC 4.1 code block, so it matches the approved spec exactly.",
+      "recommendation": "No action required (spec-verbatim). If touched later, memoize into a local like the sibling methods for consistency."
+    }
+  ]
+}

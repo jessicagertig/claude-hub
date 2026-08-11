@@ -1,0 +1,60 @@
+{
+  "agent": 2,
+  "focus": "PlatoTab.tsx state machine and routing — the 6-state body switching logic and the tab container structure",
+  "findings": [
+    {
+      "id": "H1",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "lines": "532-535",
+      "summary": "useAiJobApplicationSummary called unconditionally — fires for all 6 states including when no summary exists",
+      "spec_requirement": "Spec lines 47 and 308: 'Full structured data via useAiJobApplicationSummary — only when a summary exists and status is succeeded' and 'fetch the full data only when status is succeeded and the rich layout needs rendering'",
+      "actual_behavior": "The hook is called unconditionally at component top level (line 532). When no summary exists, aiSummary?.id is undefined and falls back to 0 (line 534: `aiSummary?.id || 0`), making an API call to `/job_applications/{id}/ai_job_application_summaries/0` which returns a 404. When a summary exists but status is pending/in_progress/extracted/textract_processing/failed, the full structured data is fetched unnecessarily. The underlying useQuery in the hook (useAiJobApplicationSummary.ts line 41) has no `enabled` option, so there is no mechanism to disable the fetch conditionally.",
+      "why_it_matters": "Every time PlatoTab renders for a candidate without a summary, or with a non-succeeded summary, it fires a wasted API call. For the no-summary case this is a 404 error. The spec explicitly requires lazy fetching to avoid this. Line 537 guards the consumption of the data (`const structuredData = status === 'succeeded' ? ...`) but does not guard the fetch itself.",
+      "fix": "Add an `enabled` option to the useQuery call in useAiJobApplicationSummary.ts (e.g., `{ enabled: aiJobApplicationSummaryId > 0 }`), or add an `enabled` parameter to the hook interface. Then pass `enabled: summaryExists && status === 'succeeded'` from PlatoTab. Alternatively, since the hook file is not listed in the spec's modified files, it may be acceptable to pass a sentinel and add `enabled: !!aiJobApplicationSummaryId` to the hook — but the hook file must be modified either way."
+    },
+    {
+      "id": "H2",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+      "lines": "195-204 (diff line numbers)",
+      "summary": "Route for /ai path not wrapped in FeatureFlipper — accessible when feature flag is off",
+      "spec_requirement": "Spec line 128: 'Wrap the new route in <FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">'. Spec line 204: 'When the feature is disabled... the /ai route must redirect to /overview'",
+      "actual_behavior": "The new <Route path={`${match.path}/ai`}> (diff lines 195-204) is added directly inside the <Switch> block without any FeatureFlipper wrapper. While the possiblePaths array is conditionally gated (diff line 179), that only affects the currentViewPath state for tab highlighting and the redirector fallthrough. The Route itself is matched by React Router's <Switch> before redirector() executes, so a direct URL navigation to /ai when the flag is off will render PlatoTab instead of redirecting to /overview.",
+      "why_it_matters": "Users with the feature flag disabled can access the Plato tab by navigating directly to the /ai URL. The spec explicitly requires the Route to be wrapped in FeatureFlipper so the route does not match when the flag is off, causing the request to fall through to redirector() which redirects to /overview.",
+      "fix": "Wrap the <Route> in <FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">...</FeatureFlipper> as the spec requires. Import FeatureFlipper (the component, not just the hook) if not already imported. The existing import at diff line 161 imports useFeatureFlipper and Features but not the FeatureFlipper component itself — it needs to be added."
+    }
+  ],
+  "verified_correct": [
+    {
+      "requirement": "State machine evaluation order: succeeded → pending/in_progress/extracted → textract_processing → failed → no-summary+hasResume → no-summary+no-resume (first match wins)",
+      "location": "PlatoTab.tsx lines 815-835 (diff)",
+      "notes": "renderBody() uses if-return chain with summaryExists guards. Order matches spec exactly. Final return renderNoResume() is the correct fallback for row 6."
+    },
+    {
+      "requirement": "Container structure: flex column filling height, header bar with PlatoChip(26px)+label on left, Regenerate ghost button (when succeeded) or kebab (otherwise) on right",
+      "location": "PlatoTab.tsx lines 837-859 (diff), Styled.Container lines 881-889, Styled.Header lines 891-901",
+      "notes": "Container is flex column height 100%. Header has PlatoChip size=26 radius=7 + 'Plato' label on left. Right side shows Button styleType='text' with refresh-cw icon when succeeded, kebab otherwise. Matches spec."
+    },
+    {
+      "requirement": "Scrollable body with 720px max-width centered column, 22px 28px 56px padding",
+      "location": "PlatoTab.tsx Styled.Body lines 943-947, Styled.BodyInner lines 949-954 (diff)",
+      "notes": "Body has flex-grow: 1 and overflow-y: auto (scrollable). BodyInner has max-width: 720px, margin: 0 auto (centered), padding: 22px 28px 56px. Matches spec exactly."
+    },
+    {
+      "requirement": "Follows same container pattern as JobApplicationActivity.tsx",
+      "location": "PlatoTab.tsx Styled.Container/Header/Body",
+      "notes": "Structure mirrors JobApplicationActivity.tsx: outer flex-column container with header bar (border-bottom) and scrollable body. Naming differs (Header vs Title, Body vs Feed) but structural pattern matches."
+    },
+    {
+      "requirement": "possiblePaths conditional inclusion of 'ai' when feature flag is on",
+      "location": "JobApplicationContainer.tsx diff lines 169-170, 179, 187",
+      "notes": "isAiEnabled defined at component top level via useFeatureFlipper hook (correct — hooks cannot be called inside useEffect). possiblePaths conditionally includes 'ai' via spread. isAiEnabled added to useEffect dependency array. Matches spec exactly."
+    },
+    {
+      "requirement": "Feature flag uses Features enum, not string literal",
+      "location": "JobApplicationContainer.tsx diff line 170",
+      "notes": "Uses Features.AI_APPLICANT_SUMMARY enum value as spec requires."
+    }
+  ]
+}

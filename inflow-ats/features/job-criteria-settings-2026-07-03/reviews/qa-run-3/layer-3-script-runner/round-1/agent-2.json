@@ -1,0 +1,15 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 2,
+  "focus": "Zero-criteria review guard in QueueBulkAiSummaryJobs (bulk fail-fast -> 422). app/interactors/queue_bulk_ai_summary_jobs.rb:19, SPEC.md §6.2.3.",
+  "scenarios_run": [
+    "Built own isolated org/user/job/candidate (SecureRandom suffix); confirmed global AI_APPLICANT_SUMMARY flag reads true; stubbed org.ai_credits_available? true so the zero-criteria guard is the message produced.",
+    "Scenario A (guard fires): latest AiJobCriteria = zero-criteria failure (ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE), job passed. Called QueueBulkAiSummaryJobs.call(organization:, user:, job_application_ids:[ja.id], job:, params:{}). Asserted context.failure?==true, context.error EXACTLY the zero-criteria message, ActiveJob :test adapter enqueued_jobs empty (no BulkGenerateAiSummariesJob), and BulkAiSummaryJobApplication.count unchanged (no claim rows).",
+    "Scenario B (control, succeeded): latest row = succeeded criteria, job passed. Guard did NOT fire: failure?==false, error!=zero-criteria msg, proceeded to working-set logic (queued_count==0).",
+    "Scenario C (control + falsifiability): zero-criteria row still latest in DB but job:nil. Safe-nav short-circuits, guard does NOT fire (failure?==false). Identical DB state to A -> failing when guard-condition reachable (A), passing when unreachable (C) demonstrates the fail assertion flips if the guard line were removed/disabled.",
+    "Scenario C2 (control): job kwarg omitted entirely -> safe-nav, guard does NOT fire, existing behavior intact.",
+    "Scenario D (guard ordering): zero-criteria latest + org.ai_credits_available? stubbed false -> credits message ('Your organization is out of AI credits...') fires FIRST, confirming the zero-criteria guard sits AFTER the flipper and credits fail!s (queue_bulk_ai_summary_jobs.rb:17-19)."
+  ],
+  "findings": []
+}

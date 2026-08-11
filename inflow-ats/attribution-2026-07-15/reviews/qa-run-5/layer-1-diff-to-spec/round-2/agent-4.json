@@ -1,0 +1,34 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 4,
+  "focus_area": "Api::V1::OrganizationsController#create (SPEC.md 4.4, D5) and the authorization surface (SPEC.md 6, SPEC.md 7 constraint 6)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "SPEC.md 4.4: copy utm_source/utm_campaign/utm_data/internal_ref from current_user onto the new Organization, created_via-style",
+      "SPEC.md 4.4: no re-capture of query params at organization creation",
+      "SPEC.md 4.4: organization_params NOT modified; values never come from the request",
+      "SPEC.md 4.4: user with nil columns produces an organization with nil columns (no fallback)",
+      "SPEC.md 4.4: no other change to the controller",
+      "SPEC.md 6: Pundit authorize @organization call unchanged",
+      "SPEC.md 6: no new endpoints, no policy changes, no routes changes",
+      "SPEC.md 6: no auth filters added to the unauthenticated signup/omniauth paths",
+      "SPEC.md 6: Hire::ConfirmationsController still token-authenticated via User.confirm_by_token, absent from the diff",
+      "SPEC.md 7 constraint 6: serializers diff empty; four columns not exposed through any Api::V1 serializer at HEAD; SessionSerializer and OrganizationSerializer untouched"
+    ],
+    "verified": [
+      "4.4 copy lines: diff hunk app/controllers/api/v1/organizations_controller.rb @@ -29,6 +29,10 @@ adds exactly the four assignments (@organization.utm_source = current_user.utm_source, .utm_campaign, .utm_data, .internal_ref) in the spec's exact order, immediately after the existing @organization.created_via = current_user.created_via (HEAD lines 31-35), before @organization.is_claimed = true and authorize @organization (HEAD line 37)",
+      "4.4 no re-capture / never from request: all four values read from current_user; no params/queryString read added; organization_params (HEAD lines 118-146) permits :name ... :google_click_id, :heard_about_us_from and a settings array -- none of utm_source/utm_campaign/utm_data/internal_ref appear at top level or inside settings; git diff for the file contains only the one 4-line hunk",
+      "4.4 nil-to-nil: direct attribute assignment with no || fallback, no default; nil user columns copy as nil (also pinned by the new spec/controllers/api/v1/organizations_controller_spec.rb nil-context examples)",
+      "4.4 no other controller change: git diff 62dd55867..fc3f047f9 -- app/controllers/api/v1/organizations_controller.rb is exactly the 4 added lines (+4 in --stat); index/show/update/destroy/organization_params untouched",
+      "6 authorize unchanged: 'authorize @organization' appears in the diff only as an unmodified context line; present at HEAD organizations_controller.rb:37",
+      "6 routes/policies empty: git diff 62dd55867..fc3f047f9 -- config/routes.rb app/policies produces zero output; the 22-file --stat list contains no routes or policy files; no new controller action defined anywhere in the diff",
+      "6 no auth filters added: grep of the full diff dump for before_action/skip_before_action/authenticate shows only two spec-file lines (a test stub allow(controller).to receive(:authenticate_api_v1_user!) in organizations_controller_spec.rb and a comment about Devise's internal prepend_before_action in omniauth_callbacks_controller_spec.rb); no filter added to registrations, omniauth callbacks, or the omniauth.rb setup lambda",
+      "6 Hire::ConfirmationsController: git diff over the range for app/controllers/hire/confirmations_controller.rb is 0 lines; at HEAD #show still calls User.confirm_by_token(params[:confirmation_token]) and redirects to the bare /auth?email_confirmed=true / =false URLs; the only related diff artifact is the NEW spec/controllers/hire/confirmations_controller_spec.rb, which traces to SPEC.md 4.8 / 9 item 5 (controller gains new spec coverage pinning both bare redirects) and asserts exactly those two redirects",
+      "7 constraint 6 serializers: git diff 62dd55867..fc3f047f9 -- app/serializers is empty; git grep at fc3f047f9 across app/serializers for the four names hits ONLY app/serializers/api/v1/ahoy_visit_serializer.rb, which is byte-identical at 62dd55867 and at HEAD and serializes Ahoy::Visit's own pre-existing utm_source/utm_campaign columns (ahoy_visits table), not the new User/Organization columns; Api::V1::SessionSerializer uses an explicit attribute list with no utm_*/internal_ref; Api::V1::OrganizationSerializer greps clean; no serializer uses a wholesale dump (grep for object.attributes / as_json / .slice( across app/serializers at HEAD: zero hits)"
+    ],
+    "missing": []
+  },
+  "notes": "Re-verified from scratch against the pre-dumped diff plus HEAD fc3f047f9 on branch attribution-work-qa (confirmed via git rev-parse). Diff-to-spec direction for the focus area: the three hunks in scope (organizations_controller.rb +4 lines -> 4.4; new organizations_controller_spec.rb -> 9 organizations-create coverage, follows the suite's stubbed-Pundit convention and the queue-adapter around block; new hire/confirmations_controller_spec.rb -> 4.8 / 9 item 5) all trace to spec requirements; no untraceable change found in the area. The AhoyVisitSerializer utm_source/utm_campaign attributes are the one thing that superficially resembles a constraint-6 violation and were confirmed pre-existing, unmodified, and belonging to a different table. The qa-run-5 delta duty (l1-run4-001 truncation-text amendment, 5.1/7 constraint 1/11) does not touch this focus area, so no verification of the amendment was performed here. No settled ruling (M1-M4, 9 LOWs) was re-reported."
+}

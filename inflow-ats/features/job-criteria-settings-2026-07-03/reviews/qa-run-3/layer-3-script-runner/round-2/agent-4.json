@@ -1,0 +1,27 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 4,
+  "focus": "DOUBLE-POST race + created_at tie-break stability (SPEC 4.1): Job#extract_job_criteria_immediately called twice creating two pending rows (no pending guard); latest_ai_job_criteria = ai_job_criteria.order(created_at: :desc).first ordering determinism; latest_succeeded_ai_job_criteria; serializer + predicate stability with two pending rows. app/models/job.rb, app/models/ai_job_criteria.rb, app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+  "scenarios_run": [
+    "Setup: built isolated org/owner_ou/job (draft, description present) in-script; ActiveJob queue_adapter=:test so ExtractJobCriteriaJob only enqueues, never runs (NO real AI). 21 assertions, 21 PASS.",
+    "S1 DOUBLE-POST (no rows, latest not in-flight): two rapid job.extract_job_criteria_immediately(requesting_organization_user_id: owner_ou.id) calls -> NO exception; exactly 2 pending rows created (0->2); both status pending; exactly 2 ExtractJobCriteriaJob enqueued; enqueued args reference the 2 distinct new row ids; latest_ai_job_criteria returns ONE row deterministic across 5 queries (newest id).",
+    "S1 measured created_at delta between the two in-process calls = 3373 microseconds (~3.4ms) -> two rapid calls produce DISTINCT created_at, not a tie; 'latest row wins' resolves cleanly.",
+    "S1 serializer with two pending rows: status=='pending' (reflects latest), zero_criteria_failure==false, criteria==nil (no succeeded row); Job#zero_criteria_extraction_failure? == false. State not corrupted by the double row.",
+    "S2 second immediate call when latest is PENDING (from 1st call): 1st call -> 1 pending row; 2nd call NOT guarded (pending is not in_progress/retrying) -> 2nd pending row (count 1->2). Confirms SPEC 4.1 documented deliberate consequence.",
+    "S3 created_at TIE-BREAK (identical created_at, statuses pending vs failed via update_column): latest_ai_job_criteria does NOT raise; returns exactly one Integer id; STABLE across 20 queries (returned the first-inserted/lower-id row 3009 pending, not the later 3010 failed).",
+    "S3b two SUCCEEDED rows identical created_at, different criteria (AAA vs BBB): latest_succeeded_ai_job_criteria returns one row, no raise, STABLE across 20 queries (returned first-inserted AAA); serializer.criteria == latest_succeeded_ai_job_criteria.criteria (internally consistent within a request).",
+    "FALSIFIABILITY: with DISTINCT created_at, latest_ai_job_criteria == strictly-newer row (pending), not the older succeeded row -> proves the ordering assertion is non-tautological."
+  ],
+  "findings": [
+    {
+      "id": "l3-r2-a4-001",
+      "severity": "MED",
+      "title": "latest_ai_job_criteria / latest_succeeded_ai_job_criteria order by created_at with no secondary sort key — tie is theoretically nondeterministic (report-only; no defect observed)",
+      "file": "app/models/job.rb:688-694",
+      "evidence": "latest_ai_job_criteria = ai_job_criteria.order(created_at: :desc).first (and latest_succeeded_ai_job_criteria likewise) have NO secondary tie-break column (e.g. .order(created_at: :desc, id: :desc)). Forcing two rows to share an identical created_at, latest_ai_job_criteria returned exactly one row, never raised, and was STABLE across 20 repeated fresh queries — so NO nondeterminism was actually observed. However the stable result was the FIRST-inserted / lower-id row (id 3009 pending over id 3010 failed; and succeeded AAA over BBB), i.e. NOT the last-created row that 'latest row wins' intuitively implies. Postgres does not guarantee ordering among rows tied on the sole ORDER BY key, so this stability is not contractually guaranteed across query plans / index usage / table reorg.",
+      "reproduction": "Create two AiJobCriteria rows on one job, update_column(:created_at, same_fixed_time) on both, call job.latest_ai_job_criteria repeatedly. Returns one row, no crash; the tied winner is the first-inserted row in this environment.",
+      "recommendation": "Report-only; do NOT fix as part of this feature (implementation matches SPEC job.rb verbatim — no spec-vs-impl mismatch). Practically unreachable: two real POSTs arrive on separate HTTP requests and this test measured 3.4ms between two in-process calls, so an exact created_at tie effectively never occurs; the double-enqueue is documented harmless (SPEC 4.1) and both rows are pending anyway so 'which pending wins' is immaterial. If deterministic tie-breaking is ever wanted, a follow-up could add id: :desc as a secondary sort — a product/infra decision, not a gap fix."
+    }
+  ]
+}

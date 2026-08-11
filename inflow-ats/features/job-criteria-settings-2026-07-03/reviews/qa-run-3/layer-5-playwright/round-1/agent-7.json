@@ -1,0 +1,22 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 7,
+  "assignment": "(A) Regenerate confirm modal full content (SPEC 8.5) and (B) 'Criteria tiers' sidebar glossary (SPEC 8.3), reached by CLICKS on the 'QA Succeeded' job (28055) Plato AI settings.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs -> already logged in as Rezu May / Acme Inc., jobs list rendered.",
+    "Clicked 'QA Succeeded' job title -> landed on /jobs/28055/stages/196330/applicants (candidates view).",
+    "Clicked 'Job setup' left-nav link -> /jobs/28055/setup/details.",
+    "Clicked 'Plato AI settings' nav item -> /jobs/28055/setup/ai. Job criteria section rendered in succeeded state: criteria card (Plato disc + 'Job criteria' + 'Plato extracted these from your job description 29 minutes ago.') + count rail Core 2 / Preferred 1 / Bonus 1; action row 'View criteria' + 'Regenerate criteria'.",
+    "(B) Verified right sidebar 'Criteria tiers' glossary: h3 'Criteria tiers'; intro paragraph 'Plato extracts scoring criteria from the job description and sorts them into tiers. Section titles decide the tier; words inside an item can also signal it, but the title always wins.'; three entries Core/Preferred/Bonus, each an h4 with a tier icon + a description paragraph. Core lead 'Must-haves that count most toward a candidate's score.' Preferred lead 'Nice-to-haves that count toward the score, less than core criteria.' Bonus lead 'A small boost when a candidate has them.' All leads match DECISIONS verbatim; each entry has extra trailing sentences describing where Plato sources the tier (expanded draft copy; DECISIONS says copy will be iterated later). Sentence case, uses 'count most/less toward the score' phrasing, no 'weight/heaviest', no em dashes.",
+    "(A) Clicked 'Regenerate criteria' in the action row -> CenterModal opened. Title EXACTLY 'Regenerate job criteria?'. Lead paragraph EXACTLY 'Plato will re-extract scoring criteria from the current job description. Reviews that have already run keep the criteria they were scored against.' Bordered statement box with an icon + text EXACTLY 'Regenerating works best when you have changed the parts of the description that affect scoring, like requirements or responsibilities. Keeping regenerations rare keeps scores comparable across candidates. If the criteria change significantly, you can also regenerate all candidate reviews.' Footer: primary 'Regenerate criteria' button + secondary 'Cancel' button.",
+    "Verified via DOM eval: statement-box icon SVG is Feather 'refresh-cw' (polyline '23 4 23 10 17 10' + polyline '1 20 1 14 7 14' + refresh path). Primary 'Regenerate criteria' button disabled=false, no spinner/loading child -> present and enabled, not pre-loading.",
+    "Clicked 'Cancel' (never the primary confirm) -> modal closed. Confirmed via DOM eval: modal title gone, Cancel gone, section 'Regenerate criteria' button back to disabled=false/no-spinner, 'View criteria' still present -> no mutation fired.",
+    "Console (error level, all): 7 errors = 1 heap-api.com 404 + 4 react-router history deprecation warnings + 2 'Store does not have a valid reducer' Redux warnings. All match the known pre-existing list. No feature-referencing (aiJobCriteria / JobCriteria / /ai_job_criteria) errors."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-7/01-ai-settings-criteria-and-sidebar.png",
+    "/tmp/qa-run-3-l5/agent-7/02-regenerate-confirm-modal.png"
+  ],
+  "findings": []
+}

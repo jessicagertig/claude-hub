@@ -1,0 +1,34 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 4,
+  "focus_area": "Api::V1::OrganizationsController#create (D5) and authorization surface (SPEC.md §6, §7 constraint 6)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "SPEC.md §4.4 (D5): four values copied from current_user parallel to created_via; organization_params NOT modified; values never from request params; nil → nil; no other change to the controller in the diff",
+      "SPEC.md §6: authorize @organization unchanged (position and form)",
+      "SPEC.md §6: no new endpoints / route changes; no new controller actions in the diff",
+      "SPEC.md §6: no policy changes (app/policies/ diff empty)",
+      "SPEC.md §6: /magic_login, /sign_up, omniauth request/callback remain unauthenticated; no auth filters added",
+      "SPEC.md §6: Hire::ConfirmationsController#show still token-authenticated via User.confirm_by_token; file absent from diff",
+      "SPEC.md §7 constraint 6: no serializer changes; four columns not exposed in any Api::V1 serializer at HEAD"
+    ],
+    "verified": [
+      "§4.4 four-value copy: diff hunk app/controllers/api/v1/organizations_controller.rb @@ -29,6 +29,10 @@ adds exactly '@organization.utm_source = current_user.utm_source', '@organization.utm_campaign = current_user.utm_campaign', '@organization.utm_data = current_user.utm_data', '@organization.internal_ref = current_user.internal_ref' (HEAD lines 32–35), in the spec's exact order and same plain-assignment form, inserted directly after the existing '@organization.created_via = current_user.created_via' (line 31) and before '@organization.is_claimed = true' — exactly parallel to the created_via analog (§8 row 'Parent→child attribute copy at org creation')",
+      "§4.4 organization_params NOT modified: git diff --stat 62dd55867..fc3f047f9 -- app/controllers/api/v1/organizations_controller.rb = 4 insertions(+), 0 deletions, single hunk; organization_params at HEAD fc3f047f9 (line 118) permits :name, :default_from_email, :website_url, :logo, :social_share_image, :remoteness, :wwr_company_statement, :wwr_company_bio, :linkedin_company_id, :enable_x_hiring, :white_label_job_board_enabled, :hud_display_visibility, :google_click_id, :heard_about_us_from, settings: [...] — none of utm_source/utm_campaign/utm_data/internal_ref permitted",
+      "§4.4 values never from request params: all four assignments read only current_user attributes; Organization.new(organization_params) cannot receive the four keys since they are not permitted",
+      "§4.4 nil → nil: plain attribute assignments with no || fallbacks; both migrations (20260715233505, 20260715233506) add the columns with no defaults (schema.rb at HEAD: t.string \"utm_source\" / t.string \"utm_campaign\" / t.jsonb \"utm_data\" / t.string \"internal_ref\" with no default: on users and organizations); app/models/organization.rb at HEAD has zero references to the four columns and no before_save/before_create/before_validation callbacks — a nil user column produces a nil organization column",
+      "§4.4 no other change to this controller: the 4 insertions are the file's entire diff in range; create's save/push/org_owner!/render flow and all other actions untouched",
+      "§6 authorize unchanged: 'authorize @organization' appears as an unchanged context line in the diff hunk; at HEAD it remains immediately after '@organization.is_claimed = true' and before '@organization.save', same form (Pundit authorize on the instance), same position relative to attribute assignment",
+      "§6 no new endpoints: git diff 62dd55867..fc3f047f9 -- config/routes.rb is empty; /sign_up → registrations#create (routes.rb:81), /magic_login → registrations#magic_create (routes.rb:82), omniauth callback GET users/auth/google_oauth2/callback (routes.rb:128) all present at HEAD, identical to base",
+      "§6 no new controller actions: the only added 'def' lines in the entire diff are User.from_omniauth keyword-signature conversion (app/models/user.rb, spec'd §4.6) and the two migration change methods; registrations_controller hunks are inside existing magic_create hash-building and sign_up_params; omniauth_callbacks_controller hunk is inside existing google_oauth2",
+      "§6 no policy changes: git diff 62dd55867..fc3f047f9 -- app/policies/ is empty",
+      "§6 no auth filters added: grep of the full diff for added before_action/skip_before_action/prepend_before_action/authenticate/authorize lines matches only spec-file stubs (spec/controllers/api/v1/organizations_controller_spec.rb allow(controller).to receive(:authenticate_api_v1_user!/:authorize)) and a comment in the omniauth spec; config/initializers/omniauth.rb diff is the allowed_keys line only — request/callback phases' auth posture unchanged",
+      "§6 Hire::ConfirmationsController: git diff 62dd55867..fc3f047f9 -- app/controllers/hire/ is empty; at HEAD #show still calls User.confirm_by_token(params[:confirmation_token]) and keeps both bare redirects ('/auth?email_confirmed=true' line 18, '/auth?email_confirmed=false' line 21); only a new spec file (spec/controllers/hire/confirmations_controller_spec.rb) touches this controller, per §9 item 5 / §4.8",
+      "§7 constraint 6 no serializer changes: git diff 62dd55867..fc3f047f9 -- app/serializers/ is empty (0 lines); git grep for the four column names across app/serializers/ at HEAD hits only app/serializers/api/v1/ahoy_visit_serializer.rb (:utm_source, :utm_campaign) — a pre-existing serializer, byte-identical at base 62dd55867, serializing Ahoy::Visit's own ahoy_visits columns, not the new User/Organization columns; Api::V1::SessionSerializer, Api::V1::OrganizationSerializer, and Api::V1::ShallowOrganizationSerializer contain none of the four fields at HEAD"
+    ],
+    "missing": []
+  },
+  "notes": "All assigned requirements traced to concrete diff hunks or verified-empty diffs at range 62dd55867..fc3f047f9 (HEAD confirmed fc3f047f960cc7eda5bdee8141ad7443bfebefef, branch attribution-work-qa). Diff-to-spec direction for my area: the organizations_controller.rb hunk (diff file lines 1–15) maps 1:1 to §4.4; no other hunk in the diff touches the controller, its params, policies, serializers, or routes. The ahoy_visit_serializer utm hits are pre-existing Ahoy tracking fields unrelated to this feature (stated for completeness, not a finding). Prior finding l1-run4-001 concerns §5.1/§7 constraint 1 truncation wording — outside my assigned area (my §7 scope is constraint 6 only), so no verification recorded here."
+}

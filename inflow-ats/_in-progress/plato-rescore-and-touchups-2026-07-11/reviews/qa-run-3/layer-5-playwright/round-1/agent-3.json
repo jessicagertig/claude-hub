@@ -1,0 +1,25 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 3,
+  "assignment": "Per-stage modal STATE 4 (checked) detailed copy on Senior Engineer / Inbox (SPEC 1.2 state 4 + credit copy normal variant), display only. Check re-score checkbox, assert body copy byte-exact at balance 20 with bold counts, submit enabled, Statement block byte-exact, screenshot, cancel without submitting.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc).",
+    "Clicked 'Senior Engineer' → landed on job 29092 candidates view, Inbox stage selected showing 3 candidates (Agnes Sipes, Carl Dietrich, Emilee Hand).",
+    "Clicked the Inbox stage-name select-all checkbox — all 3 candidate checkboxes became checked.",
+    "Opened the Bulk options three-dot menu at the top right of the candidate list → clicked 'Run Plato reviews' — 'Review candidates' modal opened in unchecked state 2 ('0 of the 3 candidates ... Unless you select re-review below, no candidates will be reviewed.', submit disabled) — consistent with SPEC state 2 since all 3 Inbox candidates have current seeded reviews.",
+    "Checked the 'Also re-review candidates that already have a review' checkbox — modal switched to STATE 4.",
+    "VERIFIED body textContent byte-exact via element.textContent: 'The 3 candidates selected from this hiring stage will be reviewed, including candidates that already have a review. Each successful review uses one AI credit, so running this uses up to 3 credits from your balance of 20 available.' Displayed balance was 20 — no substitution needed.",
+    "VERIFIED bold counts via innerHTML: credit-sentence counts render as <b>3</b> and <b>20</b>. Lead-sentence '3' is plain (matches SPEC — bold markers only on the credit-copy counts).",
+    "VERIFIED leading 'The' present; plural forms correct ('3 credits', '20 available'); no literal 'credit(s)' anywhere in the modal; no 'Up to ' prefix anywhere in the modal; no overestimate info block ('overestimate' absent); no shortfall sentence ('You are short' absent) — all confirmed with textContent.includes checks over the modal container.",
+    "VERIFIED submit button 'Generate reviews' ENABLED in checked state (element.disabled === false; was disabled in the prior unchecked zero-processable state).",
+    "VERIFIED Statement block byte-exact via strict equality: 'You will receive an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' → exact: true. Renders as bordered box with mail icon per screenshot.",
+    "Screenshot taken of the checked-state modal.",
+    "Clicked Cancel — modal closed, no submit ever clicked, no Plato run triggered.",
+    "Console check (all session messages): 0 errors, 0 warnings at error/warning level among 193 messages — no new feature-referencing console errors."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-3/state4-checked-modal.png"
+  ],
+  "findings": []
+}

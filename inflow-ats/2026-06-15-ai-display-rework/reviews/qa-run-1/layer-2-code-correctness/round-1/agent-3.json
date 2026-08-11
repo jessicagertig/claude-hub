@@ -1,0 +1,85 @@
+{
+  "agent": "layer-2-code-correctness-agent-3",
+  "round": 1,
+  "files_reviewed": [
+    "app/javascript/shared/types/jobApplication.ts",
+    "app/javascript/shared/types/aiJobApplicationSummary.ts",
+    "app/javascript/ats/src/websockets/WebsocketJobChannelHandler.tsx",
+    "app/javascript/ats/src/websockets/WebsocketGlobalChannelHandler.tsx",
+    "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts",
+    "app/javascript/shared/queryHooks/useJobApplication.ts",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationListContainer.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationNavItem.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoGeneratedReviewCallout.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoOverviewCallout.tsx",
+    "app/serializers/api/v1/ai_job_application_summary_status_serializer.rb",
+    "app/models/ai_job_application_summary_status.rb"
+  ],
+  "findings": [
+    {
+      "id": "CC3-001",
+      "severity": "BLOCKER",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationNavItem.tsx",
+      "line": 26,
+      "title": "Status check uses 'succeeded' but AiJobApplicationSummaryStatus only has 'none' | 'current' | 'regenerating'",
+      "detail": "Line 26: `summaryStatus === \"succeeded\"` will never be true. The AiJobApplicationSummaryStatus model (app/models/ai_job_application_summary_status.rb) defines enum values `none: 0, current: 1, regenerating: 2`. The frontend type (jobApplication.ts line 4) correctly defines `\"none\" | \"current\" | \"regenerating\"`. But JobApplicationNavItem still checks for the old AiJobApplicationSummary.status value 'succeeded' instead of the new 'current'. The Harvey ball fit indicator in the sidebar nav list will never render.",
+      "fix": "Change line 26 from `summaryStatus === \"succeeded\"` to `summaryStatus === \"current\"`. Also consider adding `summaryStatus === \"regenerating\"` if the score should display during regeneration."
+    },
+    {
+      "id": "CC3-002",
+      "severity": "MED",
+      "file": "app/javascript/ats/src/websockets/WebsocketJobChannelHandler.tsx",
+      "line": "73-76",
+      "title": "ai_summary_status_change handler does not invalidate jobApplicationsForStage",
+      "detail": "The new ai_summary_status_change case invalidates ['jobApplication'] and ['aiJobApplicationSummary'] but not 'jobApplicationsForStage'. JobApplicationListContainer (line 222-223) passes aiJobApplicationSummaryStatus.status and scorePercentage to JobApplicationNavItem via data from useInfiniteJobApplicationsForStage. When a summary reaches 'current' status via this websocket event, the list view sidebar items will not update until the user navigates away and back. The GlobalChannelHandler's AI_SUMMARY_COMPLETE event does invalidate jobApplicationsForStage (line 251), so this only matters if: (a) the JobChannel event fires without a corresponding GlobalChannel event, or (b) the JobChannel event fires first and the user needs immediate feedback. Given that both events exist for the same completion lifecycle, this is not a blocker but a potential race/gap.",
+      "fix": "Add `queryClient.invalidateQueries(\"jobApplicationsForStage\");` to the ai_summary_status_change case, matching the pattern in WebsocketGlobalChannelHandler's AI_SUMMARY_COMPLETE handler."
+    },
+    {
+      "id": "CC3-003",
+      "severity": "LOW",
+      "file": "app/javascript/ats/src/websockets/WebsocketJobChannelHandler.tsx",
+      "line": "73-76",
+      "title": "ai_summary_status_change handler does not use payload.jobApplicationId for targeted invalidation",
+      "detail": "The handler invalidates all ['jobApplication'] queries (every cached job application) instead of targeting just the affected one. Comparing with WebsocketGlobalChannelHandler line 153 (attachExternalResumeComplete) which does `queryCache.invalidateQueries([\"jobApplication\", Number(data.payload.jobApplicationId)])` for a targeted invalidation. The backend broadcasts `payload: { jobApplicationId: job_application.id }` per the spec, so the data is available. The broad invalidation works correctly but causes unnecessary refetches for all cached job applications. This is consistent with the AI_SUMMARY_COMPLETE handler in GlobalChannelHandler (line 225) which also does a broad invalidation, so this follows the existing pattern.",
+      "fix": "No change needed for consistency with existing patterns. Could be optimized later to `queryClient.invalidateQueries([\"jobApplication\", data.payload.jobApplicationId])` if performance is a concern."
+    },
+    {
+      "id": "CC3-004",
+      "severity": "LOW",
+      "file": "app/javascript/ats/src/websockets/WebsocketJobChannelHandler.tsx",
+      "line": 83,
+      "title": "useCallback dependency array does not include setActiveJobApplicationId",
+      "detail": "handleJobMessage uses setActiveJobApplicationId (line 71) but it is not in the dependency array (line 83). This is technically a missing dependency. However, setActiveJobApplicationId comes from React.useState which produces a stable setter, so this will not cause bugs in practice. Pre-existing issue, not introduced by this change.",
+      "fix": "No fix needed -- React.useState setters are referentially stable."
+    },
+    {
+      "id": "CC3-005",
+      "severity": "LOW",
+      "file": "app/javascript/shared/types/aiJobApplicationSummary.ts",
+      "line": "1-10",
+      "title": "AiJobApplicationSummary type is still exported and used by consumers",
+      "detail": "The AiJobApplicationSummary and AiJobApplicationSummaryFull interfaces remain exported and are actively consumed by: (1) useAiJobApplicationSummary.ts query hook, (2) PlatoTab.tsx via the hook's return data. No consumer imports AiJobApplicationSummary from this file directly by type name -- the types are inferred through the hook's return type. The type definitions appear correct and consistent with the full summary endpoint's response shape. No issues found.",
+      "fix": "No fix needed."
+    },
+    {
+      "id": "CC3-006",
+      "severity": "LOW",
+      "file": "app/javascript/shared/types/jobApplication.ts",
+      "line": "1-9",
+      "title": "AiJobApplicationSummaryStatus type matches backend model and serializer",
+      "detail": "Verified the type definition against: (1) AiJobApplicationSummaryStatus model enum (none/current/regenerating), (2) AiJobApplicationSummaryStatusSerializer attributes (id, ai_job_application_summary_id, status, score_percentage, headline, integrated_role_analysis, updated_at). All fields match after camelCase conversion. The type correctly allows null for aiJobApplicationSummaryStatus on the JobApplication interface (line 21), handling the case where no status record exists.",
+      "fix": "No fix needed."
+    },
+    {
+      "id": "CC3-007",
+      "severity": "LOW",
+      "file": "app/javascript/ats/src/websockets/WebsocketJobChannelHandler.tsx",
+      "line": "73-76",
+      "title": "No payload validation on ai_summary_status_change, but matches existing patterns",
+      "detail": "The ai_summary_status_change handler does not validate data.payload or its shape. However, this is consistent with all other cases in the same handler -- wwr_listing_published/updated (lines 55-59) do not validate payload either, and docx_to_pdf_conversion_complete (line 71) accesses data.payload.jobApplicationId without a guard. The handler's outer guard `if (data.event != null)` is the only validation, matching every other case. No security concern since this is an authenticated ActionCable channel.",
+      "fix": "No fix needed -- consistent with existing patterns."
+    }
+  ],
+  "summary": "One BLOCKER found: JobApplicationNavItem checks summaryStatus === 'succeeded' but the new AiJobApplicationSummaryStatus type only contains 'none' | 'current' | 'regenerating'. The fit indicator Harvey ball in the sidebar list will never render. One MED: the ai_summary_status_change websocket handler does not invalidate jobApplicationsForStage, meaning the list view sidebar may not update when a summary completes via this event path. The WebsocketJobChannelHandler's new case otherwise follows existing patterns correctly -- same invalidation style, same lack of payload validation, same dependency array conventions."
+}

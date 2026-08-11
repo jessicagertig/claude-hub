@@ -1,0 +1,31 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 5,
+  "focus": "SPEC 2.4 (PlatoTab callsite wiring), 2.5 (Regenerate gating), 2.6 (AiSummaryState.tsx deletion) + backward compatibility",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "2.4 handleGenerate required boolean rescoreRequested param (no default) passed into generate({ jobApplicationId, rescoreRequested }, ...)",
+      "2.4 three PlatoTabEmptyState onClick paths arrow-wrapped onClick={() => handleGenerate(false)}, none bare",
+      "2.4 Regenerate ConfirmationModal onConfirm calls handleGenerate(true) after removeModal()",
+      "2.5 header-right condition at :247 changed to statusValue === \"current\" alone; branch contents (credits check, Buy-credits fallbacks, ConfirmationModal copy, loading/disabled pairing) unchanged",
+      "2.6 AiSummaryState.tsx deleted; zero remaining references in app/ and cypress/; no surviving generate({...}) callsite missing rescoreRequested; diff deletes only this one file",
+      "PlatoTab.tsx has no changes beyond handleGenerate signature/callsites and the :247 condition",
+      "RUN 2 ADDENDUM: fix commit 970b0f4b2 present, minimal, and test genuinely falsifiable"
+    ],
+    "implemented": [
+      "2.4 handleGenerate signature: PlatoTab.tsx:73 `const handleGenerate = (rescoreRequested: boolean) => {` — required boolean, no default; PlatoTab.tsx:75 passes `{ jobApplicationId: jobApplication.id, rescoreRequested }` into generate",
+      "2.4 all three PlatoTabEmptyState callsites arrow-wrapped with literal false: PlatoTab.tsx:192 (bulkQueued), :203 (failed), :233 (deriveEmptyStatus ready/noCredits) — verified via diff hunks @@189/@@200/@@230 and current source; grep confirms no bare `onClick={handleGenerate}` remains anywhere",
+      "2.4 ConfirmationModal onConfirm (PlatoTab.tsx:106-109): removeModal() then handleGenerate(true) — order matches spec; exactly four handleGenerate callsites exist (lines 108, 192, 203, 233)",
+      "2.5 PlatoTab.tsx:247 `} else if (statusValue === \"current\") {` — fullSummary?.stale clause removed, condition alone; diff hunk @@244 changes only that one line",
+      "2.5 branch contents unchanged: :248 `isLoadingCredits || totalRemaining > 0`; :250 Button `loading={buttonLoading} disabled={buttonLoading}` PAIRED (known-failure #11 satisfied); :254-265 admin PlatoHeaderNavButton Buy-credits history.push to /hire/settings/plato-ai/billing; :266-270 non-admin PlatoHeaderNavButton -> handleBuyCredits AlertModal; ConfirmationModal copy at :94-104 intact ('Are you sure you want to regenerate?', 'Uses 1 credit of {totalRemaining} remaining', confirmText Regenerate)",
+      "2.6 AiSummaryState.tsx deleted (patch line 39 'deleted file mode 100644', full 221-line removal); it is the ONLY deleted file in feature-diff-run2.patch (grep -c 'deleted file mode' = 1, known-failure #23 satisfied)",
+      "2.6 independent worktree grep: `grep -rn AiSummaryState app/ cypress/` returns zero hits; `useGenerateAiSummary` consumed only by PlatoTab.tsx (import :14, usage :38) plus its own definition; only frontend POST path to /job_applications/:id/ai_job_application_summaries is the hook's generateAiSummary; no cypress reference to the endpoint — no surviving generate({...}) callsite missing rescoreRequested, no compile hazard",
+      "PlatoTab.tsx diff completeness: patch section (lines 506-566) contains exactly six hunks — @@70 signature+params, @@105 onConfirm, @@189/@@200/@@230 onClicks, @@244 condition — nothing else changed in the file",
+      "RUN 2 ADDENDUM verified: commit 970b0f4b2 changes exactly 1 file, 1 line — the rejection test payload from `ai_job_application_summary: {}` to `ai_job_application_summary: { irrelevant: 'x' }` in spec/controllers/api/v1/ai_job_application_summaries_controller_spec.rb:58; nothing else in the commit; with a non-empty outer hash the outer params.require passes and only the inner .require(:rescore_requested) raises, so removing the inner require makes the test fail — genuinely falsifiable; fix present in feature-diff-run2.patch (patch line 771)",
+      "Committed-code check (known-failure #15): worktree HEAD is 970b0f4b2; `git status --porcelain` clean across app/javascript/ats/src/views/jobApplications/, app/javascript/shared/queryHooks/, and the controller spec — the reviewed diff is the committed branch state"
+    ],
+    "missing": []
+  }
+}

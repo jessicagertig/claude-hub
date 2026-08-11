@@ -1,0 +1,23 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 4,
+  "agents": 10,
+  "findings_summary": "10 HIGH filed; 9 carried to the fix loop, 1 (r4-l1-a9-005) consolidated into r4-l1-a9-002 by orchestrator judgment. All are test-falsifiability gaps in the four new spec files. App code clean in all 10 slices for the fourth consecutive full-layer audit (delicacy 34/0; reverse traceability all hunks traced; branch = feature + 3 spec-only fix commits).",
+  "findings": [
+    {"id": "r4-l1-a3-001", "severity": "HIGH", "agent": 3, "validated_by": [9], "title": "nil-org subscription.deleted example cannot detect deletion of the §5.3 'if organization' guard (NoMethodError swallowed by the insertion's own rescue)", "fix": "inverted logger spy: not_to have_received(:error) with the subscription.deleted ledger-error message"},
+    {"id": "r4-l1-a5-001", "severity": "HIGH", "agent": 5, "validated_by": [9], "title": "interactor check-first uniqueness guard deletion masked by index + RecordNotUnique rescue (identical outcomes)", "fix": "in the guard examples assert the backstop never fires (logger not_to have_received(:error) with the rescue's message)"},
+    {"id": "r4-l1-a6-001", "severity": "HIGH", "agent": 6, "validated_by": [9], "title": "on: :create scoping unpinned — bare after_commit would fire fan-out on update/destroy (org destroy cascades via dependent: :destroy) and no example fails", "fix": "example that updates then destroys a row after clear_enqueued_jobs and asserts nothing enqueues"},
+    {"id": "r4-l1-a6-002", "severity": "HIGH", "agent": 6, "validated_by": [9], "title": "11 of 13 attribution field mappings deletable/typo-swappable undetected (.compact hides nil-column deletions)", "fix": "populate all 13 attribution columns with distinct owner vs organization values and assert every payload key/value"},
+    {"id": "r4-l1-a7-001", "severity": "HIGH", "agent": 7, "validated_by": [9], "title": "no example performs Notification::PaidSubscriptionDeletedJob — restoring the removed discord call double-notifies undetected", "fix": "example performing the job (Slack posting stubbed, :test adapter) asserting no Discord::NotifySubscriptionDeletedJob enqueue"},
+    {"id": "r4-l1-a9-001", "severity": "HIGH", "agent": 9, "title": "§5.1 reset_ai_credits in the trial-started callback branch asserted nowhere (twin of the run-1 invoice.paid fix)", "fix": "have_received(:reset_ai_credits) in the nil→trialing example of organization_subscription_events_spec.rb"},
+    {"id": "r4-l1-a9-002", "severity": "HIGH", "agent": 9, "title": "§5.3 own begin/rescue has no failure-isolation example on the subscription.deleted path", "fix": "mirror the invoice.paid ledger-failure example: raising CreateSubscriptionEvent stub; assert both enqueues + subscription_canceled_at + sync_with_stripe still happen; have_received(:call); logger spy on the subscription.deleted ledger-error message. ALSO COVERS r4-l1-a9-005 (placement semantics pinned by existing-behaviors-survive-raising-writer)"},
+    {"id": "r4-l1-a9-003", "severity": "HIGH", "agent": 9, "title": "enum integer mappings unpinned (renumbering spec-frozen 0/1 or 3/7 passes the suite)", "fix": "one example asserting the exact full SubscriptionEvent.event_types hash"},
+    {"id": "r4-l1-a9-004", "severity": "HIGH", "agent": 9, "title": "stripe_subscription_id argument SOURCE masked — fixtures equate event id and org column, so org-column-swap passes", "fix": "invoice.paid: one example with object.subscription != org.stripe_subscription_id asserting the row records the event-sourced value; subscription.deleted: stale-subscription example (event id != org column) asserting the row records the event id and sync_with_stripe is NOT called"},
+    {"id": "r4-l1-a9-005", "severity": "HIGH", "agent": 9, "status": "CONSOLIDATED into r4-l1-a9-002", "title": "'appended at the END' placement unpinned — pinned by the two ledger-failure examples (invoice.paid already fixed in 549039a0c; subscription.deleted added by a9-002's fix)"}
+  ],
+  "prior_finding_review": {
+    "r3-l1-a4-001": "FIX VERIFIED (agent 4 — backdate exits the dedupe window; guard+index deletion now fails the example)",
+    "r3-l1-a9-001": "FIX VERIFIED (agent 2 — regex matches only the insertion's own log line; have_received(:call) pins insertion presence)"
+  }
+}

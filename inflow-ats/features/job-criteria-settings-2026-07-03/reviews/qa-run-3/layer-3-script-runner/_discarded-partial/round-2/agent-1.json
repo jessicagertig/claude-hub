@@ -1,0 +1,7 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 1,
+  "scenario": "Job#extract_job_criteria_immediately AND Job#extract_job_criteria_if_needed gating (SPEC §4.1). Seeded ai-org-published-job.json; queue_adapter=:test; controlled latest AiJobCriteria row status directly (no OpenAI) and asserted row-delta + ExtractJobCriteriaJob enqueue args across all guard branches.",
+  "findings": []
+}

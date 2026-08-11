@@ -1,0 +1,55 @@
+{
+  "job": "go",
+  "runs": 5,
+  "criteria_range": "26-31",
+  "criteria_mean": 27.4,
+  "t1_range": "2-6",
+  "decomp_delta_range": "5-11",
+  "always_present_count": 6,
+  "always_present": [
+    "ability to work cross functionally",
+    "excellent communication skills",
+    "experience working in multi cloud or hybrid cloud environments",
+    "familiarity with system design for high availability, multi region, and multi tenant architectures",
+    "solid understanding of kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads",
+    "strong programming experience in go (golang) for production backend systems"
+  ],
+  "total_cost": 0.0729,
+  "per_run": [
+    {
+      "run": 1,
+      "count": 26,
+      "t1": 6,
+      "decomp": 6,
+      "cost": 0.014718
+    },
+    {
+      "run": 2,
+      "count": 31,
+      "t1": 2,
+      "decomp": 11,
+      "cost": 0.015569
+    },
+    {
+      "run": 3,
+      "count": 26,
+      "t1": 3,
+      "decomp": 6,
+      "cost": 0.014135
+    },
+    {
+      "run": 4,
+      "count": 26,
+      "t1": 3,
+      "decomp": 6,
+      "cost": 0.014175
+    },
+    {
+      "run": 5,
+      "count": 28,
+      "t1": 2,
+      "decomp": 5,
+      "cost": 0.014345
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 10,
+  "focus_area": "useSession.ts (§5.4 D2/D10) + SignupForm.tsx (§5.5 D10/D14) + second pass on §5.2 AuthForm capture/payload",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "§5.4 magicLink: four fields added to destructured params, inline TS type, and variables object (posts to /magic_login); TS types consistent with referral?: string | null",
+      "§5.4 register: four fields added to destructured params and variables (posts to /sign_up)",
+      "§5.4 no change to useMagicLink/useRegister hook wrappers",
+      "§5.5 capture: raw props.location.search through sanitizeTrackingParams into component state (referral-state analog); four fields in register payload alongside firstName/lastName/email/password/inviteToken/referral",
+      "§5.5 D14 event: trackEvent(\"user_signed_up_client_side\") plain call in register onSuccess BEFORE props.onComplete(); window.logger line unchanged; trackEvent imported from @shared/lib/posthog",
+      "Parent fact: SignupForm rendered by Signup.tsx at /register; Signup.tsx NOT in diff",
+      "§5.2 second pass: AuthForm capture-into-state, magicLink payload fields, exact field-name match AuthForm state -> mutation call -> useSession destructure -> variables -> wire",
+      "Diff-to-spec: every changed line in useSession.ts and SignupForm.tsx traces to §5.4/§5.5"
+    ],
+    "verified": [
+      "§5.4 magicLink destructure: useSession.ts adds utmSource, utmCampaign, utmData, internalRef to the destructured parameter list (diff hunk @@ -47,6 +62,10 @@; HEAD fc3f047f9 lines 56-68)",
+      "§5.4 magicLink inline TS type: utmSource?: string | null; utmCampaign?: string | null; utmData?: Record<string, any> | null; internalRef?: string | null — same optional/nullable shape as the existing referral?: string | null and partner?: string | null (diff hunk @@ -56,6 +75,10 @@)",
+      "§5.4 magicLink variables object: the four added after partner, posts to /magic_login via apiPost (diff hunk @@ -77,6 +100,10 @@)",
+      "§5.4 register destructure + variables: the four added after referral in both; posts to /sign_up; register remains untyped at HEAD, matching the spec's asymmetry (register gets destructure+variables only, no inline type mentioned and none exists)",
+      "§5.4 wrappers untouched: the useSession.ts diff contains exactly 5 hunks (register destructure, register variables, magicLink destructure, magicLink type, magicLink variables); zero hunks in useRegister/useMagicLink/useLogin/useLogout/useSendPasswordResetEmail/useResetPassword; full file read at HEAD confirms wrapper onSuccess handlers are the pre-existing logger + setQueryData/invalidateQueries code with no trackEvent and no attribution code",
+      "§5.5 capture: SignupForm.tsx line 26 (HEAD) — const [trackingParams] = React.useState(sanitizeTrackingParams(props.location.search)); raw string input, one-shot state with no setter, directly below the existing referral useState at line 25 (the line-23-area analog); import { sanitizeTrackingParams } from \"@shared/lib/utils\"",
+      "§5.5 payload: register mutation call includes utmSource/utmCampaign/utmData/internalRef read from trackingParams, alongside firstName, lastName, email (toLower(trimmedEmail)), password, inviteToken, referral (HEAD lines 60-71)",
+      "§5.5 D14 event: register onSuccess is window.logger(\"[SignupForm] register onScucess\", { data }) [pre-existing line, unchanged, typo pre-existing] then trackEvent(\"user_signed_up_client_side\") [plain, no properties] then props.onComplete(); import { trackEvent } from \"@shared/lib/posthog\"",
+      "Parent fact: AppAuthRouter.tsx line 454 routes path /register -> handleRegisterRoute -> <Signup {...props} {...renderProps} /> (line 382); Signup.tsx line 25 renders <SignupForm onComplete={signupComplete} {...props} />; git diff --name-only 62dd55867..fc3f047f9 does NOT include Signup.tsx",
+      "§5.2 capture (second pass): AuthForm.tsx line 41 (HEAD) — const [trackingParams] = React.useState(sanitizeTrackingParams(location.search)); raw string, sanitized before entering state, no setter, adjacent to the referral/partner useState analogs (lines 39-40)",
+      "§5.2 magicLink payload (second pass): handleAuth passes utmSource/utmCampaign/utmData/internalRef from trackingParams alongside referral and partner (HEAD lines 79-88); D14 event trackEvent(\"user_signed_up_client_side\") fires in magicLink onSuccess before onComplete({ email: cleanedEmail, ...data }), logger line unchanged",
+      "§5.2 field-name trace (second pass): sanitizeTrackingParams outputs exactly utmSource/utmCampaign/internalRef/utmData (utils.js HEAD, trackingParams.utmSource assignments) -> AuthForm passes keys utmSource/utmCampaign/utmData/internalRef -> magicLink destructures the identical four names -> variables object uses shorthand for the same four -> apiPost (api.ts line 52) applies allKeysToSnake (structure.js: newObject[snakeCase(key)]) -> wire params utm_source/utm_campaign/utm_data/internal_ref, the exact names sign_up_params permits; no name mismatch at any hop, so no field silently drops",
+      "Absence semantics along the trace: sanitizer omits absent fields -> trackingParams.<field> reads undefined -> destructured undefined -> variables key undefined -> allKeysToSnake(undefined) returns undefined -> JSON.stringify drops the key -> wire param never sent (spec §5.1 absence contract holds end to end)",
+      "Diff-to-spec: SignupForm.tsx changed lines are exactly 2 imports + 1 state line + 4 payload lines + 1 trackEvent line, all tracing to §5.5; useSession.ts changed lines are exactly the 5 hunks above, all tracing to §5.4; AuthForm.tsx changed lines (2 imports, 1 state line, 4 payload fields, 1 trackEvent, 4 GoogleSSOButton props) all trace to §5.2 D1/D2/D7/D14; nothing extra in any of the three files"
+    ],
+    "missing": []
+  },
+  "notes": "All checks performed against the pre-dumped diff and cross-verified with git show at fc3f047f9 on attribution-work-qa. Conforming details worth recording: (1) the magicLink window.logger object still lists only the pre-existing six fields — the spec enumerates exactly three places to add the four fields for magicLink and the logger is not one, so its unchanged state is conforming, not a gap; (2) useRegister's onSuccess label string \"[useSession] useLogin onSuccess\" is a pre-existing copy-paste artifact on an unchanged context line, not part of this diff; (3) utmData?: Record<string, any> | null in the magicLink type matches the Record<string, any> shape GoogleSSOButton's Props use — the spec fixes no TS shape for utmData, so this is a conforming plan-level choice; (4) SignupForm has no partner param (pre-existing; the spec's §5.5 payload list correctly omits it); (5) the register path's payload trace (SignupForm keys -> register destructure -> variables -> allKeysToSnake -> wire) closes identically to the magicLink trace."
+}

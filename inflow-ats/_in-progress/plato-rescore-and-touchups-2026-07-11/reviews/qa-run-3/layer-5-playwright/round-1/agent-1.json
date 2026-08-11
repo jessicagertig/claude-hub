@@ -1,0 +1,36 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 1,
+  "assignment": "auth + navigation integrity + per-stage modal STATE 1 (no selection) + checkbox disabled (SPEC 1.1 + 1.2 state 1)",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs -> redirected to /auth. Completed magic-link dev flow (email rezu.may@wrkhq.com -> Continue with email -> DEVELOPMENT ONLY WORKAROUND link /magic_links/validate?token=...) -> logged in, landed on jobs list.",
+    "Jobs list (org Acme Inc.): both jobs present — 'Design Lead' (job 29093, Inbox 2, Total 2) and 'Senior Engineer' (job 29092, Inbox 3, Total 63). VERIFIED.",
+    "Clicked 'Senior Engineer' -> candidates view /jobs/29092/stages/203589/applicants/... Stage counts: Inbox 3 / Screen 5 / Interview 55 (also Decide 0, Offer 0, Hired 0, Archived 0). VERIFIED exact counts.",
+    "Plato Reviews card present in stages column below Job setup/Distribution: sparkle disc icon, text 'Plato βeta scores every candidate on role fit and skills.', button 'Run Plato'. DOM text confirms card title 'Plato Reviews' (Playwright locator matched 'Plato ReviewsPlato βeta...'). Screenshot 02-plato-reviews-card.png. VERIFIED.",
+    "With NOTHING selected in Inbox (all row checkboxes and stage-name checkbox unchecked), opened Bulk options three-dot menu at top of candidate list -> clicked 'Run Plato reviews'. Modal 'Review candidates' opened.",
+    "STATE 1 no-selection copy byte-level verified via textContent: 'No candidates selected. Use the checkboxes next to the candidate names to select the candidates to generate reviews for. To select all candidates within this hiring stage, use the checkbox next to the stage name.' — EXACT match to SPEC 1.2 state 1.",
+    "Re-score checkbox RENDERED and DISABLED: input[name=rescore] disabled=true, checked=false. Label 'Also re-review candidates that already have a review' + description 'Recommended if you've changed the candidate requirements in the job description.' — EXACT match to SPEC 1.1. Wrapper emotion label BulkGenerateAiSummariesConfirmModal_RescoreCheckbox present.",
+    "Toggle attempt 1: Playwright browser_click on the label refused with 'element is not enabled' (actionability check resolved label to disabled control). Toggle attempt 2: JS label.click() AND checkbox.click() dispatched — checked stayed false, disabled stayed true. Checkbox does NOT toggle. VERIFIED.",
+    "Submit button 'Generate reviews' disabled=true (DOM property + rendered gray/disabled in screenshot). VERIFIED.",
+    "Statement block present: wrapper emotion label BulkGenerateAiSummariesConfirmModal_Statement, contains feather mail SVG (envelope rect path + polyline '22,6 12,13 2,6'), copy byte-level exact: 'You will receive an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' — EXACT match to SPEC 1.4. VERIFIED.",
+    "Screenshot of full modal saved (03-modal-no-selection-state.png): bolded 'No candidates selected.' and 'select all candidates', disabled checkbox, bordered Statement box with mail icon, disabled Generate reviews + Cancel.",
+    "Modal closed before finishing: intended Cancel click found the modal already dismissed (a backdrop pointer event during the earlier timed-out label-click retries is the likely cause); DOM verified clean — no input[name=rescore], no 'No candidates selected' paragraph, no 'Generate reviews' button remain. Nothing was submitted: network requests filtered for bulk|ai_job_application_summaries|rescore show ZERO matching requests.",
+    "Console check (all session messages + saved logs): only known noise — react-router history deprecation warnings, 'Store does not have a valid reducer' Redux warnings, pre-login 401 on /api/v1/me from the /auth page. Zero feature-referencing errors (no rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summaries/React errors). CLEAN."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-1/02-plato-reviews-card.png",
+    "/tmp/qa-run-3-l5/agent-1/03-modal-no-selection-state.png"
+  ],
+  "findings": [
+    {
+      "id": "l5-r1-a1-001",
+      "severity": "MED",
+      "title": "Report-only observation: Agnes Sipes's Inbox list row shows no fit chip while her Overview shows a current seeded review with 'Poor fit'",
+      "url": "http://app.lvh.me:5007/jobs/29092/stages/203589/applicants/20977/overview",
+      "expected": "Navigation map says all 3 Inbox candidates on Senior Engineer have current 'Seeded review —' Plato reviews; the other two rows (Carl Dietrich 'Good fit', Emilee Hand 'Excellent fit') show fit chips in the candidate list.",
+      "actual": "Agnes Sipes's candidate-list row renders no fit chip, while her Overview tab shows a current review ('Seeded review — early-career QA, weak fit', fit 'Poor fit'). Outside my assigned SPEC sections (1.1/1.2 state 1) — reporting as observation for whichever agent owns list-row fit display; possibly a fixture artifact in the seeded status row.",
+      "evidence": "Accessibility snapshot: row f25e282 (Agnes Sipes) contains only checkbox + link, no fit generic; rows f25e292/f25e306 contain generic 'Good fit'/'Excellent fit'. Overview for 20977 shows 'Generated by Plato' activity with 'Poor fit'."
+    }
+  ]
+}

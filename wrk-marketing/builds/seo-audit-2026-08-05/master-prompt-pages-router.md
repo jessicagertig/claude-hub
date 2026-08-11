@@ -1,0 +1,62 @@
+  
+You are executing the technical SEO remediation for [**www.polymer.co**](http://www.polymer.co), a Next.js \+ Sanity marketing site deployed on Vercel. The authoritative data source is the workbook **`Polymer-Technical-SEO-Audit_MakeReality.xlsx`**. Do not re-derive URL lists from memory — read the named tab at the start of each phase.
+
+## Rules of engagement
+
+1. **Never deploy or publish without a checkpoint.** Work on a branch; open a PR per phase; wait for explicit human approval before merge/deploy. For Sanity content changes, use drafts and list them for review.  
+2. **Verify you are in the correct repo/site** before any change: confirm the project builds the site serving `https://www.polymer.co` (check domain config), not app.polymer.co, developer.polymer.co, or jobs.polymer.co. If ambiguous, stop and ask.  
+3. **Log anything you cannot automate** (missing CMS permissions, environment values, editorial judgment calls) in a running `BLOCKED.md` rather than improvising.  
+4. **Keep a changelog.** Append every change (file, URL affected, before → after) to `SEO-CHANGELOG.md` in the repo. The final report is built from it.  
+5. **Never fabricate data** — no invented review ratings in schema, no guessed publish dates. Pricing figures must be read from the live `/pricing` page at execution time (as of audit date: Starter $124/mo, Growth $233/mo, Scale $415/mo, 14-day free trial).  
+6. Preserve URLs. Any URL change requires a 301 and an entry in the redirect map below.
+
+## Phase 1 — De-orphan the high-value content (read tab `01 Orphaned Pages`)
+
+The tab lists 10 live, ranking pages unreachable from any internal link (\~49% of the site's organic traffic).
+
+1. Fix the blog index: render **all** posts on `/blog` (pagination or full archive), not just recent ones.  
+2. Add a related-posts module to the blog post template (3 links minimum, topically matched).  
+3. Confirm each of the 10 URLs returns 200 and is now reachable ≤3 clicks from the homepage; record the click path per URL in the changelog.
+
+## Phase 2 — Crawl & AI-crawler infrastructure (read tabs `02 XML Sitemap`, `03 robots.txt`, `08 llms.txt`)
+
+1. `pages/sitemap.xml.js`: emit every marketing route \+ every Sanity post, `lastModified` from CMS timestamps, www host, absolute HTTPS URLs.  
+2. `robots.txt`: allow all; explicitly allow `GPTBot`, `ClaudeBot`, `PerplexityBot`, `Google-Extended`; include the `Sitemap:` line.  
+3. `llms.txt` per the spec tab — accurate product description, live pricing, canonical URLs, top evergreen guides (the same posts de-orphaned in Phase 1). Wrong or stale llms.txt content is worse than none; source every line from live pages.
+
+## Phase 3 — Redirects & canonicals (read tabs `04 Canonicals`, `06 Backlinked 404`, `16 Redirect Links`)
+
+**Redirect map (all targets verified live at audit time):**
+
+| From | To | Type | Why |
+| :---- | :---- | :---- | :---- |
+| `https://www.polymer.co/contact` | restore page (preferred) — else 301 → `https://www.polymer.co/about` | restore / 301 | 404 with 22 backlinks; enterprise CTA target |
+| internal hrefs to `https://polymer.co` / `https://polymer.co/` | `https://www.polymer.co/` | href update | avoid 308 hop |
+| `https://www.polymer.co/?partner_source=whatjobs` | keep live; canonical → `https://www.polymer.co/` | canonical | 243 backlinks on parameter URL |
+
+1. Implement self-referencing canonicals via a `<link rel="canonical">` in `components/seo.js`, which every template already renders (tab 04 lists every URL and its exact canonical value).  
+2. Restore `/contact` with a demo/sales form if a design exists; otherwise ship the 301 now and log the page build in `BLOCKED.md`.
+
+## Phase 4 — Metadata & headings (read tabs `07 Title Rewrites`, `12 Meta Rewrites`, `17 Headings`)
+
+1. Apply all 13 title rewrites exactly as written (≤60 chars). Two rows are marked "(keep)" — skip them.  
+2. Apply all 9 meta description rewrites (≤155 chars). The industry-page template repeats the pattern — fix at template level where possible.  
+3. Add the missing H1 to `/plato` (wording in tab 17); demote "Table of contents" and boilerplate-CTA first-H2s per the tab.
+
+## Phase 5 — Structured data (read tab `05 Structured Data`)
+
+Implement JSON-LD per the tab's template table: Organization \+ WebSite (`pages/_app.js`), SoftwareApplication with real offers (homepage, `/features`, `/plato`), Product \+ 3 Offers (`/pricing`), Article \+ BreadcrumbList (blog template, with real `datePublished`/`dateModified` from Sanity), BreadcrumbList site-wide, FAQPage only where visible FAQs exist. **Never emit aggregateRating** — Polymer has no on-site reviews. Validate every template's output with a schema validator before PR.
+
+## Phase 6 — Images, links, headers (read tabs `11 Images`, `14 External Links`, `10 Wrk Legacy`, `15 Security Headers`)
+
+1. Images: template-level fix for Sanity image URLs — explicit `fm=webp` (or avif), width capped at rendered size; add width/height attributes everywhere (all 111 images lack them). The tab lists all 79 oversized files, worst-first (top offender: 7.0 MB PNG).  
+2. External links: replace the 5 confirmed-dead links (three `help.wrk.xyz` → current help docs; crazyegg and topgrading rows per tab). Do **not** remove the 15 bot-walled links (403/429 from G2/Capterra/Quora etc.) — verify in a browser and leave those that load.  
+3. Wrk legacy: rewrite the Webflow post per tab 10 (brand references, dead help links). Keep its URL (8 referring domains) unless a 301 is added.  
+4. Add `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: strict-origin-when-cross-origin`, and a **Report-Only** CSP in `next.config` headers; note CSP enforcement as a follow-up after a clean report week.
+
+## Phase 7 — Final report
+
+1. Compile `SEO-CHANGELOG.md` into a summary: issues closed (by audit \#), URLs touched, PRs opened/merged, items in `BLOCKED.md`.  
+2. **Do-not-touch list** (never modify in this engagement): `jobs.polymer.co` and its job-post templates, `app.polymer.co`, `developer.polymer.co`, billing/auth code, any customer data, DNS.  
+3. Recommend the verification pass: re-crawl, Search Console sitemap status, schema validation results, and the AI-visibility re-benchmark (workbook tab `09 AI Visibility` holds the baseline: 71 AI Overview citations / 0 ChatGPT).
+

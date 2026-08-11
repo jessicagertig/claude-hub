@@ -1,0 +1,74 @@
+{
+  "agent": "agent-1",
+  "round": 1,
+  "qaRun": 3,
+  "layer": "diff-to-spec",
+  "scope": "full spec-to-code verification across all 8 changed files",
+  "findings": [],
+  "fixVerification": {
+    "finding": "useAiJobApplicationSummary fired for non-succeeded statuses when a summary existed",
+    "fix": "PlatoTab.tsx line 40 changed from `aiJobApplicationSummaryId: aiSummary?.id || 0` to `aiJobApplicationSummaryId: (status === \"succeeded\" && aiSummary?.id) || 0`",
+    "verified": true,
+    "analysis": "The fix correctly gates the fetch ID on status === \"succeeded\". When status is anything other than succeeded, aiJobApplicationSummaryId resolves to 0, and the hook's enabled guard (`!!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0`) prevents the query from firing. The structuredData access at line 43 also guards on status === \"succeeded\", providing defense in depth."
+  },
+  "verificationSummary": {
+    "PlatoMark.tsx": {
+      "status": "pass",
+      "notes": "Three variants (sparkle/sparkles/wand) present. aria-hidden on SVG. PlatoChip gradient, hairline, glyph color (gray[900]), size calc (0.62) all match spec. Emotion styled pattern with labels."
+    },
+    "PlatoTab.tsx": {
+      "status": "pass",
+      "notes": "State machine matches spec 6-row table in correct evaluation order. Succeeded layout: provenance line with distanceInWords (not timeAgoInWordsShort), stale banner, headline (h1/23px/1.28/600/-0.02em/loudText/pretty), domain labels (loudText+secondaryText, 3px circle separator, 16px margin), fit card (1px border/9px radius/16px 20px 20px padding/3px gradient bar/roleAnalysis||summaryText fallback/15px+24px lh), achievements (15px award icon/14px+21px lh/9px gap/omit if empty), experience (14.5px/23px lh/66ch/omit if falsy), gaps (same), skills (key sorted front, loudText+dark ternary fill vs primaryText+transparent, 13px/chipBorder/4px/3px 10px), footer (30px mt/14px pt/1px border/13px info gray[400]/12px placeholderText). Eyebrow uses ${[t.text.xs]} standalone (Known Failure Pattern #1 avoided). Generate/regenerate/try-again all call useGenerateAiSummary with correct toast pattern. Credit balance uses useOrganizationAiCreditBalance with admin/non-admin zero-credits handling. Shimmer/dot animations have prefers-reduced-motion. Header has PlatoChip(26)+Plato label and conditional Regenerate/kebab. Body: 720px max-width, 22px 28px 56px padding. Empty/Failed action layout is stacked column with 8px gap (Styled.ActionColumn)."
+    },
+    "PlatoOverviewCallout.tsx": {
+      "status": "pass",
+      "notes": "State machine covers all 6 states with correct copy (titles, subtitles, CTAs). Card is styled.button with reset CSS (appearance/background/border/padding/text-align/width/cursor/font). Accent gradient bar, PlatoChip(32/8), text column, CTA with chevron-right. Connector tick ::after pseudo-element. Hover border transition. All CTA labels are display-only text. Entire card navigates on click via onOpen."
+    },
+    "JobApplicationContainer.tsx": {
+      "status": "pass",
+      "notes": "PlatoTab imported. useFeatureFlipper + Features imported. isAiEnabled defined at component top level using Features.AI_APPLICANT_SUMMARY enum. possiblePaths conditionally includes 'ai' via spread. isAiEnabled in useEffect deps. Route gated with {isAiEnabled && <Route>} (known justified deviation from FeatureFlipper wrapper). Route placed after /notes, before redirector()."
+    },
+    "JobApplicationSidebar.tsx": {
+      "status": "pass",
+      "notes": "PlatoChip imported. FeatureFlipper imported. isPropValid, Box, Text imported. PlatoNavItem uses styled(NavLink, {shouldForwardProp: isPropValid}). platoNavLinkStyles is verbatim copy of NavItem linkStyles plus label. PlatoNavLabel matches StyledLabel pattern. PlatoChip(22/6) in icon slot. FeatureFlipper wraps the nav item. Links to ${match.url}/ai."
+    },
+    "JobApplicationActivity.tsx": {
+      "status": "pass",
+      "notes": "AiJobApplicationSummaryFeedItem and AiSummaryState imports removed. PlatoOverviewCallout imported. match: any added to Props type and destructured. onOpen navigates via history.push with match.url.replace to strip /overview segment (correct URL construction). FeatureFlipper wraps callout."
+    },
+    "aiJobApplicationSummary.ts": {
+      "status": "pass",
+      "notes": "AiAssessment interface matches spec exactly (primaryDomain, secondaryDomain, tertiaryDomain with null unions, keySkills, standoutAccomplishments, optional careerNarrative and experienceClassifications). AiResumeStructuredData.assessment typed as AiAssessment instead of any."
+    },
+    "useAiJobApplicationSummary.ts": {
+      "status": "pass",
+      "notes": "enabled guard (!!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0) correctly prevents fetch when ID is 0 or falsy. Known justified deviation per task instructions."
+    }
+  },
+  "notesOnDeviations": [
+    {
+      "file": "JobApplicationContainer.tsx",
+      "description": "Route uses {isAiEnabled && <Route>} instead of <FeatureFlipper> wrapper",
+      "justified": true,
+      "reason": "Known justified deviation -- React Router v5 constraint"
+    },
+    {
+      "file": "useAiJobApplicationSummary.ts",
+      "description": "New enabled guard added to hook",
+      "justified": true,
+      "reason": "Known justified deviation -- minimal change to fix lazy-fetch requirement"
+    },
+    {
+      "file": "PlatoTab.tsx",
+      "description": "Kebab button in non-succeeded header has no action handler",
+      "justified": true,
+      "reason": "Known justified deviation -- spec says kebab icon button (otherwise), plan review acknowledged v1 placeholder"
+    },
+    {
+      "file": "JobApplicationActivity.tsx",
+      "description": "onOpen uses match.url.replace(/\\/[^/]+$/, '') instead of spec's literal match.url",
+      "justified": true,
+      "reason": "Spec's literal suggestion of ${match.url}/ai would produce .../overview/ai since match inside JobApplicationActivity matches the /overview route. The replace() correctly strips /overview to navigate to .../ai. This fixes a spec error."
+    }
+  ]
+}

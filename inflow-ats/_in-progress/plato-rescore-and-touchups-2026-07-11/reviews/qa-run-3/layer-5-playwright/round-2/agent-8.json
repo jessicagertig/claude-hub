@@ -1,0 +1,31 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 8,
+  "assignment": "Skip-path bulk run re-verification (convergence round, independent). Senior Engineer > Screen: select all 5 (2 reviewed seeded, 3 bare resume-less), open per-stage bulk modal, verify unchecked state-3 copy at balance 16, SUBMIT ONCE with checkbox UNCHECKED (authorized). Expect queued_count 0 / skipped_count 3, zero credits consumed, toast verbatim, state unchanged (bare empty state intact, seeded review + Regenerate intact).",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as Rezu May (Acme Inc.). Clicked 'Senior Engineer' (job 29092).",
+    "Clicked 'Screen 5' stage. List showed exactly 5: Yesenia Bernhard (Good fit chip), Cornelius Jenkins (Excellent fit chip), Brent Lubowitz, Refugio Ondricka, Wally Blanda (no chips) — 2 reviewed + 3 bare as briefed.",
+    "Clicked the stage-name Select-All checkbox — all 5 row checkboxes checked.",
+    "Opened Bulk options three-dot menu > clicked 'Run Plato reviews'. Modal 'Review candidates' opened.",
+    "VERIFIED body copy byte-level vs SPEC 1.2 state 3: '3 of the 5 candidates selected from this hiring stage don't have a Plato review yet. Each successful review uses one AI credit, so running this uses up to 3 credits from your balance of 16 available.' Bold on 3 and 16 confirmed in screenshot. No 'Up to ' prefix and no overestimate info block (count exact — all 5 rows loaded). Balance line reads 16, matching briefed current balance.",
+    "VERIFIED checkbox present and UNCHECKED, label 'Also re-review candidates that already have a review', description 'Recommended if you've changed the candidate requirements in the job description.' (SPEC 1.1).",
+    "VERIFIED Statement block verbatim (SPEC 1.4): 'You will receive an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.'",
+    "Clicked 'Generate reviews' (single authorized submit, checkbox unchecked). Modal closed, selection cleared.",
+    "POST /api/v1/bulk_ai_job_application_summaries => 200 OK. Request body: {\"bulk_ai_job_application_summary\":{\"job_id\":29092,\"hiring_stage_id\":203590,\"excluded_job_application_ids\":[],\"included_job_application_ids\":[],\"role_fit\":[],\"rescore_requested\":false}} — rescore_requested false confirmed; server-side select-all resolution (empty included/excluded arrays).",
+    "Response payload: {\"queued_count\":0,\"skipped_count\":3,\"any_textract_pending\":false} — queued 0, skipped 3 as expected.",
+    "Toast (captured in the click-time accessibility snapshot page-2026-07-13T00-52-30-324Z.yml; it auto-dismissed before the delayed screenshot): '3 skipped (no resume, already processing, or not enough credits)' — verbatim, single paragraph, no queued-count line (queued was 0).",
+    "Balance unchanged: GET /api/v1/ai_credits refetched after submit => 200 with total_credits_remaining 16 (addon_credits_remaining 16). Zero credits consumed.",
+    "Spot-check reviewed candidate: Yesenia Bernhard > Plato tab — seeded review fully intact ('Seeded review — Android contractor, small-business scope', Good fit, 5 criteria scoring detail, skills) with 'Regenerate' button in header-right.",
+    "Spot-check bare candidate: Brent Lubowitz > Plato tab — empty state intact: heading 'Plato needs a resume', 'Upload a resume on the resume tab, then come back to generate a review.', 'Go to resume tab' button. Not queued, no summary.",
+    "Network sweep for ai_job_application_summar*: only the one authorized bulk POST plus a read-only GET of Yesenia's existing summary 2533 when opening her Plato tab. No per-candidate generation POSTs.",
+    "Console: 0 feature-referencing errors across the session. Only 2 pre-existing Emotion ':first-child is potentially unsafe when doing server-side rendering' messages (known noise class)."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-8/01-bulk-modal-unchecked-3of5-balance16.png",
+    "/tmp/qa-run-3-l5/agent-8/02-after-submit-toast.png",
+    "/tmp/qa-run-3-l5/agent-8/03-yesenia-seeded-review-intact-regenerate.png",
+    "/tmp/qa-run-3-l5/agent-8/04-brent-needs-resume-empty-state.png"
+  ],
+  "findings": []
+}

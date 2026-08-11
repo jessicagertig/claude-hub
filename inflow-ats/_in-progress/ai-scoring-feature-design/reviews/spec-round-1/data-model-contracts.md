@@ -1,0 +1,9 @@
+# data-model-contracts — Round 1
+
+## Findings
+
+- F1 [MED] Spec lists 4 existing prompt files but the directory has 8. Section 4 says "Existing prompt files: `job_description_structured_data.rb`, `job_description_criteria_extraction.rb`, `candidate_criteria_scoring.rb`, `scoring_display.rb`." The actual directory at `app/services/ai_job_application_action/scoring/prompts/` contains 8 files: the 4 listed plus `criteria_decomposer.rb`, `criteria_decomposition_judge.rb`, `criteria_expansion.rb`, and `criteria_review.rb`. These unlisted files may be experimental/unused from the standalone scoring pipeline work. The spec should either list all files or explicitly note which are active vs. inactive. An implementing agent encountering 8 files when the spec lists 4 will be confused about which to use or modify. **Fix:** Update Section 4 to list all 8 existing prompt files and note which are actively used by the 2-call scoring pipeline (Calls 1 & 2) vs. which are experimental/unused.
+
+- F2 [LOW] `AiJobApplicationSummaryStatus` lifecycle: the spec says "Create when AI evaluation first kicks off for a job application." It does not specify WHERE this record is created. The analog pattern is `CreateAiSummaryGeneration` (the interactor that creates the `AiJobApplicationSummary` row). The spec should state whether `AiJobApplicationSummaryStatus` is created in the same interactor, in the orchestrator, or in a callback on `AiJobApplicationSummary`. Not blocking since the plan will decide this, but worth noting.
+
+- F3 [LOW] The `AiApiRequest` polymorphic association already supports arbitrary `requestable_type` values. Adding `AiJobCriteria` as a new `requestable_type` requires no schema change to `ai_api_requests`. Verified: the model at app/models/ai_api_request.rb uses `belongs_to :requestable, polymorphic: true` with no type constraint. No issue.

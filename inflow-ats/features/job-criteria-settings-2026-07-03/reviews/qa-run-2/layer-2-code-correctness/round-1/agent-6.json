@@ -1,0 +1,39 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 6,
+  "focus_area": "Job Criteria section component + AI-settings sidebar — display-state precedence, in-flight derivation, button double-click protection, empty/error/loading states, tier rendering",
+  "files_reviewed": [
+    "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAiSettings.tsx"
+  ],
+  "findings": [
+    {
+      "id": "l2-a6-001",
+      "severity": "LOW",
+      "title": "`history` prop threaded into JobCriteriaSection but never used (dead code)",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAiSettings.tsx",
+      "line": 107,
+      "description": "JobSetupAiSettings renders `<JobCriteriaSection job={passedJob} history={props.history} />` (line 107) and JobCriteriaSection declares `history: any` in its Props interface (JobCriteriaSection.tsx:22), but the component destructures only `{ job }` (JobCriteriaSection.tsx:25) and never reads `history`. Navigation for the intro's 'job description' link is done with a react-router `<Link>` (JobCriteriaSection.tsx:40), which the brief (adjudication #10) confirms is correct. SPEC §8.3 originally called for `props.history.push`, so this `history` threading is a vestige of the pre-adjudication design. No runtime effect (an undefined `history` is simply ignored); purely dead code. `props.history` is also never verified to be passed to JobSetupAiSettings itself, but since it is unused downstream this is harmless.",
+      "recommendation": "Drop the `history` prop from the `<JobCriteriaSection>` callsite and remove `history: any` from the Props interface, since the intro link uses `<Link>` and no history-based navigation remains."
+    },
+    {
+      "id": "l2-a6-002",
+      "severity": "LOW",
+      "title": "isInFlight folds in raw `isFetching`, so the Generate/Regenerate button briefly disables on incidental background refetches",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+      "line": 70,
+      "description": "`isInFlight = isPayloadStatusInFlight || isFetching` (line 70). `isFetching` from react-query is true for ANY fetch, including window-focus/mount background refetches, not only the post-POST refetch the mutation triggers. Because the paid-action button binds `loading={isInFlight} disabled={isInFlight}` (lines 160-161), any incidental refetch momentarily puts the Generate/Regenerate button into a loading+disabled flicker even when no extraction is running. This is largely by design — the mutation lives inside RegenerateJobCriteriaConfirmModal (SPEC §8.5), so `isFetching` is the section's only signal that the invalidation-driven refetch is in flight (SPEC §8.3 defines isInFlight as 'payload status in-flight OR the modal-owned POST just fired and the query is refetching'). The double-click protection itself is correct: both `disabled` and `loading` are present, isPayloadStatusInFlight is status-derived so it survives reload, and the actual paid POST is gated behind the confirm modal's own owned-mutation loading/disabled. The only consequence of the broader `isFetching` is a sub-second cosmetic disable on unrelated refetches.",
+      "recommendation": "Acceptable as-is per the spec's isInFlight definition. If the flicker is undesired, gate the isFetching contribution on the mutation actually being pending (e.g., track the modal-owned mutation's isLoading) rather than any fetch."
+    },
+    {
+      "id": "l2-a6-003",
+      "severity": "LOW",
+      "title": "Pre-existing 'Save changes' button has `loading` without `disabled` (double-submit gap, out of feature scope)",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAiSettings.tsx",
+      "line": 56,
+      "description": "The bottom-bar 'Save changes' Button (lines 56-65) sets `loading={isLoadingUpdateJob}` but no `disabled`. Button/index.js only short-circuits `onClick` when `disabled` is set (index.js:33-38); `loading` alone does not block clicks. So during the in-flight save a second click re-fires `updateJob`, i.e. a duplicate PUT and a possible second success toast. This is the pre-existing Plato reviews save form that SPEC §8.3 explicitly leaves untouched ('lines 15-80 untouched'); it is not the feature's paid extraction/regeneration action, and the underlying job settings update is idempotent, so real-world harm is negligible. Noted for completeness because the brief asks to check every actionable button in the assigned files. The feature's own paid action (Regenerate/Generate) correctly carries both `disabled` and `loading` (JobCriteriaSection.tsx:160-161).",
+      "recommendation": "Out of feature scope — do not fix as part of this feature. If touched later, add `disabled={isLoadingUpdateJob}` to match the loading state."
+    }
+  ]
+}

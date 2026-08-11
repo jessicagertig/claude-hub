@@ -1,0 +1,25 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 14,
+  "assignment": "Shortfall recomputation at live balance 16, display only (no submits): per-stage Interview modal (Select-All 55, unchecked + checked) and all-stages Senior Engineer modal (unchecked + checked). Verify shortfall arithmetic renders from the LIVE balance, not a cached 20.",
+  "steps": [
+    "Verified live balance via GET /api/v1/ai_credits: total_credits_remaining=16 (addon_credits_remaining=16, daily/monthly/addon-subscription all 0) — matches the expected post-consumption balance (20 - 4).",
+    "Navigated http://app.lvh.me:5007/jobs (already logged in as Rezu May / Acme Inc.) -> clicked 'Senior Engineer' -> clicked 'Interview 55' stage link. Stage counts observed: Inbox 3, Screen 5, Interview 55, Decide/Offer/Hired/Archived 0.",
+    "Clicked the Interview stage-name Select-All checkbox WITHOUT scrolling (verified candidate-list scrollTop=0 afterward; page 1 of 50 rows still loaded, page 2 never fetched). Opened Bulk options dropdown -> clicked 'Run Plato reviews'.",
+    "Per-stage modal UNCHECKED (byte-level match): 'Up to 55 of the 55 candidates selected from this hiring stage don't have a Plato review yet. Each successful review uses one AI credit. You are short 39 credits. The first 16 candidates will get reviews generated; the rest will be skipped.' Shortfall 55-16=39 and 'The first 16' both render from the LIVE balance 16, not cached 20. Overestimate info block present: 'This count may be an overestimate.'",
+    "Checked 'Also re-review candidates that already have a review' -> CHECKED state (byte-level match): 'The 55 candidates selected from this hiring stage will be reviewed, including candidates that already have a review. Each successful review uses one AI credit. You are short 39 credits. The first 16 candidates will get reviews generated; the rest will be skipped.' Count 55, shortfall 39, leading 'The' present (correct for per-stage), overestimate info block GONE, submit 'Generate reviews' enabled. Clicked Cancel; modal closed. Nothing submitted.",
+    "Clicked 'Run Plato' on the Plato Reviews card -> all-stages modal UNCHECKED (byte-level match): '58 candidates in this job don't have a Plato review yet. Each successful review uses one AI credit. You are short 42 credits. The first 16 candidates will get reviews generated; the rest will be skipped.' Shortfall 58-16=42 from live balance.",
+    "Arithmetic pre-check per assignment step 3 held: modal shows the SAME counts as pre-re-score (58 unreviewed / 63 total) — the 3 re-scored Inbox candidates still count as reviewed (current) and Screen's 2 reviewed unchanged, so 63-5=58. No recomputation from different counts was needed; displayed numbers are internally consistent with balance 16.",
+    "Checked the rescore checkbox -> all-stages CHECKED state (byte-level match): '63 candidates in this job will be reviewed, including candidates that already have a review. Each successful review uses one AI credit. You are short 47 credits. The first 16 candidates will get reviews generated; the rest will be skipped.' NO leading 'The' (correct for all-stages per SPEC 1.5), shortfall 63-16=47, submit 'Run Plato reviews' enabled. Clicked Cancel; modal closed. Nothing submitted.",
+    "Left clean state: unchecked the Interview Select-All checkbox after finishing.",
+    "Console sweep (all messages, level=error): 0 errors, 0 warnings across the session's 183 messages. Network sweep: all app API requests 200; only known-noise heap-api.com 404 present; zero POSTs to bulk_ai_job_application_summaries or ai_job_application_summaries (confirms display-only run)."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-14/agent-14-01-per-stage-unchecked-balance16.png",
+    "/tmp/qa-run-3-l5/agent-14/agent-14-02-per-stage-checked-balance16.png",
+    "/tmp/qa-run-3-l5/agent-14/agent-14-03-all-stages-unchecked-balance16.png",
+    "/tmp/qa-run-3-l5/agent-14/agent-14-04-all-stages-checked-balance16.png"
+  ],
+  "findings": []
+}

@@ -1,0 +1,23 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 9,
+  "focus": "collection-point removal",
+  "findings": [],
+  "checks_verified": [
+    "1a PASS — _gcl_aw read/parse block (gclAwCookieValue, parsedArray, googleClickId, lines 24-29 pre-change) fully removed from committed OrganizationForm.tsx; no reference remains in the file",
+    "1b PASS — __adroll_fpc read (adrollFirstPartyCookie, line 34 pre-change) removed",
+    "1c PASS — both window.logger calls ('[OrganizationForm] get _gcl_aw cookie value' and 'get __adroll_fpc cookie value') removed; no other logger calls touched",
+    "1d PASS — createOrganization payload changed from { name, googleClickId, heardAboutUsFrom, adrollFirstPartyCookie } to exactly { name, heardAboutUsFrom }",
+    "1e PASS — useCookieValue import removed; committed file has zero remaining uses of useCookieValue; the hook file itself (shared/hooks/useCookieValue.ts) is not modified in the diff and its other consumer (useReferrerCookie.ts) is untouched",
+    "2a PASS — heardAboutUsFrom state, handleHeardAboutUsFromChange, its SessionFormInput, and its payload slot all untouched",
+    "2b PASS — window.__adroll.record_user block in handleSubmit untouched (segments, identifiers, try/catch, logger all identical)",
+    "2c PASS — trackEvent(\"organization_created\") in the createOrganization onSuccess untouched",
+    "2d PASS — git diff b4cb4463a a0d59115d on OrganizationForm.tsx contains exactly the three §5.7 hunks (import removal, cookie-block removal, payload narrowing); nothing else in the file changed; committed diff is byte-identical to the feature.diff hunk",
+    "3a PASS — organization_params permit narrowed only: before = :name, :default_from_email, :website_url, :logo, :social_share_image, :remoteness, :wwr_company_statement, :wwr_company_bio, :linkedin_company_id, :enable_x_hiring, :white_label_job_board_enabled, :hud_display_visibility, :google_click_id, :adroll_first_party_cookie, :heard_about_us_from, settings: [...]; after = identical list minus :google_click_id and :adroll_first_party_cookie; :heard_about_us_from and the entire settings array retained unchanged",
+    "3b PASS — #create copy block as a whole: all pre-existing copy lines retained (owner_id, created_via, utm_source, utm_campaign, utm_data, internal_ref, adroll_click_id, is_claimed), eight new lines appended between adroll_click_id and is_claimed in the exact §6.4 form and order; no other controller action changed",
+    "3c PASS — git diff b4cb4463a a0d59115d on organizations_controller.rb contains exactly two hunks (#create copy block, organization_params permit); no other change in the controller",
+    "4 PASS — spec file: 'stores adroll_first_party_cookie from the request body' inverted to 'ignores google_click_id and adroll_first_party_cookie sent in the request body' (body sends 'from-body' for both; assertions expect current_user's 'gclid-abc123'/'fpc-abc123'); header comment lines 10-12 ('it IS permitted through organization_params' paragraph) rewritten to describe the thirteen-column copy and the removed collection point; full committed file read — no other example or comment still asserts/describes org-form collection; committed diff byte-identical to the feature.diff hunk",
+    "5 PASS — whole-tree grep at a0d59115d for _gcl_aw and __adroll_fpc returns hits only in app/javascript/shared/lib/utils.js, all inside sanitizeTrackingParams (via its getCookieValue helper); single collection point per §8.4 holds"
+  ]
+}

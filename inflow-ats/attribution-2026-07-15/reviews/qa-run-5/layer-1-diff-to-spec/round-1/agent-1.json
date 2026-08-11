@@ -1,0 +1,37 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 1,
+  "focus_area": "Data model — two migrations, db/schema.rb hunks, no-model-change constraints (SPEC.md §3, §7 constraints 2-3)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "§3: two migrations, one per table, identical column sets",
+      "§3: column names/types exactly utm_source string, utm_campaign string, utm_data jsonb, internal_ref string",
+      "§3: no defaults, no null constraints, no indexes on the four columns",
+      "§3: explicit contrast with settings jsonb (default: {}, null: false) on both tables, verified in schema.rb at HEAD",
+      "§3: migration class names match file names",
+      "§3: migration shape follows analog db/migrate/20260622182504_add_ai_summary_and_criteria_columns_to_jobs.rb",
+      "§3: no model changes — no validations/enums/attr_accessor in app/models/user.rb or app/models/organization.rb; organization.rb has NO edit in the diff",
+      "§7 constraint 2: nil for absent — no jsonb default at the schema layer",
+      "§7 constraint 3: no backfill — no data migration in the diff, nothing under db/data/ in the range",
+      "schema.rb version line updated to 2026_07_15_233506"
+    ],
+    "verified": [
+      "Two migrations present as new files in the diff (dump lines 503-534): db/migrate/20260715233505_add_attribution_columns_to_users.rb and db/migrate/20260715233506_add_attribution_columns_to_organizations.rb; contents at HEAD fc3f047f9 confirmed identical to the dump via git show",
+      "Identical column sets in identical order in both migrations: add_column :utm_source :string, :utm_campaign :string, :utm_data :jsonb, :internal_ref :string — matches the §3 table exactly; no default:, null:, limit:, or add_index anywhere in either file",
+      "Class names AddAttributionColumnsToUsers / AddAttributionColumnsToOrganizations match their file names",
+      "Analog structural match (read 20260622182504_add_ai_summary_and_criteria_columns_to_jobs.rb at HEAD): same shape — # frozen_string_literal: true, class < ActiveRecord::Migration[6.1], single def change of add_column lines. Only difference: the analog's counter columns carry default: 0, null: false, which §3 explicitly forbids here — a spec-mandated deviation, not a mismatch",
+      "schema.rb hunks (dump lines 535-569): version line 2026_06_11_120003 -> 2026_07_15_233506 (matches the later migration timestamp); four columns added inside create_table \"organizations\" (t.string utm_source, t.string utm_campaign, t.jsonb utm_data, t.string internal_ref — no options) and identically inside create_table \"users\"",
+      "settings contrast at HEAD: organizations block line 7 and users block line 19 both read t.jsonb \"settings\", default: {}, null: false, while the four new columns in both blocks have no default and no null constraint — the deliberate contrast §3 requires",
+      "No index on any of the four columns: grep of full schema.rb at HEAD shows zero t.index lines referencing utm_source/utm_campaign/utm_data/internal_ref; the index lines adjacent to the users hunk (current_organization_user_id, discarded_at, email, organization_id, reset_password_token) are all pre-existing",
+      "§7 constraint 2: utm_data jsonb has no default in either migration and none in schema.rb — absent data stays SQL NULL, not {}",
+      "§7 constraint 3: git diff --name-status 62dd55867..fc3f047f9 -- db/ returns only the two migrations + db/schema.rb; git diff --stat over db/data/ in the range is empty — no data migration, no backfill",
+      "No model changes for the columns: git diff --name-status over app/models/ shows only user.rb; its entire diff (dump lines 466-489) is the from_omniauth keyword-signature change plus four assignments inside the first_or_create block (§4.6 territory, assigned to another reviewer) — no validates, no enum, no attr_accessor for the new columns anywhere in user.rb",
+      "app/models/organization.rb: absent from the diff file list and from git diff --name-status — NO edit, exactly as §3 requires",
+      "Diff-to-spec direction: every hunk in my area traces to spec — users migration -> §3; organizations migration -> §3; schema.rb version line -> §3/§7; organizations columns hunk -> §3; users columns hunk -> §3. No untraced changes under db/migrate or db/schema.rb"
+    ],
+    "missing": []
+  },
+  "notes": "Zero findings; every assigned requirement traced to concrete diff lines and every db/migrate + db/schema.rb hunk traced back to §3. Trace chain: AGENT-BRIEF.md -> SPEC.md §3/§7 -> diff-62dd55867-fc3f047f9.txt (dump lines 466-569) -> repo at fc3f047f9 (git show of both migrations, the analog migration, and schema.rb; git diff --name-status over db/ and app/models/; base 62dd55867 schema.rb). One non-finding worth recording: schema.rb at HEAD also contains utm_source/utm_medium/utm_term/utm_content/utm_campaign string columns at lines 104-108 — those belong to the pre-existing ahoy_visits table, present verbatim in base commit 62dd55867, untouched by this diff; not attribution-feature columns. HEAD confirmed fc3f047f960cc7eda5bdee8141ad7443bfebefef on branch attribution-work-qa, matching the brief. Prior finding l1-run4-001 concerns §5.1/§7.1/§11 truncation wording, outside my data-model area — not evaluated here. Repo was touched read-only (git show/diff/grep only)."
+}

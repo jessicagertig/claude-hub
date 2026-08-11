@@ -1,0 +1,111 @@
+{
+  "scores": [
+    {
+      "criterion_text": "[tier_2] Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience in building backend services at Heroku (a PaaS) and HashiCorp, utilizing Go to build microservices, APIs, and cloud integrations."
+    },
+    {
+      "criterion_text": "[tier_2] Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume explicitly mentions experience with Kubernetes and Terraform across AWS and Azure in his roles at Activision Blizzard and HashiCorp."
+    },
+    {
+      "criterion_text": "[tier_2] Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "At HashiCorp, the candidate designed services for managed products and worked on Consul/Vault across AWS and Azure, which aligns with managing environments in managed or customer-facing contexts."
+    },
+    {
+      "criterion_text": "[tier_2] Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate's history at Heroku involves building developer-facing features like Dashboards, integration testing frameworks, and tooling that led to dedicated developer experience teams."
+    },
+    {
+      "criterion_text": "[tier_2] Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has built log delivery services, implemented mTLS, and designed networking for vault replication/consul federation, demonstrating a strong grasp of reliability and security."
+    },
+    {
+      "criterion_text": "[tier_2] Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate highlights his roles as a multiplier, mentor, and advocate for best practices (e.g., spearheading Terraform conventions) throughout his career."
+    },
+    {
+      "criterion_text": "[tier_1] Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Go is explicitly listed as a primary language, and the candidate's professional experience spans over a decade of building high-impact backend systems with it."
+    },
+    {
+      "criterion_text": "[tier_1] Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has direct experience building services on top of Kubernetes and Knative at Heroku and working with cloud-native infrastructure at Activision Blizzard."
+    },
+    {
+      "criterion_text": "[tier_2] Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists Terraform under his skills and mentions leading the alignment on Terraform conventions at Blizzard."
+    },
+    {
+      "criterion_text": "[tier_2] Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has significant experience managing services across AWS and Azure, specifically mentioned in the context of his work at Blizzard and HashiCorp."
+    },
+    {
+      "criterion_text": "[tier_2] A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate's tenure at Heroku, specifically building Private Spaces and the dashboard, provides direct evidence of deep understanding of PaaS architecture."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate built integration testing frameworks and developer tools at Heroku and worked on cloud-provider integrations at HashiCorp."
+    },
+    {
+      "criterion_text": "[tier_2] Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "While the candidate has experience building managed services that integrate with cloud providers (Consul/Vault on AWS/Azure), there is no specific mention of publishing to a 'Marketplace' UI."
+    },
+    {
+      "criterion_text": "[tier_2] Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate worked extensively on multi-cloud environments (AWS, Azure) and managed platforms for customers (HCP, Heroku)."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The design of Heroku Private Spaces and HashiCorp managed services inherently requires addressing multi-tenant and high-availability architecture."
+    },
+    {
+      "criterion_text": "[tier_2] Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly mentions extensive experience with distributed systems and adopting/contributing to open source packages."
+    },
+    {
+      "criterion_text": "[tier_2] Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate mentions building log delivery services and dashboard metrics services, indicating strong familiarity with monitoring/logging observability stacks."
+    }
+  ],
+  "computed_score": {
+    "points": 70.0,
+    "max": 72,
+    "percentage": 97.2
+  }
+}

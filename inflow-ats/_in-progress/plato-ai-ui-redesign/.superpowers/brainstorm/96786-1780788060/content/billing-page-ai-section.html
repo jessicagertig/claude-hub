@@ -1,0 +1,105 @@
+<h2>AI Credits on Plan & Billing Page</h2>
+<p class="subtitle">Current state vs proposed — how should credits appear on the main billing page?</p>
+
+<div style="display: flex; flex-direction: column; gap: 32px;">
+
+  <!-- Current: tiny link -->
+  <div>
+    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.4; margin-bottom: 8px;">Current — what's there now</div>
+    <div class="mockup" style="max-width: 680px;">
+      <div class="mockup-header">AccountBilling.tsx — current AI credits section</div>
+      <div class="mockup-body" style="padding: 20px 24px;">
+        <!-- Fake plan cards above -->
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+          <div style="flex: 1; height: 120px; border: 1px solid rgba(128,128,128,0.15); border-radius: 6px; padding: 12px;">
+            <div style="font-size: 12px; font-weight: 600; opacity: 0.3;">Free Plan</div>
+            <div style="font-size: 10px; opacity: 0.2; margin-top: 4px;">features...</div>
+          </div>
+          <div style="flex: 1; height: 120px; border: 1px solid rgba(128,128,128,0.15); border-radius: 6px; padding: 12px;">
+            <div style="font-size: 12px; font-weight: 600; opacity: 0.3;">Growth Plan</div>
+            <div style="font-size: 10px; opacity: 0.2; margin-top: 4px;">features...</div>
+          </div>
+          <div style="flex: 1; height: 120px; border: 1px solid rgba(128,128,128,0.15); border-radius: 6px; padding: 12px;">
+            <div style="font-size: 12px; font-weight: 600; opacity: 0.3;">Scale Plan</div>
+            <div style="font-size: 10px; opacity: 0.2; margin-top: 4px;">features...</div>
+          </div>
+        </div>
+        <!-- The actual current link — this is it -->
+        <div style="padding: 8px 0; border-top: 1px solid rgba(128,128,128,0.08);">
+          <p style="font-size: 13px; color: rgba(128,128,128,0.5); margin: 0;">
+            AI credits are managed separately — <span style="color: rgba(80,80,80,0.8); text-decoration: underline; cursor: pointer;">go to AI billing →</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Proposed: proper section -->
+  <div>
+    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.4; margin-bottom: 8px;">Proposed — give it the weight it deserves</div>
+    <div class="mockup" style="max-width: 680px;">
+      <div class="mockup-header">AccountBilling.tsx — proposed AI credits section</div>
+      <div class="mockup-body" style="padding: 20px 24px;">
+        <!-- Fake plan cards above (compressed) -->
+        <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+          <div style="flex: 1; height: 60px; border: 1px solid rgba(128,128,128,0.1); border-radius: 6px; padding: 10px; opacity: 0.3;">
+            <div style="font-size: 11px; font-weight: 600;">Plan cards above...</div>
+          </div>
+        </div>
+
+        <!-- AI Credits — proper section matching plan card styling -->
+        <div style="border: 1px solid rgba(128,128,128,0.15); border-radius: 8px; overflow: hidden;">
+          <!-- Section header -->
+          <div style="padding: 16px 20px; border-bottom: 1px solid rgba(128,128,128,0.1); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 15px; font-weight: 600;">AI Credits</div>
+              <div style="font-size: 12px; opacity: 0.45; margin-top: 2px;">Plato AI candidate summaries</div>
+            </div>
+            <a style="font-size: 12px; color: rgb(99,102,241); text-decoration: none; cursor: pointer;">Manage AI settings →</a>
+          </div>
+
+          <!-- Balance + subscription in one row -->
+          <div style="padding: 16px 20px;">
+            <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+              <div style="flex: 1; background: rgba(128,128,128,0.04); border-radius: 5px; padding: 12px; text-align: center;">
+                <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.4;">Monthly</div>
+                <div style="font-size: 22px; font-weight: 700;">42</div>
+                <div style="font-size: 9px; opacity: 0.3;">resets Jul 1</div>
+              </div>
+              <div style="flex: 1; background: rgba(128,128,128,0.04); border-radius: 5px; padding: 12px; text-align: center;">
+                <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.4;">Purchased</div>
+                <div style="font-size: 22px; font-weight: 700;">10</div>
+                <div style="font-size: 9px; opacity: 0.3;">never expire</div>
+              </div>
+              <div style="flex: 1; background: rgba(99,102,241,0.05); border-radius: 5px; padding: 12px; text-align: center;">
+                <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.4;">Total Available</div>
+                <div style="font-size: 22px; font-weight: 700; color: rgb(99,102,241);">52</div>
+              </div>
+            </div>
+
+            <!-- Subscription status row -->
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.12); border-radius: 5px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 6px; height: 6px; background: rgb(16,185,129); border-radius: 50%;"></div>
+                <div>
+                  <span style="font-size: 12px; font-weight: 500;">Pro Plan</span>
+                  <span style="font-size: 12px; opacity: 0.4;"> · 50 credits/mo · renews Jul 1</span>
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="mock-button" style="font-size: 10px; padding: 3px 10px;">Buy more</button>
+                <button class="mock-button" style="font-size: 10px; padding: 3px 10px; opacity: 0.4;">Manage</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top: 20px; padding: 16px; background: rgba(128,128,128,0.05); border-radius: 8px; font-size: 13px;">
+  <strong>This is for the Plan & Billing page</strong> — the existing <code>AccountBilling.tsx</code>. The "Manage AI settings →" link goes to the Plato AI admin page (whichever layout we pick). This replaces the current gray text link.
+</div>

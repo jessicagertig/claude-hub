@@ -1,0 +1,7 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 2,
+  "scenario": "Job#extract_job_criteria_if_needed delegation + guard reduction (SPEC 4.1). Seeded ai-org-published-job.json, used Senior Engineer (job id=27607, description present). With ActiveJob queue_adapter=:test, set the latest AiJobCriteria row status directly and called job.extract_job_criteria_if_needed, asserting row-delta + ExtractJobCriteriaJob enqueue for each of 6 states. Ran /tmp/l3_a2_if_needed.rb via RAILS_ENV=test foreman run rails runner. Cleaned up all created rows (remaining=0).",
+  "findings": []
+}

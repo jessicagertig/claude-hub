@@ -1,0 +1,342 @@
+diff --git a/app/javascript/ats/src/components/shared/UserNav.tsx b/app/javascript/ats/src/components/shared/UserNav.tsx
+index 888210a00..fb49abda0 100644
+--- a/app/javascript/ats/src/components/shared/UserNav.tsx
++++ b/app/javascript/ats/src/components/shared/UserNav.tsx
+@@ -9,6 +9,7 @@ import Icon from "@ats/src/components/shared/Icon";
+ import UserAvatar from "@ats/src/components/shared/UserAvatar";
+ 
+ import { useCurrentSession } from "@ats/src/context/CurrentSessionContext";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ function UserNav(props) {
+   const { currentUser, currentOrganizationUser } = useCurrentSession();
+@@ -36,11 +37,11 @@ function UserNav(props) {
+   };
+ 
+   const handleChangelogClick = () => {
+-    window.open("https://polymer.co/changelog", "_blank");
++    window.open(`https://polymer.co/changelog${INTERNAL_UTM_PARAMS}`, "_blank");
+   };
+ 
+   const handleHelpClick = () => {
+-    window.open("https://help.polymer.co", "_blank");
++    window.open(`https://help.polymer.co/${INTERNAL_UTM_PARAMS}`, "_blank");
+   };
+ 
+   const handlePricingClick = () => {
+diff --git a/app/javascript/ats/src/views/accountAdmin/AccountCommentTemplates.tsx b/app/javascript/ats/src/views/accountAdmin/AccountCommentTemplates.tsx
+index 6d20d410e..3722422b8 100644
+--- a/app/javascript/ats/src/views/accountAdmin/AccountCommentTemplates.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/AccountCommentTemplates.tsx
+@@ -19,7 +19,7 @@ import {
+   useUpdateCommentTemplate,
+   useDeleteCommentTemplate,
+ } from "@shared/queryHooks/useCommentTemplate";
+-import { moveFromIndexToIndex } from "@shared/lib/utils";
++import { moveFromIndexToIndex, INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ import { useToastContext } from "@shared/context/ToastContext";
+ import { useModalContext } from "@shared/context/ModalContext";
+@@ -191,7 +191,7 @@ export default function AccountCommentTemplates(props) {
+   const viewLink = (
+     <Button
+       type="externalLink"
+-      link="https://help.polymer.co/en/articles/5506525-using-review-templates"
++      link={`https://help.polymer.co/en/articles/5506525-using-review-templates${INTERNAL_UTM_PARAMS}`}
+       styleType="text"
+     >
+       View docs
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountBilling/AccountBilling.tsx b/app/javascript/ats/src/views/accountAdmin/accountBilling/AccountBilling.tsx
+index 131146227..571d091da 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountBilling/AccountBilling.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountBilling/AccountBilling.tsx
+@@ -16,6 +16,7 @@ import LoadingIndicator from "@ats/src/components/shared/LoadingIndicator";
+ import { useStripeCustomer, useBillingPrices } from "@shared/queryHooks/useBilling";
+ 
+ import { useCurrentSession } from "@ats/src/context/CurrentSessionContext";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ import AccountBillingPlans from "@ats/src/views/accountAdmin/accountBilling/AccountBillingPlans";
+ import AccountBillingPlansUnsubscribed from "@ats/src/views/accountAdmin/accountBilling/AccountBillingPlansUnsubscribed";
+@@ -92,7 +93,7 @@ function AccountBilling(props) {
+   }, []);
+ 
+   const viewLink = (
+-    <Button type="externalLink" link="https://polymer.co/pricing" styleType="text">
++    <Button type="externalLink" link={`https://polymer.co/pricing${INTERNAL_UTM_PARAMS}`} styleType="text">
+       View pricing page
+       <Icon name="external-link" />
+     </Button>
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsDiscord.tsx b/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsDiscord.tsx
+index 8e89530f7..f76402a30 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsDiscord.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsDiscord.tsx
+@@ -26,6 +26,7 @@ import FormSelect from "@ats/src/components/forms/FormSelect";
+ import FormSection from "@ats/src/components/forms/FormSection";
+ import ConfirmationModal from "@ats/src/components/modals/ConfirmationModal";
+ import Icon from "@ats/src/components/shared/Icon";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ function AccountIntegrationsDiscord(props) {
+   const addToast = useToastContext();
+@@ -131,7 +132,7 @@ function AccountIntegrationsDiscord(props) {
+     <>
+       <Button
+         type="externalLink"
+-        link="https://help.polymer.co/en/articles/5721747-have-new-candidate-notifications-show-up-in-a-discord-server"
++        link={`https://help.polymer.co/en/articles/5721747-have-new-candidate-notifications-show-up-in-a-discord-server${INTERNAL_UTM_PARAMS}`}
+         styleType="text"
+       >
+         View docs
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsLinkedIn.tsx b/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsLinkedIn.tsx
+index bd1ef1d41..bc2bf2a38 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsLinkedIn.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsLinkedIn.tsx
+@@ -18,6 +18,7 @@ import FormLabel from "@ats/src/components/forms/FormLabel";
+ import LinkedinIdConfirmationModal from "@ats/src/components/modals/LinkedinIdConfirmationModal";
+ 
+ import { useModalContext } from "@shared/context/ModalContext";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ const linkedInIneligibilityDetail = (stripeSubscriptionStatus: string | null): string => {
+   if (stripeSubscriptionStatus === "trialing") {
+@@ -223,7 +224,7 @@ function AccountIntegrationsLinkedIn(props) {
+     <>
+       <Button
+         type="externalLink"
+-        link="https://help.polymer.co/en/articles/8828635-post-your-jobs-to-linkedin"
++        link={`https://help.polymer.co/en/articles/8828635-post-your-jobs-to-linkedin${INTERNAL_UTM_PARAMS}`}
+         styleType="text"
+       >
+         View docs
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsSlack.tsx b/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsSlack.tsx
+index 7d0607517..2f7e4b1b8 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsSlack.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsSlack.tsx
+@@ -20,6 +20,7 @@ import Icon from "@ats/src/components/shared/Icon";
+ import OauthConnectButton from "./OuathConnectButton";
+ import FormFieldset from "@ats/src/components/forms/FormFieldset";
+ import FormCheckbox from "@ats/src/components/forms/FormCheckbox";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ function AccountIntegrationsSlack(props) {
+   const addToast = useToastContext();
+@@ -122,7 +123,7 @@ function AccountIntegrationsSlack(props) {
+     <>
+       <Button
+         type="externalLink"
+-        link="https://help.polymer.co/en/articles/5721143-have-new-candidate-notifications-show-up-in-a-slack-workspace"
++        link={`https://help.polymer.co/en/articles/5721143-have-new-candidate-notifications-show-up-in-a-slack-workspace${INTERNAL_UTM_PARAMS}`}
+         styleType="text"
+       >
+         View docs
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsWebflow.tsx b/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsWebflow.tsx
+index c4d8126c3..304b55d3b 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsWebflow.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsWebflow.tsx
+@@ -37,6 +37,7 @@ import { useToastContext } from "@shared/context/ToastContext";
+ import { useCurrentSession } from "@ats/src/context/CurrentSessionContext";
+ 
+ import { isDeadlineDateAfterCurrent } from "@shared/lib/time";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ function AccountIntegrationsWebflow(props) {
+   const { openModal, removeModal } = useModalContext();
+@@ -533,7 +534,7 @@ function AccountIntegrationsWebflow(props) {
+     <>
+       <Button
+         type="externalLink"
+-        link="https://polymer.co/blog/use-webflow-cms-to-display-your-wrk-job-posts-on-your-webflow-site"
++        link={`https://polymer.co/blog/use-webflow-cms-to-display-your-wrk-job-posts-on-your-webflow-site${INTERNAL_UTM_PARAMS}`}
+         styleType="text"
+       >
+         View docs
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsXHiring.tsx b/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsXHiring.tsx
+index 316983591..f5a9f632c 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsXHiring.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsXHiring.tsx
+@@ -11,6 +11,7 @@ import Button from "@ats/src/components/shared/Button";
+ import FormSelect from "@ats/src/components/forms/FormSelect";
+ import FormSection from "@ats/src/components/forms/FormSection";
+ import Icon from "@ats/src/components/shared/Icon";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ function AccountIntegrationsXHiring(props) {
+   const addToast = useToastContext();
+@@ -106,7 +107,7 @@ function AccountIntegrationsXHiring(props) {
+     <>
+       <Button
+         type="externalLink"
+-        link="https://help.polymer.co/en/articles/9415910-post-your-jobs-to-x-hiring"
++        link={`https://help.polymer.co/en/articles/9415910-post-your-jobs-to-x-hiring${INTERNAL_UTM_PARAMS}`}
+         styleType="text"
+       >
+         View docs
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsZapier.tsx b/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsZapier.tsx
+index 15dbf55c9..bb45b6c63 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsZapier.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsZapier.tsx
+@@ -8,6 +8,7 @@ import CopyField from "@ats/src/components/shared/CopyField";
+ import { useOrganizationApiKeys } from "@shared/queryHooks/useOrganization";
+ import Button from "@ats/src/components/shared/Button";
+ import Icon from "@ats/src/components/shared/Icon";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ function AccountIntegrationsZapier(props) {
+   const { currentOrganization } = useCurrentSession();
+@@ -21,7 +22,7 @@ function AccountIntegrationsZapier(props) {
+     <>
+       <Button
+         type="externalLink"
+-        link="https://help.polymer.co/en/articles/6218084-trigger-automated-workflows-in-zapier"
++        link={`https://help.polymer.co/en/articles/6218084-trigger-automated-workflows-in-zapier${INTERNAL_UTM_PARAMS}`}
+         styleType="text"
+       >
+         View docs
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountJobBoard/AccountJobBoardCustomDomain.tsx b/app/javascript/ats/src/views/accountAdmin/accountJobBoard/AccountJobBoardCustomDomain.tsx
+index c5336bfc3..cd4c9311e 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountJobBoard/AccountJobBoardCustomDomain.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountJobBoard/AccountJobBoardCustomDomain.tsx
+@@ -19,6 +19,7 @@ import LoadingIndicator from "@ats/src/components/shared/LoadingIndicator";
+ 
+ import { useToastContext } from "@shared/context/ToastContext";
+ import { useCreateCustomDomain, useDeleteCustomDomain } from "@shared/queryHooks/useCareersPage";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ function AccountJobBoardCustomDomain(props: any) {
+   const addToast = useToastContext();
+@@ -159,7 +160,7 @@ function AccountJobBoardCustomDomain(props: any) {
+   const viewLink = (
+     <Button
+       type="externalLink"
+-      link="https://help.polymer.co/en/articles/10250419-configuring-a-custom-domain"
++      link={`https://help.polymer.co/en/articles/10250419-configuring-a-custom-domain${INTERNAL_UTM_PARAMS}`}
+       styleType="text"
+     >
+       View docs
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/PurchaseAiCreditTopUpConfirmModal.tsx b/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/PurchaseAiCreditTopUpConfirmModal.tsx
+index 56c17d3f5..69095174b 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/PurchaseAiCreditTopUpConfirmModal.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/PurchaseAiCreditTopUpConfirmModal.tsx
+@@ -6,6 +6,7 @@ import CenterModal from "@ats/src/components/modals/CenterModal";
+ import Button from "@ats/src/components/shared/Button";
+ import Icon from "@ats/src/components/shared/Icon";
+ import Tooltip from "@ats/src/components/shared/Tooltip";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ interface PurchaseAiCreditTopUpConfirmModalProps {
+   onCancel: () => void;
+@@ -47,8 +48,8 @@ function PurchaseAiCreditTopUpConfirmModal({
+       </Styled.MethodRow>
+ 
+       <Styled.Terms>
+-        By confirming, you agree to Polymer&rsquo;s <a href="https://polymer.co/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a> and{" "}
+-        <a href="https://polymer.co/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
++        By confirming, you agree to Polymer&rsquo;s <a href={`https://polymer.co/terms${INTERNAL_UTM_PARAMS}`} target="_blank" rel="noopener noreferrer">Terms of Service</a> and{" "}
++        <a href={`https://polymer.co/privacy${INTERNAL_UTM_PARAMS}`} target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+       </Styled.Terms>
+ 
+       <Styled.ButtonContainer>
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/UpdateAiCreditSubscriptionConfirmModal.tsx b/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/UpdateAiCreditSubscriptionConfirmModal.tsx
+index aafb7a8db..669bb2535 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/UpdateAiCreditSubscriptionConfirmModal.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/UpdateAiCreditSubscriptionConfirmModal.tsx
+@@ -6,6 +6,7 @@ import CenterModal from "@ats/src/components/modals/CenterModal";
+ import Button from "@ats/src/components/shared/Button";
+ import Icon from "@ats/src/components/shared/Icon";
+ import Tooltip from "@ats/src/components/shared/Tooltip";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ interface UpdateAiCreditSubscriptionConfirmModalProps {
+   onCancel: () => void;
+@@ -119,8 +120,8 @@ function UpdateAiCreditSubscriptionConfirmModal(
+       )}
+ 
+       <Styled.Terms>
+-        By confirming, you agree to Polymer&rsquo;s <a href="https://polymer.co/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a> and{" "}
+-        <a href="https://polymer.co/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
++        By confirming, you agree to Polymer&rsquo;s <a href={`https://polymer.co/terms${INTERNAL_UTM_PARAMS}`} target="_blank" rel="noopener noreferrer">Terms of Service</a> and{" "}
++        <a href={`https://polymer.co/privacy${INTERNAL_UTM_PARAMS}`} target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+       </Styled.Terms>
+ 
+       <Styled.ButtonContainer>
+diff --git a/app/javascript/ats/src/views/sessions/components/FormLogoHeader.tsx b/app/javascript/ats/src/views/sessions/components/FormLogoHeader.tsx
+index 32dfa052f..b3c9ac094 100644
+--- a/app/javascript/ats/src/views/sessions/components/FormLogoHeader.tsx
++++ b/app/javascript/ats/src/views/sessions/components/FormLogoHeader.tsx
+@@ -2,11 +2,12 @@ import React from "react";
+ import styled from "@emotion/styled";
+ import { css } from "@emotion/react";
+ import LogoWithBackground from "@ats/src/components/shared/LogoWithBackground";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ export default function FormLogoHeader() {
+   return (
+     <Styled.Container>
+-      <a href="https://polymer.co" className="app-header__logo" rel="noopener noreferrer">
++      <a href={`https://polymer.co${INTERNAL_UTM_PARAMS}`} className="app-header__logo" rel="noopener noreferrer">
+         <LogoWithBackground variant="gradient" size={28} backgroundSize={50} />
+       </a>
+     </Styled.Container>
+diff --git a/app/javascript/ats/src/views/sessions/components/HeaderBar.tsx b/app/javascript/ats/src/views/sessions/components/HeaderBar.tsx
+index 9be9531a8..877002543 100644
+--- a/app/javascript/ats/src/views/sessions/components/HeaderBar.tsx
++++ b/app/javascript/ats/src/views/sessions/components/HeaderBar.tsx
+@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
+ import { css } from "@emotion/react";
+ 
+ import Logo from "@ats/src/components/shared/Logo";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ interface Props {
+   darkModeAllowed?: boolean;
+@@ -23,7 +24,7 @@ export default function HeaderBar({ darkModeAllowed = true }: Props) {
+ 
+   return (
+     <Styled.Container css={modeStyles} darkModeAllowed={darkModeAllowed}>
+-      <a href="https://polymer.co" className="app-header__logo" rel="noopener noreferrer">
++      <a href={`https://polymer.co${INTERNAL_UTM_PARAMS}`} className="app-header__logo" rel="noopener noreferrer">
+         <Logo /> Polymer
+       </a>
+     </Styled.Container>
+diff --git a/app/javascript/shared/components/PolymerBar.tsx b/app/javascript/shared/components/PolymerBar.tsx
+index d4bfe5ec8..08f08acc5 100644
+--- a/app/javascript/shared/components/PolymerBar.tsx
++++ b/app/javascript/shared/components/PolymerBar.tsx
+@@ -11,6 +11,7 @@ import SupportMessageModal from "@ats/src/components/modals/SupportMessageModal"
+ import Text from "@shared/components/Text";
+ import Box from "@shared/components/Box";
+ import breakpoint from "@shared/styles/breakpoints";
++import { INTERNAL_UTM_PARAMS } from "@shared/lib/utils";
+ 
+ const polymerLogo = () => (
+   <Logo>
+@@ -129,11 +130,11 @@ export default function PolymerBar() {
+   const { openModal, removeModal } = useModalContext();
+ 
+   const handleChangelogClick = () => {
+-    window.open("https://polymer.co/changelog", "_blank");
++    window.open(`https://polymer.co/changelog${INTERNAL_UTM_PARAMS}`, "_blank");
+   };
+ 
+   const handleHelpClick = () => {
+-    window.open("https://help.polymer.co", "_blank");
++    window.open(`https://help.polymer.co/${INTERNAL_UTM_PARAMS}`, "_blank");
+   };
+ 
+   const handleSendSupportMessageClick = (e) => {
+diff --git a/app/javascript/shared/lib/utils.js b/app/javascript/shared/lib/utils.js
+index 5f42ea1ca..2f5513ac6 100644
+--- a/app/javascript/shared/lib/utils.js
++++ b/app/javascript/shared/lib/utils.js
+@@ -140,6 +140,10 @@ export const removeKnownUrlPrefix = (url) => {
+   // .replace(/(\/$)/, ""); // removes trailing slashes
+ };
+ 
++/* Internal links to Polymer marketing properties
++--===================================================-- */
++export const INTERNAL_UTM_PARAMS = "?utm_source=polymer_app&utm_medium=internal";
++
+ /* Remove from Array
+ --===================================================-- */
+ export const removeFromArray = (array, fn) => {

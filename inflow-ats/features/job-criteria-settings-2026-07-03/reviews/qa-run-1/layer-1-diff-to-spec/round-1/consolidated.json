@@ -1,0 +1,44 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agents_dispatched": 14,
+  "agents_reporting": 14,
+  "raw_findings": 3,
+  "valid_findings": [
+    {
+      "id": "l1-001",
+      "source": "agent-5 l1-a5-001",
+      "severity": "HIGH",
+      "title": "Exhaustion-site broadcast unreachable: retry_on block calls private instance method broadcast_completion with class-level self (NoMethodError)",
+      "file": "app/jobs/extract_job_criteria_job.rb",
+      "line": 11,
+      "status": "VALID — mechanism independently verified by orchestrator against ActiveJob 6.1 yield semantics; agent verified empirically with probe job against the repo bundle",
+      "note": "Analog generate_ai_job_application_summary_job.rb:20 has the identical latent defect — OUT of diff scope, recorded as MED for Jessica"
+    },
+    {
+      "id": "l1-002",
+      "source": "agent-14 l1-a14-001 (also observed by agent-7 as note)",
+      "severity": "HIGH",
+      "title": "SectionIntro job-description link is <a> without href/tabIndex — not keyboard-focusable; adjudicated focus ring is dead CSS; no codebase precedent for <a onClick> without href",
+      "file": "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+      "line": 39,
+      "status": "VALID"
+    }
+  ],
+  "invalidated_findings": [
+    {
+      "source": "agent-4 l1-a4-001",
+      "title": "rescore_requested merge-reconciliation edits in bulk controller spec untraceable",
+      "ruling": "RATIFIED as documented develop-merge repair per ORCHESTRATION-LOG develop-merge rows and QA dispatch exclusion list; agent's own recommendation was ratify-don't-revert. Recorded in BRIEF.md so later rounds don't re-flag."
+    }
+  ],
+  "med_ledger_additions": [
+    "Analog GenerateAiJobApplicationSummaryJob retry_on exhaustion block has the identical class-level-self NoMethodError defect (generate_ai_job_application_summary_job.rb:20) — pre-existing, outside this diff",
+    "lib/tasks/ai_bulk_extract.rake is inert: assigns enum values :in_progress/:extracted that do not exist in the AiJobCriteria status enum, raises before any work (pre-existing, diff-untouched; found by agent-13)",
+    "Two aria-labels duplicate visible label text (agent-9 note; LOW)"
+  ],
+  "spec_coverage": {
+    "notes": "All SPEC sections 3-13 assigned to >=2 agents; agents 1-3,6-13 report full implementation of their assigned requirements; section 7 behavioral gap is l1-001; section 8.3 link affordance gap is l1-002"
+  },
+  "verdict": "FAIL — 2 HIGH findings -> fix loop, restart in qa-run-2"
+}

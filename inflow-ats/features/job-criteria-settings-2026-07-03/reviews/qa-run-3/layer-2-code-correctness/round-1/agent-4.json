@@ -1,0 +1,14 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 4,
+  "focus_area": "zero-criteria review guard chain: correctness, ordering, nil-safety across all AI-summary entry points (pipeline failure pattern 8)",
+  "files_reviewed": [
+    "app/interactors/validate_ai_summary_generation.rb",
+    "app/interactors/validate_auto_ai_summary_generation.rb",
+    "app/interactors/queue_bulk_ai_summary_jobs.rb",
+    "app/controllers/api/v1/bulk_ai_job_application_summaries_controller.rb",
+    "app/models/textract_result.rb"
+  ],
+  "findings": []
+}

@@ -1,0 +1,23 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 5,
+  "agent_index": 4,
+  "slice": "migration + enum + uniqueness invariant",
+  "findings": [],
+  "verified": [
+    "Migration 20260725033136_add_stripe_subscription_id_and_amount_to_subscription_events.rb contains exactly the two SPEC §3 add_column calls (add_column :subscription_events, :stripe_subscription_id, :string; add_column :subscription_events, :amount, :integer), both nullable with no defaults, and nothing else — no backfill, no currency column, no data operations",
+    "Partial unique index is single-column on stripe_subscription_id with where: 'event_type IN (2, 8)', unique: true, name idx_subscription_events_conversion_stripe_sub_id — matches the binding INVARIANT (index name/syntax are SPEC-PROPOSED); comment in the migration correctly labels 2=converted_to_paid, 8=trial_converted_to_paid against the committed enum",
+    "Committed db/schema.rb diff is exactly: version bump 2026_07_24_183711 -> 2026_07_25_033136 (matching the migration timestamp), t.string stripe_subscription_id + t.integer amount on subscription_events, and the partial unique index dumped as (event_type = ANY (ARRAY[2, 8])) — no other hunks committed",
+    "Enum at 33dffbe3e: trial_started: 7 and trial_converted_to_paid: 8 added; values 0/1/2/3/4/5/6 byte-identical to a0d59115d (only a trailing comma added after downgraded_plan: 6); git grep across app/ at 33dffbe3e confirms zero writers for downgraded_to_free/upgraded_plan/downgraded_plan (only the model comment/enum lines reference them)",
+    "Stale comment block corrected: new comment lists 0-8 and every line matches the committed enum name/number exactly; D2 main-plan-only comment present naming OrganizationAiCreditPurchase / AiCreditBalanceTransaction",
+    "r4-l1-a9-003 enum-mapping example (subscription_event_fanout_spec.rb 'pins the exact stored integer for every event_type') asserts eq against the exact full 9-pair hash; every pair matches the committed enum, and eq on the full hash fails on any renumbering, rename, addition, or removal",
+    "CONVERSION_EVENT_TYPES = %w[converted_to_paid trial_converted_to_paid].freeze on SubscriptionEvent maps to integers {2, 8}, matching the index predicate; conversion_duplicate_exists? queries SubscriptionEvent by stripe_subscription_id alone (no organization scope), filtered to CONVERSION_EVENT_TYPES — matches §3's single-column invariant and §6's check-first guard; guard runs BEFORE build and context.fail!s gracefully (include Interactor confirmed — fail! never raises to callers)",
+    "RecordNotUnique backstop: method-level rescue ActiveRecord::RecordNotUnique on #call logs 'CreateSubscriptionEvent raced conversion uniqueness index for stripe_subscription_id ...' via Rails.logger.error, ap's the error, and fail!s with the same message as the check-first path; Interactor::Failure from fail! is not swallowed by this rescue",
+    "r4-l1-a5-001 pin: the interactor spec's negative assertions use /\\ACreateSubscriptionEvent raced conversion uniqueness index/ which anchors-matches the committed rescue's actual log string; both check-first guard examples stub Rails.logger.error with and_call_original BEFORE the call, so if conversion_duplicate_exists? (or its call site) is deleted, the second insert hits the DB index, the backstop logs the pinned message, and the not_to have_received(:error) assertion fails — the guard examples are falsifiable. If only the method definition is deleted, NoMethodError propagates (Interactor rescues only Interactor::Failure) and the examples fail on the raise",
+    "RecordNotUnique backstop example stubs conversion_duplicate_exists? to false so the insert genuinely hits the partial index, asserts no raise + failure? + exact message + row count 1 — exercises the real rescue path",
+    "Repaired duplicate-delivery example (r3-l1-a4-001): backdates the first row's created_at via update_column (no callbacks, no fan-out re-fire) past the 5-minute dedupe so the second delivery is enforced only by the conversion guard/index; asserts count change of exactly 1 and exactly 1 conversion-type row",
+    "D11 spot-check (not my slice): the stripe_webhook_handler_job.rb diff contains exactly the two sanctioned rescue-isolated appended blocks (invoice.paid after reset_ai_credits; subscription.deleted after EngagementReport::GeneratorJob) — no other lines in the file changed",
+    "Guard-order fix per §6: return unless organization now precedes the two ap logging lines; nil-organization spec example asserts success with no row and no raise"
+  ]
+}

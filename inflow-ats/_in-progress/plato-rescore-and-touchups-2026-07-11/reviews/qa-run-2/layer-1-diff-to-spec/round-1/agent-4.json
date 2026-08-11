@@ -1,0 +1,18 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 4,
+  "focus": "SPEC 2.1 (interactor gate), 2.2 (controller param boundary), 2.3 (hook param) — full rescore_requested threading chain",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": ["2.1", "2.2", "2.3"],
+    "implemented": ["2.1", "2.2", "2.3"],
+    "missing": []
+  },
+  "verification_notes": {
+    "2.1": "create_ai_summary_generation.rb diff is a single one-line hunk (1 insertion, 1 deletion): `if active_ai_summary` -> `if active_ai_summary && !job_application.ai_summary_rescore_requested`. The condition string is character-identical to create_bulk_ai_summary_generation.rb:45. Nothing else in the file changed (git diff f8815555a..HEAD --stat confirms 2 +- for this file). Per guardrail 1, bulk-only behaviors (staleness-refresh block, missing textract_pending branch, enqueue differences) were NOT compared or flagged.",
+    "2.2": "ai_job_application_summaries_controller.rb gains exactly one private params method `ai_job_application_summary_params` = `params.require(:ai_job_application_summary).require(:rescore_requested)` (lines 43-45), matching the bulk controller's require-then-require shape (bulk_ai_job_application_summaries_controller.rb:78-79). `create` sets `job_application.ai_summary_rescore_requested = ai_job_application_summary_params` at line 17, after the ValidateAiSummaryGeneration guard and immediately BEFORE CreateAiSummaryGeneration.call (line 19) — same placement as the bulk path (attribute set on the record just before the interactor). No begin/rescue block anywhere in the file. Controller diff is +8 lines total: the assignment plus the private method, nothing else. `ai_summary_rescore_requested` is a pre-existing `attribute :ai_summary_rescore_requested, :boolean, default: false` on JobApplication (job_application.rb:11), so the raw required value typecasts to boolean on assignment.",
+    "2.3": "useAiJobApplicationSummary.ts diff is a single +1 line hunk: GenerateParams gains `rescoreRequested: boolean;` — required, no optional marker. It rides into the pre-existing unchanged POST body `variables: { aiJobApplicationSummary: params }`. No other hook changes. snake_case conversion verified: generateAiSummary calls apiPost without skipKeysToSnake (defaults false); apiPost -> apiMutate applies `allKeysToSnake(variables)` (api.ts:52); allKeysToSnake recurses into nested plain objects (structure.js:94-108), so the body posts as `ai_job_application_summary: { job_application_id, rescore_requested }`.",
+    "chain": "Threading verified end-to-end: useAiJobApplicationSummary.ts -> api.ts (apiPost/apiMutate/allKeysToSnake) -> structure.js (allKeysToSnake) -> ai_job_application_summaries_controller.rb (require chain + assignment) -> job_application.rb:11 (boolean attribute) -> create_ai_summary_generation.rb:36 (gate). Worktree files for all three assigned files are clean against HEAD (970b0f4b2); the committed diff was reviewed, not the working tree."
+  }
+}

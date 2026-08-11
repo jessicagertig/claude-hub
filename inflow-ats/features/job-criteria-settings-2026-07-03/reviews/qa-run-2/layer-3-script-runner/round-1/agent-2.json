@@ -1,0 +1,41 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 2,
+  "focus": "Job#latest_ai_job_criteria, Job#latest_succeeded_ai_job_criteria, and the display-precedence rule (failed latest row wins over an older succeeded row) — verified at runtime against the live test DB (RAILS_ENV=test) by building AiJobCriteria rows with controlled created_at timestamps on the seeded Senior Engineer job (id=27280, Acme Inc.).",
+  "scenarios_run": [
+    "Seeded ai-org-published-job.json (paid org, AI_APPLICANT_SUMMARY on, published Senior Engineer job).",
+    "S1 latest-regardless-of-status: built 3 rows (older succeeded / middle failed / newest pending) -> latest_ai_job_criteria returned the newest (pending).",
+    "S2 latest_succeeded skips newer: built old succeeded + newer failed -> latest_succeeded_ai_job_criteria returned the old succeeded; latest_ai_job_criteria returned the newer failed.",
+    "S3a precedence (plain failure): older succeeded-with-criteria + newer failed (non-zero-criteria msg) -> latest=failed, zero_criteria_extraction_failure?=false, serializer payload status='failed'/zero_criteria_failure=false; payload.criteria still holds OLD succeeded criteria (by design) but §8.2 row ordering (JobCriteriaSection.tsx:73-83) checks status=='failed' BEFORE criteria-present, so UI hides the old card (displayState='failure').",
+    "S3b precedence (zero-criteria failure): older succeeded + newer failed with each of the 3 ZERO_CRITERIA_ERROR_MESSAGES -> latest=failed, zero_criteria_extraction_failure?=true, payload status='failed'/zero_criteria_failure=true (UI displayState='zeroCriteria').",
+    "S4 ordering determinism: two rows with IDENTICAL created_at -> 5 re-queries returned the same id (stable within-process); documented missing secondary tiebreaker.",
+    "S5 empty case: zero rows -> latest_ai_job_criteria nil, latest_succeeded_ai_job_criteria nil, zero_criteria_extraction_failure? falsy (returns nil), payload status=null (§8.2 row 5 never-extracted)."
+  ],
+  "findings": [
+    {
+      "id": "l3-a2-001",
+      "severity": "LOW",
+      "title": "latest_ai_job_criteria / latest_succeeded_ai_job_criteria have no secondary tiebreaker for equal created_at",
+      "evidence": "Job#latest_ai_job_criteria = ai_job_criteria.order(created_at: :desc).first (job.rb:688-690); latest_succeeded similarly (job.rb:692-694). Built two rows with identical created_at (2026-06-01T07:00:00.000000Z, ids 2524 succeeded / 2525 failed). 5 re-queries all returned id=2524 (stable within-process), but the SQL has no `id DESC` tiebreaker, so on a created_at collision which row wins is DB-plan-dependent, not guaranteed by the query. In a true tie between a succeeded and a failed row this could non-deterministically pick either, which would swing the §8.2 display state (card vs failure). NOTE: not reachable via real app code paths — every row is created at a distinct microsecond-precision timestamp (publish callback, extract_job_criteria_immediately, and the auto-path's wait:30.seconds all produce genuinely later timestamps), so a true collision does not occur in production. Reported as LOW/observation per brief; not inflated.",
+      "file": "app/models/job.rb",
+      "recommendation": "Optional hardening: add `.order(created_at: :desc, id: :desc)` to both finders so the newest row is deterministic even on a timestamp tie. No functional impact under current app paths."
+    },
+    {
+      "id": "l3-a2-002",
+      "severity": "LOW",
+      "title": "zero_criteria_extraction_failure? returns nil (not false) in the never-extracted state",
+      "evidence": "job.rb:696-698 defines it as latest_ai_job_criteria&.zero_criteria_failure?; with zero rows the safe-navigation returns nil rather than false. Confirmed at runtime (S5: got nil). Verified this is FULLY ACCOMMODATED by every consumer and causes no wrong behavior: (1) all Ruby guards use truthy `if ...zero_criteria_extraction_failure?` (textract_result.rb:70, queue_bulk_ai_summary_jobs.rb:19, validate_auto_ai_summary_generation.rb:19, validate_ai_summary_generation.rb:30) — nil is falsy, so the guard correctly does NOT fire when criteria were never extracted; (2) the serializer passes it through as zero_criteria_failure and the frontend query-hook type is already `boolean | null` (useAiJobCriteria.ts:14), with the display derivation (JobCriteriaSection.tsx:75) gating it behind `status === \"failed\"` (a truthy check), so null never reaches a wrong branch. Zero functional impact; reported for transparency only.",
+      "file": "app/models/job.rb",
+      "recommendation": "Optional: coerce to boolean (`!!latest_ai_job_criteria&.zero_criteria_failure?` or `latest_ai_job_criteria&.zero_criteria_failure? || false`) so the predicate honors the `?`-returns-boolean convention and the payload field is always a real boolean. Not required — the contract already types it boolean|null and all consumers handle it."
+    }
+  ],
+  "verifications_passed": [
+    "latest_ai_job_criteria returns the row with the newest created_at REGARDLESS of status — with (succeeded 3h-old, failed 2h-old, pending 1h-old) it returned the pending row (newest). Confirmed at runtime.",
+    "latest_succeeded_ai_job_criteria returns the newest SUCCEEDED row, skipping newer non-succeeded rows — with (old succeeded, newer failed) it returned the old succeeded row; the unfiltered latest correctly returned the newer failed row.",
+    "PRECEDENCE (SPEC §8.2, the HIGH-risk case) works end-to-end: older succeeded-with-criteria + newer failed -> latest_ai_job_criteria = the FAILED row -> serializer status='failed'. Because JobCriteriaSection.tsx:73-83 checks `status === \"failed\"` (rows 2/3) BEFORE `criteria` present (row 4), the UI shows the empty/failure state and HIDES the stale succeeded card — so candidates are never shown as scored against criteria the latest extraction no longer produced. The old succeeded criteria remaining in payload.criteria is by design (serializer reads latest_succeeded) and is correctly suppressed by row ordering, not by nulling the field.",
+    "Zero-criteria failure variant: for all THREE ZERO_CRITERIA_ERROR_MESSAGES, a newer failed row over an older succeeded row yields zero_criteria_extraction_failure? == true and payload {status:'failed', zero_criteria_failure:true} (UI zeroCriteria state) — the scoring guards (validate/queue-bulk/textract) will correctly fail-fast in this state.",
+    "Empty/never-extracted case: a job with zero AiJobCriteria rows -> latest_ai_job_criteria nil, latest_succeeded_ai_job_criteria nil, zero_criteria_extraction_failure? falsy, payload status=null/criteria=null (drives §8.2 row 5 never-extracted EmptyState). Guards do NOT fire in this state (correct — never-extracted is not a failure).",
+    "Ordering is stable within a process for equal created_at (5/5 identical results); the only gap is the absence of an id tiebreaker in the SQL (LOW, unreachable via real app paths)."
+  ]
+}

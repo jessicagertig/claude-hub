@@ -1,0 +1,21 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 7,
+  "focus": "Predicate methods: AiJobCriteria#zero_criteria_failure? + ZERO_CRITERIA_ERROR_MESSAGES (app/models/ai_job_criteria.rb) and Job#zero_criteria_extraction_failure? + latest_ai_job_criteria (app/models/job.rb). SPEC.md 4.2, 4.3.",
+  "scenarios_run": [
+    "Built own isolated org/job(s) with SecureRandom suffix; created AiJobCriteria rows DIRECTLY via create! (never ran extraction; never published; never updated a row to succeeded; inline adapter safe).",
+    "Verified ZERO_CRITERIA_ERROR_MESSAGES constant contains exactly the 3 documented messages ('No criteria sections found in job description', 'No criteria extracted from job description', 'Criteria array is empty').",
+    "AiJobCriteria#zero_criteria_failure? truth table: status=failed + each of the 3 zero-criteria messages -> true (3 cases).",
+    "AiJobCriteria#zero_criteria_failure?: status=failed + non-zero-criteria strings ('Job description is blank', 'Failed to parse AI response: x', 'Some random error', '') -> false (4 cases).",
+    "AiJobCriteria#zero_criteria_failure?: status=failed + error_message nil -> false.",
+    "AiJobCriteria#zero_criteria_failure?: each of the 3 zero-criteria messages combined with each NON-failed status (pending/in_progress/succeeded/retrying) -> false (12 cases). Confirms status_failed? && ... gating.",
+    "Job#zero_criteria_extraction_failure?: job with NO ai_job_criteria rows -> nil (safe-nav, not false); latest_ai_job_criteria also nil.",
+    "Job#zero_criteria_extraction_failure?: latest row = zero-criteria failed -> true.",
+    "Job#zero_criteria_extraction_failure? FALSIFIABILITY: older zero-criteria-failed row + newer succeeded row (created_at set explicitly) -> false; confirmed latest_ai_job_criteria resolves to the succeeded row (reads LATEST, not any).",
+    "Job#zero_criteria_extraction_failure?: latest = pending / in_progress / retrying stacked on top of an older zero-criteria-failed row -> false (deliberate per spec) (3 cases).",
+    "Job#zero_criteria_extraction_failure?: latest = non-zero-criteria failure ('Job description is blank') -> false.",
+    "Job#zero_criteria_extraction_failure? FALSIFIABILITY: older succeeded row + newer zero-criteria-failed row -> true (latest failure wins)."
+  ],
+  "findings": []
+}

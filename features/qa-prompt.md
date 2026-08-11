@@ -18,7 +18,7 @@ Before anything else:
 
 ## Context you need
 
-1. **Working directory:** You are in a feature working directory (e.g., `~/claude-hub/<pipeline>/YYYY-MM-DD-feature-name/`). Determine the pipeline from the parent directory name.
+1. **Working directory:** You are in a feature working directory (e.g., `~/claude-hub/<pipeline>/feature-name-YYYY-MM-DD/`). Determine the pipeline from the parent directory name.
 2. **Pipeline config:** Read `~/claude-hub/<pipeline>/qa-config.yml` for server commands, seed endpoints, auth instructions, and verification layers. If this file does not exist, STOP — the pipeline has not been configured for QA.
 3. **Base branch:** Read `base_branch` from the pipeline config. Default is `main`. For inflow-ats this is `develop`.
 4. **Feature spec:** Read `SPEC.md` in the working directory.
@@ -206,6 +206,15 @@ For each file, check:
 4. **Error handling** — uncaught exceptions, swallowed errors, misleading error messages, missing rollbacks
 5. **Data integrity** — missing validations, incorrect associations, orphaned records, race conditions on writes
 6. **Pattern violations** — does this code follow the conventions of the surrounding codebase? Read neighboring files for comparison.
+7. **Analog structural matching** — if the codebase has an analog for this code (e.g., another bulk operation controller, another background job in the same domain, another model with similar lifecycle), grep for it, read it, and compare at the structural level. Layer completeness ("it has a controller") without structural matching ("the controller accepts the same parameter shape") is insufficient. A structural mismatch is BLOCKER.
+
+   What to compare:
+   - **Controller parameter interfaces:** if existing bulk operations accept `job_id` + `hiring_stage_id` + `included/excluded_ids` with server-side resolution, the new bulk operation must too. Do not accept raw ID arrays resolved client-side when the analog resolves server-side.
+   - **Job retry/exhaustion patterns:** if other jobs in the same domain use exhaustion blocks on `retry_on`, the new job must too. Do not skip the exhaustion block when analogs have one.
+   - **Callback patterns:** if analogous models use `after_commit` callbacks to trigger downstream work, the new model should follow the same pattern.
+   - **Error handling shapes:** if analogs rescue specific error classes and set status before re-raising, the new code must follow the same rescue/status/raise sequence.
+
+   Real failures this would have caught: (1) A bulk AI summary controller accepted raw `job_application_ids` from the frontend instead of following the `job_id` + `hiring_stage_id` + `included/excluded` pattern used by bulk move and bulk message controllers. Passed a full QA round unflagged. (2) An AI summary generation job lacked an exhaustion block on `retry_on` despite two other jobs in the same domain having one. Users saw multiple failure toasts before retries exhausted.
 
 Report findings with file path, line number, what's wrong, and why it matters.
 

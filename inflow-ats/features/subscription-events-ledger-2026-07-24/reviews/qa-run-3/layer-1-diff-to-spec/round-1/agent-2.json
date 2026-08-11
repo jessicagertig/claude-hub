@@ -1,0 +1,25 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 3,
+  "agent_index": 2,
+  "slice": "invoice.paid conversion insertion",
+  "findings": [],
+  "verified": [
+    "Webhook file diff a0d59115d..e850c74fe is purely additive: 34 added lines, 0 removed/modified lines (grep '^-[^-]' = 0). Exactly the two sanctioned insertion blocks; no reordering, no attribute-access changes, no cleanup (D11 satisfied for this file).",
+    "Insertion 1 placement: appended at the END of the invoice.paid main-plan else-branch body, immediately after organization.organization_ai_credit_balance&.reset_ai_credits and before the branch-closing end; after the raise CustomStripeSubscriptionMissingError guard (guard is the else branch's first line). Pre-existing 'updated = organization.update(...)' error-logging block is context at a0d59115d, not part of the diff.",
+    "Rescue isolation: insertion wrapped in its OWN begin/rescue StandardError; rescue logs with context (Rails.logger.error with org id, invoice id, subscription id, e.message, plus ap e). Stripe::StripeError < StandardError, so no error class escapes to the branch's three existing rescue tiers; existing behavior completes before the insertion runs.",
+    "§4 predicate exact: object.amount_paid.to_i > 0; stripe_subscription.trial_end.present? -> 'trial_converted_to_paid' else 'converted_to_paid'; uses the branch's ALREADY-retrieved stripe_subscription local (Stripe::Subscription.retrieve(object.subscription) at metadata step 4 — no second retrieve, no event-payload snapshot, no status, no billing_reason accessed anywhere in the insertion).",
+    "Writer call exact per §5.2: CreateSubscriptionEvent.call(organization: organization, event_type: subscription_event_type, to_plan: organization.plan, stripe_subscription_id: object.subscription, amount: object.amount_paid); from_plan omitted -> nil.",
+    "Duplicate -> graceful no-op verified in committed CreateSubscriptionEvent: conversion_duplicate_exists? check-first guard (queries by stripe_subscription_id alone against SubscriptionEvent::CONVERSION_EVENT_TYPES = %w[converted_to_paid trial_converted_to_paid], matching the §3 single-column partial index), context.fail! (caught by Interactor's .call, never raises to the webhook), plus rescue ActiveRecord::RecordNotUnique -> same graceful fail for the raced case.",
+    "D10 style: event_type selected via full if/else expression assigned to subscription_event_type; no .presence anywhere in the insertion.",
+    "Tests at e850c74fe (spec/jobs/stripe_webhook_handler_subscription_events_spec.rb): full 4-cell predicate matrix (amount_paid 0/4900 x trial_end present/nil) with Stripe::Subscription.retrieve stubbed; positive cells assert event_type, amount, stripe_subscription_id, to_plan, and from_plan nil — falsifiable (deleting the insertion fails the change-by-1 assertions; deleting the amount guard fails the zero cells).",
+    "Duplicate-delivery test: two perform_now calls -> change(SubscriptionEvent, :count).by(1) plus explicit conversion-row count == 1; non-vacuous.",
+    "Existing-behavior assertions present on BOTH paths: success example and ledger-failure example (CreateSubscriptionEvent.call stubbed to raise StandardError) each assert stripe_current_period_end_at persisted, stripe_update_default_payment_method received, reset_ai_credits received; failure example also asserts not_to raise_error. Failure example is falsifiable against misplacement (an insertion moved above reset_ai_credits that raises would fail the have_received assertion).",
+    "sync_with_stripe asserted in the subscription.deleted example (expect(organization).to have_received(:sync_with_stripe)) — the e850c74fe fix line, falsifiable against removal of organization&.sync_with_stripe.",
+    "Fix commit 7574df408 audited individually: touches ONLY spec/jobs/stripe_webhook_handler_subscription_events_spec.rb, +3 lines, all inside the ledger-failure example (stub setup for organization_ai_credit_balance.reset_ai_credits + the have_received(:reset_ai_credits) assertion). Nothing else.",
+    "Fix commit e850c74fe audited individually: touches ONLY the same spec file, +1 line, the sync_with_stripe have_received assertion in the subscription.deleted example. Nothing else.",
+    "App diff unchanged since 89286fba8 confirmed: both fix commits are spec-file-only.",
+    "Queue-adapter :test around-block present in the spec (pipeline rule 31)."
+  ]
+}

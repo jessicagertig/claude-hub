@@ -1,0 +1,101 @@
+{
+  "agent": 5,
+  "focus": "JobApplicationActivity + types + hook",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+      "location": "line 397",
+      "requirement": "Spec section 6: onOpen navigates to ${match.url}/ai via history.push",
+      "description": "The onOpen callback uses `match.url.replace(/\\/[^/]+$/, \"\")` to strip the last path segment before appending `/ai`. Spec section 6 says: 'Use history.push(`${match.url}/ai`)'. The spec is explicit: use match.url directly, not a transformed version of it. The regex strip is a deviation from the spec regardless of whether it produces functionally equivalent navigation in practice -- spec says match.url/ai, implementation does something different. Whether this is functionally equivalent depends on the value of match.url at the call site (which is JobApplicationActivity rendered inside a Route whose path includes the view subpath, e.g. /overview), but the spec was written with knowledge of the call site and specified match.url directly. This is a spec-implementation mismatch.",
+      "fix": "Change the onOpen callback to: `onOpen={() => history.push(\\`${match.url}/ai\\`)}`"
+    }
+  ],
+  "verified_requirements": [
+    {
+      "requirement": "Spec 6: Remove import of AiJobApplicationSummaryFeedItem (line 10)",
+      "result": "PASS -- import removed, PlatoOverviewCallout imported instead (line 10 of modified file)"
+    },
+    {
+      "requirement": "Spec 6: Remove import of AiSummaryState (line 11)",
+      "result": "PASS -- import removed"
+    },
+    {
+      "requirement": "Spec 6: Add import of PlatoOverviewCallout",
+      "result": "PASS -- line 10: `import PlatoOverviewCallout from \"@ats/src/views/jobApplications/PlatoOverviewCallout\"`"
+    },
+    {
+      "requirement": "Spec 6: Replace FeatureFlipper block to render PlatoOverviewCallout with jobApplication={jobApplication} and onOpen",
+      "result": "PASS -- lines 394-399 render PlatoOverviewCallout inside FeatureFlipper with jobApplication and onOpen props"
+    },
+    {
+      "requirement": "Spec 6: Add match: any to Props type",
+      "result": "PASS -- line 37: `match: any;` added to Props type"
+    },
+    {
+      "requirement": "Spec 6: Add match to function parameter destructuring",
+      "result": "PASS -- line 39: `{ jobApplication, orgAdminJobsListUrl, history, match }` destructuring confirmed"
+    },
+    {
+      "requirement": "Spec 6: No unspecced changes introduced in JobApplicationActivity.tsx",
+      "result": "PASS -- only the imports at lines 10-11, the Props type addition, the function signature, and the FeatureFlipper block were changed; no other modifications"
+    },
+    {
+      "requirement": "Spec 7: AiAssessment interface added with primaryDomain: { name: string; reasoning: string } | null",
+      "result": "PASS -- line 16 of aiJobApplicationSummary.ts: `primaryDomain: { name: string; reasoning: string } | null;`"
+    },
+    {
+      "requirement": "Spec 7: AiAssessment interface secondaryDomain: { name: string; reasoning: string } | null",
+      "result": "PASS -- line 17: `secondaryDomain: { name: string; reasoning: string } | null;`"
+    },
+    {
+      "requirement": "Spec 7: AiAssessment interface tertiaryDomain: { name: string | null; reasoning: string } | null",
+      "result": "PASS -- line 18: `tertiaryDomain: { name: string | null; reasoning: string } | null;`"
+    },
+    {
+      "requirement": "Spec 7: tertiaryDomain.name is string | null (not plain string)",
+      "result": "PASS -- verified: `{ name: string | null; reasoning: string }` on line 18"
+    },
+    {
+      "requirement": "Spec 7: Domain types include reasoning field as required (not optional)",
+      "result": "PASS -- all three domains have `reasoning: string` (not `reasoning?: string`)"
+    },
+    {
+      "requirement": "Spec 7: AiAssessment.keySkills: string[]",
+      "result": "PASS -- line 19: `keySkills: string[];`"
+    },
+    {
+      "requirement": "Spec 7: AiAssessment.standoutAccomplishments: string[]",
+      "result": "PASS -- line 20: `standoutAccomplishments: string[];`"
+    },
+    {
+      "requirement": "Spec 7: AiAssessment.careerNarrative?: string (optional)",
+      "result": "PASS -- line 21: `careerNarrative?: string;`"
+    },
+    {
+      "requirement": "Spec 7: AiAssessment.experienceClassifications?: any[] (optional)",
+      "result": "PASS -- line 22: `experienceClassifications?: any[];`"
+    },
+    {
+      "requirement": "Spec 7: AiResumeStructuredData.assessment changed from assessment?: any to assessment?: AiAssessment",
+      "result": "PASS -- line 41: `assessment?: AiAssessment;`"
+    },
+    {
+      "requirement": "Spec 7: AiAssessment exported",
+      "result": "PASS -- interface is declared with `export interface AiAssessment`"
+    },
+    {
+      "requirement": "Spec 7: No unspecced changes in aiJobApplicationSummary.ts",
+      "result": "PASS -- only AiAssessment interface added and assessment field type changed; no other modifications"
+    },
+    {
+      "requirement": "Hook lazy fetch guard: enabled option added as !!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0",
+      "result": "PASS -- line 44 of useAiJobApplicationSummary.ts: `{ enabled: !!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0 }` exactly as specified"
+    },
+    {
+      "requirement": "Hook: no unspecced changes in useAiJobApplicationSummary.ts",
+      "result": "PASS -- only the enabled option line was added; function signature and query key unchanged"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 14,
+  "focus": "Cross-cutting integration: ONE zero-criteria job blocks ALL FOUR AI-summary creation entry points, all keyed on Job#zero_criteria_extraction_failure?; the 3 validators emit ONE byte-identical canonical guard message (SPEC §6.1/§6.2); CONTROL (succeeded latest row) allows all four past the guard.",
+  "scenarios_run": [
+    "Isolated setup: built own uniquely-suffixed org/user/owner_ou/job(with description)/candidate/job_application + one TextractResult (no result text so its after_commit queue_ai_summary_job no-ops). Granted REAL credits (OrganizationAiCreditBalance.monthly_credits_remaining=100) so ai_credits_available? is instance-independently true — required because ValidateAutoAiSummaryGeneration re-derives org via ja.job.organization (a fresh instance an instance-stub would miss). has_resume stubbed true on the passed ja (ActiveStorage method). Global AI_APPLICANT_SUMMARY flag read-only confirmed true. ActiveJob queue_adapter=:test; generate_ai_summary + extract_job_criteria_if_needed stubbed to no-op recorders so NO real AI/Textract can fire.",
+    "PHASE A (guard fires): latest AiJobCriteria row = terminal zero-criteria failure (Criteria array is empty). Asserted Job#zero_criteria_extraction_failure? == true, then drove all four sites on the SAME job/ja: (1) ValidateAiSummaryGeneration.call(job_application, organization) -> failure?, error == CANONICAL. (2) ValidateAutoAiSummaryGeneration.call(job_application) -> failure?, error == CANONICAL. (3) QueueBulkAiSummaryJobs.call(organization, user, job_application_ids:[ja.id], job, params:{}) -> failure?, error == CANONICAL, and enqueued_jobs contained NO BulkGenerateAiSummariesJob (fail-fast, nothing enqueued). (4) TextractResult#generate_ai_summary_with_credit_flow -> early return: extract_if_needed NOT called, generate_ai_summary NOT called, no new AiJobApplicationSummary, no new AiJobCriteria row.",
+    "PHASE A cross-site message identity: v1.error == v2.error == v3.error; uniq of all three == [CANONICAL]; byte-lengths all 123 (byte-identical, no whitespace/copy drift). CANONICAL copied verbatim from SPEC.md §6.2 lines 248/254.",
+    "PHASE B (CONTROL / falsifiability): switched latest row to succeeded (criteria present, created_at newer). Job#zero_criteria_extraction_failure? == false. All four allowed past the guard: ValidateAiSummaryGeneration success (error nil), ValidateAutoAiSummaryGeneration success (error nil), QueueBulkAiSummaryJobs success (error nil, no canonical block), funnel proceeded past the guard (both extract_if_needed and generate_ai_summary reached). Proves the PHASE A canonical assertions are non-ghost — they would not pass if the guard were always-on or the message drifted."
+  ],
+  "findings": [
+    {
+      "id": "l3-r2-a14-001",
+      "severity": "MED",
+      "title": "Canonical zero-criteria guard message is a triplicated string literal (no shared constant) — currently byte-identical, latent drift risk",
+      "file": "app/interactors/validate_ai_summary_generation.rb:30, app/interactors/validate_auto_ai_summary_generation.rb:19, app/interactors/queue_bulk_ai_summary_jobs.rb:19",
+      "evidence": "The user-facing guard message ('No scoring criteria were found in the job description. Regenerate job criteria in Plato AI settings before running reviews.') is hard-coded as an identical literal in all 3 validators with no DRY constant. My script confirmed all three are byte-identical today (uniq == [CANONICAL], all 123 bytes). Nothing structurally enforces that equality, so a future edit to one site could silently drift while the other two stay put.",
+      "reproduction": "grep -rn 'No scoring criteria were found' app/interactors/ shows three separate literals; there is no shared constant like AiJobCriteria::ZERO_CRITERIA_ERROR_MESSAGES for the *guard* message (that constant covers the detection side only).",
+      "recommendation": "REPORT-ONLY, do not fix. Spec-compliant: SPEC §6.2 explicitly specifies the literal inline in each interactor, and it matches the existing pattern (all other error strings in ValidateAiSummaryGeneration — out-of-credits, no-resume, etc. — are inline literals). Optional future hardening: extract to a single constant so the three sites cannot drift. Does not affect convergence."
+    }
+  ]
+}

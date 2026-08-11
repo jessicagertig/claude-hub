@@ -1,0 +1,24 @@
+diff --git a/transactional/user-facing/user-bulk-all-stages-ai-summary-complete.mjml b/transactional/user-facing/user-bulk-all-stages-ai-summary-complete.mjml
+index 107a7ef..90f6ef0 100644
+--- a/transactional/user-facing/user-bulk-all-stages-ai-summary-complete.mjml
++++ b/transactional/user-facing/user-bulk-all-stages-ai-summary-complete.mjml
+@@ -27,7 +27,6 @@
+       <mj-section padding="0 0 4px">
+         <mj-column padding="0">
+           <mj-text line-height="160%" padding="0" font-size="16px">
+-            <p>Hi {{user_first_name}},</p>
+             <p>Plato has finished reviewing the {{total_count}} selected candidates in <b>{{job_title}}</b>. Here's the breakdown:</p>
+             <p>
+               <b>{{succeeded_count}}</b> reviewed successfully<br />
+diff --git a/transactional/user-facing/user-bulk-all-stages-ai-summary-failed.mjml b/transactional/user-facing/user-bulk-all-stages-ai-summary-failed.mjml
+index 5c2c69d..297e268 100644
+--- a/transactional/user-facing/user-bulk-all-stages-ai-summary-failed.mjml
++++ b/transactional/user-facing/user-bulk-all-stages-ai-summary-failed.mjml
+@@ -27,7 +27,6 @@
+       <mj-section padding="0 0 4px">
+         <mj-column padding="0">
+           <mj-text line-height="160%" padding="0" font-size="16px">
+-            <p>Hi {{user_first_name}},</p>
+             <p>We weren't able to complete the Plato review for the {{total_queued_count}} selected candidates in <b>{{job_title}}</b>.</p>
+             <p>You can try again from the job page. If the problem persists, please contact support at <a href="mailto:support@polymer.co">support@polymer.co</a>.</p>
+           </mj-text>

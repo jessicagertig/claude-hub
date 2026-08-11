@@ -1,0 +1,28 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 8,
+  "focus_area": "omniauth chain (2nd pass)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "SPEC §4.5 (D8 — allowed_keys list, loop untouched, utm_data Hash session ride with :json serializer string keys)",
+      "SPEC §4.6 (D9 — exact keyword signature and order; assignments inside first_or_create block only; existing SSO user never assigned; post-block unchanged)",
+      "SPEC §4.7 (keyword call with merged_tracking string-key reads; nothing else changed in the action)",
+      "SPEC §9.2 (user_from_omniauth model spec scenarios, falsifiability)",
+      "SPEC §9.3 (omniauth callbacks controller spec pins keyword call + string-key session read, Devise::Test::ControllerHelpers)",
+      "SPEC §7 constraint 5 (creation-time only — SSO branch)"
+    ],
+    "verified": [
+      "§4.5: config/initializers/omniauth.rb line 14 is exactly allowed_keys = %w[partner referral utm_source utm_campaign utm_data internal_ref]; only that line changed in the file (13-line diff, single hunk); existing loop (value = rack_request.params[key]; tracking_params[key] = value if value && !value.empty?) untouched — Rack's parse_nested_query yields the utm_data[<key>] inputs as a string-keyed Hash which responds to empty?; cookies_serializer.rb confirmed :json (unchanged in diff), so the utm_data hash round-trips session[:oauth_tracking] with string keys, matching the controller's string-key reads",
+      "§4.6: app/models/user.rb:379 signature is character-for-character the spec's def self.from_omniauth(auth:, created_via:, partner_source: nil, utm_source: nil, utm_campaign: nil, utm_data: nil, internal_ref: nil); the four raw assignments (no &.downcase) sit inside the first_or_create block directly after partner_source; post-block assign_attributes(remember_me: true) / update(first_name:, last_name:) / enqueue_complete_user_setup unchanged (full-file diff is only the signature line + 4 added assignment lines); enqueue_complete_user_setup read — touches settings/jobs only, never the four columns",
+      "§4.7: omniauth_callbacks_controller.rb:22-30 keyword call matches the spec block verbatim including argument order and merged_tracking['utm_source']/['utm_campaign']/['utm_data']/['internal_ref'] string-key reads; full-file read confirms merged_tracking = request_phase_params.merge(tracking_from_session) unchanged, PosthogIdentifyJob/PosthogTrackJob calls, previously_new_record? event selection, and redirect all untouched (single 21-line hunk replacing only the call)",
+      "D9 call-site search re-run: git grep -n from_omniauth matches only user.rb:379 (definition), omniauth_callbacks_controller.rb:22 (sole call site, converted), and the two new spec files — no missed positional call site",
+      "§9.2: spec/models/user_from_omniauth_spec.rb covers all six required scenarios — keyword creation persists all four values raw ('SomeRawValue' verbatim, utm_data hash round-trip); omitted keywords → all four nil; existing user (matching email) with 'ShouldNotStick' values passed → columns stay nil and User count unchanged; auth:/created_via: required (ArgumentError); partner_source 'WWR' → 'wwr' (downcasing preserved); falsifiability confirmed: deleting the four block assignments fails tests 1 and 3; reverting to the positional signature makes tests 1–3 raise ArgumentError under Ruby 3 kwargs-to-positional-hash conversion; moving assignment outside the block turns 'ShouldNotStick' persistent and fails test 3",
+      "§9.3: spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb is type: :controller, includes Devise::Test::ControllerHelpers, sets @request.env['devise.mapping'], stubs request.env['omniauth.auth'], seeds session[:oauth_tracking] with all six tracking keys (string keys), and asserts have_received(:from_omniauth).with(auth:, created_via:, partner_source:, utm_source:, utm_campaign:, utm_data:, internal_ref:) — this fails against a positional call (rspec-mocks kwargs matching under Ruby 3) and against a symbol-key merged_tracking read (session hash carries string keys; a symbol read yields nil ≠ 'SomeRawValue'); second example pins nil-for-absent when no tracking rode the session; redirect assertion pins the unchanged redirect",
+      "§7 constraint 5 (SSO branch): assignment strictly inside first_or_create; post-block update touches only first_name/last_name/remember_me; pinned by the existing-user model spec test",
+      "Supporting verification: db/schema.rb has the four nullable no-default columns on users; spec/rails_helper.rb use_transactional_fixtures = true (fixed test emails safe); User validations (email presence only) make the inline User.create! calls viable, matching the api_factories.rb manual-creation shape"
+    ],
+    "missing": []
+  }
+}

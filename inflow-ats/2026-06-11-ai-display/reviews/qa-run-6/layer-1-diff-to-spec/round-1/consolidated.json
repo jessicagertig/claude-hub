@@ -1,0 +1,35 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 6,
+  "findings": [],
+  "dismissed": [
+    {
+      "id": "l1-d1",
+      "title": "Em dash vs double hyphen in PlatoOverviewCallout failed-state subtitle",
+      "agent": 1,
+      "reason": "Spec markdown uses -- which is a convention for em dash. Implementation uses the actual Unicode em dash character. Typographic normalization, not a functional deviation."
+    },
+    {
+      "id": "l1-d2",
+      "title": "useAiJobApplicationSummary called with 0 ID when non-succeeded",
+      "agent": 3,
+      "reason": "Invalid finding. The hook has an enabled guard: !!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0. When ID is 0, enabled is false and React Query does not execute the query. No request is made."
+    }
+  ],
+  "user_directed_overrides": [
+    "Spec section 4 route gating overridden: unconditional Route, static possiblePaths, no FeatureFlipper in JobApplicationContainer",
+    "Spec section 6 onOpen URL: spec says match.url/ai but match.url at /overview route includes /overview. Implementation correctly strips last segment."
+  ],
+  "spec_coverage": {
+    "total_requirements": 52,
+    "implemented": 52,
+    "missing": 0,
+    "deviating": 0,
+    "details": [
+      "All requirements verified across 5 agents",
+      "2 false positives dismissed with reasoning",
+      "Run 5 overflow:hidden fix verified correct by Agent 1"
+    ]
+  }
+}

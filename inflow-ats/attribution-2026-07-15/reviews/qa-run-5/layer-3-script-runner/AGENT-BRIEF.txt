@@ -1,0 +1,73 @@
+Layer 3 (Script Runner) — Shared Agent Brief — qa-run-5
+
+Feature: UTM capture + funnel events (attribution), inflow-ats. HEAD fc3f047f9, branch attribution-work-qa.
+Your job: verify the feature's BACKEND BUSINESS LOGIC actually works at runtime by writing temporary Ruby scripts and running them against the live test-env Rails server + database.
+
+Spec (intent): /Users/jessica/claude-hub/inflow-ats/attribution-2026-07-15/SPEC.md
+Repo: /Users/jessica/wrk/wrk-corp/inflow-ats
+
+=== TOOLS ===
+
+1) QA harness (data seeding + cleanup over HTTP) — run from anywhere:
+   - Cleanup (wipes DB via DELETE /cypress/cleanup, test-env gated):
+     python -m qa_harness cleanup --config ~/claude-hub/inflow-ats/qa-config.yml
+   - Seed a plan:
+     python -m qa_harness seed --plan /Users/jessica/claude-hub/inflow-ats/attribution-2026-07-15/reviews/seed-plans/default-user-and-org.json --config ~/claude-hub/inflow-ats/qa-config.yml
+     (default-user-and-org.json creates user rezu.may@wrkhq.com + org Acme Inc, active paid sub, all standard flags.
+      clean-slate-flags-only.json enables flags only, no user/org.)
+
+2) Script runner (test_frr = `RAILS_ENV=test foreman run rails runner`). CRITICAL invocation form —
+   you MUST use a login shell AND cd into the repo first, or rvm loads the wrong gemset and rails runner
+   dies with `uninitialized constant ActiveSupport::LoggerThreadSafeLevel::Logger`:
+     bash -lic 'cd /Users/jessica/wrk/wrk-corp/inflow-ats && test_frr /tmp/YOUR_SCRIPT.rb'
+   Write scripts to /tmp ONLY, extension .rb. The script executes in RAILS_ENV=test against the same DB the
+   seed/cleanup endpoints touch. (Equivalent fallback if needed: bash -lic 'cd <repo> && RAILS_ENV=test bundle exec rails runner /tmp/x.rb'.)
+
+=== SERVER / DB SAFETY (absolute) ===
+- The server + sidekiq are ALREADY RUNNING (started by the orchestrator). Do NOT start or stop them.
+- RAILS_ENV=test ONLY. Never set DATABASE_URL. Never edit .env. Never run psql. Never run rails db:reset/setup/schema:load/drop.
+- Wipe the DB ONLY via `qa_harness cleanup` (HTTP DELETE /cypress/cleanup). Seed ONLY via qa_harness seed / /cypress/* endpoints.
+- Writing data inside a test_frr script (User.create!, from_omniauth, etc.) is allowed — that IS rails runner in test env.
+- Do not kill any process.
+
+=== WHAT TO VERIFY (attribution backend logic) ===
+The four attribution columns on users AND organizations: utm_source (string), utm_campaign (string),
+utm_data (jsonb), internal_ref (string). Stored RAW as sent (no downcase, no mapping). Absent => nil column
+(utm_data nil, NEVER {}). Written at row CREATION only; existing users/orgs never updated on later login.
+
+Key code under test:
+- User.from_omniauth(auth:, created_via:, partner_source: nil, utm_source: nil, utm_campaign: nil, utm_data: nil, internal_ref: nil)
+  — assigns the 4 utm values INSIDE its first_or_create block (creation-time only); partner_source is &.downcase'd, utm values are raw.
+- Api::V1::RegistrationsController#create (POST /sign_up) — sign_up_params permits the 4 (utm_data: {}); mass-assigned to the new User.
+- Api::V1::RegistrationsController#magic_create (POST /magic_login) — merges the 4 into user_params in both branches; new-user branch only.
+    * Every magic_create request MUST include login_intent: 'hire' — without it the connect branch evaluates organization.id on nil and 500s (pre-existing, out of scope).
+- Api::V1::OrganizationsController#create — copies the 4 from current_user onto the new Organization (NOT from request body).
+
+You may exercise logic three ways: (a) call model/class methods directly in a test_frr script (best for from_omniauth
+and jsonb round-trips); (b) POST to the HTTP endpoints (curl to http://app.lvh.me:5007) then verify the DB via a
+test_frr script; (c) build ActionController::Parameters and inspect persistence. Prefer (a)/(c) for determinism.
+
+Frontend sanitizer (sanitizeTrackingParams in utils.js) is JS — NOT exercisable via test_frr. Do not try; it is out of Layer 3 scope (covered by Layer 2).
+
+=== SEVERITY ===
+- BLOCKER: feature broken/unusable at runtime. HIGH: wrong behavior / lost data / incorrect result this feature introduced.
+- MED: pre-existing; spec-compliant-but-imperfect; out of scope; needs a design decision. LOW: nitpick.
+- Spec-implementation mismatch is HIGH+, never MED.
+
+=== SETTLED RULINGS — do NOT re-report (full text in reviews/QA-MED-FINDINGS.md) ===
+- M1: SSO session[:oauth_tracking] ride untyped/uncapped server-side; cookie-overflow 500 on crafted POSTs acceptable.
+- M2: pre-existing magic_create connect-branch nil crash (organization.id on nil) when login_intent defaults to 'connect'. Route around with login_intent:'hire'.
+- M3: bracket-containing utm_data keys can 400 the SSO POST. Acceptable.
+- M4: resolved by D18/D19 at this HEAD.
+- Known baselines: ~148 pre-existing full-suite RSpec failures (AI-credit/AI-summary areas); utils.test.js deliberately absent (no Jest); pre-existing `ap` debug lines in from_omniauth.
+
+=== WORKFLOW ===
+1. Cleanup, then seed the plan you need (usually default-user-and-org.json). This gives you a clean DB you own for your run.
+2. Write verification scripts to /tmp and run via the test_frr login-shell form above.
+3. Verify return values, DB state (reload records), validations, edge cases (absent params -> nil not {}, jsonb string-key round-trip, existing-record-not-modified, raw-vs-downcase).
+4. Review any prior-round findings you are given: reproduce and validate or invalidate each.
+
+=== OUTPUT ===
+Write JSON to the output path in your dispatch message:
+{"layer":"script-runner","round":<R>,"run":5,"agent_index":<N>,"findings":[{"id":"l3-r<R>-a<N>-F1","severity":"HIGH","title":"...","file":"...","evidence":"what your script did + the actual output proving it","recommendation":"..."}],"notes":"scripts run + concrete outputs observed (paste the key printed values)"}
+An empty findings array is legitimate ONLY if notes shows real runtime scrutiny — the scenarios you ran and the actual values printed.

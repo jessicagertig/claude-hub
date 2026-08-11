@@ -1,0 +1,39 @@
+{
+  "layer": "script-runner",
+  "run": "qa-run-3",
+  "round": 2,
+  "agents_dispatched": 15,
+  "agents_reporting": 15,
+  "execution_model": "additive-only isolation (own uniquely-suffixed orgs; no cleanup; global flag read-only) in parallel batches of 4; fresh reshuffled team plus new adversarial angles (rescue/exhaustion broadcast wiring, perform success-path broadcast, cross-org scoping, double-POST race, real-credit precondition path, whitespace/case message sensitivity, jsonb key pass-through, extracted_at source)",
+  "high_plus_count": 0,
+  "med_count": 3,
+  "low_count": 0,
+  "findings": [
+    {
+      "id": "l3-r2-a3-001",
+      "severity": "MED",
+      "title": "JobPolicy#is_org_admin? is not record-org-scoped; org isolation for the criteria endpoints rests entirely on the controller's current_organization.jobs.where scoping",
+      "file": "app/policies/job_policy.rb",
+      "classification": "report-only (spec-compliant, not a feature bug)",
+      "detail": "JobPolicy.new(adminA, jobB).update?/#show? return true because is_org_admin? reads the caller's own current_organization_user, ignoring the record's org. The controller's exists(current_organization.jobs.where(id:)) returns 'no job found' (422) before policy runs for cross-org ids, so an attacker cannot read/regenerate another org's criteria. SPEC §9 line 474 explicitly documents org scoping via the controller lookup. Pre-existing shared-infra property; do NOT change policy/controller infra (pipeline rules 20/23)."
+    },
+    {
+      "id": "l3-r2-a4-001",
+      "severity": "MED",
+      "title": "latest_ai_job_criteria / latest_succeeded_ai_job_criteria order by created_at with no secondary sort key",
+      "file": "app/models/job.rb",
+      "classification": "report-only (backend edge case; matches SPEC verbatim; no defect observed)",
+      "detail": "order(created_at: :desc).first has no tie-breaker, so an exact-microsecond created_at tie is not SQL-guaranteed to pick a specific row. In practice rows are milliseconds apart (double-POST test showed 3.4ms) and the query never raised or corrupted state across 20 probes. Practically unreachable; SPEC §3/§4.3 specify this ordering. Do not fix without owner direction."
+    },
+    {
+      "id": "l3-r2-a14-001",
+      "severity": "MED",
+      "title": "Canonical zero-criteria guard message is a triplicated inline string literal (no shared constant)",
+      "file": "app/interactors/validate_ai_summary_generation.rb, validate_auto_ai_summary_generation.rb, queue_bulk_ai_summary_jobs.rb",
+      "classification": "report-only (spec-compliant; matches existing inline-literal pattern in these interactors)",
+      "detail": "The 123-byte message is byte-identical across all 3 validators today (verified uniq == [canonical]) but nothing enforces equality on future edits. SPEC §6.2 specifies inline literals and the surrounding interactors use inline-literal errors throughout, so this matches convention. Latent drift risk only."
+    }
+  ],
+  "coverage_note": "Reshuffled re-confirmation of every round-1 area (guards x4, gating x2, predicates, auth, broadcast, serializer, bulk claim-row, constants, false-positive, controller, cross-cutting) PLUS 4 new adversarial angles. All PASS, all falsifiable. No real AI/Textract calls (queue_adapter=:test per script; extractors stubbed).",
+  "verdict": "CLEAN (round 2 of 2). Two consecutive clean rounds (round-1 + round-2, 0 HIGH+ each) -> LAYER 3 CONVERGED -> advance to Layer 4."
+}

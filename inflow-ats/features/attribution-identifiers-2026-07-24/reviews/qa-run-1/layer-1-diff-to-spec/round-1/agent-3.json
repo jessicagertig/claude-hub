@@ -1,0 +1,32 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 3,
+  "focus": "fbclid chain",
+  "findings": [
+    {
+      "id": "l1-a3-001",
+      "type": "VIOLATION",
+      "title": "Valueless `?fbclid` and empty `?fbclid=` set trackingParams.fbclid to null/\"\" instead of leaving the field absent; `?fbclid=` persists \"\" to users.fbclid",
+      "spec_requirement": "SPEC §5.1: \"New output fields, all absent when their source is absent (never `null`/`\\\"\\\"` fabrication — repo rule 10)\"; SPEC §8 constraint 1: \"Nil for absent, everywhere\"; §5.1 cookie rule treats a present-but-empty value as absent. AMBIGUITY NOTED: §4's fbclid row says \"the same handling `adct` gets from `sanitizeTrackingValue`\" — the existing adct guard (`parsedParams.adct !== undefined`, utils.js:88-90) produces exactly this null/\"\" behavior, so the implementation is analog-exact; and §4 Notes scope the non-empty-string \"present\" test to the conditional rules (fbc construction, li_fat_id/gclid fallbacks) only, stating no consequence for fbclid storage itself. The spec is internally in tension; needs a ruling.",
+      "evidence": "app/javascript/shared/lib/utils.js:119-125 (committed a0d59115d): `if (parsedParams.fbclid !== undefined) { trackingParams.fbclid = sanitizeTrackingValue(parsedParams.fbclid, ATTRIBUTION_IDENTIFIER_MAX_LENGTH); }`. Empirically verified with the repo's query-string v6.1.0: `parse('?fbclid')` → `{fbclid: null}` and `parse('?fbclid=')` → `{fbclid: \"\"}` — both pass the `!== undefined` guard. `sanitizeTrackingValue(null)` returns null (isString fails); `sanitizeTrackingValue(\"\")` returns \"\". Downstream for `?fbclid=`: AuthForm.tsx:88 / SignupForm.tsx:74 send `fbclid: \"\"` → useSession.ts variables → apiPost/allKeysToSnake (values untransformed) → sign_up_params[:fbclid] == \"\" → magic_create/#create persist users.fbclid = \"\" (no validation, no server-side scrubbing), later copied to organizations.fbclid by organizations_controller.rb:39. Downstream for `?fbclid`: JSON null → Rails nil → column nil (DB end-state matches absent; only the helper output contract is violated). The SSO path is unaffected (GoogleSSOButton.tsx:101 guard `typeof fbclid === \"string\" && fbclid.length > 0` suppresses the hidden input). The fbc construction correctly excludes both cases (utils.js:135-143).",
+      "recommendation": "Either (a) guard fbclid storage on the first-occurrence value being a non-empty string (the §4-Notes present test: select first-of-array, then `typeof x === \"string\" && x.length > 0` before assigning — the `fbclidParamValue` local already computed for fbc at utils.js:135 can be reused), making `?fbclid` and `?fbclid=` produce an absent field; or (b) obtain a ruling that analog-exact adct behavior is intended and record it in the spec. Material persistence difference is only the `?fbclid=` → `\"\"` column case; the `?fbclid` → null case violates the §5.1 output contract but ends nil in the DB."
+    }
+  ],
+  "chain_verified": [
+    "1. sanitizeTrackingParams capture rule — FAIL (finding l1-a3-001). Sub-checks: URL-param source (not cookie) PASS (utils.js:119-125 reads parsedParams.fbclid only); repeated-param first occurrence PASS (sanitizeTrackingValue value[0] on array, utils.js:33; qs v6.1.0 verified to build ['a','b'] in occurrence order for ?fbclid=a&fbclid=b); rule-28 alphabetization N/A-PASS (fbclid logic needs no cross-key order; keysInOccurrenceOrder untouched); 1024-code-unit surrogate-safe cap PASS (ATTRIBUTION_IDENTIFIER_MAX_LENGTH=1024, maxLength param, trailing lone-high-surrogate drop, utils.js:32-41); otherwise-unmodified PASS; valueless `?fbclid`/`?fbclid=` → absent FAIL (stored null/\"\", finding l1-a3-001)",
+    "2. AuthForm.tsx — PASS (fbclid: trackingParams.fbclid in magicLink payload line 88; fbclid={trackingParams.fbclid} GoogleSSOButton prop line 147)",
+    "3. SignupForm.tsx — PASS (fbclid: trackingParams.fbclid in register payload line 74)",
+    "4. GoogleSSOButton.tsx — PASS (fbclid?: string prop line 20; hidden input name=\"fbclid\" under typeof===\"string\" && length>0 guard lines 101-102)",
+    "5. useSession.ts — PASS (destructured in register line ~42 and magicLink line ~91; magicLink inline type fbclid?: string | null; in BOTH variables objects; no skipKeysToSnake on register/magicLink; allKeysToSnake uses lodash snakeCase (structure.js:2,102-104) and snakeCase('fbclid') === 'fbclid' verified empirically → wire name fbclid)",
+    "6. sign_up_params — PASS (:fbclid plain scalar permit before trailing utm_data: {}, registrations_controller.rb:328)",
+    "7. #magic_create — PASS (fbclid: sign_up_params[:fbclid] in BOTH branches, registrations_controller.rb:104 and 126)",
+    "8. omniauth.rb allowed_keys — PASS (fbclid present, omniauth.rb:15)",
+    "9. User.from_omniauth — PASS (nil-defaulted fbclid: keyword user.rb:381; omniauth_user.fbclid = fbclid assigned inside the first_or_create block only, before skip_confirmation!; nothing post-block touches it)",
+    "10. Callbacks controller — PASS (fbclid: merged_tracking['fbclid'], omniauth_callbacks_controller.rb:33)",
+    "11. OrganizationsController#create — PASS (@organization.fbclid = current_user.fbclid in the copy block, organizations_controller.rb:39; never from request params)",
+    "12. Migrations — PASS (add_column :users, :fbclid, :string in 20260724183710; add_column :organizations, :fbclid, :string in 20260724183711; bare add_column → nullable, no default, no index; schema.rb at a0d59115d shows fbclid on both tables, lines 1097/1300)",
+    "13. Four extended spec files — PASS (registrations_controller_spec: long_fbclid = 'fb' + 'x'*300 (>255) persisted intact in BOTH magic_create and #create per §10 item 1, all-eight/none-nil/existing-user-inert cases extended; user_from_omniauth_spec: persisted raw, omitted→nil, existing user untouched; omniauth_callbacks_controller_spec: session-seeded fbclid received by from_omniauth, nil-example extended; organizations_controller_spec: fbclid copied from current_user, nils→nils)",
+    "fbc interaction — PASS (fbc construction uses first-of-array fbclidParamValue with the non-empty-string guard, utils.js:135-143; uncapped fbclid feeds the construction and the cap applies to the final constructed fbc per §5.1)"
+  ]
+}

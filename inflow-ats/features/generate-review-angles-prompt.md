@@ -105,6 +105,17 @@ The review agent identifies all consumers of modified code and verifies they are
 
 ### Full-stack analog completeness
 [If analog exists] The review agent verifies the new feature has a corresponding piece for every layer of the analog pipeline. A missing layer is a BLOCKER.
+
+### Analog structural matching
+[If analog exists] The review agent greps for analog files, reads their parameter interfaces, retry/exhaustion patterns, callback patterns, and error handling shapes, and diffs them against the new code. Layer completeness ("it has a controller") without structural matching ("the controller accepts the same parameter shape") is insufficient. A structural mismatch is BLOCKER.
+
+What to compare:
+- **Controller parameter interfaces:** if existing bulk operations accept `job_id` + `hiring_stage_id` + `included/excluded_ids` with server-side resolution, the new bulk operation must too. Do not accept raw ID arrays resolved client-side when the analog resolves server-side.
+- **Job retry/exhaustion patterns:** if other jobs in the same domain use exhaustion blocks on `retry_on`, the new job must too. Do not skip the exhaustion block when analogs have one.
+- **Callback patterns:** if analogous models use `after_commit` callbacks to trigger downstream work, the new model should follow the same pattern.
+- **Error handling shapes:** if analogs rescue specific error classes and set status before re-raising, the new code must follow the same rescue/status/raise sequence.
+
+Real failures this would have caught: (1) `BulkAiJobApplicationSummariesController` accepted raw `job_application_ids` from the frontend instead of following the `job_id` + `hiring_stage_id` + `included/excluded` pattern used by bulk move and bulk message controllers. Passed a full QA round unflagged. (2) `GenerateAiJobApplicationSummaryJob` lacked an exhaustion block on `retry_on` despite `GetResumeTextFromTextractJob` and `BulkGenerateAiSummariesJob` both having one. Users saw multiple failure toasts before retries exhausted.
 ```
 
 ## After you finish

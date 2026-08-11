@@ -1,0 +1,27 @@
+{
+  "reviewer": "agent-2",
+  "round": 2,
+  "layer": "layer-2-code-correctness",
+  "file": "PlatoTab.tsx (first half: imports, props, hooks, state machine, header bar, non-succeeded states)",
+  "findings": [
+    {
+      "id": "H1",
+      "severity": "HIGH",
+      "title": "Credit loading guard missing: 'Buy more credits' shown instead of generate button during credit balance load",
+      "file": "/Users/jessica/wrk/wrk-corp/inflow-ats.ai-display/app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "lines": [46, 83, 96, 146, 362],
+      "description": "The analog `AiSummaryState.tsx` (line 58) guards the out-of-credits branch with `!isLoadingCredits && totalRemaining <= 0`. PlatoTab omits this guard. During the `useOrganizationAiCreditBalance` fetch, `creditData` is `undefined`, so `creditData?.totalCreditsRemaining || 0` evaluates to 0. This makes `totalRemaining === 0` while `isLoadingCredits === true`. Every credit action branch — `renderCreditsAction` (line 83), the header bar Regenerate button (line 362), and the stale banner regenerate button (line 146) — evaluates `totalRemaining > 0` as false and falls through to show 'Buy more credits' (or the admin billing link). Users with credits see the wrong action during the load window. The spec explicitly says 'Follow the pattern from AiSummaryState.tsx lines 49-108.' The analog shows the generate button (disabled/loading) during load; PlatoTab shows 'Buy more credits' instead.",
+      "fix": "Add `!isLoadingCredits` guard before the out-of-credits branch in all three call sites. Easiest fix: change `if (totalRemaining > 0)` in `renderCreditsAction` to `if (isLoadingCredits || totalRemaining > 0)` so the generate button (already disabled via `buttonLoading`) is shown during load. Apply the same guard to the header bar ternary and the stale banner ternary. Alternatively, match the analog's exact structure: check `!isLoadingCredits && totalRemaining <= 0` for the out-of-credits path, and fall through to the generate/regenerate button for both loading and credits-available states.",
+      "traced_chain": "AiSummaryState.tsx:58 (analog guard) → PlatoTab.tsx:46 (totalRemaining computation, no loading guard) → PlatoTab.tsx:83 (renderCreditsAction, no loading guard) → PlatoTab.tsx:362 (header bar, no loading guard) → PlatoTab.tsx:146 (stale banner, no loading guard)"
+    }
+  ],
+  "no_findings_notes": [
+    "Hooks called at top level only — no violations of Rules of Hooks.",
+    "State machine order in renderBody (lines 332-350) matches spec table exactly.",
+    "useAiJobApplicationSummary call (lines 40-43): the || 0 fallback is a known-evaluated non-issue per the review brief.",
+    "renderGenerating, renderProcessing, renderFailed, renderEmpty, renderNoResume all match spec copy and structure.",
+    "Import of useGenerateAiSummary and useAiJobApplicationSummary both from the correct file (useAiJobApplicationSummary.ts confirmed).",
+    "Credit hint copy: 'Uses 1 credit · N remaining' for Generate, 'Uses 1 credit' for Try again — matches spec exactly.",
+    "handleGenerate error path uses correct error message chain: error?.data?.errors?.general?.[0] || fallback — matches analog."
+  ]
+}

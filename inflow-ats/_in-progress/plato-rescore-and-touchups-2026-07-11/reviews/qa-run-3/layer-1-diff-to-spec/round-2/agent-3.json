@@ -1,0 +1,37 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 3,
+  "focus": "Item 2 backend — SPEC 2.1 (interactor gate), SPEC 2.2 (controller param boundary), SPEC 2.8 (interactor spec + controller spec, ghost-test audit, fix commits 970b0f4b2 and cca9222a5 minimality)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "2.1 gate condition at create_ai_summary_generation.rb:36 character-identical to create_bulk_ai_summary_generation.rb:45; nothing else changed in the file",
+      "2.2 single params method ai_job_application_summary_params (require-then-require); attribute set on job_application before CreateAiSummaryGeneration.call; no begin block",
+      "2.8 spec/interactors/create_ai_summary_generation_spec.rb: true path builds new pending summary + enqueues GenerateAiJobApplicationSummaryJob; false path returns existing + enqueues nothing + count invariant; validation_result double stubs textract_pending: false; assertion pairs match create_bulk_ai_summary_generation_spec.rb:96-112",
+      "2.8 spec/controllers/api/v1/ai_job_application_summaries_controller_spec.rb: rejection test posts non-empty payload missing only rescore_requested; threading test falsifiable; stubs match production shapes",
+      "Fix commit 970b0f4b2 present, minimal, makes rejection test genuinely falsifiable",
+      "Fix commit cca9222a5 present, minimal, preserves prior assertions, matches bulk analog assertion pair",
+      "Ghost-test audit of all four new examples (core rule 26)"
+    ],
+    "implemented": [
+      "2.1 gate condition at create_ai_summary_generation.rb:36 character-identical to create_bulk_ai_summary_generation.rb:45; nothing else changed in the file",
+      "2.2 single params method ai_job_application_summary_params (require-then-require); attribute set on job_application before CreateAiSummaryGeneration.call; no begin block",
+      "2.8 spec/interactors/create_ai_summary_generation_spec.rb: true path builds new pending summary + enqueues GenerateAiJobApplicationSummaryJob; false path returns existing + enqueues nothing + count invariant; validation_result double stubs textract_pending: false; assertion pairs match create_bulk_ai_summary_generation_spec.rb:96-112",
+      "2.8 spec/controllers/api/v1/ai_job_application_summaries_controller_spec.rb: rejection test posts non-empty payload missing only rescore_requested; threading test falsifiable; stubs match production shapes",
+      "Fix commit 970b0f4b2 present, minimal, makes rejection test genuinely falsifiable",
+      "Fix commit cca9222a5 present, minimal, preserves prior assertions, matches bulk analog assertion pair",
+      "Ghost-test audit of all four new examples (core rule 26)"
+    ],
+    "missing": []
+  },
+  "verification_notes": {
+    "committed_state": "Reviewed committed code at HEAD (cca9222a5) per rule 15; git status --porcelain clean for all four focus files; diff hunk counts: interactor 1 hunk (line 36 only), controller 2 hunks (attribute assignment + private params method), both trace to SPEC 2.2.",
+    "spec_2_1": "HEAD create_ai_summary_generation.rb:36 reads `if active_ai_summary && !job_application.ai_summary_rescore_requested` — byte-identical to the bulk gate line in create_bulk_ai_summary_generation.rb (`if active_ai_summary && !job_application.ai_summary_rescore_requested`). The single hunk in feature-diff-run3.patch changes only that line. Per guardrail 1, the bulk interactor's staleness-refresh block and its lack of a textract_pending branch were NOT compared; single-send keeps its own pre-existing behavior (textract_pending branch at :41, enqueue at :65-69) untouched by the diff.",
+    "spec_2_2": "Controller HEAD: line 17 sets job_application.ai_summary_rescore_requested = ai_job_application_summary_params BEFORE CreateAiSummaryGeneration.call at line 19 (after the ValidateAiSummaryGeneration success guard, matching the bulk placement of attribute-set-just-before-interactor). Private method at :43-45 is the controller's only params method: params.require(:ai_job_application_summary).require(:rescore_requested). No begin/rescue block anywhere in the controller. JobApplication has `attribute :ai_summary_rescore_requested, :boolean, default: false` (job_application.rb:11), so string params cast correctly.",
+    "spec_2_8_interactor_spec": "True path: asserts result.success?, result.ai_summary.id != existing.id, status 'pending', existing stays succeeded/stale-false, wrapped in expect{}.to have_enqueued_job(GenerateAiJobApplicationSummaryJob) — the bulk analog's assertion set (create_bulk_ai_summary_generation_spec.rb:89-94) plus the enqueue assertion SPEC 2.8 explicitly requires for the single-send. False path: inner expect{result.ai_summary.id == existing.id}.not_to have_enqueued_job wrapped in outer expect{}.not_to change{job_application.ai_job_application_summaries.count} — matches the bulk analog's count-invariant pair (bulk spec :104-112) plus the SPEC-required enqueues-nothing assertion. validation_result double stubs textract_pending: false as SPEC 2.8 mandates. Falsifiability: reverting the 2.1 gate makes the true path fail (ai_summary.id would equal existing.id, no job enqueued); removing the gate entirely makes the false path fail (count changes, job enqueued). Not ghost tests. Helpers (create_credit_test_organization etc.) exist in spec/support/ai_credits_test_helpers.rb.",
+    "spec_2_8_controller_spec": "Rejection test posts ai_job_application_summary: { irrelevant: 'x' } — outer require(:ai_job_application_summary) passes (non-empty), only the inner .require(:rescore_requested) raises ActionController::ParameterMissing; if the inner require were removed the request would proceed and the raise_error expectation would fail. Genuinely falsifiable. Threading test: captures the job_application argument passed to CreateAiSummaryGeneration and asserts ai_summary_rescore_requested is true — removing the controller's line-17 assignment leaves the boolean attribute at its default false, failing the test. Stubs match production shapes: ValidateAiSummaryGeneration double responds to success? (the only method the controller reads before passing it through); CreateAiSummaryGeneration stub receives the positional context hash (interactor .call signature) and returns success? + a real AiJobApplicationSummary record so render_one/serializer operate on the production type; in the rejection test CreateAiSummaryGeneration is unstubbed but unreachable because the params method raises first — correct, since that ordering is what the test targets.",
+    "fix_970b0f4b2": "git show: 1 file, +1/-1 — only the rejection test's posted payload changed from {} to { irrelevant: 'x' }. Present in committed diff (blob da3ad72ea matches feature-diff-run3.patch). Minimal and correct.",
+    "fix_cca9222a5": "git show: 1 file, +5/-3 — only the false-path example, wrapping the existing expect{}.not_to have_enqueued_job in an outer expect{}.not_to change{...count} (nested form; RSpec NegationUnsupportedError precludes .not_to matcher.and matcher). Prior assertions preserved verbatim (result.ai_summary.id eq existing.id, not_to have_enqueued_job). Resulting example matches the bulk analog's count-invariant assertion pair. Minimal and correct."
+  }
+}

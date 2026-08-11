@@ -1,0 +1,14 @@
+{
+  "agent": 8,
+  "round": 1,
+  "focus": "Dead code cleanup + RSpec tests",
+  "specs_checked": ["S20", "Phase E tests"],
+  "findings": [],
+  "summary": {
+    "S20_status": "PASS",
+    "S20_detail": "AiJobApplicationSummaryFeedItem.tsx (443 lines) is deleted. Grep of app/ source directory confirms zero remaining imports or references. Matches in public/packs-test/ (compiled webpack bundles) and node_modules/.cache/ (babel cache) are build artifacts, not source references.",
+    "tests_status": "PASS",
+    "tests_detail": "All four plan-required test cases are present and behaviorally correct: (1) Positive broadcast test iterates described_class::BROADCAST_STATUSES dynamically (7 statuses: textract_processing, extracting, summarizing, scoring, integrating, succeeded, failed), each transitioning from pending and asserting JobChannel.broadcast_to with correct event and payload. (2) Negative non-broadcast test covers awaiting_job_criteria and retrying with not_to receive. (3) Status-unchanged test updates stale (non-status attribute) after setting extracting, correctly testing status_changed? guard. (4) Create test creates a new record, correctly testing that before_update callback does not fire on create. The broadcast_status_change method (line 78-89 of ai_job_application_summary.rb) uses before_update + status_changed? + BROADCAST_STATUSES.include?(status) guards, all of which are correctly exercised by these tests. The use of create!/update! in specs is permitted per CLAUDE.md rule 10 exception.",
+    "redundant_guard_note": "Line 39 (summary.update!(status: :pending) if summary.status != 'pending') is technically redundant because RSpec let! re-evaluates per example, so summary always starts at :pending. Not a bug -- harmless defensive code."
+  }
+}

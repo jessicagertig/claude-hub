@@ -1,0 +1,129 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience using Go to build custom controllers (Lineten), but the scope of building full PaaS-level APIs and orchestrator logic is not explicitly detailed as their primary focus."
+    },
+    {
+      "criterion_text": "Work closely with our infrastructure team to integrate with Kubernetes (clusters, deployments, autoscaling) and Terraform (infrastructure as code) across AWS, GCP, Azure and other clouds.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience with Kubernetes and Terraform across AWS and other environments (Civo, nClouds, Lineten)."
+    },
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has specific experience with multi-region/multi-cloud deployments for customers in consultant roles at nClouds and Lineten."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate demonstrates strong experience with CI/CD and observability, though evidence of specific collaboration with UX teams or building developer-facing CLI tools is limited."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume highlights significant work in SRE roles improving platform reliability, observability, and incident response metrics."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "While the candidate has senior experience, there is no explicit mention of mentoring or defining organizational best practices."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate lists Go as a skill and mentions building custom Golang controllers, but the depth of building large-scale production backend systems is not fully detailed compared to their infrastructure work."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate holds multiple CKA/CKAD/CKS certifications and has extensive professional experience with cluster management, storage, and networking."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Terraform and experience using it at nClouds and Lineten."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists AWS and Azure in their skills section and provides evidence of managing AWS EKS clusters."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate worked at Civo (a PaaS provider) on Managed K3s and DBaaS, demonstrating direct experience with the target domain."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience with CI/CD tools (ArgoCD, GitHub Actions) and integration work."
+    },
+    {
+      "criterion_text": "Excellent communication skills",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "While the candidate held consultant roles requiring client interaction, the resume does not provide explicit evidence of excellent communication skills beyond standard professional expectations."
+    },
+    {
+      "criterion_text": "Ability to work cross functionally",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate mentions collaborating on platform observability and resource optimization, which implies cross-functional work, though it is not explicitly detailed."
+    },
+    {
+      "criterion_text": "Ability to thrive within a fast moving product engineering environment",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has worked in multiple SRE/Consulting roles, which typically require high speed and adaptability."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No specific evidence of publishing or integrating software directly into cloud marketplaces is mentioned."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has clear experience with multi-cloud environments (AWS, Civo, etc.) and customer-facing consulting engagements."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly references designing multi-region clusters and multi-tenant AWS EKS platforms."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate mentions working with K3s, Mayastor, and other open-source/distributed systems."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists Prometheus and Grafana as core skills and documents implementation experience with these tools."
+    }
+  ],
+  "computed_score": {
+    "points": 81.0,
+    "max": 112,
+    "percentage": 72.3
+  }
+}

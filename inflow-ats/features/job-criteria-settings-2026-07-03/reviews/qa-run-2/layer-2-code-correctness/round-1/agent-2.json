@@ -1,0 +1,42 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 2,
+  "focus_area": "Backend models — associations, callbacks, latest-row lookup methods, gating/broadcast logic, status/enum handling, denormalized-column integrity",
+  "files_reviewed": [
+    "app/models/ai_job_criteria.rb",
+    "app/models/job.rb (criteria additions: latest_ai_job_criteria, latest_succeeded_ai_job_criteria, zero_criteria_extraction_failure?, extract_job_criteria_immediately, extract_job_criteria_if_needed, ai_job_criteria association)",
+    "app/models/textract_result.rb (zero-criteria funnel guard)",
+    "app/jobs/extract_job_criteria_job.rb (broadcast_completion, perform, retry_on exhaustion)"
+  ],
+  "trace": "extract_job_criteria_job.rb -> ExtractCriteria#extract -> AiJobCriteria(status/error_message, ZERO_CRITERIA_* constants) -> zero_criteria_failure?; job.rb#extract_job_criteria_immediately -> ExtractJobCriteriaJob.perform_later(id, requesting_id) -> perform(id, requesting_id=nil); textract_result.rb#generate_ai_summary_with_credit_flow -> job.zero_criteria_extraction_failure? -> latest_ai_job_criteria&.zero_criteria_failure?; ai_job_criteria.rb#resume_waiting_summaries -> job.ai_job_application_summaries(through job_applications) -> GenerateAiJobApplicationSummaryJob; analogs: generate_ai_job_application_summary_job.rb, ai_job_application_summary.rb, ai_job_application_summary_status.rb, JobApplication#latest_ai_job_application_summary; score_job_application.rb:43 writes ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE with status:failed; CustomErrorAiSummary < StandardError; JobApplication belongs_to :job (required).",
+  "findings": [
+    {
+      "id": "l2-a2-001",
+      "severity": "LOW",
+      "title": "perform StandardError rescue can overwrite a terminal status/error_message set by ExtractCriteria and re-invoke broadcast_completion",
+      "file": "app/jobs/extract_job_criteria_job.rb",
+      "line": 28,
+      "description": "ExtractCriteria#extract catches its own JSON::ParserError/StandardError, sets the row to :failed with a specific error_message, and returns normally (extract_criteria.rb:148-156). Control then returns to perform which calls broadcast_completion (line 23). The entire perform body is wrapped by `rescue StandardError => e` (line 28). If broadcast_completion itself raises (e.g., a GlobalChannel/ActionCable failure) after a successful or already-failed extraction, this rescue re-reads the row and calls `update_columns(status: :failed, error_message: e&.message)` (line 33), clobbering the real extraction outcome/message (and thus potentially changing zero_criteria_failure? classification), then calls broadcast_completion again (line 34) which may raise a second time unhandled. This is structurally identical to the analog (generate_ai_job_application_summary_job.rb:39-45) and only triggers on a broadcast-layer exception, so it is an accepted edge case, not a feature defect — reported for completeness.",
+      "recommendation": "No change required (matches the adjudicated analog). If ever hardened, wrap the broadcast call in its own rescue so a broadcast failure cannot rewrite a completed row's status/error_message."
+    },
+    {
+      "id": "l2-a2-002",
+      "severity": "LOW",
+      "title": "Frontend in-flight spinner is never resolved when ExtractCriteria returns early without reaching a terminal status",
+      "file": "app/jobs/extract_job_criteria_job.rb",
+      "line": 23,
+      "description": "On the manual (requesting_organization_user_id present) path, if ExtractCriteria#extract returns early before writing a terminal status — e.g. `return unless @organization` (extract_criteria.rb:25-26) leaves the row `pending` — then broadcast_completion's `return unless ai_job_criteria.status_succeeded? || ai_job_criteria.status_failed?` (line 49) suppresses the broadcast. The completion event never fires, the payload never re-invalidates, and the frontend Regenerate button spins until a manual reload. These are degenerate states (a job with no organization) and the analog behaves identically (generate_ai_job_application_summary_job.rb:62). Reported for completeness; not a realistic user workflow.",
+      "recommendation": "No change required (matches analog). Would only matter if a job could legitimately reach extraction with a nil organization."
+    },
+    {
+      "id": "l2-a2-003",
+      "severity": "LOW",
+      "title": "extract_job_criteria_immediately issues two identical latest_ai_job_criteria queries",
+      "file": "app/models/job.rb",
+      "line": 732,
+      "description": "`latest_ai_job_criteria` (job.rb:688, `ai_job_criteria.order(created_at: :desc).first`) is invoked twice in succession (lines 732 and 733) for the in_progress and retrying guards, firing two identical ORDER BY created_at DESC LIMIT 1 queries per call. Behavior is correct; this is a minor redundancy consistent with the original DECISIONS.md code block. Ordering matches the analog `has_one :latest_ai_job_application_summary, -> { order(created_at: :desc) }` (job_application.rb:32); with created_at precision:6 (schema.rb:187) a tie is effectively impossible for two sequential saves, so non-determinism is not a practical concern.",
+      "recommendation": "Optional: memoize the latest row into a local before the two guards. Not required."
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 2,
+  "findings": [
+    {
+      "id": "l1-r2-001",
+      "type": "VIOLATION",
+      "title": "useAiJobApplicationSummary still fires for non-succeeded statuses when summary exists",
+      "spec_requirement": "Spec 'AI summary data fetching': 'fetch the full data only when status is succeeded and the rich layout needs rendering'",
+      "evidence": "PlatoTab.tsx lines 38-41: useAiJobApplicationSummary is called with aiSummary?.id whenever a summary exists. When status is pending/in_progress/extracted/textract_processing/failed, the query fires with a valid ID, making an unnecessary API call. The QA Run 1 fix added an enabled guard for id=0 but did not restrict to succeeded-only.",
+      "recommendation": "Change the hook call to pass aiJobApplicationSummaryId: (status === 'succeeded' && aiSummary?.id) || 0. The enabled guard in the hook will prevent the fetch when id is 0.",
+      "agents": [2],
+      "note": "Agent 1 observed this but did not elevate to a finding because data is consumed only when succeeded. However, the spec explicitly requires fetching only when succeeded, making this a spec-implementation mismatch (always HIGH in Layer 1)."
+    }
+  ],
+  "dismissed": [
+    {
+      "id": "l1-r2-d1",
+      "title": "Kebab button renders without functionality in zero states",
+      "reason": "Spec explicitly says 'a kebab icon button (otherwise)' for all non-succeeded states. Plan review LOW F2 acknowledged no dropdown/action defined, acceptable for v1. This is spec-compliant.",
+      "agent": 2
+    }
+  ],
+  "spec_coverage": {
+    "total_requirements": 52,
+    "implemented": 51,
+    "missing": 0,
+    "deviating": 1,
+    "details": [
+      "All 5 QA Run 1 fixes verified correct",
+      "1 remaining deviation: hook fires for non-succeeded statuses"
+    ]
+  }
+}

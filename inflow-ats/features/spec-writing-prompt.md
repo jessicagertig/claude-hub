@@ -58,6 +58,21 @@ Write `SPEC.md` in the working directory. Cover:
 
 The spec must be specific enough that a planning agent can read it cold and produce an implementation plan without re-discovering things you already found. If you reference a model, name it. If you reference a pattern, give the file path.
 
+### Spec form
+
+`SPEC.md` is a design document. It states what changes and where, in the sections listed above. Nothing else belongs in it.
+
+- **A correctly worded requirement survives review on its own.** When a review agent flags a requirement, the fix is to word that requirement more precisely — never to append a justification defending it. A spec that argues for its own decisions is a spec that stated them imprecisely.
+- **Write for a reader encountering the spec cold.** Every sentence must be actionable without knowing what came before it: no references to prior review rounds, earlier drafts, findings, other runs, or the history of a decision. A spec has no memory of how it was written.
+- **No commit hashes, branch names, or git references.** The spec describes the code as it will be, not the commits that got it there. If a change matters, describe the change; the reader cannot resolve a hash and should not have to.
+- **State each fact once**, in the section that owns it. Do not restate a decision in a second section so that section reads standalone. A one-line change in the code must not require edits in five places in the spec.
+- **No open questions.** Anything needing Jessica's ruling goes in `REVIEW-FINDINGS.md` — not as a section, not as a risk list, not as an inline "confirm this is intended."
+- **No findings, risk registers, or review provenance.** No "See Risk R6" pointers, no "Amended: round 2" headers, no "correction to the original justification" paragraphs.
+- **Judgments only when they compress.** A reason for a design choice belongs in the spec only if it fits naturally as a short sentence inside the section it explains. If it needs a paragraph defending itself against an alternative, it is not spec content.
+- **No code blocks, pseudocode, or function signatures.** Name the identifiers — class, method, file, column, route, verbatim string — and say what changes. Column types, nullability, and defaults are the exception.
+
+Write `REVIEW-FINDINGS.md` in the working directory for everything the spec excludes: open questions awaiting a ruling, accepted risks and their blast radius, and anything a review round surfaced that is not yet a design decision. Decisions Jessica confirms move to `approved-decisions.md` and are then edited into the section of `SPEC.md` that owns them.
+
 ### Step 6: Print the summary
 
 After writing `SPEC.md`, print in conversation:

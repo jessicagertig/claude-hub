@@ -1,0 +1,49 @@
+{
+  "agent": "code-correctness-reviewer-2",
+  "round": 1,
+  "qaRun": 2,
+  "scope": "Backend model, serializer, JobApplicationActivity, PlatoOverviewCallout, PlatoLoadingState",
+  "filesReviewed": [
+    "app/models/ai_job_application_summary.rb",
+    "app/models/ai_job_application_summary_status.rb",
+    "app/serializers/api/v1/job_application_serializer.rb",
+    "app/serializers/api/v1/ai_job_application_summary_status_serializer.rb",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoOverviewCallout.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoLoadingState.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoGeneratedReviewCallout.tsx",
+    "app/javascript/shared/types/jobApplication.ts",
+    "app/javascript/shared/lib/time.ts",
+    "app/models/job_application.rb",
+    "db/schema.rb"
+  ],
+  "findings": [],
+  "analysis": {
+    "backendModel": {
+      "verdict": "PASS",
+      "details": "broadcast_status_change uses before_update callback with status_changed? (correct for pre-save dirty tracking). after_commit callbacks use saved_change_to_status? (correct for post-save dirty tracking). job_application and job_application.job are non-optional belongs_to associations, so nil is impossible at callback time. rescue StandardError on the broadcast prevents callback failures from aborting the save. BROADCAST_STATUSES constant correctly excludes pending, awaiting_job_criteria, retrying. update_columns(status: 'current') on AiJobApplicationSummaryStatus works correctly because Rails 6.1 update_columns passes values through the type system including enum mapping (confirmed by analog: board_wwr_listing.rb:203 uses update_columns(status: 'canceled') with an integer enum column)."
+    },
+    "serializer": {
+      "verdict": "PASS",
+      "details": "has_one :ai_job_application_summary_status on the serializer delegates to JobApplication's has_one :ai_job_application_summary_status association. When no status record exists, serializer returns null. Matches the analog pattern in ShallowJobApplicationSerializer. AiJobApplicationSummaryStatusSerializer serializes id, ai_job_application_summary_id, status, score_percentage, headline, integrated_role_analysis, updated_at -- all columns confirmed present in db/schema.rb."
+    },
+    "jobApplicationActivity": {
+      "verdict": "PASS",
+      "details": "Conditional on line 399 uses optional chaining (?.status) which returns undefined when aiJobApplicationSummaryStatus is null -- correctly falls through to PlatoOverviewCallout. Props passed to PlatoGeneratedReviewCallout (headline, roleFit, scorePct, generatedAgo) use || fallbacks for safety (|| '', || '', || 0, distanceInWords). distanceInWords receives updatedAt which is always present when status is current/regenerating. Props passed to PlatoOverviewCallout (summaryStatusValue, hasResume) are correctly sourced from the status record."
+    },
+    "platoOverviewCallout": {
+      "verdict": "PASS",
+      "details": "deriveCalloutStatus handles all input combinations correctly: current/regenerating return null (component returns null, parent renders PlatoGeneratedReviewCallout instead); null/undefined/none with resume returns 'ask'; null/undefined/none without resume returns 'noResume'; unexpected values fall through to 'ask' (defensive). The component is only rendered when status is NOT current/regenerating (per parent conditional), so the current/regenerating null returns are defensive only."
+    },
+    "platoLoadingState": {
+      "verdict": "PASS",
+      "details": "Monotonic advancement via Math.max(prev, target) in useEffect is correct. STATUS_TO_STEP maps pipeline statuses to step indices correctly per spec. Unmapped statuses (retrying, awaiting_job_criteria, succeeded, failed) produce target=null, effect is a no-op, checklist holds position. Initial state defaults to step 1 when no status is mapped, which is reasonable (skips 'Processing the resume' if component mounts before first status). prefers-reduced-motion media query disables spinner animation for accessibility."
+    }
+  },
+  "knownMedFindings": [
+    "Controller N+1 on show action -- already reported as MED in Run 1, not re-reported",
+    "JobApplicationNavItem 'succeeded' check -- already reported as MED in Run 1, not re-reported",
+    "PlatoTabEmptyState || undefined -- already reported as MED in Run 1, not re-reported"
+  ],
+  "summary": "All five assigned files pass correctness review. No BLOCKER or HIGH issues found. The backend model's callback structure is correct: before_update uses status_changed?, after_commit uses saved_change_to_status?. The update_columns(status: 'current') call works correctly with Rails 6.1 enum mapping (confirmed by analog in board_wwr_listing.rb). The serializer has_one association delegates correctly to the model association. Frontend conditional logic in JobApplicationActivity handles null aiJobApplicationSummaryStatus safely via optional chaining. deriveCalloutStatus in PlatoOverviewCallout covers all input combinations. PlatoLoadingState monotonic advancement is correctly implemented with Math.max."
+}

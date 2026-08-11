@@ -1,0 +1,46 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 5,
+  "focus_area": "JobPolicy authorization gate for AiJobCriteriaController regenerate (POST -> :update?) and show (GET -> :show?), SPEC §9 / BRIEF #11 (commit 859c85ead). Instantiated the REAL JobPolicy against the seeded 'Senior Engineer' job for admin, hiring-team member, and outsider; proved the mid-QA auth change from update_ai_settings? to update?.",
+  "files_reviewed": [
+    "app/controllers/api/v1/ai_job_criteria_controller.rb",
+    "app/policies/job_policy.rb",
+    "app/policies/application_policy.rb",
+    "app/policies/ai_job_application_summary_policy.rb",
+    "app/models/job.rb",
+    "app/controllers/application_controller.rb",
+    "app/controllers/api/v1/base_controller.rb"
+  ],
+  "verification": {
+    "method": "RAILS_ENV=test foreman run rails runner — instantiated JobPolicy.new(user, job) against the real seeded 'Senior Engineer' job (id 27626, published) in org 'Acme Inc.' and asserted .update?/.show?/.on_hiring_team?/.is_org_admin? for three principals. ActiveJob queue_adapter=:test; no OpenAI; org setting restored via ensure; all created rows removed via sanctioned qa-harness cleanup.",
+    "results_all_pass": true,
+    "checks": {
+      "admin_rezu_may_org_owner": { "is_org_admin?": true, "update?": true, "show?": true },
+      "member_taylor_brooks_org_user_on_hiring_team": {
+        "is_org_admin?": false,
+        "in_job_users": true,
+        "on_hiring_team?": true,
+        "update?_NEW_gate": true,
+        "show?": true,
+        "auth_change_demo_with_hiring_team_ai_credits_control_enabled_false": {
+          "OLD_gate_JobPolicy#update_ai_settings?": false,
+          "OLD_gate_AiJobApplicationSummaryPolicy#can_use_ai_credits?_direct": false,
+          "NEW_gate_JobPolicy#update?": true,
+          "conclusion": "CHANGE PROVEN: member is blocked under the OLD update_ai_settings?/can_use_ai_credits? gate but allowed under the NEW update? gate."
+        }
+      },
+      "outsider_org_user_not_on_job_not_admin": {
+        "is_org_admin?": false,
+        "is_org_user?": true,
+        "in_job_users": false,
+        "on_hiring_team?": false,
+        "update?": false,
+        "show?": false
+      }
+    },
+    "authorize_after_org_scoped_find": "Confirmed. Both #show and #create call authorize INSIDE exists(current_organization.jobs.where(id: params[:job_id]), ...). application_controller.rb:52-60 shows exists yields (yield obj.first) ONLY when obj.exists?; a cross-org job_id yields an empty org-scoped relation -> renders 'no job found' (422) and never yields, so authorize/render never run and no cross-org criteria can leak. authorize runs strictly after the org-scoped find in both actions.",
+    "no_bypass_path": "JobPolicy#update? = on_hiring_team? = is_org_admin? || record.users.include?(user); JobPolicy#show? = (is_org_user? && user.current_organization_user.jobs.where(id: record.id).any?) || is_org_admin?. Job#users (has_many :users through :organization_users through :hiring_team_memberships) is the hiring-team set. An outsider org member (is_org_user? true) is still denied both update? and show? because they are neither admin nor in the hiring-team set. No path lets an outsider through."
+  },
+  "findings": []
+}

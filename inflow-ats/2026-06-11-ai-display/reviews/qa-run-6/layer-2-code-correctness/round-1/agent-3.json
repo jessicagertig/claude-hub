@@ -1,0 +1,19 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 3,
+  "files_reviewed": [
+    "/Users/jessica/wrk/wrk-corp/inflow-ats.ai-display/app/javascript/ats/src/views/jobApplications/PlatoTab.tsx"
+  ],
+  "findings": [
+    {
+      "id": "A3-H1",
+      "severity": "HIGH",
+      "file": "/Users/jessica/wrk/wrk-corp/inflow-ats.ai-display/app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 182,
+      "what": "PlatoMark icon in FitCard header is hardcoded to `colors.gray[700]` (#404040 — a very dark gray) with no dark mode variant. In dark mode this icon is essentially invisible against a dark card background.",
+      "why_matters": "The spec (dark mode section, lines 208-214) requires every icon color using specific gray scale values to use a `t.dark` ternary (e.g., `t.dark ? t.color.gray[400] : t.color.gray[700]`). The `PlatoMark` component receives `color` as a plain prop from the JSX call site (`<PlatoMark size={15} color={colors.gray[700]} />`), not via a styled component, so no theme access exists at this call site. The component has no `useTheme` import. `gray[700]` = #404040 renders as near-black which disappears on dark mode card surfaces.",
+      "fix": "Import `useTheme` from `@emotion/react`, call `const t = useTheme() as any` at the top of `PlatoTab`, then pass `color={t.dark ? t.color.gray[400] : t.color.gray[700]}` to the PlatoMark on line 182. This matches the icon color ternary pattern used in `AchievementIcon` (line 723: `color: ${t.dark ? t.color.gray[400] : t.color.gray[700]}`) elsewhere in this same file."
+    }
+  ]
+}

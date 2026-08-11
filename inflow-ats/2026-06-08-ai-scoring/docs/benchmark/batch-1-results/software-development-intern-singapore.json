@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "batch": 1,
+    "criteria_prompt_version": 10,
+    "job_id": 14935,
+    "title": "Software Development Intern (Singapore)",
+    "organization": "Goodlight AI",
+    "cost": 0.000682
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "A product is only as good as someone's ability to use it.\nAs a software development intern, you’ll help in product development in a full-stack capacity. We are on a mission to create the best spreadsheet add-on the world has ever seen. Don't worry, you won't be alone in this righteous undertaking. You'll get one-on-one mentoring and guidance, as well as opportunity to be a part of a lean, early-stage team."
+      },
+      {
+        "heading": "About Airboxr",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "We're quite literally changing the way people use spreadsheets today. Imagine all the pain a typical business analyst goes through to create an analysis where they have to collect, clean and organize data from multiple third-party data sources. We remedy that by creating an all powerful spreadsheets add-on that lets you query data across different sources without having to write a single line of code.\nWe're proudly a remote-first and hands-off company. As long as you can take ownership of your work, you don't need to work on a strict schedule. Our rule for meetings is simple. If something's taking too long to explain over slack, we jump on a call. We also don’t believe in unnecessary daily stand ups. We'll all sync up once (maybe twice) a week to make sure everyone’s on the same page."
+      },
+      {
+        "heading": "Tech Stack",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Our frontend is built with React and MUI, written in Typescript. Our backend APIs are built with NestJS (also written in Typescript) that talk to a PostgreSQL server, hosted on GCP.\nYou can probably tell that we prefer strongly typed languages and opinionated frameworks with in-built support for a scalable architecture. That's because we want to build a real product that scales well, not a prototype that barely works.\nWe love functional and reactive programming and only kind of like OOP."
+      },
+      {
+        "heading": "Why Join Now?",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "We’re in the early stages of building a revolutionary product, gaining traction quicker than we anticipated. You’ll be working very closely with the founders and will get a front-row seat for this very exciting startup journey that lies ahead of us.\nAlso, we’re also backed by Entrepreneur First."
+      },
+      {
+        "heading": "Requirements",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Currently studying computer science. Students from non-computing engineering faculties are welcome if they can demonstrate experience in software development through past projects / work.\nWhile not necessary, it will help if you’re already familiar with Typescript and React.\nThe following is also important, given that we’ll be collaborating remotely:\nFamiliarity and comfort with online communication through multiple channels (Slack, Zoom etc.).\nAbility to communicate thoughts and opinions clearly in written and verbal communications.\nAbility to think critically and form opinions based on information available.\nThis role is open only to Singaporean/PR applicants.  The role may be extended to six months for qualifying candidates to make them eligible for university credits."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Currently studying computer science.",
+        "tier": "tier_1",
+        "tier_reasoning": "Implicit requirement for eligibility - must be studying computer science.",
+        "binary": true,
+        "source_text": "Currently studying computer science."
+      },
+      {
+        "text": "Students from non-computing engineering faculties are welcome if they can demonstrate experience in software development through past projects / work.",
+        "tier": "tier_2",
+        "tier_reasoning": "Default — no tier_1 signal word and being welcome is not tier_1.",
+        "binary": true,
+        "source_text": "Students from non-computing engineering faculties are welcome if they can demonstrate experience in software development through past projects / work."
+      },
+      {
+        "text": "Familiarity and comfort with online communication through multiple channels (Slack, Zoom etc.).",
+        "tier": "tier_2",
+        "tier_reasoning": "Default — no tier_1 signal word.",
+        "binary": false,
+        "source_text": "Familiarity and comfort with online communication through multiple channels (Slack, Zoom etc.)."
+      },
+      {
+        "text": "Ability to communicate thoughts and opinions clearly in written and verbal communications.",
+        "tier": "tier_2",
+        "tier_reasoning": "Default — 'Ability to' is a neutral tier_2 signal word.",
+        "binary": false,
+        "source_text": "Ability to communicate thoughts and opinions clearly in written and verbal communications."
+      },
+      {
+        "text": "Ability to think critically and form opinions based on information available.",
+        "tier": "tier_2",
+        "tier_reasoning": "Default — 'Ability to' is a neutral tier_2 signal word.",
+        "binary": false,
+        "source_text": "Ability to think critically and form opinions based on information available."
+      },
+      {
+        "text": "This role is open only to Singaporean/PR applicants.",
+        "tier": "tier_1",
+        "tier_reasoning": "Implicit eligibility requirement - must be a Singaporean/PR applicant.",
+        "binary": true,
+        "source_text": "This role is open only to Singaporean/PR applicants."
+      },
+      {
+        "text": "The role may be extended to six months for qualifying candidates to make them eligible for university credits.",
+        "tier": "tier_2",
+        "tier_reasoning": "Default — no tier_1 signal word and more of a benefit mention.",
+        "binary": false,
+        "source_text": "The role may be extended to six months for qualifying candidates to make them eligible for university credits."
+      }
+    ]
+  }
+}

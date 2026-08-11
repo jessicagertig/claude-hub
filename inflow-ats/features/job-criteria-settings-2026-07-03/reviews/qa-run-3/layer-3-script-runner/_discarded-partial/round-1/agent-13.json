@@ -1,0 +1,25 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 13,
+  "focus_area": "BulkGenerateAiSummariesJob#each_iteration claim-row :failed fix (SPEC 6.3) — runtime behavior: validation-failure marks claim row :failed (not :processing), fully-failed batch still notifies via on_complete, :failed rows do not block re-claim, update_columns not in a transaction",
+  "files_reviewed": [
+    "app/jobs/bulk_generate_ai_summaries_job.rb",
+    "app/interactors/queue_bulk_ai_summary_jobs.rb",
+    "app/interactors/validate_ai_summary_generation.rb",
+    "app/models/bulk_ai_summary_job_application.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/models/job.rb"
+  ],
+  "runtime_evidence": {
+    "seed": "ai-org-with-candidates.json (org 'Acme Inc.', admin 'Rezu May', job 'Senior Engineer', 3 job_applications; 0 AI credits; AI_APPLICANT_SUMMARY on)",
+    "safety": "ActiveJob queue_adapter=:test; every record fails ValidateAiSummaryGeneration ('No resume uploaded' — resume check precedes credits; credits also 0). Generation never reached: AiJobApplicationSummary count stayed 0 (no OpenAI). Zero-criteria latest AiJobCriteria (failed + 'Criteria array is empty') set so zero_criteria_extraction_failure?==true.",
+    "assertion_1_isolated_each_iteration": "Direct BulkGenerateAiSummariesJob#each_iteration on one :processing claim row -> reloads to :failed (NOT left :processing). PASS.",
+    "assertion_2_zero_criteria_batch": "perform_now over the whole batch: bulk_b claim rows {processing=>3} -> {failed=>3}; none left :processing. PASS.",
+    "assertion_3_on_complete_notifies": "on_complete fired for the fully-failed batch and dispatched notify_failure -> GlobalChannel.broadcast_to(user, action: 'AI_SUMMARY_BULK_FAILED') captured (succeeded=0 && failed>0 branch). Batch notifies, does not silently hang. PASS.",
+    "assertion_4_requeueability": "QueueBulkAiSummaryJobs already-claimed query (status: :processing) returns [] once rows are :failed; working_set == all ready_ids (all re-queueable). A fresh :processing claim create for a candidate that already has a :failed row succeeds (partial unique index index_bulk_ai_sjas_on_job_app_processing only covers status=0). :failed never blocks re-claim. PASS.",
+    "assertion_5_no_transaction": "each_iteration body contains no `transaction`; update_columns(status: :failed) at bulk_generate_ai_summaries_job.rb:64 is not inside a transaction (pipeline rule 25). PASS.",
+    "cleanup": "All BulkAiSummaryJobApplication rows and AiJobCriteria rows removed; verified 0 leftover."
+  },
+  "findings": []
+}

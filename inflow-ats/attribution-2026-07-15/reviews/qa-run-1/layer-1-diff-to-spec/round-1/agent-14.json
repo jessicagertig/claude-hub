@@ -1,0 +1,46 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 14,
+  "focus_area": "cross-cutting constraints (2nd pass)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "SPEC §2 stack-scope touched list (every listed file present in diff)",
+      "SPEC §2 'Not touched' list (no serializers, policies, models other than user.rb, Sidekiq jobs, api.ts, contexts, Cypress tests in diff)",
+      "SPEC §6 authorization requirements: none (authorize @organization unchanged, no new endpoints, no policy changes)",
+      "SPEC §7 constraint 1 (capture-side-only sanitization: 255-char truncation, first-of-array, 10-key cap; no server-side sanitization added)",
+      "SPEC §7 constraint 2 (nil-for-absent, no fabricated fallbacks in helper output, controller merges, org copy)",
+      "SPEC §7 constraint 3 (no backfill, no data migration)",
+      "SPEC §7 constraint 4 (raw storage, no downcase/mapping on the four values)",
+      "SPEC §7 constraint 5 (creation-time only: first_or_create block, magic_create new-user branch, org copy at create)",
+      "SPEC §7 constraint 6 (no serializer changes)",
+      "SPEC §7 constraint 7 (no PosthogTrackJob/PosthogIdentifyJob call added, removed, or modified)",
+      "SPEC §7 constraint 8 (five event names exact, plain trackEvent calls, no properties)",
+      "SPEC §7 constraint 9 (utm_data inner keys are raw URL param names)",
+      "SPEC §7 constraint 10 (files-never-edit respected; new files limited to 2 migrations + 6 §9 test files)",
+      "SPEC §9 event-name grep check (user_signed_up_client_side exactly two frontend callsites; server user_signed_up untouched)",
+      "SPEC §10 deferred items absent from diff",
+      "SPEC §5 preamble case convention (camelCase payload keys, allKeysToSnake wire conversion, SSO inputs snake_case direct)"
+    ],
+    "verified": [
+      "§2 touched list: all listed backend files in diff (2 migrations 20260715233505/20260715233506, registrations_controller.rb sign_up_params + magic_create both branches, organizations_controller.rb #create, omniauth_callbacks_controller.rb line 22 keyword call, user.rb from_omniauth, omniauth.rb line 14 only, confirmations_controller.rb line 18 success redirect only) and all listed frontend files in diff (utils.js sanitizeTrackingParams placed alongside standardizeQueryParamsObject, AuthForm.tsx, SignupForm.tsx, GoogleSSOButton.tsx, useSession.ts magicLink destructure+type+variables and register destructure+variables, Auth.tsx second useEffect [emailConfirmed], OrganizationForm.tsx, ProfileForm.tsx, posthog.ts window.logger already-on-branch diff committed as-is). db/schema.rb regeneration is listed as touched in REVIEW-ANGLES.md and is a required side effect of the migrations",
+      "§2 'Not touched': diff file list is exactly 24 files — 16 edits + 2 migrations + 6 new test files; zero serializer/policy/job/api.ts/context/cypress files; only model touched is user.rb and only from_omniauth changed",
+      "§6: authorize @organization present and unchanged in #create (read live at organizations_controller.rb:38); organization_params (lines 118+) does not permit the four values; config/routes.rb absent from diff; token auth in confirmations#show unchanged",
+      "§7.1: sanitizeTrackingValue does array-first + slice(0,255); 10-key cap via slice(0,10) on raw-string occurrence order; no server-side sanitization anywhere in the backend diff",
+      "§7.2: grep of all added diff lines for '|| 0', '|| \"\"', '|| {}', '|| []' found zero; helper emits absent fields (utmData only when utmDataKeys.length > 0, per-field !== undefined guards); valueless ?utm_source passes through as null (query-string v6.1.0 parse line 151 'value === undefined ? null : decode' — read in node_modules); useSession passes undefined through, dropped by JSON serialization after allKeysToSnake (structure.js read — recurses objects, snakeCase per key); sign_up_params[:key] nil when absent; org copy is direct current_user attribute copy; migrations and schema.rb show no defaults, nullable, no index",
+      "§7.3: no db/data/ files in diff",
+      "§7.4: from_omniauth assigns the four raw (partner_source keeps &.downcase, new values do not); magic_create merges sign_up_params values verbatim; no get_created_via-style mapping added",
+      "§7.5: four assignments confirmed inside the first_or_create block (user.rb:385-397 read live), post-block assign_attributes/update/enqueue_complete_user_setup unchanged; magic_create merges present in both user_params branches, row creation only in new-user branch; org values copied only in #create",
+      "§7.6: zero serializer files in diff (grep of diff for 'serializer' matches only a spec comment); render_one(@organization, Api::V1::OrganizationSerializer) untouched",
+      "§7.7: grep of diff for 'Posthog' matches only frontend imports of @shared/lib/posthog and the sanctioned posthog.ts window.logger hunks; server callsites registrations_controller.rb:52/190, omniauth_callbacks_controller.rb:35, invites_controller.rb:80 all untouched",
+      "§7.8: git grep confirms exactly five event callsites — AuthForm.tsx:91 and SignupForm.tsx:75 user_signed_up_client_side, Auth.tsx:29 email_verified, OrganizationForm.tsx:71 organization_created, ProfileForm.tsx:68/70 organization_owner_user_name_submitted/invited_user_name_submitted — all plain trackEvent(name) with no properties; trackEvent definition read (posthog.ts, ph.capture(event, properties))",
+      "§7.9: utmData keyed by decoded raw param name from the query string; key derivation mirrors query-string v6.1.0 parse's own key handling (parse does param.replace(/\\+/g, ' ') then decode before split — verified in node_modules/query-string/index.js line 147), so canonical utm_* keys join correctly; GoogleSSOButton renders name={'utm_data[' + key + ']'} with the raw key",
+      "§7.10: new files are exactly the 2 migrations plus the 6 test files §9 requires (registrations_controller_spec.rb, user_from_omniauth_spec.rb, omniauth_callbacks_controller_spec.rb, organizations_controller_spec.rb, hire/confirmations_controller_spec.rb, utils.test.js); api.ts and context files absent from diff",
+      "§9 grep check: git grep user_signed_up_client_side app/ returns exactly AuthForm.tsx:91 and SignupForm.tsx:75; server 'user_signed_up' strings unmodified (no user_signed_up in any diff hunk besides the two client_side additions); git grep from_omniauth shows definition + single keyword-form call site + new specs, no stale positional call",
+      "§10 deferred absent: AuthRegister.tsx, Login.tsx, marketing-site files not in diff; no browser user_logged_in event added; no serializer exposure; no server-side identify/event at confirmations#show (only the redirect string changed); no backfill",
+      "§5 case convention: payload keys utmSource/utmCampaign/utmData/internalRef camelCase in AuthForm.tsx handleAuth, SignupForm.tsx handleSignup, useSession.ts magicLink/register variables; apiPost/apiMutate run allKeysToSnake (api.ts:52 read) producing utm_source/utm_campaign/utm_data/internal_ref wire params matching the sign_up_params permit; GoogleSSOButton hidden inputs written snake_case directly (utm_source, utm_campaign, internal_ref, utm_data[key]) bypassing allKeysToSnake"
+    ],
+    "missing": []
+  }
+}

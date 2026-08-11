@@ -1,0 +1,118 @@
+{
+  "meta": {
+    "batch": 17,
+    "criteria_prompt_version": 9,
+    "job_id": 26305,
+    "title": "Physiotherapist - Markham, ON",
+    "organization": "FlexMD",
+    "cost": 0.000634
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Physiotherapist - Markham, ON\n***$10,000 Marketing or Signing Bonus ***\nFlexMD is looking for Physiotherapists to partner with us at our new Mount Joy, Markham clinic"
+      },
+      {
+        "heading": "Why FlexMD?",
+        "inferred_section_type": "culture",
+        "type": "non_criteria",
+        "content": "·         Turnkey clinic with full-service business and administrative support, including reception, staff management, payroll, supply management, marketing, EHR management, billing submissions, and training.\n·         Cross discipline referrals and clinic marketing that accelerate growth of a busy and rewarding practice.\n·         On-site primary care clinic and pharmacy.\n·         An experienced management team.\n·         Brand new, professionally managed facility with state-of-the-art equipment and technology, suitable for both rehab and sports performance treatments.\n·         Latest electrotherapy tools including ultrasound and eStim (IFT, TENS, and EMS)\n·         Variety of work area options including 10’ x 12’ private treatment, open galley-style treatment tables, and spacious gym area with mobility equipment.\n·         3 section, 90° drop, electric adjust treatment tables.\n·         In-suite commercial washer and dryer.\n·         Private staff areas including lockers, washroom, and kitchen.\n·         Flexible hours - full or part time, early morning, evening and/or weekends.\n·         Close proximity to the Markham Stouffville Hospital.\n·         Work in the vibrant and growing community of Mount Joy, Markham, adjacent to a Go Station, walking distance to a variety of shops and restaurants.\n·         Free parking near building entrance."
+      },
+      {
+        "heading": "Requirements",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "·         Registration with the College of Physiotherapists of Ontario, in good standing.\n·         Spinal Manipulation, Pelvic Floor, or Acupuncture Controlled Act rostering is an asset.\n·         Active Release Therapy (ART) or Sports Medicine certification is an asset.\n·         Professional Liability Insurance.\n·         Strong critical thinking, decision-making and analytical skills\n·         Exceptional time management and organizational skills with an ability to work independently.\n·         Excellent oral and written communication skills.\n·         Enthusiasm for collaborating with a multi-disciplinary team.\n·         Proficiency in the use of Microsoft Word and Excel."
+      },
+      {
+        "heading": "Physiotherapist-Partners Benefits:",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "·         Competitive overhead split."
+      },
+      {
+        "heading": "Learn More",
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "To learn more, please visit our website: www.FlexMD.ca"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Registration with the College of Physiotherapists of Ontario, in good standing.",
+        "tier": "tier_1",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "·         Registration with the College of Physiotherapists of Ontario, in good standing."
+      },
+      {
+        "text": "Spinal Manipulation, Pelvic Floor, or Acupuncture Controlled Act rostering is an asset.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "·         Spinal Manipulation, Pelvic Floor, or Acupuncture Controlled Act rostering is an asset."
+      },
+      {
+        "text": "Active Release Therapy (ART) certification",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "·         Active Release Therapy (ART) or Sports Medicine certification is an asset."
+      },
+      {
+        "text": "Sports Medicine certification",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "·         Active Release Therapy (ART) or Sports Medicine certification is an asset."
+      },
+      {
+        "text": "Professional Liability Insurance.",
+        "tier": "tier_1",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "·         Professional Liability Insurance."
+      },
+      {
+        "text": "Strong critical thinking, decision-making and analytical skills",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Strong\"",
+        "binary": false,
+        "source_text": "·         Strong critical thinking, decision-making and analytical skills"
+      },
+      {
+        "text": "Exceptional time management and organizational skills with an ability to work independently.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Exceptional\"",
+        "binary": false,
+        "source_text": "·         Exceptional time management and organizational skills with an ability to work independently."
+      },
+      {
+        "text": "Excellent oral and written communication skills.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Excellent\"",
+        "binary": false,
+        "source_text": "·         Excellent oral and written communication skills."
+      },
+      {
+        "text": "Enthusiasm for collaborating with a multi-disciplinary team.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "·         Enthusiasm for collaborating with a multi-disciplinary team."
+      },
+      {
+        "text": "Proficiency in the use of Microsoft Word and Excel.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Proficiency\"",
+        "binary": false,
+        "source_text": "·         Proficiency in the use of Microsoft Word and Excel."
+      }
+    ]
+  }
+}

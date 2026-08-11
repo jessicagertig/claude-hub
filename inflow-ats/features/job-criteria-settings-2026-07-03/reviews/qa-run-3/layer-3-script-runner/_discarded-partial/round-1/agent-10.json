@@ -1,0 +1,21 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 10,
+  "focus_area": "ValidateAiSummaryGeneration zero-criteria review guard (SPEC 6.2.1) — guard fires/silences across AiJobCriteria latest-row states, exact message, and ordering vs has_job_description?",
+  "scenario": "Seeded ai-org-with-candidates (Acme Inc., Rezu May admin, published 'Senior Engineer' job, AI_APPLICANT_SUMMARY flipper ON). Called ValidateAiSummaryGeneration.call(job_application:, organization:) directly. Neutralized the two unrelated upstream preconditions (has_resume, ai_credits_available?) via per-call singleton overrides — exactly matching the interactor spec's stubs — so the ONLY variable was the latest AiJobCriteria row state. The guard's own chain (job.zero_criteria_extraction_failure? -> latest_ai_job_criteria -> AiJobCriteria#zero_criteria_failure?) was left fully real. ActiveJob queue_adapter=:test; no OpenAI; no downstream jobs run inline; rows built directly and cleaned via delete_all.",
+  "trace": "validate_ai_summary_generation.rb:30 (guard) -> job.rb:696 zero_criteria_extraction_failure? -> job.rb:688 latest_ai_job_criteria (ai_job_criteria.order(created_at: :desc).first) -> ai_job_criteria.rb:17 zero_criteria_failure? (status_failed? && ZERO_CRITERIA_ERROR_MESSAGES.include?(error_message)); ordering vs validate_ai_summary_generation.rb:29 has_job_description?",
+  "cases_verified": [
+    "1a NO ai_job_criteria rows -> guard silent -> context.success? TRUE",
+    "1b latest succeeded -> guard silent -> context.success? TRUE",
+    "2 latest failed + 'No criteria sections found in job description' -> context.failure? TRUE, error == exact guard message",
+    "3 latest failed + 'No criteria extracted from job description' -> context.failure? TRUE, error == exact guard message",
+    "4 latest failed + 'Criteria array is empty' -> context.failure? TRUE, error == exact guard message",
+    "5 latest failed + 'Job description is blank' (non-zero-criteria) -> guard silent -> context.success? TRUE",
+    "6 latest pending -> guard silent -> context.success? TRUE",
+    "7 older failed+zero row UNDER newer pending row (explicit created_at) -> predicate reads latest -> guard silent -> context.success? TRUE",
+    "8 blank job description + zero-criteria latest row -> description error ('This job needs a description before Plato can review candidates. Add one in Job Setup.') wins over the zero-criteria error -> confirms guard sits AFTER has_job_description? check"
+  ],
+  "result": "9/9 assertions PASS. Guard fires exactly and only when the latest AiJobCriteria row failed with one of the three ZERO_CRITERIA_ERROR_MESSAGES; returns the exact spec message; silent for no-rows/succeeded/pending/non-zero-message/newer-non-failed-on-top; ordered after the description check.",
+  "findings": []
+}

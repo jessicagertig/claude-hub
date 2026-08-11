@@ -1,0 +1,28 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 12,
+  "focus_area": "frontend SSO + events (2nd pass)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "SPEC §5.3 (D7) GoogleSSOButton hidden inputs",
+      "SPEC §5.6 (D12) Auth.tsx two-effect identify/event mechanism",
+      "SPEC §5.7 (D13) OrganizationForm organization_created",
+      "SPEC §5.8 (D16) ProfileForm event selection on isNewOwner",
+      "SPEC §5.9 posthog.ts diff scope",
+      "SPEC §7 constraint 7 (no PosthogTrackJob/PosthogIdentifyJob changes)",
+      "SPEC §7 constraint 8 (exact event names, plain no-property trackEvent calls)"
+    ],
+    "verified": [
+      "§5.3: Props extended with utmSource?/utmCampaign?/utmData?/internalRef?; hidden input names exactly utm_source (GoogleSSOButton.tsx:66), utm_campaign (:69), internal_ref (:72), utm_data[key] via name={\"utm_data[\" + key + \"]\"} (:77); string guards exactly match the analog form typeof x === \"string\" && x.length > 0 (:65,68,71 vs referral/partner analog :59,62); per-key guard on utmData values identical (:76) so null (valueless ?utm_medium) fails the typeof check and \"\" fails the length check — degenerate values render NO input, the accepted consequence; utmData != undefined outer guard prevents Object.keys on undefined; form action /api/v1/users/auth/google_oauth2 method post unchanged; callsite AuthForm.tsx:128-134 passes all four from trackingParams state",
+      "§5.6: identify/event NOT in the mount effect — mount effect (Auth.tsx:19-21) still only calls showEmailConfirmationBannerIfApplicable; second React.useEffect at :23-31 with deps [emailConfirmed]; bare-returns unless emailConfirmed (:24); reads id and email from queryString.parse(props.location.search) (:26); both-present guard id != undefined && email != undefined (:27) — loose inequality also rejects null from valueless params, so a stale /auth?email_confirmed=true URL fires NEITHER call; identifyUser({ id: Number(id), email }) (:28) precedes trackEvent(\"email_verified\") (:29); identifyUser keys on String(user.id) (posthog.ts:32) matching the AppAuthRouter distinct_id; fires once per landing (emailConfirmed transitions false→true once, effect re-runs only on that dep change); email_confirmed=false sets state false → effect bare-returns, nothing fires; imports from @shared/lib/posthog (:11)",
+      "§5.7: trackEvent(\"organization_created\") (OrganizationForm.tsx:71) fires in createOrganization onSuccess BEFORE onComplete(data) (:72); no properties; no identifyUser import or call added to the file",
+      "§5.8: in updateMe onSuccess (ProfileForm.tsx:65-73), props.isNewOwner true → trackEvent(\"organization_owner_user_name_submitted\") (:68), else → trackEvent(\"invited_user_name_submitted\") (:70) — wasInvited and the neither-true edge both land in the else branch; both plain no-property calls, both before props.onComplete() (:72); isNewOwner/wasInvited still computed and passed by OnboardingProfile.tsx:16-17,47-48, unchanged in the diff",
+      "§5.9: posthog.ts diff is a single hunk (@@ -23,8 +23,12 @@) touching only identifyUser — window.logger on the not-loaded skip path (:27) and the fire path (:31); trackEvent/resetUser/getPosthog untouched; 6 changed lines match the diffstat",
+      "§7 constraint 7: grep of the full 62dd55867..8dcc2f06f diff for PosthogTrackJob/PosthogIdentifyJob returns zero lines (added, removed, or context) — no server job call added, removed, or modified; server user_signed_up strings at registrations_controller.rb:52,:190, omniauth_callbacks_controller.rb:35, invites_controller.rb:80 all unmodified",
+      "§7 constraint 8: the diff adds exactly the five spec event names — user_signed_up_client_side (AuthForm.tsx:91, SignupForm.tsx:75), email_verified (Auth.tsx:29), organization_created (OrganizationForm.tsx:71), organization_owner_user_name_submitted (ProfileForm.tsx:68), invited_user_name_submitted (ProfileForm.tsx:70) — all single-argument trackEvent calls with no properties; git grep user_signed_up_client_side app/ matches only the two frontend callsites"
+    ],
+    "missing": []
+  }
+}

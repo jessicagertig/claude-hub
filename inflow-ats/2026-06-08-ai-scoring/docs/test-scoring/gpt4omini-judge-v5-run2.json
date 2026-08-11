@@ -1,0 +1,126 @@
+{
+  "criteria": [
+    {
+      "original": {
+        "text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": true,
+        "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+      },
+      "action": "decompose",
+      "reasoning": "This criterion contains multiple distinct requirements related to backend services, which can be separated into individual skills.",
+      "decomposed": [
+        {
+          "text": "Ability to design backend services in Go that power our PaaS",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": true,
+          "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+        },
+        {
+          "text": "Ability to build backend services in Go that power our PaaS",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": true,
+          "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+        },
+        {
+          "text": "Ability to maintain backend services in Go that power our PaaS",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": true,
+          "source_text": "Design, build, and maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling."
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences."
+      },
+      "action": "decompose",
+      "reasoning": "This criterion includes multiple distinct features that can be separated into individual skills related to developer features.",
+      "decomposed": [
+        {
+          "text": "Ability to improve CLI usage for developers",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences."
+        },
+        {
+          "text": "Ability to enhance CI/CD workflows for developers",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences."
+        },
+        {
+          "text": "Ability to enable marketplace and cloud provider integrations for developers",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences."
+        },
+        {
+          "text": "Ability to create better observability and logging experiences for developers",
+          "tier": "tier_2",
+          "tier_reasoning": "default — no signal word",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences."
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "Excellent communication skills",
+        "tier": "tier_2",
+        "tier_reasoning": "soft skills cap at tier_2",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+      },
+      "action": "decompose",
+      "reasoning": "This criterion is part of a compound that includes multiple distinct soft skills, which can be separated into individual skills.",
+      "decomposed": [
+        {
+          "text": "Excellent communication skills",
+          "tier": "tier_2",
+          "tier_reasoning": "soft skills cap at tier_2",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+        },
+        {
+          "text": "Ability to work cross functionally",
+          "tier": "tier_1",
+          "tier_reasoning": "soft skills cap at tier_2",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+        },
+        {
+          "text": "Ability to thrive within a fast moving product engineering environment",
+          "tier": "tier_1",
+          "tier_reasoning": "soft skills cap at tier_2",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment."
+        }
+      ]
+    }
+  ]
+}

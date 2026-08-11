@@ -1,0 +1,935 @@
+diff --git a/app/controllers/api/v1/ai_job_application_summaries_controller.rb b/app/controllers/api/v1/ai_job_application_summaries_controller.rb
+index af293e47c..2e3a13771 100644
+--- a/app/controllers/api/v1/ai_job_application_summaries_controller.rb
++++ b/app/controllers/api/v1/ai_job_application_summaries_controller.rb
+@@ -14,6 +14,8 @@ class Api::V1::AiJobApplicationSummariesController < Api::V1::BaseController
+         return
+       end
+ 
++      job_application.ai_summary_rescore_requested = ai_job_application_summary_params
++
+       result = CreateAiSummaryGeneration.call(
+         job_application: job_application,
+         validation_result: validation_result,
+@@ -35,4 +37,10 @@ class Api::V1::AiJobApplicationSummariesController < Api::V1::BaseController
+       end
+     end
+   end
++
++  private
++
++  def ai_job_application_summary_params
++    params.require(:ai_job_application_summary).require(:rescore_requested)
++  end
+ end
+diff --git a/app/interactors/create_ai_summary_generation.rb b/app/interactors/create_ai_summary_generation.rb
+index 628b84bdb..07d62950c 100644
+--- a/app/interactors/create_ai_summary_generation.rb
++++ b/app/interactors/create_ai_summary_generation.rb
+@@ -33,7 +33,7 @@ class CreateAiSummaryGeneration
+       .order(created_at: :desc)
+       .first
+ 
+-    if active_ai_summary
++    if active_ai_summary && !job_application.ai_summary_rescore_requested
+       context.ai_summary = active_ai_summary
+       return
+     end
+diff --git a/app/javascript/ats/src/views/jobApplications/AiSummaryState.tsx b/app/javascript/ats/src/views/jobApplications/AiSummaryState.tsx
+deleted file mode 100644
+index 338697a1b..000000000
+--- a/app/javascript/ats/src/views/jobApplications/AiSummaryState.tsx
++++ /dev/null
+@@ -1,221 +0,0 @@
+-import React from "react";
+-import styled from "@emotion/styled";
+-import { css } from "@emotion/react";
+-
+-
+-import WandIcon from "@ats/src/components/shared/WandIcon";
+-import Button from "@ats/src/components/shared/Button";
+-
+-import { useGenerateAiSummary } from "@shared/queryHooks/useAiJobApplicationSummary";
+-import { useOrganizationAiCreditBalance } from "@shared/queryHooks/useOrganizationAiCreditBalance";
+-import { useToastContext } from "@shared/context/ToastContext";
+-import CenterModal from "@ats/src/components/modals/CenterModal";
+-import { useModalContext } from "@shared/context/ModalContext";
+-import { useCurrentSession } from "@ats/src/context/CurrentSessionContext";
+-
+-interface Props {
+-  jobApplicationId: number;
+-  hasResume?: boolean;
+-}
+-
+-function AiSummaryState({ jobApplicationId, hasResume }: Props) {
+-  const addToast = useToastContext();
+-  const { mutate: generate, isLoading } = useGenerateAiSummary();
+-  const { data: creditData, isError: creditError, isLoading: isLoadingCredits } = useOrganizationAiCreditBalance();
+-  const { currentOrganizationUser } = useCurrentSession();
+-  const { openModal, removeModal } = useModalContext();
+-
+-  const totalRemaining = creditError ? 0 : creditData?.totalCreditsRemaining || 0;
+-  const buttonLoading = isLoadingCredits || isLoading;
+-
+-  const handleClick = () => {
+-    generate(
+-      { jobApplicationId },
+-      {
+-        onSuccess: () => {
+-          addToast({ title: "Summary generation queued", kind: "success" });
+-        },
+-        onError: (error: any) => {
+-          addToast({
+-            title: error?.data?.errors?.general?.[0] || "Failed to queue summary",
+-            kind: "warning",
+-            delay: 10000,
+-          });
+-        },
+-      },
+-    );
+-  };
+-
+-  const renderContent = () => {
+-    if (hasResume === false) {
+-      return (
+-        <Styled.Message>
+-          AI summaries cannot be generated for candidates without a resume.
+-        </Styled.Message>
+-      );
+-    }
+-
+-    if (!isLoadingCredits && totalRemaining <= 0) {
+-      return (
+-        <>
+-          <Styled.Message>
+-            Your organization is out of AI credits. Purchase more credits to generate summaries.
+-          </Styled.Message>
+-          <Styled.Actions>
+-            {currentOrganizationUser.isAdmin ? (
+-              <Button type="internalLink" link="/hire/settings/ai-billing" size="small">Buy more credits</Button>
+-            ) : (
+-              <Button
+-                onClick={() => {
+-                  openModal(
+-                    <CenterModal headerTitleText="Admin access required" onCancel={removeModal}>
+-                      <Styled.ModalBody>
+-                        <p>Only admins can purchase more credits. Please contact an admin for your organization.</p>
+-                        <Styled.ModalActions>
+-                          <Button onClick={removeModal}>Close</Button>
+-                        </Styled.ModalActions>
+-                      </Styled.ModalBody>
+-                    </CenterModal>
+-                  );
+-                }}
+-                loading={buttonLoading}
+-                disabled={buttonLoading}
+-                size="small"
+-              >
+-                Buy more credits
+-              </Button>
+-            )}
+-          </Styled.Actions>
+-        </>
+-      );
+-    }
+-
+-    return (
+-      <>
+-        <Styled.Actions>
+-          <Button
+-            onClick={handleClick}
+-            loading={buttonLoading}
+-            disabled={buttonLoading}
+-            size="small"
+-          >
+-            Generate summary
+-          </Button>
+-          <Styled.CreditNote>1 credit</Styled.CreditNote>
+-        </Styled.Actions>
+-      </>
+-    );
+-  };
+-
+-  return (
+-    <Styled.Component>
+-      <Styled.Intro>
+-        <div>
+-          <Styled.Icon>
+-            <WandIcon />
+-          </Styled.Icon>
+-          AI candidate summary
+-        </div>
+-      </Styled.Intro>
+-      {renderContent()}
+-    </Styled.Component>
+-  );
+-}
+-
+-export default AiSummaryState;
+-
+-/* Styled Components
+-======================================================= */
+-let Styled: any;
+-Styled = {};
+-
+-Styled.Component = styled.div((props: any) => {
+-  const t: any = props.theme;
+-  return css`
+-    label: AiSummaryState_Component;
+-    ${[t.mb(4), t.px(4), t.pt(4), t.pb(4), t.rounded.md]}
+-    display: flex;
+-    flex-direction: column;
+-    align-items: center;
+-    text-align: center;
+-    border: 1px solid ${t.dark ? "transparent" : t.color.gray[200]};
+-    background-color: ${t.dark ? "rgba(255,255,255,0.07)" : "transparent"};
+-  `;
+-});
+-
+-Styled.Intro = styled.div((props: any) => {
+-  const t: any = props.theme;
+-  return css`
+-    label: AiSummaryState_Intro;
+-    ${[t.mb(3), t.text.xs]}
+-    color: ${t.dark ? t.color.gray[400] : t.color.gray[600]};
+-    display: flex;
+-    align-items: center;
+-
+-    > div {
+-      display: flex;
+-      align-items: center;
+-    }
+-  `;
+-});
+-
+-Styled.Icon = styled.div((props: any) => {
+-  const t: any = props.theme;
+-  return css`
+-    label: AiSummaryState_Icon;
+-    ${[t.mr(2), t.h(6), t.w(6), t.rounded.xs]}
+-    display: flex;
+-    align-items: center;
+-    justify-content: center;
+-    background-color: ${t.dark ? t.color.gray[800] : t.color.white};
+-    border: 1px solid ${t.dark ? t.color.gray[700] : t.color.gray[200]};
+-    color: ${t.dark ? t.color.gray[400] : t.color.gray[600]};
+-  `;
+-});
+-
+-Styled.Message = styled.p((props: any) => {
+-  const t: any = props.theme;
+-  return css`
+-    label: AiSummaryState_Message;
+-    ${t.text.xs}
+-    color: ${t.dark ? t.color.gray[400] : t.color.gray[600]};
+-  `;
+-});
+-
+-Styled.Actions = styled.div((props: any) => {
+-  const t: any = props.theme;
+-  return css`
+-    label: AiSummaryState_Actions;
+-    ${t.mt(2)}
+-    display: flex;
+-    align-items: center;
+-    gap: ${t.spacing["3"]};
+-  `;
+-});
+-
+-Styled.CreditNote = styled.span((props: any) => {
+-  const t: any = props.theme;
+-  return css`
+-    label: AiSummaryState_CreditNote;
+-    ${t.text.xs}
+-    color: ${t.dark ? t.color.gray[400] : t.color.gray[500]};
+-  `;
+-});
+-
+-Styled.ModalBody = styled.div((props: any) => {
+-  const t: any = props.theme;
+-  return css`
+-    label: AiSummaryState_ModalBody;
+-    ${[t.p(5)]}
+-  `;
+-});
+-
+-Styled.ModalActions = styled.div((props: any) => {
+-  const t: any = props.theme;
+-  return css`
+-    label: AiSummaryState_ModalActions;
+-    ${[t.mt(4)]}
+-    display: flex;
+-    justify-content: flex-end;
+-  `;
+-});
+diff --git a/app/javascript/ats/src/views/jobApplications/BulkGenerateAiSummariesConfirmModal.tsx b/app/javascript/ats/src/views/jobApplications/BulkGenerateAiSummariesConfirmModal.tsx
+index 73d58ec45..63ec1b099 100644
+--- a/app/javascript/ats/src/views/jobApplications/BulkGenerateAiSummariesConfirmModal.tsx
++++ b/app/javascript/ats/src/views/jobApplications/BulkGenerateAiSummariesConfirmModal.tsx
+@@ -6,6 +6,8 @@ import CenterModal from "@ats/src/components/modals/CenterModal";
+ import Button from "@ats/src/components/shared/Button";
+ import Icon from "@ats/src/components/shared/Icon";
+ import FormContainer from "@ats/src/components/forms/FormContainer";
++import FormCheckbox from "@ats/src/components/forms/FormCheckbox";
++import Tooltip from "@ats/src/components/shared/Tooltip";
+ 
+ import { useModalContext } from "@shared/context/ModalContext";
+ import { useToastContext } from "@shared/context/ToastContext";
+@@ -44,11 +46,12 @@ function BulkGenerateAiSummariesConfirmModal({
+   const { mutate: bulkGenerate, isLoading } = useBulkGenerateAiSummaries();
+ 
+   const [errors, setErrors] = React.useState([]);
++  const [rescore, setRescore] = React.useState(false);
+ 
+   const { data, isError } = useOrganizationAiCreditBalance();
+   const available = isError ? 0 : data?.totalCreditsRemaining || 0;
+-  // Only processable candidates (no existing "current" summary) consume credits.
+-  const shortfall = Math.max(0, processableCount - available);
++  const candidatesToScoreCount = rescore ? candidatesCount : processableCount;
++  const shortfall = Math.max(0, candidatesToScoreCount - available);
+ 
+   const handleOnCancel = () => {
+     dismissModalWithAnimation(() => onCancel);
+@@ -71,7 +74,7 @@ function BulkGenerateAiSummariesConfirmModal({
+         excludedJobApplicationIds: idsArrayType === "excluded" ? idsArray : [],
+         includedJobApplicationIds: idsArrayType === "included" ? idsArray : [],
+         roleFit,
+-        rescoreRequested: false,
++        rescoreRequested: rescore,
+       },
+       {
+         onSuccess: (data: { queuedCount: number; skippedCount: number; anyTextractPending: boolean }) => {
+@@ -102,52 +105,60 @@ function BulkGenerateAiSummariesConfirmModal({
+     );
+   };
+ 
+-  const shortfallText = (
++  const creditCopy = (
+     <>
+-      You are short <b>{shortfall}</b> credit{shortfall === 1 ? "" : "s"}. The first {available}{" "}
+-      candidate{available === 1 ? "" : "s"} will get reviews generated; the rest will be skipped.
++      Each successful review uses one AI credit
++      {shortfall > 0 ? (
++        <>
++          . You are short <b>{shortfall}</b> credit{shortfall === 1 ? "" : "s"}. The first{" "}
++          {available} candidate{available === 1 ? "" : "s"} will get reviews generated; the rest
++          will be skipped.
++        </>
++      ) : (
++        <>
++          , so running this uses up to <b>{candidatesToScoreCount}</b> credit
++          {candidatesToScoreCount === 1 ? "" : "s"} from your balance of <b>{available}</b> available.
++        </>
++      )}
+     </>
+   );
+ 
+-  const instructions =
+-    candidatesCount === 0 ? (
++  let bodyCopy: React.ReactNode;
++  if (candidatesCount === 0) {
++    // State 1 — no selection (kept VERBATIM from today, SPEC 1.2/1.8)
++    bodyCopy = (
+       <>
+         <span>No candidates selected.</span> Use the checkboxes next to the candidate names to select
+         the candidates to generate reviews for. To <b>select all candidates</b> within this hiring
+         stage, use the checkbox next to the stage name.
+       </>
+-    ) : processableCount === 0 ? (
++    );
++  } else if (!rescore && processableCount === 0) {
++    // State 2 — unchecked, zero processable (numeric 0, no credit sentence)
++    bodyCopy = (
+       <>
+-        <span>Nothing to generate.</span> Every selected candidate already has a review, so none
+-        will be reprocessed.
++        0 of the {candidatesCount} candidates selected from this hiring stage don't have a Plato
++        review yet. Unless you select re-review below, no candidates will be reviewed.
+       </>
+-    ) : isProcessableCountExact ? (
++    );
++  } else if (!rescore) {
++    // State 3 — unchecked, processable ("Up to " prefix only when inexact)
++    bodyCopy = (
+       <>
+-        Generate Plato reviews for <b>{processableCount}</b> candidate
+-        {processableCount === 1 ? "" : "s"}.{" "}
+-        {shortfall > 0 ? (
+-          shortfallText
+-        ) : (
+-          <>
+-            This will use <b>{processableCount}</b> credit{processableCount === 1 ? "" : "s"} from
+-            your balance of <b>{available}</b> available.
+-          </>
+-        )}
++        {isProcessableCountExact ? "" : "Up to "}
++        {processableCount} of the {candidatesCount} candidates selected from this hiring stage don't
++        have a Plato review yet. {creditCopy}
+       </>
+-    ) : (
++    );
++  } else {
++    // State 4 — checked (leading "The"; exact count even mid-load; no info block)
++    bodyCopy = (
+       <>
+-        Generate Plato reviews for up to <b>{processableCount}</b> candidate
+-        {processableCount === 1 ? "" : "s"}
+-        {shortfall > 0 ? (
+-          <>. {shortfallText}</>
+-        ) : (
+-          <>
+-            , using up to <b>{processableCount}</b> credit{processableCount === 1 ? "" : "s"} from
+-            your balance of <b>{available}</b> available.
+-          </>
+-        )}
++        The {candidatesCount} candidates selected from this hiring stage will be reviewed, including
++        candidates that already have a review. {creditCopy}
+       </>
+     );
++  }
+ 
+   const modalButtons = (
+     <Styled.ButtonContainer>
+@@ -157,7 +168,7 @@ function BulkGenerateAiSummariesConfirmModal({
+         size="medium"
+         onClick={handleOnConfirm}
+         loading={isLoading}
+-        disabled={isLoading || processableCount === 0}
++        disabled={isLoading || candidatesCount === 0 || (!rescore && processableCount === 0)}
+         aria-label="Generate reviews"
+       >
+         Generate reviews
+@@ -175,25 +186,35 @@ function BulkGenerateAiSummariesConfirmModal({
+   );
+ 
+   return (
+-    <CenterModal
+-      headerTitleText="Review candidates"
+-      onCancel={handleOnCancel}
+-    >
+-      <Styled.Instructions>{instructions}</Styled.Instructions>
+-      <FormContainer errors={errors} buttons={modalButtons} onSubmit={handleOnConfirm}>
+-        {!isProcessableCountExact && processableCount > 0 && (
+-          <Styled.Caveat>
+-            This is a Select All and not all candidates are loaded, so this may be an overestimate.
+-            Candidates who already have a review won't be reprocessed.
+-          </Styled.Caveat>
+-        )}
+-        <Styled.Callout>
+-          <Icon name="file-text" />
+-          <span>
+-            Candidates you selected that already have a review were excluded from this count. Candidates may also be skipped if they have no resume, their resume is still processing, or they're already part of another bulk operation.
+-          </span>
+-        </Styled.Callout>
+-      </FormContainer>
++    <CenterModal headerTitleText="Review candidates" onCancel={handleOnCancel}>
++      <Styled.Instructions>{bodyCopy}</Styled.Instructions>
++      {!isProcessableCountExact && !rescore && (
++        <Tooltip label="This is not an exact count of candidates without a review. If fewer candidates than stated above are unreviewed, only those unreviewed candidates will be reviewed, and fewer credits will be consumed.">
++          <Styled.Info>
++            <Icon name="alert-circle" />
++            <span>This count may be an overestimate.</span>
++          </Styled.Info>
++        </Tooltip>
++      )}
++      <Styled.RescoreCheckbox>
++        <FormCheckbox
++          name="rescore"
++          label="Also re-review candidates that already have a review"
++          description="Recommended if you've changed the candidate requirements in the job description."
++          checked={rescore}
++          onChange={() => setRescore((currentRescore) => !currentRescore)}
++          disabled={candidatesCount === 0}
++        />
++      </Styled.RescoreCheckbox>
++      <Styled.Statement>
++        <Icon name="mail" />
++        <span>
++          You will receive an email with the final count when it's done. Candidates without a
++          resume, one that's still processing, or those already part of another bulk operation are
++          skipped.
++        </span>
++      </Styled.Statement>
++      <FormContainer errors={errors} buttons={modalButtons} onSubmit={handleOnConfirm} />
+     </CenterModal>
+   );
+ }
+@@ -233,24 +254,39 @@ Styled.ButtonContainer = styled.div((props) => {
+   `;
+ });
+ 
+-Styled.Caveat = styled.div((props) => {
++Styled.RescoreCheckbox = styled.div((props) => {
++  const t: any = props.theme;
++  return css`
++    label: BulkGenerateAiSummariesConfirmModal_RescoreCheckbox;
++    ${t.mt(4)}
++  `;
++});
++
++Styled.Info = styled.div((props) => {
+   const t: any = props.theme;
+   return css`
+-    label: BulkGenerateAiSummariesConfirmModal_Caveat;
+-    ${[t.p(3), t.rounded.md, t.text.sm]}
+-    background: ${t.dark ? t.color.gray[800] : t.color.gray[100]};
+-    color: ${t.dark ? t.color.gray[300] : t.color.gray[700]};
++    label: BulkGenerateAiSummariesConfirmModal_Info;
++    ${[t.text.xs, t.mt(-1), t.mb(5)]}
++    color: ${t.dark ? t.color.gray[400] : t.color.gray[600]};
++    display: flex;
++    align-items: center;
++    line-height: 1.3;
++
++    svg {
++      ${[t.h(6), t.w(4), t.mr(1)]}
++      min-width: 16px;
++    }
+ 
+-    b {
+-      color: ${t.dark ? t.color.gray[100] : t.color.black};
++    &:hover {
++      cursor: text;
+     }
+   `;
+ });
+ 
+-Styled.Callout = styled.div((props) => {
++Styled.Statement = styled.div((props) => {
+   const t: any = props.theme;
+   return css`
+-    label: BulkGenerateAiSummariesConfirmModal_Callout;
++    label: BulkGenerateAiSummariesConfirmModal_Statement;
+     ${[t.mt(4), t.p(3), t.rounded.md]}
+     display: flex;
+     gap: 0.625rem;
+diff --git a/app/javascript/ats/src/views/jobApplications/PlatoTab.tsx b/app/javascript/ats/src/views/jobApplications/PlatoTab.tsx
+index 436bcc3e0..02098a674 100644
+--- a/app/javascript/ats/src/views/jobApplications/PlatoTab.tsx
++++ b/app/javascript/ats/src/views/jobApplications/PlatoTab.tsx
+@@ -70,9 +70,9 @@ function PlatoTab({ jobApplication, history, match, isFetchingJobApplication }:
+     showPlatoLoading,
+   });
+ 
+-  const handleGenerate = () => {
++  const handleGenerate = (rescoreRequested: boolean) => {
+     generate(
+-      { jobApplicationId: jobApplication.id },
++      { jobApplicationId: jobApplication.id, rescoreRequested },
+       {
+         onSuccess: () => {
+           setShowPlatoLoading(true);
+@@ -105,7 +105,7 @@ function PlatoTab({ jobApplication, history, match, isFetchingJobApplication }:
+         cancelText="Cancel"
+         onConfirm={() => {
+           removeModal();
+-          handleGenerate();
++          handleGenerate(true);
+         }}
+         onCancel={() => {
+           removeModal();
+@@ -189,7 +189,7 @@ function PlatoTab({ jobApplication, history, match, isFetchingJobApplication }:
+           status="bulkQueued"
+           creditsRemaining={totalRemaining}
+           isAdmin={currentOrganizationUser.isAdmin}
+-          onClick={handleGenerate}
++          onClick={() => handleGenerate(false)}
+         />
+       </Styled.EmptyStateWrapper>
+     );
+@@ -200,7 +200,7 @@ function PlatoTab({ jobApplication, history, match, isFetchingJobApplication }:
+           status="failed"
+           creditsRemaining={totalRemaining}
+           isAdmin={currentOrganizationUser.isAdmin}
+-          onClick={handleGenerate}
++          onClick={() => handleGenerate(false)}
+           failedDueToNoJobCriteria={fullSummary.failedDueToNoJobCriteria}
+           jobId={jobApplication.jobId}
+         />
+@@ -230,7 +230,7 @@ function PlatoTab({ jobApplication, history, match, isFetchingJobApplication }:
+           status={deriveEmptyStatus()}
+           creditsRemaining={totalRemaining}
+           isAdmin={currentOrganizationUser.isAdmin}
+-          onClick={handleGenerate}
++          onClick={() => handleGenerate(false)}
+         />
+       </Styled.EmptyStateWrapper>
+     );
+@@ -244,7 +244,7 @@ function PlatoTab({ jobApplication, history, match, isFetchingJobApplication }:
+         Regenerating
+       </Styled.Regenerating>
+     );
+-  } else if (statusValue === "current" && fullSummary?.stale) {
++  } else if (statusValue === "current") {
+     if (isLoadingCredits || totalRemaining > 0) {
+       headerRight = (
+         <Button styleType="text" onClick={handleClickRegenerate} loading={buttonLoading} disabled={buttonLoading}>
+diff --git a/app/javascript/ats/src/views/jobApplications/RunPlatoReviewAllModal.tsx b/app/javascript/ats/src/views/jobApplications/RunPlatoReviewAllModal.tsx
+index e2db38e9c..bc739460f 100644
+--- a/app/javascript/ats/src/views/jobApplications/RunPlatoReviewAllModal.tsx
++++ b/app/javascript/ats/src/views/jobApplications/RunPlatoReviewAllModal.tsx
+@@ -112,22 +112,41 @@ function RunPlatoReviewAllModal({
+     </Styled.ButtonContainer>
+   );
+ 
++  const creditSentence = (
++    <>
++      Each successful review uses one AI credit
++      {shortfall > 0 && candidatesToScoreCount > 0 ? (
++        <>
++          . You are short <b>{shortfall}</b> credit{shortfall === 1 ? "" : "s"}. The first{" "}
++          {available} candidate{available === 1 ? "" : "s"} will get reviews generated; the rest
++          will be skipped.
++        </>
++      ) : (
++        <>
++          , so running this uses up to <b>{candidatesToScoreCount}</b> credit
++          {candidatesToScoreCount === 1 ? "" : "s"} from your balance of <b>{available}</b> available.
++        </>
++      )}
++    </>
++  );
++
+   return (
+     <CenterModal headerTitleText="Review all candidates" onCancel={handleOnCancel}>
+       <Styled.Body>
+-        {candidatesToScoreCount} candidate{candidatesToScoreCount === 1 ? "" : "s"} in this job
+-        {candidatesToScoreCount === 1 ? " doesn't" : " don't"} have a Plato review yet.
+-        Each successful review uses one AI credit
+-        {shortfall > 0 && candidatesToScoreCount > 0 ? (
++        {rescore ? (
++          <>
++            {candidatesCount} candidate{candidatesCount === 1 ? "" : "s"} in this job will be reviewed,
++            including candidates that already have a review. {creditSentence}
++          </>
++        ) : candidatesToScoreCount === 0 ? (
+           <>
+-            . You are short <b>{shortfall}</b> credit{shortfall === 1 ? "" : "s"}. The first{" "}
+-            {available} candidate{available === 1 ? "" : "s"} will get reviews generated; the rest
+-            will be skipped.
++            0 candidates in this job don't have a Plato review yet. Unless you select re-review below, no
++            candidates will be reviewed.
+           </>
+         ) : (
+           <>
+-            , so running this uses up to <b>{candidatesToScoreCount}</b> credit
+-            {candidatesToScoreCount === 1 ? "" : "s"} from your balance of <b>{available}</b> available.
++            {candidatesToScoreCount} candidate{candidatesToScoreCount === 1 ? "" : "s"} in this job
++            {candidatesToScoreCount === 1 ? " doesn't" : " don't"} have a Plato review yet. {creditSentence}
+           </>
+         )}
+       </Styled.Body>
+@@ -146,7 +165,8 @@ function RunPlatoReviewAllModal({
+         <Icon name="mail" />
+         <span>
+           The hiring team gets an email with the final count when it's done. Candidates without a
+-          resume, or one that's still processing, are skipped.
++          resume, one that's still processing, or those already part of another bulk operation are
++          skipped.
+         </span>
+       </Styled.Statement>
+ 
+diff --git a/app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts b/app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts
+index b9b90195b..f0d3458c7 100644
+--- a/app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts
++++ b/app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts
+@@ -3,6 +3,7 @@ import { apiGet, apiPost } from "./api";
+ 
+ interface GenerateParams {
+   jobApplicationId: number;
++  rescoreRequested: boolean;
+ }
+ 
+ const generateAiSummary = async (params: GenerateParams) => {
+diff --git a/app/mailers/bulk_all_stages_ai_summary_result_mailer.rb b/app/mailers/bulk_all_stages_ai_summary_result_mailer.rb
+index 7d33c66cb..a7d995c54 100644
+--- a/app/mailers/bulk_all_stages_ai_summary_result_mailer.rb
++++ b/app/mailers/bulk_all_stages_ai_summary_result_mailer.rb
+@@ -2,21 +2,26 @@
+ 
+ class BulkAllStagesAiSummaryResultMailer < ApplicationMailer
+   def complete(user_id, job_id, succeeded_count, failed_count, skipped_count, total)
+-    @user = User.find(user_id)
+     @job = Job.find(job_id)
+ 
+     job_link = "#{Variables::AtsRootUrl}/jobs/#{@job.id}/stages"
+ 
++    recipients = @job.organization_users.actives.includes(:user)
++    return unless recipients.any?
++
++    to_recipients = recipients.map do |organization_user|
++      { name: "#{organization_user.user.first_name} #{organization_user.user.last_name}".strip, email: organization_user.user.email }
++    end
++
+     message_params = {
+       from: { name: 'Polymer', email: Variables::EMAIL_NOTIFICATIONS_ADDRESS },
+-      to: [{ name: @user.full_name, email: @user.email }],
++      to: to_recipients,
+       list_unsubscribe: "mailto:#{Variables::REPLY_TO_EMAIL_ADDRESS}",
+       subject: "Your Plato reviews for #{@job.title} are ready",
+       template: 'user-bulk-all-stages-ai-summary-complete',
+       template_version: 'initial',
+       tags: ['polymer', 'user-facing'],
+       variables: {
+-        user_first_name: @user.first_name,
+         job_title: @job.title,
+         total_count: total,
+         succeeded_count: succeeded_count,
+@@ -30,21 +35,26 @@ class BulkAllStagesAiSummaryResultMailer < ApplicationMailer
+   end
+ 
+   def failed(user_id, job_id, total_queued_count)
+-    @user = User.find(user_id)
+     @job = Job.find(job_id)
+ 
+     job_link = "#{Variables::AtsRootUrl}/jobs/#{@job.id}/stages"
+ 
++    recipients = @job.organization_users.actives.includes(:user)
++    return unless recipients.any?
++
++    to_recipients = recipients.map do |organization_user|
++      { name: "#{organization_user.user.first_name} #{organization_user.user.last_name}".strip, email: organization_user.user.email }
++    end
++
+     message_params = {
+       from: { name: 'Polymer', email: Variables::EMAIL_NOTIFICATIONS_ADDRESS },
+-      to: [{ name: @user.full_name, email: @user.email }],
++      to: to_recipients,
+       list_unsubscribe: "mailto:#{Variables::REPLY_TO_EMAIL_ADDRESS}",
+       subject: "We couldn't complete your Plato reviews for #{@job.title}",
+       template: 'user-bulk-all-stages-ai-summary-failed',
+       template_version: 'initial',
+       tags: ['polymer', 'user-facing'],
+       variables: {
+-        user_first_name: @user.first_name,
+         job_title: @job.title,
+         total_queued_count: total_queued_count,
+         job_link: job_link
+diff --git a/spec/controllers/api/v1/ai_job_application_summaries_controller_spec.rb b/spec/controllers/api/v1/ai_job_application_summaries_controller_spec.rb
+new file mode 100644
+index 000000000..da3ad72ea
+--- /dev/null
++++ b/spec/controllers/api/v1/ai_job_application_summaries_controller_spec.rb
+@@ -0,0 +1,84 @@
++# frozen_string_literal: true
++
++require 'rails_helper'
++
++RSpec.describe Api::V1::AiJobApplicationSummariesController, type: :controller do
++  include ActiveJob::TestHelper
++  include Devise::Test::ControllerHelpers
++
++  around do |example|
++    original_adapter = ActiveJob::Base.queue_adapter
++    ActiveJob::Base.queue_adapter = :test
++    example.run
++    ActiveJob::Base.queue_adapter = original_adapter
++  end
++
++  let(:organization) { create_credit_test_organization }
++  let(:user) { organization.owner }
++  let(:organization_user) do
++    ou = credit_test_owner_organization_user(organization)
++    ou.update!(role: :org_admin) unless ou.org_admin? || ou.org_owner?
++    ou
++  end
++  let(:job_record) { create_credit_test_job(organization: organization) }
++
++  before do
++    Flipper.enable(:AI_APPLICANT_SUMMARY, organization)
++    organization.organization_ai_credit_balance.update!(monthly_credits_remaining: 100)
++
++    organization_user
++    user.update_column(:current_organization_user_id, organization_user.id)
++    user.reload
++
++    allow(controller).to receive(:authenticate_api_v1_user!)
++    allow(controller).to receive(:current_api_v1_user).and_return(user)
++    allow(controller).to receive(:current_user).and_return(user)
++    allow(controller).to receive(:set_sentry_context)
++  end
++
++  def job_application_with_textract
++    job_application = create_credit_test_job_application(job: job_record)
++    job_application.resume.attach(io: StringIO.new('fake'), filename: 'r.pdf', content_type: 'application/pdf')
++    TextractResult.create!(
++      job_application: job_application,
++      textract_job_result_text: "resume text #{SecureRandom.hex(4)}",
++      textract_job_id: "tx-#{SecureRandom.hex(4)}",
++      textract_job_status: :succeeded
++    )
++    job_application
++  end
++
++  describe '#create' do
++    it 'rejects a request without rescore_requested' do
++      job_application = job_application_with_textract
++      allow(ValidateAiSummaryGeneration).to receive(:call)
++        .and_return(double(success?: true, textract_result: job_application.latest_textract_result, textract_pending: false))
++
++      expect {
++        post :create, params: { job_application_id: job_application.id, ai_job_application_summary: { irrelevant: 'x' } }, format: :json
++      }.to raise_error(ActionController::ParameterMissing)
++    end
++
++    it 'threads rescore_requested onto the job_application before CreateAiSummaryGeneration' do
++      job_application = job_application_with_textract
++      ai_job_application_summary = job_application.ai_job_application_summaries.create!(
++        textract_result: job_application.latest_textract_result, status: :pending
++      )
++      allow(ValidateAiSummaryGeneration).to receive(:call)
++        .and_return(double(success?: true, textract_result: job_application.latest_textract_result, textract_pending: false))
++      captured_job_application = nil
++      allow(CreateAiSummaryGeneration).to receive(:call) do |args|
++        captured_job_application = args[:job_application]
++        double(success?: true, ai_summary: ai_job_application_summary)
++      end
++
++      post :create, params: {
++        job_application_id: job_application.id,
++        ai_job_application_summary: { rescore_requested: true }
++      }, format: :json
++
++      expect(response).to have_http_status(:ok)
++      expect(captured_job_application.ai_summary_rescore_requested).to be true
++    end
++  end
++end
+diff --git a/spec/interactors/create_ai_summary_generation_spec.rb b/spec/interactors/create_ai_summary_generation_spec.rb
+new file mode 100644
+index 000000000..ad8616e96
+--- /dev/null
++++ b/spec/interactors/create_ai_summary_generation_spec.rb
+@@ -0,0 +1,65 @@
++# frozen_string_literal: true
++
++require 'rails_helper'
++
++RSpec.describe CreateAiSummaryGeneration, type: :interactor do
++  include ActiveJob::TestHelper
++
++  around do |example|
++    original_adapter = ActiveJob::Base.queue_adapter
++    ActiveJob::Base.queue_adapter = :test
++    example.run
++    ActiveJob::Base.queue_adapter = original_adapter
++  end
++
++  let(:organization) { create_credit_test_organization }
++  let(:org_user) { credit_test_owner_organization_user(organization) }
++  let(:user) do
++    u = organization.owner
++    u.update(current_organization_user: org_user)
++    u
++  end
++  let(:job) { create_credit_test_job(organization: organization) }
++  let(:job_application) do
++    ja = create_credit_test_job_application(job: job)
++    TextractResult.create!(
++      job_application: ja,
++      textract_job_result_text: "resume text #{SecureRandom.hex(4)}",
++      textract_job_id: "tx-#{SecureRandom.hex(4)}",
++      textract_job_status: :succeeded
++    )
++    ja
++  end
++  let(:textract_result) { job_application.latest_textract_result }
++  let(:validation_result) { double('validation_result', textract_result: textract_result, textract_pending: false) }
++
++  describe '#call' do
++    context 'rescore path (active succeeded summary exists, ai_summary_rescore_requested set)' do
++      it 'builds a new pending row and enqueues GenerateAiJobApplicationSummaryJob when rescore requested' do
++        existing = job_application.ai_job_application_summaries.create!(textract_result: textract_result, status: :succeeded, stale: false)
++        job_application.ai_summary_rescore_requested = true
++
++        expect {
++          result = described_class.call(job_application: job_application, validation_result: validation_result, user: user)
++          expect(result.success?).to be true
++          expect(result.ai_summary.id).not_to eq(existing.id)
++          expect(result.ai_summary.status).to eq('pending')
++          expect(existing.reload.status).to eq('succeeded')
++          expect(existing.reload.stale).to be false
++        }.to have_enqueued_job(GenerateAiJobApplicationSummaryJob)
++      end
++
++      it 'returns the existing summary and enqueues nothing when rescore not requested' do
++        existing = job_application.ai_job_application_summaries.create!(textract_result: textract_result, status: :succeeded, stale: false)
++        job_application.ai_summary_rescore_requested = false
++
++        expect {
++          expect {
++            result = described_class.call(job_application: job_application, validation_result: validation_result, user: user)
++            expect(result.ai_summary.id).to eq(existing.id)
++          }.not_to have_enqueued_job(GenerateAiJobApplicationSummaryJob)
++        }.not_to change { job_application.ai_job_application_summaries.count }
++      end
++    end
++  end
++end
+diff --git a/spec/mailers/bulk_all_stages_ai_summary_result_mailer_spec.rb b/spec/mailers/bulk_all_stages_ai_summary_result_mailer_spec.rb
+index 308663933..548d2d090 100644
+--- a/spec/mailers/bulk_all_stages_ai_summary_result_mailer_spec.rb
++++ b/spec/mailers/bulk_all_stages_ai_summary_result_mailer_spec.rb
+@@ -7,22 +7,34 @@ RSpec.describe BulkAllStagesAiSummaryResultMailer, type: :mailer do
+   let(:user) { organization.owner }
+   let(:job) { create_credit_test_job(organization: organization) }
+ 
++  let(:active_member) { create_credit_test_organization_user(organization, role: :org_admin) }
++  let(:inactive_member) { create_credit_test_organization_user(organization, role: :org_admin) }
++
+   let(:send_template_double) { instance_double(Emails::SendTemplateEmail, send: true) }
+ 
+   before do
+     allow(Emails::SendTemplateEmail).to receive(:new).and_return(send_template_double)
++    job.organization_users << active_member
++    job.organization_users << inactive_member
++    inactive_member.update!(is_active: false)
+   end
+ 
+   describe '#complete' do
+-    it 'sends with correct template, variables, and job-level link' do
+-      described_class.new.complete(user.id, job.id, 5, 1, 2)
++    it 'sends to active hiring-team members with correct template, variables, and job-level link' do
++      described_class.new.complete(user.id, job.id, 5, 1, 2, 8)
+ 
+       expect(Emails::SendTemplateEmail).to have_received(:new) do |params|
+         expect(params[:template]).to eq('user-bulk-all-stages-ai-summary-complete')
+         expect(params[:template_version]).to eq('initial')
+-        expect(params[:tags]).to eq(['polymer', 'user-facing', 'ai-summaries'])
+-        expect(params[:to].first[:email]).to eq(user.email)
+-        expect(params[:subject]).to eq("Your AI summaries for #{job.title} are ready")
++        expect(params[:tags]).to eq(['polymer', 'user-facing'])
++        expect(params[:subject]).to eq("Your Plato reviews for #{job.title} are ready")
++
++        emails = params[:to].map { |r| r[:email] }
++        expect(emails).to include(active_member.user.email)
++        expect(emails).not_to include(inactive_member.user.email)
++
++        expect(params[:variables]).not_to have_key(:user_first_name)
++        expect(params[:variables][:total_count]).to eq(8)
+         expect(params[:variables][:succeeded_count]).to eq(5)
+         expect(params[:variables][:failed_count]).to eq(1)
+         expect(params[:variables][:skipped_count]).to eq(2)
+@@ -34,14 +46,19 @@ RSpec.describe BulkAllStagesAiSummaryResultMailer, type: :mailer do
+   end
+ 
+   describe '#failed' do
+-    it 'sends with correct template and variables' do
++    it 'sends to active hiring-team members with correct template and variables' do
+       described_class.new.failed(user.id, job.id, 10)
+ 
+       expect(Emails::SendTemplateEmail).to have_received(:new) do |params|
+         expect(params[:template]).to eq('user-bulk-all-stages-ai-summary-failed')
+         expect(params[:template_version]).to eq('initial')
+-        expect(params[:to].first[:email]).to eq(user.email)
+-        expect(params[:subject]).to eq("We couldn't generate AI summaries for #{job.title}")
++        expect(params[:subject]).to eq("We couldn't complete your Plato reviews for #{job.title}")
++
++        emails = params[:to].map { |r| r[:email] }
++        expect(emails).to include(active_member.user.email)
++        expect(emails).not_to include(inactive_member.user.email)
++
++        expect(params[:variables]).not_to have_key(:user_first_name)
+         expect(params[:variables][:total_queued_count]).to eq(10)
+         expect(params[:variables][:job_link]).to include("/jobs/#{job.id}/stages")
+         expect(params[:variables][:job_link]).not_to include('applicants')

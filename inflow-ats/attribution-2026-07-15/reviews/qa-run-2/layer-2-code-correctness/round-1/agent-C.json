@@ -1,0 +1,72 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": "C",
+  "files_reviewed": [
+    "app/javascript/ats/src/views/sessions/Auth.tsx",
+    "app/javascript/ats/src/views/sessions/components/OrganizationForm.tsx",
+    "app/javascript/ats/src/views/sessions/components/ProfileForm.tsx",
+    "app/javascript/shared/lib/posthog.ts",
+    "app/javascript/shared/lib/utils.js",
+    "app/javascript/shared/lib/utils.test.js",
+    "app/javascript/shared/PostHogContext.tsx",
+    "app/javascript/ats/src/components/modals/NewJobCenterModal.tsx",
+    "app/javascript/ats/src/views/sessions/OnboardingProfile.tsx",
+    "app/controllers/hire/confirmations_controller.rb",
+    "app/controllers/api/v1/registrations_controller.rb",
+    "app/controllers/api/v1/organizations_controller.rb",
+    "app/controllers/api/v1/users/omniauth_callbacks_controller.rb",
+    "app/models/user.rb (from_omniauth)",
+    "config/initializers/omniauth.rb",
+    "spec/controllers/api/v1/registrations_controller_spec.rb",
+    "spec/controllers/api/v1/organizations_controller_spec.rb",
+    "spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb",
+    "spec/controllers/hire/confirmations_controller_spec.rb",
+    "spec/models/user_from_omniauth_spec.rb",
+    "spec/controllers/api/v1/organization_ai_credit_purchases_purchase_top_up_spec.rb (convention comparison)",
+    "spec/models/job_criteria_lifecycle_spec.rb (around-block convention comparison)",
+    "node_modules/query-string/index.js (v6.1.0 parse/extract verification)"
+  ],
+  "findings": [
+    {
+      "id": "C1",
+      "severity": "LOW",
+      "file": "app/javascript/ats/src/views/sessions/Auth.tsx",
+      "line": 27,
+      "title": "Present-but-empty and array id/email values pass the identify guard",
+      "detail": "The guard is `id != undefined && email != undefined`. queryString.parse yields \"\" for `?id=&email=` (empty string passes the loose-inequality guard, Number(\"\") === 0, so identifyUser fires ph.identify(\"0\")); a repeated `?id=1&id=2` yields an array (Number([\"1\",\"2\"]) is NaN, so ph.identify(\"NaN\")); a repeated email yields an array passed as the email person property despite the `email as string` cast. The server-side producer (Hire::ConfirmationsController#show line 18) always emits well-formed id/email, so these paths are reachable only via hand-crafted URLs; the spec (5.6 step 2) only required guarding absence, which the code does. Consequence of a crafted URL is PostHog identity pollution (distinct_id \"0\"/\"NaN\") plus a spurious email_verified event.",
+      "spec_ref": "SPEC.md 5.6 step 2",
+      "verdict_note": "Guard satisfies the spec's absence requirement; degenerate values require URL tampering."
+    },
+    {
+      "id": "C2",
+      "severity": "LOW",
+      "file": "app/javascript/ats/src/views/sessions/Auth.tsx",
+      "line": 23,
+      "title": "email_verified re-fires on every remount while the query params persist",
+      "detail": "The effect fires once per mount (emailConfirmed transitions false->true once and never back), but the `email_confirmed=true&id=..&email=..` params are never stripped from the URL. A back-button return or history restore to the same URL remounts Auth and fires identifyUser + trackEvent(\"email_verified\") again, mildly inflating the funnel step. identify itself is idempotent. The spec's own wording is \"exactly once per landing\", and each remount is a landing, so this matches the approved semantics. React is 16.14 with no StrictMode in app/javascript, so there is no double-effect mount concern.",
+      "spec_ref": "SPEC.md 5.6",
+      "verdict_note": "Consistent with spec wording; noted as a duplicate-event edge only."
+    },
+    {
+      "id": "C3",
+      "severity": "LOW",
+      "file": "app/javascript/shared/lib/utils.js",
+      "line": 40,
+      "title": "sanitizeTrackingParams occurrence scan silently drops all utmData for inputs without a leading '?'",
+      "detail": "queryString.extract(search) returns \"\" when the input contains no '?' (verified in node_modules/query-string/index.js v6.1.0 extract), while queryString.parse handles a bare \"a=1&b=2\" string. For a bare query string input, utmSource/utmCampaign/internalRef would still be captured (they come from parsedParams) but keysInOccurrenceOrder would be empty, so utmData would be silently absent. All current callers pass location.search, which is always empty or '?'-prefixed, and every test input is '?'-prefixed, so this is latent-only. Separately verified NOT to be a defect: the key scan's `param.replace(/\\+/g, \" \")` + decodeUriComponent exactly mirrors query-string v6.1.0 parse (`param.replace(/\\+/g, ' ')` then decodeComponent on the key), so scan keys and parse keys cannot diverge on '+' or percent-encoding; the utils.test.js '%C2' test pins this. All 11 Jest tests pass when run directly.",
+      "spec_ref": "SPEC.md 5.1",
+      "verdict_note": "Latent inconsistency between the two query-string entry points; unreachable from current callers."
+    },
+    {
+      "id": "C4",
+      "severity": "LOW",
+      "file": "spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb",
+      "line": 44,
+      "title": "allowed_keys extension in the omniauth setup lambda has no test coverage",
+      "detail": "The spec seeds session[:oauth_tracking] directly, so it pins the keyword call-site conversion and the string-key session read but never exercises config/initializers/omniauth.rb's setup lambda. A regression removing utm_source/utm_campaign/utm_data/internal_ref from allowed_keys would pass every spec while silently dropping SSO attribution. This matches SPEC.md 9 item 3, which only required the session-seed test, so it is spec-consistent; recorded as a coverage note. The stub itself does not mask a type mismatch: `have_received(:from_omniauth).with(auth: anything, created_via:..., utm_data: {'utm_medium'=>'cpc'}, ...)` fails against a positional call or wrong key types, and the string-keyed nested hash matches what the :json cookie serializer round-trip produces in production.",
+      "spec_ref": "SPEC.md 9 item 3, 4.5",
+      "verdict_note": "Spec-directed test shape; gap is in what the spec asked for, not in the test's correctness."
+    }
+  ]
+}

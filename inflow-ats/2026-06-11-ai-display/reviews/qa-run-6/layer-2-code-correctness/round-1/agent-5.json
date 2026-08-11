@@ -1,0 +1,31 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 5,
+  "files_reviewed": [
+    "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+    "app/javascript/ats/src/views/jobApplications/JobApplicationSidebar.tsx",
+    "app/javascript/shared/types/aiJobApplicationSummary.ts",
+    "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts"
+  ],
+  "findings": [
+    {
+      "id": "H1",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationContainer.tsx",
+      "line": 152,
+      "title": "possiblePaths unconditionally includes 'ai' — infinite redirect loop when flag is off",
+      "description": "Line 152 defines `possiblePaths = [\"overview\", \"resume\", \"messages\", \"files\", \"notes\", \"ai\"]` without gating \"ai\" on the AI_APPLICANT_SUMMARY feature flag. The `/ai` Route (line 276-283) is wrapped in `<FeatureFlipper feature=\"AI_APPLICANT_SUMMARY\">`, so when the flag is off the route does not exist. However, the `redirector()` function (lines 186-192) will still redirect to `${match.url}/ai` whenever `currentViewPath` is `\"ai\"` (because `possiblePaths.includes(\"ai\")` returns true regardless of flag state), and with no matching Route for `/ai` the Switch falls through to `redirector()` again — creating an infinite redirect loop. The spec (Section 4, paragraph starting 'Add \"ai\" to the possiblePaths array conditionally') explicitly requires conditional inclusion: `const possiblePaths = [\"overview\", \"resume\", \"messages\", \"files\", \"notes\", ...(isAiEnabled ? [\"ai\"] : [])]` where `isAiEnabled` comes from `useFeatureFlipper()({ feature: Features.AI_APPLICANT_SUMMARY })`. Neither `useFeatureFlipper` nor `Features` is imported and `isAiEnabled` does not exist in this file.",
+      "fix": "Import `useFeatureFlipper` and `Features` from `@ats/src/components/shared/FeatureFlipper`. Add `const isAiEnabled = useFeatureFlipper()({ feature: Features.AI_APPLICANT_SUMMARY });` at the component top level (before the useEffect). Change line 152 to: `const possiblePaths = [\"overview\", \"resume\", \"messages\", \"files\", \"notes\", ...(isAiEnabled ? [\"ai\"] : [])];`"
+    },
+    {
+      "id": "H2",
+      "severity": "HIGH",
+      "file": "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts",
+      "line": 44,
+      "title": "enabled guard uses `> 0` numeric comparison on a value that can be a fabricated 0 fallback — masks the core rule violation in PlatoTab",
+      "description": "The `enabled` guard on line 44 is `!!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0`. This guard is designed to prevent a request firing when no real ID exists. However, PlatoTab.tsx line 41 passes `aiJobApplicationSummaryId: (status === 'succeeded' && aiSummary?.id) || 0`. When `status !== 'succeeded'` or `aiSummary?.id` is falsy/absent, the expression evaluates to `0` — a fabricated fallback — and then relies on the `> 0` guard to stop the request. This is the pattern prohibited by Known Failure Pattern #13 ('Never fabricate fallback values for absent data') and by pipeline rule 13 from the inflow-ats CLAUDE.md. The correct fix is in PlatoTab (pass `undefined` instead of `0` when no real ID exists), but the hook's guard implicitly enables and documents this fabricated-0 pattern. The guard `aiJobApplicationSummaryId > 0` is only safe if callers never pass a fabricated 0; the hook interface (typed as `number`, not `number | undefined`) and its guard together invite this anti-pattern. The spec (Section 7 type changes) types the interface parameter as `aiJobApplicationSummaryId: number` with no option for undefined, which creates pressure on callers to supply a fabricated 0.",
+      "fix": "Change the parameter type to `aiJobApplicationSummaryId: number | undefined` (or `number | null`). Change the `enabled` guard to `enabled: aiJobApplicationSummaryId != null && aiJobApplicationSummaryId > 0`. In PlatoTab.tsx line 41, pass `aiJobApplicationSummaryId: (status === 'succeeded' && aiSummary?.id) ? aiSummary.id : undefined` — eliminating the `|| 0` fallback entirely."
+    }
+  ]
+}

@@ -1,0 +1,207 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume shows experience with local Linux-based virtualization and NAT environments, but lacks evidence of managing multi-cloud racks or customer-facing cloud environments."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of professional-grade monitoring, logging, alerting, or multi-cloud failover implementation."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Candidate has significant Go experience building a distributed ETL pipeline, load balancers, and web applications in professional settings."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The resume mentions Juju orchestration but does not provide evidence of Kubernetes-specific cluster design or management."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "Candidate lists Ansible, which is configuration management, but lacks evidence of using Terraform or cloud-native IaC for infrastructure provisioning."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Candidate has integrated Google OAuth 2.0 but lacks experience managing actual cloud compute/network/storage services on major cloud providers."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Candidate shows familiarity with building developer-focused CLI tools and backend services, demonstrating an understanding of abstraction."
+    },
+    {
+      "criterion_text": "Excellent communication skills",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not provide evidence of communication skills beyond technical documentation."
+    },
+    {
+      "criterion_text": "Ability to work cross functionally",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence provided regarding cross-functional collaboration."
+    },
+    {
+      "criterion_text": "Thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has professional experience in a remote software development role, suggesting an ability to work in product engineering."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No mention of cloud marketplace experience."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "Infrastructure work described is on-premises/local Linux-based."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate built a load balancer and distributed pipeline, showing some understanding of high availability concepts."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Candidate explicitly mentions contributing to open-source tools and building a distributed Go-based ETL pipeline."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No mention of industry-standard observability tools."
+    },
+    {
+      "criterion_text": "Ability to design backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Candidate has demonstrated ability to design Go-based APIs and internal tooling, but lacks specific PaaS scheduler/orchestrator experience."
+    },
+    {
+      "criterion_text": "Ability to build backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Strong Go backend building skills shown, but missing PaaS-specific orchestrator experience."
+    },
+    {
+      "criterion_text": "Ability to maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate's experience with documentation and deployment guides indicates an ability to maintain infrastructure software."
+    },
+    {
+      "criterion_text": "Ability to work closely with the infrastructure team to integrate with Kubernetes.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of Kubernetes integration."
+    },
+    {
+      "criterion_text": "Ability to integrate with Kubernetes components such as clusters, deployments, and autoscaling.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of Kubernetes usage."
+    },
+    {
+      "criterion_text": "Ability to integrate with Terraform as infrastructure as code.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of Terraform usage."
+    },
+    {
+      "criterion_text": "Ability to work across AWS, GCP, Azure, and other cloud platforms.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "Experience is limited to on-premise Linux environments."
+    },
+    {
+      "criterion_text": "Ability to collaborate with product and UX teams to deliver features for developers.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No specific evidence of UX/Product collaboration."
+    },
+    {
+      "criterion_text": "Ability to improve CLI usage for developers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Candidate built DebForge, a CLI tool for Debian package creation."
+    },
+    {
+      "criterion_text": "Ability to enhance CI/CD workflows for developers.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Strong experience in automation and scripting (Bash, Ansible) suggests ability to enhance workflows."
+    },
+    {
+      "criterion_text": "Ability to enable marketplace and cloud provider integrations for developers.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of marketplace integration experience."
+    },
+    {
+      "criterion_text": "Ability to create better observability and logging experiences for developers.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of professional observability implementation."
+    },
+    {
+      "criterion_text": "Ability to participate in code reviews for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Given the professional software role, code review participation is a standard expectation."
+    },
+    {
+      "criterion_text": "Ability to mentor others in backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Authored deployment guides to assist onboarding, demonstrating an ability to share knowledge."
+    },
+    {
+      "criterion_text": "Ability to help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Creating documentation and deployment guides indicates a proactive approach to defining standards."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Used automation tools like Ansible and Bash scripting, though no formal CI/CD pipeline tool (Jenkins, GitHub Actions) is mentioned."
+    },
+    {
+      "criterion_text": "Familiarity with developer tooling is a strong plus.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Built developer tools such as DebForge and documented infra setup procedures."
+    },
+    {
+      "criterion_text": "Some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Integrated Google OAuth, which is a cloud provider API service."
+    }
+  ],
+  "computed_score": {
+    "points": 86.0,
+    "max": 208,
+    "percentage": 41.3
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume shows extensive experience architecting and managing multi-cloud environments. At Civo, they 'Architected and managed the high-performance GPU infrastructure' and 'Enhanced reliability and operations for the Civo cloud platform.' At nClouds, they 'Streamlined scalable multi-tenant AWS EKS platforms.' At Lineten, they 'Conceptualized multi-region Kubernetes clusters.' They have hands-on experience with AWS, Azure, and cloud platforms."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The resume shows evidence of enhancing CI/CD workflows ('Championed GitOps adoption, integrating security scans and doubling CI/CD deployment speed'), creating better observability experiences ('Implemented unified observability stack', 'Collaborated on platform observability'), and working on developer-focused improvements. However, there's no specific mention of collaborating with product and UX teams or improving CLI usage."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume demonstrates extensive experience in reliability, scalability, and security. Examples include: 'ensuring the scalability and high availability of the multi-tiered conversational AI/ML platform,' 'Designed zero-downtime major version upgrades,' 'improving system uptime by 99.9%,' 'embedding security best practices to achieve wiz.io compliance,' 'Implemented unified observability stack,' and 'customizing alerting pipelines.' They also have multi-cloud experience."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The resume shows experience with Go services ('custom Golang controllers'), backend infrastructure, and cloud deployments across multiple roles. However, there's no explicit mention of participating in code reviews, mentoring others, or defining best practices, though these activities are implied in senior SRE roles."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The resume explicitly mentions 'custom Golang controllers' at Lineten and lists 'Go' in the programming languages skills section. The candidate has worked on production backend systems across multiple SRE roles."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The resume demonstrates extensive Kubernetes expertise: 'multi-cloud Kubernetes' specialist, 'Managed K3s,' 'multi-region Kubernetes clusters,' 'K3s Kubernetes control plane,' and multiple Kubernetes certifications (CKS, CKA, CKAD, KCNA, KCSA, Kubestronaut). Skills include service mesh tools like Linkerd and Istio."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The resume explicitly mentions Terraform multiple times: 'Proficient across FullStack development, GitOps, and Terraform/laC,' 'Streamlined scalable multi-tenant AWS EKS platforms using Terraform,' and 'Conceptualized multi-region Kubernetes clusters using Terraform.' Terraform is also listed in skills."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The resume shows extensive hands-on experience with AWS and Azure. Examples include: 'multi-tenant AWS EKS platforms,' 'Airflow on AWS,' 'AI/ML workload environment on AWS EKS,' storage migrations, security implementations, and 'AWS, Azure' listed in skills. They managed various cloud services including compute, storage, and security."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate worked at Civo, which is a cloud platform provider, where they 'Enhanced reliability and operations for the Civo cloud platform, optimizing infrastructure for Managed K3s, DBaaS, and the Kubeflow (Kfaas) MLOps environment.' This demonstrates direct experience with PaaS products and abstracting infrastructure while maintaining control for developers."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The resume shows extensive CI/CD experience: 'GitOps pipelines,' 'ArgoCD-powered GitOps pipelines,' 'GitHub Actions,' 'Gitlab CI,' 'Tekton,' 'Jenkins-X,' and 'doubling CI/CD deployment speed.' They also have cloud provider integration experience working across AWS, Azure, and cloud platforms."
+    },
+    {
+      "criterion_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The resume shows collaborative work ('Collaborated on platform observability') and experience in fast-moving environments (multiple remote roles, consultant positions, delivering results quickly). However, there's no specific evidence of excellent communication skills or explicit cross-functional collaboration beyond technical teams."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume contains no mention of publishing or integrating software on cloud marketplaces like AWS Marketplace, GCP Marketplace, or Azure Marketplace."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume demonstrates extensive experience with these architectures: 'ensuring the scalability and high availability,' 'multi-region Kubernetes clusters,' 'scalable multi-tenant AWS EKS platforms,' 'Designed zero-downtime major version upgrades,' and 'improving system uptime by 99.9%.' They have worked on multi-region and multi-tenant systems."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume shows extensive work with open source projects including Kubernetes, ArgoCD, Prometheus, Grafana, Terraform, and many other open source tools. They also worked on distributed systems including 'multi-tiered conversational AI/ML platform,' 'multi-region clusters,' and various cloud-native distributed architectures."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume explicitly mentions extensive observability experience: 'Implemented unified observability stack (Prometheus/Grafana),' 'Implemented a centralized Observability Platform (Prometheus, Grafana, Thanos),' 'Collaborated on platform observability,' and lists 'Grafana, Prometheus, Kiali, Jaeger, Fluentd, Thanos' in the Observability skills section."
+    }
+  ],
+  "computed_score": {
+    "points": 78.0,
+    "max": 92,
+    "percentage": 84.8
+  }
+}

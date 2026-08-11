@@ -1,0 +1,32 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "run": 6,
+  "findings": [],
+  "convergence": {
+    "status": "CONVERGED",
+    "consecutive_clean_rounds": 2,
+    "rounds": [
+      { "round": 1, "agents": 5, "valid_high_findings": 0 },
+      { "round": 2, "agents": 2, "valid_high_findings": 0 }
+    ]
+  },
+  "scenarios_verified": [
+    "Login + sidebar nav shows Plato entry with gradient chip",
+    "Plato tab renders no-resume state correctly",
+    "Overview callout renders with correct copy for no-resume state",
+    "Callout click navigates to Plato tab",
+    "Plato tab header: gradient chip + label + kebab button",
+    "Candidate switching updates both callout and Plato tab",
+    "Flag OFF: no Plato nav item, no callout, no errors",
+    "Multiple navigation round-trips (Overview <-> Plato) work without errors",
+    "Zero console errors across all sessions"
+  ],
+  "not_tested": [
+    "Succeeded state (requires candidate with AI summary -- seeded candidates have no resume)",
+    "Generate summary action (requires candidate with resume but no summary)",
+    "Generating/processing skeleton states (requires active summary generation)",
+    "Stale banner (requires summary with resume change)",
+    "Failed state (requires failed summary generation)"
+  ]
+}

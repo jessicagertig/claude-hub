@@ -1,0 +1,20 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 5,
+  "agent_index": 5,
+  "assignment": "subscription.deleted branch live",
+  "findings": [],
+  "verified": [
+    "Main branch live (org 37135, plan_ats_tier_starter, owner 41109; org columns set in-script to cus_qa5_agent5 / sub_qa5_agent5_main): constructed customer.subscription.deleted event through StripeWebhookHandlerJob.new.handle_stripe_event -> exactly one SubscriptionEvent row: event_type canceled_subscription, to_plan plan_ats_tier_starter (== org.plan), stripe_subscription_id sub_qa5_agent5_main (== event object id), amount nil, from_plan nil. Existing branch intact: subscription_canceled_at written (epoch 1785105161 == event ended_at), sync_with_stripe invoked exactly once (equality true; recorder stub, zero real Stripe API calls all script), Notification::PaidSubscriptionDeletedJob enqueued x1 [37135, 1785105161], EngagementReport::GeneratorJob enqueued x1 [37135, {trigger: subscription_canceled}] (queue_adapter :test, args deserialized)",
+    "Fan-out live: PosthogTrackJob x1 (41109 = owner.id, 'canceled_subscription', props) and Discord::NotifySubscriptionDeletedJob x1 [37135, 1785105161] — Discord arg verified equal to the CURRENT org.subscription_canceled_at.to_i written at step 1. Live posthog props: {stripe_subscription_id, stripe_customer_id cus_qa5_agent5, to_plan plan_ats_tier_starter} — amount and all 13 attribution fields absent via .compact",
+    "Nil-organization delivery (customer matches no org): no new SubscriptionEvent row, no raise, no PosthogTrackJob, no Discord, sync_with_stripe not called. OBSERVED vs the assignment's 'no enqueues': Notification::PaidSubscriptionDeletedJob [nil, ended_at] and EngagementReport::GeneratorJob [nil, {trigger}] DO still enqueue — pre-existing organization&.id at lines 209-210, outside the two sanctioned insertions, spec-consistent (SPEC requires existing branch behavior byte-identical); not filed as a defect",
+    "Stale-subscription (org column sub_qa5_agent5_main, event id sub_qa5_agent5_stale): row records the EVENT id sub_qa5_agent5_stale; sync_with_stripe skipped (equality false). ANSWER to the embedded question: line 208 writes subscription_canceled_at UNCONDITIONALLY (organization&.update_column is not under the line-205 equality) — column went nil -> 1785105168 on the stale delivery, so on the webhook path the column is always present at fan-out time and Discord enqueued [37135, 1785105168] (== current column value; SPEC §7-consistent). The §7 nil-skip guard is unreachable via the webhook path; verified directly via console path: CreateSubscriptionEvent.call with org.subscription_canceled_at nil -> row created, Discord SKIPPED (0), PostHog still fired (1)",
+    "Repeat cancellation: exact redelivery of the same deleted event within 5 min -> interactor dedupe blocked the second row (count stayed 1), no second PostHog/Discord, no raise; observed Notification::PaidSubscriptionDeletedJob + EngagementReport::GeneratorJob each re-enqueued x1 on the deduped redelivery (unconditional, before the ledger block — pre-existing). After backdating the row's created_at to 6.minutes.ago, redelivery inserted a SECOND canceled_subscription row (count 2) with full fan-out (posthog 1, discord 1) — no uniqueness index coverage for canceled type, spec-consistent per SPEC §5.3",
+    "Global: zero real Stripe API calls recorded (Stripe::Customer/Stripe::Subscription retrieve+list stubbed with recorders); source repo untouched (D11 — exercise only); cleanup run before seed and after completion"
+  ],
+  "scripts": [
+    "/tmp/qa5_agent5_subscription_deleted.rb"
+  ],
+  "raw_results": "/tmp/qa5_agent5_results.json"
+}

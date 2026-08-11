@@ -1,0 +1,23 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 8,
+  "focus": "adroll_first_party_cookie chain",
+  "findings": [],
+  "chain_verified": [
+    "1 PASS — sanitizeTrackingParams capture (app/javascript/shared/lib/utils.js): getCookieValue(cookieEntries, \"__adroll_fpc\") uses strict-equality name match (getCookieValue find with ===); getCookieEntries splits each entry on the FIRST '=' (indexOf/substring), skips empty-value cookies (cookieValue.length === 0 → absent); trackingParams.adrollFirstPartyCookie assigned only when the cookie value is defined (absent otherwise, never null/\"\"); capped via sanitizeTrackingValue(value, ATTRIBUTION_IDENTIFIER_MAX_LENGTH=1024) with the same surrogate-safe trailing-lone-high-surrogate rule; value otherwise verbatim (no parsing)",
+    "2 PASS — AuthForm.tsx: adrollFirstPartyCookie: trackingParams.adrollFirstPartyCookie in the magicLink payload (committed line 93) and adrollFirstPartyCookie={trackingParams.adrollFirstPartyCookie} passed to GoogleSSOButton (line 152)",
+    "3 PASS — SignupForm.tsx: adrollFirstPartyCookie: trackingParams.adrollFirstPartyCookie in the register mutation payload (line 79)",
+    "4 PASS — GoogleSSOButton.tsx: adrollFirstPartyCookie?: string in Props (line 25), destructured (line 45), hidden input name=\"adroll_first_party_cookie\" under typeof adrollFirstPartyCookie === \"string\" && adrollFirstPartyCookie.length > 0 (lines 116-117)",
+    "5 PASS — useSession.ts: destructured in register (line 46) and magicLink (line 95), typed adrollFirstPartyCookie?: string | null in the magicLink inline type (line 117), present in BOTH variables objects (lines 69, 151); lodash snakeCase(\"adrollFirstPartyCookie\") → adroll_first_party_cookie",
+    "6 PASS — sign_up_params (registrations_controller.rb:328): :adroll_first_party_cookie plain scalar permit, before the trailing utm_data: {}",
+    "7 PASS — #magic_create: adroll_first_party_cookie: sign_up_params[:adroll_first_party_cookie] in BOTH branches of the user_params conditional",
+    "8 PASS — config/initializers/omniauth.rb allowed_keys includes adroll_first_party_cookie (line reflowed to two lines; all seven pre-existing keys retained)",
+    "9 PASS — User.from_omniauth: nil-defaulted adroll_first_party_cookie: keyword (16-keyword per-keyword form per §6.6); omniauth_user.adroll_first_party_cookie = adroll_first_party_cookie assigned INSIDE the where(email:).first_or_create block only; post-block behavior unchanged",
+    "10 PASS — OmniauthCallbacksController#google_oauth2: adroll_first_party_cookie: merged_tracking['adroll_first_party_cookie'] (string key) in the from_omniauth call",
+    "11 PASS — OrganizationsController#create: @organization.adroll_first_party_cookie = current_user.adroll_first_party_cookie (from current_user, never params); organization_params no longer permits :adroll_first_party_cookie or :google_click_id (line 128)",
+    "12 PASS — migrations: 20260724183710_add_attribution_identifier_columns_to_users.rb adds adroll_first_party_cookie to users; 20260724183711_add_attribution_identifier_columns_to_organizations.rb adds ONLY the six new columns (no adroll_first_party_cookie, no google_click_id re-add); committed schema.rb (git show a0d59115d:db/schema.rb) has exactly one adroll_first_party_cookie per table",
+    "13 PASS — all four §10 spec files extended for adroll_first_party_cookie: registrations (raw storage + nil + existing-user branches + password create both ways), user_from_omniauth (raw/omitted-nil/existing-untouched), omniauth_callbacks (session-ride expectation + nil keyword in the no-tracking example), organizations (copy + nil + the INVERTED example 'ignores google_click_id and adroll_first_party_cookie sent in the request body' asserting current_user's values 'gclid-abc123'/'fpc-abc123' over body 'from-body'; header comment lines 10-12 rewritten)",
+    "14 PASS — negative §8.7: every +/- diff line touching adct/adroll_click_id/adrollClickId is a trailing-comma addition, a line reflow (from_omniauth signature, allowed_keys), or a spec header-comment count update; the adct capture call sanitizeTrackingValue(parsedParams.adct) is unchanged context and keeps the 255 cap via the new maxLength default parameter (TRACKING_VALUE_MAX_LENGTH unchanged); adroll_click_id payload threading, permits, hidden input, assignments, and spec examples all behaviorally untouched"
+  ]
+}

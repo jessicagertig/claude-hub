@@ -1,0 +1,37 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 3,
+  "head": "859c85ead",
+  "agents_dispatched": 8,
+  "agents_reporting": 8,
+  "coverage": {
+    "agent-1": "AUTH CHANGE (the delta) — controller authorize lines, JobPolicy semantics, spec auth contexts, auth-commit scope",
+    "agent-2": "backend models — Job gating §4.1, AiJobCriteria §4.2, Job#zero_criteria_extraction_failure? §4.3, constant substitutions",
+    "agent-3": "API — routes §5.1, controller §5.2 (incl. auth lines), serializer §5.3",
+    "agent-4": "zero-criteria guard §6 — validators, queue interactor, textract_result, bulk claim-row fix, bulk controller",
+    "agent-5": "WebSocket broadcast job §7 — ExtractJobCriteriaJob signature + broadcast_completion + 3 sites + analog-untouched",
+    "agent-6": "frontend data layer §8.1 hook / §8.6 WS handler / §8.7 payload type",
+    "agent-7": "frontend components §8.2-§8.5, §10",
+    "agent-8": "tests §12 — completeness, falsifiability/ghost-test sweep, auth-context delta"
+  },
+  "raw_findings": [
+    {
+      "id": "l1-a7-001",
+      "reported_severity": "HIGH (per Layer-1 all-findings-are-HIGH rule)",
+      "adjudicated_severity": "LOW — does NOT block convergence, no fix loop",
+      "title": "Vestigial `history: any` prop threaded from JobSetupAiSettings.tsx:107 into JobCriteriaSection.tsx:22 Props, never used",
+      "adjudication": "ALREADY-ADJUDICATED accepted residue. The qa-run-1 FAILURE-REPORT Finding 2 fix instruction was explicit: 'Do not change copy, do not change any other element.' The fix minimally swapped `<a onClick={history.push}>` -> react-router `<Link>`, removing `history` from the component destructuring but leaving the Props field + parent threading (minimal-fix discipline, pipeline rules 10/23). qa-run-2's L1 BRIEF explicitly documented this exact state as accepted: 'history removed from the local destructuring ONLY (Props.history and the parent's history prop untouched)', and qa-run-2 L1 converged clean (11 agents, 2 rounds) with the prop present. It is `any`-typed dead code with ZERO runtime/behavioral effect, traces to original SPEC §8.3 + the adjudicated fix scope, and is NOT part of the auth delta that triggered qa-run-3. Recorded as an optional cleanup for Jessica; not a spec-implementation mismatch, not a behavioral deviation."
+    },
+    {
+      "id": "l1-doc-001",
+      "reported_severity": "note (agent-8)",
+      "adjudicated_severity": "DOC-CONSISTENCY (not a code/test defect)",
+      "title": "SPEC §12 line 513 carries pre-amendment wording",
+      "adjudication": "§12 line 513 still reads 'org member without AI-credits control is rejected on create' — the OLD update_ai_settings? behavior. §9 and DECISIONS.md were amended to the update? gate (member ALLOWED on create), and the controller + spec correctly follow the amendment. This is a stale reference in the spec prose (the 'stale references after amendments' known-failure pattern), NOT a code or test defect. The orchestrator corrected the §12 wording to match the authoritative amended §9/DECISIONS; recorded for Jessica."
+    }
+  ],
+  "convergence_blocking_findings": [],
+  "high_plus_count": 0,
+  "verdict": "Round 1 clean after adjudication (0 convergence-blocking HIGH+). One reported HIGH adjudicated to LOW (already-adjudicated minimal-fix residue). One doc-consistency note (SPEC §12 stale wording, corrected). Round 2 required to satisfy the two-consecutive-clean-rounds gate."
+}

@@ -1,0 +1,21 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 5,
+  "agent_index": 1,
+  "slice": "trial_started writer chain",
+  "findings": [],
+  "verified": [
+    "organization.rb diff (a0d59115d..33dffbe3e) is exactly two hunks, 1 insertion + 2 deletions: (1) in the subscription_started_trial_after_commit? branch, Discord::NotifyFreeTrialStartedJob.perform_later(id) removed and replaced by CreateSubscriptionEvent.call(organization: self, event_type: 'trial_started', to_plan: plan, stripe_subscription_id: stripe_subscription_id) — byte-identical to SPEC §5.1's stated call; (2) in the trial_converted_to_paid_after_commit? branch, only Discord::NotifyTrialConvertedToPaidJob.perform_later(id) removed. Nothing else in organization.rb changed.",
+    "Slack lines (Notification::FreeTrialStartedJob.perform_later(id), Notification::TrialConvertedToPaidJob.perform_later(id)) and organization_ai_credit_balance&.reset_ai_credits appear only as unchanged context lines — byte-identical per §5.1/§5.1-second-paragraph.",
+    "Writer call passes no amount: (correct per §5.1/§7 — trial_started has no amount); committed CreateSubscriptionEvent merges amount only when context.amount.present?, so the column stays nil.",
+    "Committed gate chain traced at 33dffbe3e: after_commit :handle_after_commit_on_update, on: [:update] (organization.rb:59) → handle_subscription_status_change_after_commit (first handler, line ~1105) gated on saved_changes.key?('stripe_subscription_status') → subscription_started_trial_after_commit? (line 1188) = previous_status.nil? && current_status == 'trialing' — writer fires on exactly nil → 'trialing'. Predicate and registration are untouched by the diff.",
+    "Writer chain completes: CreateSubscriptionEvent at 33dffbe3e accepts stripe_subscription_id (merged when present), 'trial_started' is not in SubscriptionEvent::CONVERSION_EVENT_TYPES so only the pre-existing 5-minute dedupe guards it (matches §5.1: uniqueness index covers conversions only); trial_started: 7 exists in the committed enum.",
+    "spec/models/organization_subscription_events_spec.rb at 33dffbe3e satisfies SPEC §9.4: nil→'trialing' via organization.update creates exactly one SubscriptionEvent row asserted trial_started/organization_id/to_plan/stripe_subscription_id; Slack FreeTrialStartedJob enqueued; Discord::NotifyFreeTrialStartedJob exactly(:once) (guards against callback+fanout double-enqueue); trialing→active test asserts no row, Slack TrialConvertedToPaidJob still enqueued, Discord::NotifyTrialConvertedToPaidJob NOT enqueued (fails if the removed Discord line is restored). Queue adapter :test around-block present per pipeline rule 31.",
+    "nil→'trialing' precondition in the spec is real: create_credit_test_organization(stripe_active: false) never sets stripe_subscription_status (spec/support/ai_credits_test_helpers.rb:34-41), and the .tap sets only customer/subscription ids via update_columns (no callbacks) — so update(stripe_subscription_status: 'trialing') is exactly the nil→'trialing' transition.",
+    "Fix-commit delta (549039a0c..33dffbe3e on this spec file) is purely additive (+3 lines): allow-stub of organization.organization_ai_credit_balance plus expect(organization_ai_credit_balance).to have_received(:reset_ai_credits). No pre-existing assertion removed or weakened.",
+    "New have_received assertion targets the right object: the spec reads organization.organization_ai_credit_balance on the same memoized organization instance the test updates, caching the has_one target; the callback's organization_ai_credit_balance&.reset_ai_credits reads that cached target (nothing in the interactor or fan-out busts the association cache), so the stubbed instance is the one called.",
+    "New have_received assertion is non-vacuous: the only reset_ai_credits caller reachable in this test flow is the callback line (the only other callers are Organization.process_ai_credit_resets, a batch class method never invoked here, and the webhook invoice.paid branch, not exercised) — deleting organization_ai_credit_balance&.reset_ai_credits from the branch makes have_received fail.",
+    "No unsanctioned changes to app/jobs/stripe_webhook_handler_job.rb observed from this slice's vantage (its diff was not part of this slice's scope beyond confirming organization.rb scope; webhook file left to its assigned agents)."
+  ]
+}

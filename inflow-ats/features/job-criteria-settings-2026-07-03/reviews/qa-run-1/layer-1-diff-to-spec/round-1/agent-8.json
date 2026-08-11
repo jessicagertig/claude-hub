@@ -1,0 +1,43 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 8,
+  "focus_area": "The two modals — SPEC §8.4 (JobCriteriaViewModal.tsx) and §8.5 (RegenerateJobCriteriaConfirmModal.tsx)",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §8.4 FullModal right slide-over, opened via openModal, removeModal passed as onCancel",
+      "SPEC §8.4 built-in header suppressed by omitting headerTitleText (FullModal.tsx:104 renders header only when headerTitleText present)",
+      "SPEC §8.4 custom sticky header: h2 'Job criteria' 22px/600/-0.02em + X icon button 28x28, Feather x 16px via Icon, calling onCancel",
+      "SPEC §8.4 body description paragraph exact copy, 14px(t.text.sm)/400/1.6 secondary",
+      "SPEC §8.4 single bordered list grouped by tier; tier head rows icon+label+count (tabular-nums)",
+      "SPEC §8.4 empty tiers omitted (tierCriteria.length === 0 → null)",
+      "SPEC §8.4 tiers after first get top border + margin (TierHead &:not(:first-of-type) — all ListBox children are divs, selector behaves as designed, matches bundle-3 verbatim)",
+      "SPEC §8.4 NO tier hint sentences (bundle-3 TierHint dropped)",
+      "SPEC §8.4 read-only: no hover states on list rows, no footer",
+      "SPEC §8.4 props { criteria: AiJobCriterion[]; onCancel: () => void }, display-only, no data fetching inside (zero hooks)",
+      "SPEC §8.4 frozen-prop staleness — adjudicated ACCEPTED, verified not 'fixed' with live reads",
+      "SPEC §8.5 CenterModal headerTitleText=\"Regenerate job criteria?\" (required prop supplied)",
+      "SPEC §8.5 manual lead paragraph exact copy",
+      "SPEC §8.5 bordered statement box with refresh-cw icon, exact copy, mirrors RunPlatoAddDescriptionModal Styled.Statement",
+      "SPEC §8.5 footer primary 'Regenerate criteria' + secondary 'Cancel' (static labels, analog button anatomy incl. aria-label and preventDefault cancel pattern)",
+      "SPEC §8.5 modal OWNS useRegenerateAiJobCriteria internally — adjudicated ruling, verified present, not flagged",
+      "SPEC §8.5 loading={isLoading} AND disabled={isLoading} on primary (pipeline rule 11)",
+      "SPEC §8.5 onSuccess: dismissModalWithAnimation(() => onCancel), NO queue toast (verified against ModalContext.tsx — functional-updater stores onCancel, invoked on animation done, analog-identical)",
+      "SPEC §8.5 onError: warning toast error?.data?.errors?.general?.[0] || \"Could not regenerate job criteria\", delay 10000, modal stays open",
+      "SPEC §8.5 props { jobId: number; onCancel: () => void }",
+      "DECISIONS Decided OUT: no guard modals / GuardTitle / GuardBody / GuardFoot / guard state; no after-description-update variant strings; no TierHint; no internal_job_criteria (grep zero hits in both files)",
+      "DECISIONS copy rules: no em dashes, sentence case, 'extract' not 'read' ('re-extract' present), no weight/heaviest/rescored, static button labels, no timestamps in modals",
+      "Conventions-pass fix 3: JOB_CRITERIA_TIERS shared constant consumed by JobCriteriaViewModal (report text explicitly allows: 'JobCriteriaViewModal.tsx may consume it too')",
+      "Conventions-pass fix 5: ${t.rounded.sm} on CloseButton, ${t.rounded.md} on ListBox and Statement",
+      "Conventions-pass fix 6: standalone ${t.text.sm} (Description), ${t.text.xs} (TierHead label/count) — remaining raw 22px/13.5px are spec-pinned values (SPEC §8.4 '22px/600/-0.02em', plan F.3.1.4 '13.5px/1.45') with no typeScale equivalent, left by the adjudicated conventions batch",
+      "Conventions-pass fix 8: CloseButton &:focus ring implemented verbatim (outline none + 0 0 0 2px gray[500]/gray[300])",
+      "Pipeline rules 12 (no conditional variant props — none), 13 (no fabricated fallbacks; the toast string fallback is the plan-F.4.1-sanctioned exception; bundle-3's criteria[tier.key] || [] replaced with .filter), no ?? operators, double quotes",
+      "Diff-to-spec residue trace: aria-label=\"Close\" + all padding/gap/transition values trace to bundle-3 JobCriteriaModals.tsx skeleton; svg stroke-width 2px overrides trace to DECISIONS 'Feather icons 2px stroke' + plan D-3/R-2 (shared Icon ships 1.75px, wrapper CSS is the resolution); t.poly.color.* tokens exist (shared/styles/lightTheme.ts + darkTheme.ts, merged at AppDefaultWrapper.tsx:74) per DECISIONS 'poly theme tokens where they exist'; react-feather resolves 'x' and 'refresh-cw' via Icon's toPascalCase",
+      "Rule 15: worktree HEAD 9ed954142 matches brief; git status clean for both files — committed code reviewed"
+    ],
+    "implemented": 22,
+    "missing": 0,
+    "notes": "Both files are new (+184/+136, committed, clean working tree). Every line traces to SPEC §8.4/§8.5, plan F.3.1/F.3.2, the bundle-3 skeleton (binding structure/styles source), the RunPlatoAddDescriptionModal / BulkGenerateAiSummariesConfirmModal analogs, or the adjudicated conventions-pass batch (commit 9ed954142). The two adjudicated rulings touching these files (modal-owned mutation; frozen-prop staleness accepted) are implemented as ruled and were not re-flagged. Bundle-3's parent-owned onConfirm/isLoading props for the regenerate modal were correctly overridden by the rule-22 adjudication. Copy in both modals is character-exact against SPEC §8.4/§8.5 quoted strings (JSX whitespace normalization only). No behavioral deviations found: FullModal esc/backdrop close call onCancel (hasUnsavedChanges defaults false); CenterModal esc/backdrop route through handleOnCancel's animated dismiss like the analog; double-submit is prevented by live internal isLoading on loading+disabled."
+  }
+}

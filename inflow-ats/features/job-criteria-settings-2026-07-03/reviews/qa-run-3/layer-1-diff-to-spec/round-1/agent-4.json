@@ -1,0 +1,20 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 4,
+  "focus_area": "Zero-criteria review guard across all summary-creation paths (SPEC §6)",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §6.2.1 (ValidateAiSummaryGeneration guard)",
+      "SPEC §6.2.2 (ValidateAutoAiSummaryGeneration guard)",
+      "SPEC §6.2.3 (QueueBulkAiSummaryJobs optional job input + guard)",
+      "SPEC §6.2.4 (TextractResult#generate_ai_summary_with_credit_flow defensive guard ordering)",
+      "SPEC §6.3 (BulkGenerateAiSummariesJob claim-row fix)",
+      "SPEC §5.2 / §13 (bulk controller passes job: @job in both actions)"
+    ],
+    "implemented": 6,
+    "missing": 0,
+    "notes": "All six assigned paths verified against SPEC §6 and the adjudicated rulings in the BRIEF. Chain traced: bulk_ai_job_application_summaries_controller.rb -> queue_bulk_ai_summary_jobs.rb -> bulk_generate_ai_summaries_job.rb -> textract_result.rb (generate_ai_summary_with_credit_flow) -> job.rb#zero_criteria_extraction_failure? (defined job.rb:696). Detail below.\n\n1. ValidateAiSummaryGeneration (validate_ai_summary_generation.rb:30): context.fail! placed immediately AFTER the has_job_description? fail (line 29). Guarded by @job_application.job&.zero_criteria_extraction_failure? (safe-nav). Message string exactly matches SPEC §6.2.1: 'No scoring criteria were found in the job description. Regenerate job criteria in Plato AI settings before running reviews.' PASS.\n\n2. ValidateAutoAiSummaryGeneration (validate_auto_ai_summary_generation.rb:19): same context.fail! AFTER the has_job_description? fail (line 18), safe-nav @job_application.job&.zero_criteria_extraction_failure?, exact message. PASS.\n\n3. QueueBulkAiSummaryJobs (queue_bulk_ai_summary_jobs.rb:19): guard added AFTER the credits fail (line 18), reads new optional context input via context.job&.zero_criteria_extraction_failure? (safe-nav keeps input optional per SPEC §6.2.3), exact message. PASS.\n\n4. bulk_ai_job_application_summaries_controller.rb: both actions pass job: @job to QueueBulkAiSummaryJobs.call -- create at line 17 (@job set line 9), all_stages at line 43 (@job set line 35). PASS.\n\n5. textract_result.rb:70: return if job_application.job.zero_criteria_extraction_failure? placed AFTER the succeeded-summary early return (line 68) and BEFORE job_application.job.extract_job_criteria_if_needed (line 72). Ordering matches SPEC §6.2.4 exactly (blocked review does not re-trigger extraction). Uses non-safe-nav form exactly as spec shows. PASS.\n\n6. bulk_generate_ai_summaries_job.rb:62-66: validation failure branch now update_columns(status: :failed) + return (no longer leaves the claim row :processing), matching SPEC §6.3. The added Rails.logger.error line (line 63) is the adjudicated conventions-pass fix #2 (BRIEF). update_columns (not update) is used, consistent with the other row-status writes in the job (lines 56, 72, 92). Confirmed no transaction block wraps each_iteration (grep: no transaction blocks), so pipeline rule 25 (update_columns not inside a transaction) is satisfied. PASS."
+  }
+}

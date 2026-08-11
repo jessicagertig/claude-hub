@@ -1,0 +1,24 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 5,
+  "assignment": "Per-stage modal STATE 4 (checked) on Senior Engineer / Screen with count switching 3->5 (SPEC 1.2 state 4: candidatesToScoreCount = candidatesCount when checked), display only.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs (already logged in as rezu.may@wrkhq.com, org Acme Inc) -> clicked 'Senior Engineer' -> job candidates view opened on Inbox",
+    "Clicked 'Screen 5' stage link -> 5 candidates listed: Yesenia Bernhard (Good fit, reviewed), Cornelius Jenkins (Excellent fit, reviewed), Brent Lubowitz, Refugio Ondricka, Wally Blanda (3 bare)",
+    "Clicked the Screen stage-name Select-All checkbox -> all 5 candidate checkboxes checked",
+    "Opened Bulk options three-dot menu -> clicked 'Run Plato reviews' -> 'Review candidates' modal opened",
+    "UNCHECKED sanity: body read '3 of the 5 candidates selected from this hiring stage don't have a Plato review yet. Each successful review uses one AI credit, so running this uses up to 3 credits from your balance of 20 available.' Lead count 3 of 5 confirmed; displayed balance 20 (matches expected 20, no recompute needed)",
+    "CHECKED the 'Also re-review candidates that already have a review' checkbox -> body became EXACTLY 'The 5 candidates selected from this hiring stage will be reviewed, including candidates that already have a review. Each successful review uses one AI credit, so running this uses up to 5 credits from your balance of 20 available.' (byte-level match via textContent)",
+    "DOM innerHTML check: credit-copy counts bold as pinned -- '...uses up to <b>5</b> credits from your balance of <b>20</b> available.' Lead-sentence 5 plain (SPEC 1.2 marks bold only on the credit-copy counts)",
+    "Checked-state assertions: submit 'Generate reviews' ENABLED (disabled=false), NO overestimate block ('This count may be an overestimate' absent from DOM), NO 'Up to ' prefix, NO shortfall text ('You are short' absent) -- confirms candidatesToScoreCount uses the FULL selection (5), not the processable subset (3)",
+    "Toggled checkbox back OFF -> body returned to '3 of the 5 candidates selected from this hiring stage don't have a Plato review yet. ...up to 3 credits from your balance of 20 available.'",
+    "Screenshots taken of both states, then clicked Cancel -> modal closed (verified modal text gone from DOM). Never submitted",
+    "Console check: 7 [ERROR] entries total for the session, all known pre-existing noise (1 heap-api.com 404, 4 react-router history deprecation warnings, 2 Redux 'Store does not have a valid reducer'). Zero feature-referencing errors (grep for rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summar/Uncaught: no hits)"
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-5/agent-5-02-checked-state-5-of-5.png",
+    "/tmp/qa-run-3-l5/agent-5/agent-5-03-toggled-back-off-3-of-5.png"
+  ],
+  "findings": []
+}

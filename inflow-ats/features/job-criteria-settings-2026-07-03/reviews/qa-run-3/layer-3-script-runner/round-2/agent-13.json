@@ -1,0 +1,19 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 13,
+  "focus": "Re-verify Api::V1::AiJobCriteriaController#create and #show behavior (SPEC §5.2): source-vs-spec verbatim match + runtime model-level effects of each branch.",
+  "scenarios_run": [
+    "Source diff: ai_job_criteria_controller.rb (29 lines) vs SPEC §5.2 code block (lines 142-171) — character-for-character identical: frozen_string_literal, class < Api::V1::BaseController, #show (exists org-scoped lookup 'no job found' -> authorize job :show? -> render_one JobAiJobCriteriaSerializer), #create (exists -> authorize job :update? -> Flipper unless guard -> blank-description guard -> extract_job_criteria_immediately(requesting_organization_user_id: current_organization_user.id) -> render_one). Branch order and both exact error strings match.",
+    "Flipper precondition (READ ONLY, global gate): Flipper.enabled?(:AI_APPLICANT_SUMMARY, in-script org) => true, confirming the happy-path precondition. Flipper-disabled branch verified by SOURCE only (exact guard `unless Flipper.enabled?(:AI_APPLICANT_SUMMARY, current_organization)` + exact string 'AI summaries are not enabled for this organization.' + return); runtime disable not exercised because it would require disabling the global boolean flag (prohibited by additive-isolation model).",
+    "Scenario A happy path: job w/ description, no prior rows -> extract_job_criteria_immediately(requesting_organization_user_id: owner_ou.id) => exactly ONE new AiJobCriteria row status 'pending' + exactly ONE ExtractJobCriteriaJob enqueued with args [row.id, owner_ou.id] (queue_adapter :test).",
+    "Scenario B blank-description model guard: description set nil -> call => 0 rows created, 0 enqueues (matches controller's own blank-description guard which returns 422 before calling model; exact string verified by source).",
+    "Scenario C latest in_progress -> no new row, no enqueue (in-flight idempotency).",
+    "Scenario D latest retrying -> no new row, no enqueue (in-flight idempotency).",
+    "Scenario E latest pending -> new pending row IS created + enqueue fires (documents the deliberate absence of a pending guard, SPEC §4.1 / §5.2 in-flight note).",
+    "Scenario F default kwarg: extract_job_criteria_immediately (no kwarg) -> enqueue args [row.id, nil] (nil default preserved; the extract_job_criteria_if_needed path).",
+    "Scenario G #show/serializer latest-row semantics: older succeeded row + newer zero-criteria failed row -> latest_ai_job_criteria = failed row, zero_criteria_extraction_failure? = true, latest_succeeded_ai_job_criteria = older succeeded row (criteria source). No side effects from show path.",
+    "Runtime totals: 17/17 checks PASS."
+  ],
+  "findings": []
+}

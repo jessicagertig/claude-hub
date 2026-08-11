@@ -1,0 +1,30 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 10,
+  "focus_area": "SPEC §12 test plan compliance + §13 file inventory, across the whole diff",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §13 new-files table (9 rows incl. conditional JobCriteriaSection.tsx)",
+      "SPEC §13 modified-files table (15 app rows + 8 spec rows)",
+      "SPEC §12 new: ai_job_criteria_controller_spec.rb #show six §5.3 states",
+      "SPEC §12 new: ai_job_criteria_controller_spec.rb #create (row+enqueue with requesting user id, blank-description 422 exact message + no row, Flipper 422 + no row, in_progress/retrying no-op 200, draft AND published, show-vs-create authorization split)",
+      "SPEC §12 new: validate_ai_summary_generation_spec.rb (happy path, 3 zero-criteria messages fail, 'Job description is blank' does not fail, pending does not fail, in-flight-over-zero does not fail)",
+      "SPEC §12 new: job_ai_job_criteria_serializer_spec.rb mixed state (failed-zero over older succeeded)",
+      "SPEC §12 modified: job_criteria_lifecycle_spec.rb (_immediately: blank/in_progress/retrying no-row, pending row-created, kwarg threading, nil default; _if_needed: succeeded no-op, failed/none delegate; existing extract_job_criteria examples untouched)",
+      "SPEC §12 modified: ai_job_criteria_spec.rb zero_criteria_failure? truth table incl. nil error_message",
+      "SPEC §12 modified: extract_job_criteria_job_spec.rb five behavioral broadcast cases",
+      "SPEC §12 modified: validate_auto_ai_summary_generation_spec.rb zero-criteria contexts",
+      "SPEC §12 modified: queue_bulk_ai_summary_jobs_spec.rb (zero-criteria fail + nothing enqueued + no claim rows; job-less call still passes)",
+      "SPEC §12 modified: bulk_ai_job_application_summaries_controller_spec.rb (job: kind_of(Job) in both actions' interactor expectations; zero-criteria 422 per action with exact guard message)",
+      "SPEC §12 modified: textract_result_ai_trigger_spec.rb funnel guard returns before Orchestrate AND before extract_job_criteria_if_needed",
+      "SPEC §12 modified: bulk_generate_ai_summaries_job_spec.rb (validation-failure row :failed; zero-criteria batch all rows :failed with completion notification still firing)",
+      "SPEC §12 frontend-tests-none + no-Cypress documented decision",
+      "Pipeline rule 26 ghost-test hunt over every new assertion in the diff"
+    ],
+    "implemented": 16,
+    "missing": 0,
+    "notes": "Inventory reconciles exactly: 33 diff files = 9 §13 new-files rows (conditional components/JobCriteriaSection.tsx present, exercised per plan D-1) + jobCriteriaTiers.ts (traces to conventions-pass fix item 3; consumed by JobSetupAiSettings.tsx, JobCriteriaSection.tsx, and JobCriteriaViewModal.tsx) + all 23 §13 modified-files rows. No cypress/ files, no frontend test files in the diff (documented §12 decision; Button.test.tsx untouched). Every §12 requirement has a corresponding behavioral test: real HTTP requests with JSON-body/exact-message assertions, AiJobCriteria count changes, have_been_enqueued/have_enqueued_job, GlobalChannel.broadcast_to payload-content expectations, claim-row status reloads, and rule-4-compliant mailer verification (instance_double(ActionMailer::MessageDelivery) + deliver_later asserted). Ghost-test hunt clean: no reflection-only assertions, no assigned-but-never-asserted variables, no always-true type checks. The negative-expectation funnel-guard test is falsifiable: with the guard line reverted, generate_ai_summary_with_credit_flow proceeds to extract_job_criteria_if_needed (no synchronous summary exists under the :test adapter, so the earlier succeeded-summary return cannot mask it), failing the expectation. Three resolved non-findings: (1) validate_auto_ai_summary_generation_spec adds 2 examples (one fail message + in-flight-over-zero pass), not the full 6-example mirror of the new validator spec — SPEC §12's 'mirror of the new ValidateAiSummaryGeneration contexts' is ambiguous, and Reviewed Plan E.4.7.2 (authority level 3) pins exactly these two examples ('fails on zero-criteria latest; passes on in-flight-over-zero'); implementation matches the plan's resolution. (2) The job_application.reload before-hook added to the pre-existing waiting-summary context in textract_result_ai_trigger_spec.rb came from merge commit 68e5e6a4e and traces to the ORCHESTRATION-LOG 'develop merge' row ('waiting-summary examples reload past the new latest_ai_job_application_summary has_one association cache') — documented merge repair, do-not-flag per brief. (3) rescore_requested additions and params: reshaping in bulk_ai_job_application_summaries_controller_spec.rb are the adjudicated develop-merge repair. Minor coverage observation (not a violation): the 'zero-criteria job batch → all rows :failed' example runs a single-claim-row batch, so 'all' is exercised with n=1; the per-row mechanism is independently covered by the validation-failure :failed example."
+  }
+}

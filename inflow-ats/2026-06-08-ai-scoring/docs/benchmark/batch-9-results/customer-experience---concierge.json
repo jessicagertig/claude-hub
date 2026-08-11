@@ -1,0 +1,71 @@
+{
+  "meta": {
+    "batch": 9,
+    "criteria_prompt_version": 10,
+    "job_id": 24308,
+    "title": "Customer Experience - Concierge",
+    "organization": "Vinos Chidos",
+    "cost": 0.000396
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Vinos Chidos nació para cambiar la forma en la que la gente toma vino. Somos una empresa digital-first con la mejor experiencia de compra online y entrega a domicilio. Nuestras tiendas dan la oportunidad a que la gente conozca tanto a nosotros, como a nuestra oferta. El Club Chidos, nuestra membresía mensual, es la mejor forma de descubrir nuevos vinos y de ser los primeros en conocer las etiquetas que importamos.\nVinos Chidos está en un momento de mucho crecimiento. Buscamos un/a Concierge para asegurar que nuestra experiencia del cliente sea lo mejor posible. Contar con alguien en nuestras tiendas y experiencias, con un conocimiento de nuestra oferta que guíe al cliente, ayuda a posicionarnos como líderes en el mercado."
+      },
+      {
+        "heading": "Descripción de puesto",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Buscamos personas apasionadas por el vino y la hospitalidad . El rol combina la atención en tienda y hacerse cargo de impartir experiencias de manera rotativa ofreciendo a los clientes momento memorables."
+      },
+      {
+        "heading": "Requerimientos",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Experiencia en atención a clientes\nInterés en vino\nDirigido/a a resultados\nBuena comunicación\nFluidez en inglés"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Experiencia en atención a clientes",
+        "tier": "tier_1",
+        "tier_reasoning": "section heading: \"Requerimientos\" translates to \"Requirements\" in Spanish, indicating required criteria",
+        "binary": false,
+        "source_text": "Experiencia en atención a clientes"
+      },
+      {
+        "text": "Interés en vino",
+        "tier": "tier_1",
+        "tier_reasoning": "section heading: \"Requerimientos\" translates to \"Requirements\" in Spanish, indicating required criteria",
+        "binary": false,
+        "source_text": "Interés en vino"
+      },
+      {
+        "text": "Dirigido/a a resultados",
+        "tier": "tier_1",
+        "tier_reasoning": "section heading: \"Requerimientos\" translates to \"Requirements\" in Spanish, indicating required criteria",
+        "binary": false,
+        "source_text": "Dirigido/a a resultados"
+      },
+      {
+        "text": "Buena comunicación",
+        "tier": "tier_1",
+        "tier_reasoning": "section heading: \"Requerimientos\" translates to \"Requirements\" in Spanish, indicating required criteria",
+        "binary": false,
+        "source_text": "Buena comunicación"
+      },
+      {
+        "text": "Fluidez en inglés",
+        "tier": "tier_1",
+        "tier_reasoning": "section heading: \"Requerimientos\" translates to \"Requirements\" in Spanish, indicating required criteria",
+        "binary": false,
+        "source_text": "Fluidez en inglés"
+      }
+    ]
+  }
+}

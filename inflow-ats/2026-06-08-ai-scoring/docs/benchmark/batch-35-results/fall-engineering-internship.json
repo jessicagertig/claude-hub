@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "batch": 35,
+    "criteria_prompt_version": 9,
+    "job_id": 39574,
+    "title": "Fall Engineering Internship",
+    "organization": "Mantel Capture, Inc",
+    "cost": 0.000464
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Mantel is developing the first molten-salt-based carbon capture technology designed to operate at the high temperatures found inside boilers, kilns, and furnaces — enabling highly efficient carbon capture that has not been possible until now. Carbon capture can be applied across industries to reduce emissions and achieve net-negative emissions. By solving for efficiency Mantel can cut costs substantially, unlocking carbon capture's role in reaching net zero emissions by 2050. To learn more, go to: https://www.mantelcapture.com/"
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Mantel is looking for a Summer Engineering Intern excited to join a promising carbon capture startup working on the development of molten salts as a novel CO2 sorbent material. Mantel is looking for both undergrad and graduate level interns from a variety of backgrounds including Chemical Engineering, Mechanical Engineering and Materials Science who are interested in gaining machine shop, prototyping and fabrication experience. Recent graduates and students graduating in December 2026 are welcome to apply. This is a full time 40 hour per week position in the Cambridge, Massachusetts. Summer Interns will be given the opportunity to work on a variety of science and engineering problems such as:\n\nImprove our understanding of the performance of different material of construction candidates.\nRun, analyze and modify lab-based carbon capture experiments\nDesign and fabrication of new diagnostics or components for our lab-based pilot with access to a fully kitted machine shop, state of the art 3D printing facilities and electronics lab.\nSystem process engineering modeling and early engineering studies."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "non_criteria",
+        "type": "non_criteria",
+        "content": "All internships include a path to full-time positions for the right candidates."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Mantel is looking for a Summer Engineering Intern excited to join a promising carbon capture startup working on the development of molten salts as a novel CO2 sorbent material.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Mantel is looking for a Summer Engineering Intern excited to join a promising carbon capture startup working on the development of molten salts as a novel CO2 sorbent material."
+      },
+      {
+        "text": "Mantel is looking for both undergrad and graduate level interns from a variety of backgrounds including Chemical Engineering, Mechanical Engineering and Materials Science who are interested in gaining machine shop, prototyping and fabrication experience.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Mantel is looking for both undergrad and graduate level interns from a variety of backgrounds including Chemical Engineering, Mechanical Engineering and Materials Science who are interested in gaining machine shop, prototyping and fabrication experience."
+      },
+      {
+        "text": "Recent graduates and students graduating in December 2026 are welcome to apply.",
+        "tier": "tier_3",
+        "tier_reasoning": "Implicitly optional — \"welcome to apply\" implies flexible consideration",
+        "binary": true,
+        "source_text": "Recent graduates and students graduating in December 2026 are welcome to apply."
+      },
+      {
+        "text": "This is a full time 40 hour per week position in the Cambridge, Massachusetts.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "This is a full time 40 hour per week position in the Cambridge, Massachusetts."
+      },
+      {
+        "text": "Improve our understanding of the performance of different material of construction candidates.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Improve our understanding of the performance of different material of construction candidates."
+      },
+      {
+        "text": "Run, analyze and modify lab-based carbon capture experiments",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Run, analyze and modify lab-based carbon capture experiments"
+      },
+      {
+        "text": "Design and fabrication of new diagnostics or components for our lab-based pilot with access to a fully kitted machine shop, state of the art 3D printing facilities and electronics lab.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Design and fabrication of new diagnostics or components for our lab-based pilot with access to a fully kitted machine shop, state of the art 3D printing facilities and electronics lab."
+      },
+      {
+        "text": "System process engineering modeling and early engineering studies.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "System process engineering modeling and early engineering studies."
+      }
+    ]
+  }
+}

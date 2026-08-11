@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "batch": 14,
+    "criteria_prompt_version": 8,
+    "job_id": 24054,
+    "title": "Backend Engineer (Remote, Global)",
+    "organization": "Runloop",
+    "cost": 0.000826
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Runloop builds simulation environments for DeFi and trains autonomous agents to provide liquidity, manage risk, and discover trading opportunities at scale.\nWe are a fully remote and globally distributed technology startup founded by engineers from Google Brain, Coinbase, Twitter, YC, with experience in crypto, algorithmic trading, infrastructure, and machine learning. We are backed by top-tier crypto investors such as a16z, DCG, Naval Ravikant, Elad Gil, Balaji Srinivasan, etc."
+      },
+      {
+        "heading": "About you",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "You are a seasoned backend engineer (Staff/Sr. Staff/Principal) and you have experience building software with stringent latency requirements.\nYou are excited to transition into Web3/crypto and develop a deep understanding of the Web3/crypto technology stack.\nQualifications:\nYou have 8+ years of industry experience in backend engineering, focusing on speed and low-level optimization. (example domains: game engines, databases, blockchain node implementations, HFT, virtualization, hardware-accelerated computation, compiler optimization, physics simulation, rendering pipelines, etc.)\nYou are proficient in a low-level programming language such as C/C++, Rust, Go, Java.\nYou thrive in a globally-distributed, asynchronous-by-default work environment that values deep work, quality engineering, and written communication. (e.g., design docs, documentation, runbooks, etc.)"
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "We appreciate, but don’t require:\nExperience with the Ethereum development stack (e.g., Solidity, EVM, etc.)\nExperience building HFT algorithms and infrastructure\nProduction experience with Machine Learning / Reinforcement Learning"
+      },
+      {
+        "heading": "About the role",
+        "inferred_section_type": "criteria",
+        "type": "non_criteria",
+        "content": ""
+      },
+      {
+        "heading": "Expectations:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "You will write performance-sensitive code to run “whole-world” simulations of DeFi, along with supporting distributed systems, data and ML pipelines.\nOur tech stack consists of Rust, Golang, Python, PyTorch, Nomad, Consul, etc. We expect you to become proficient in Rust and self-sufficient with the rest.\nWe don’t require pre-existing knowledge of blockchain internals, but you will have to dive deep into various L1/L2 blockchain networks and determine how to integrate them into our simulation infrastructure."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "What we offer:\nCompetitive salary and equity\nPerformance-based cash bonuses from our trading business (Unlike a typical technology startup, our business model allows us to provide both equity and liquidity.)\nFull medical, dental, and vision insurance\nPaid parental leave\nFlexible work hours - we are fully remote and globally distributed\nStipend for home-office equipment and ergonomics"
+      },
+      {
+        "heading": "Why Runloop?",
+        "inferred_section_type": "culture",
+        "type": "non_criteria",
+        "content": "DeFi is becoming too complex for simple rule-based automation. As thousands of composable protocols come online, it will become increasingly difficult to evaluate risk, make investment decisions, test protocols, formulate ML/optimization problems, etc. We are building technology to tackle this complexity head-on, and we are in a unique position to discover and trade inefficiencies at scale.\nWe offer a science- and engineering-driven culture that values deep work, quality, and software craftsmanship. If you’re excited to transition into Web3/crypto, few other places can offer such direct access and exposure to the entire problem domain."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "legal",
+        "type": "non_criteria",
+        "content": "Runloop, Inc. is an equal opportunity employer. We value diversity at our company and do not discriminate on the basis of race, religion, color, national origin, gender, sexual orientation, age, marital status, veteran status, or disability status."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "You are a seasoned backend engineer (Staff/Sr. Staff/Principal) and you have experience building software with stringent latency requirements.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You are a seasoned backend engineer (Staff/Sr. Staff/Principal) and you have experience building software with stringent latency requirements."
+      },
+      {
+        "text": "You are excited to transition into Web3/crypto and develop a deep understanding of the Web3/crypto technology stack.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You are excited to transition into Web3/crypto and develop a deep understanding of the Web3/crypto technology stack."
+      },
+      {
+        "text": "8+ years of industry experience in backend engineering, focusing on speed and low-level optimization.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You have 8+ years of industry experience in backend engineering, focusing on speed and low-level optimization. (example domains: game engines, databases, blockchain node implementations, HFT, virtualization, hardware-accelerated computation, compiler optimization, physics simulation, rendering pipelines, etc.)"
+      },
+      {
+        "text": "Proficient in a low-level programming language such as C/C++, Rust, Go, Java.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"proficient\"",
+        "binary": false,
+        "source_text": "You are proficient in a low-level programming language such as C/C++, Rust, Go, Java."
+      },
+      {
+        "text": "Thrive in a globally-distributed, asynchronous-by-default work environment that values deep work, quality engineering, and written communication.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You thrive in a globally-distributed, asynchronous-by-default work environment that values deep work, quality engineering, and written communication. (e.g., design docs, documentation, runbooks, etc.)"
+      },
+      {
+        "text": "Experience with the Ethereum development stack (e.g., Solidity, EVM, etc.)",
+        "tier": "tier_2",
+        "tier_reasoning": "signal phrase: \"appreciate, but don’t require\"",
+        "binary": false,
+        "source_text": "Experience with the Ethereum development stack (e.g., Solidity, EVM, etc.)"
+      },
+      {
+        "text": "Experience building HFT algorithms and infrastructure",
+        "tier": "tier_2",
+        "tier_reasoning": "signal phrase: \"appreciate, but don’t require\"",
+        "binary": false,
+        "source_text": "Experience building HFT algorithms and infrastructure"
+      },
+      {
+        "text": "Production experience with Machine Learning / Reinforcement Learning",
+        "tier": "tier_2",
+        "tier_reasoning": "signal phrase: \"appreciate, but don’t require\"",
+        "binary": false,
+        "source_text": "Production experience with Machine Learning / Reinforcement Learning"
+      },
+      {
+        "text": "Write performance-sensitive code to run “whole-world” simulations of DeFi, along with supporting distributed systems, data and ML pipelines.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You will write performance-sensitive code to run “whole-world” simulations of DeFi, along with supporting distributed systems, data and ML pipelines."
+      },
+      {
+        "text": "Become proficient in Rust and self-sufficient with the rest of the tech stack (Rust, Golang, Python, PyTorch, Nomad, Consul, etc.)",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"proficient\"",
+        "binary": false,
+        "source_text": "Our tech stack consists of Rust, Golang, Python, PyTorch, Nomad, Consul, etc. We expect you to become proficient in Rust and self-sufficient with the rest."
+      },
+      {
+        "text": "Dive deep into various L1/L2 blockchain networks and determine how to integrate them into our simulation infrastructure.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "We don’t require pre-existing knowledge of blockchain internals, but you will have to dive deep into various L1/L2 blockchain networks and determine how to integrate them into our simulation infrastructure."
+      }
+    ]
+  }
+}

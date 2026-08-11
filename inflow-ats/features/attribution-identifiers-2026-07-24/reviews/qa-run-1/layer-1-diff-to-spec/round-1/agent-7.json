@@ -1,0 +1,25 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 7,
+  "focus": "google_click_id chain",
+  "findings": [],
+  "chain_verified": [
+    "1a. gclid URL param first, first-occurrence, typeof===string && length>0 guard (null from valueless ?gclid and \"\" from ?gclid= both fall through to cookie) — PASS (utils.js: gclidParamValue = isArray ? [0] : scalar, guarded exactly as specified)",
+    "1b. _gcl_aw cookie fallback parsed exactly as OrganizationForm.tsx:25-29 analog: split('.'), last element only when length > 1, dotless value contributes nothing, no _ga raw-fallback — PASS (gclAwSegments && gclAwSegments.length > 1 ? last element : field absent; verified against the pre-change analog at a0d59115d~1)",
+    "1c. Cookie read: strict-equality name match on _gcl_aw (getCookieValue uses cookieEntry.name === cookieName), value = everything after FIRST '=' (indexOf/substring, not useCookieValue's split('=')[1] defect), empty value treated as absent — PASS",
+    "1d. Field absent when neither source contributes (assigned only inside the two branches, never null/\"\"); ATTRIBUTION_IDENTIFIER_MAX_LENGTH = 1024 surrogate-safe cap applied to the FINAL value in both branches via sanitizeTrackingValue(value, 1024) — PASS",
+    "2. AuthForm.tsx: googleClickId: trackingParams.googleClickId in magicLink payload (line 92) AND googleClickId={trackingParams.googleClickId} GoogleSSOButton prop (line 151); capture moment useState(sanitizeTrackingParams(location.search)) unchanged — PASS",
+    "3. SignupForm.tsx: googleClickId: trackingParams.googleClickId in register mutation payload (line 78) — PASS",
+    "4. GoogleSSOButton.tsx: googleClickId?: string in Props (line 24), destructured (line 44), hidden input name=\"google_click_id\" under typeof googleClickId === \"string\" && googleClickId.length > 0 (lines 113-114) — PASS",
+    "5. useSession.ts: googleClickId destructured in register (line 45) and magicLink (line 94), typed googleClickId?: string | null in the magicLink inline type (line 116), in both variables objects (lines 68, 150); apiPost (queryHooks/api.ts:52) runs allKeysToSnake(variables) and lodash snakeCase('googleClickId') verified to produce 'google_click_id' — PASS",
+    "6. sign_up_params: :google_click_id plain scalar permit present, before the trailing utm_data: {} (registrations_controller.rb:328) — PASS",
+    "7. #magic_create: google_click_id: sign_up_params[:google_click_id] in BOTH branches of the conditional (registrations_controller.rb:108 and 130) — PASS",
+    "8. omniauth.rb allowed_keys: google_click_id present in the extended %w list (line 15); existing value && !value.empty? loop unchanged — PASS",
+    "9. User.from_omniauth: nil-defaulted google_click_id: keyword (user.rb:382); omniauth_user.google_click_id = google_click_id assigned inside the first_or_create block only (user.rb:403); post-block update touches only names — PASS",
+    "10. Callbacks controller: google_click_id: merged_tracking['google_click_id'] (omniauth_callbacks_controller.rb:37) — PASS",
+    "11. OrganizationsController#create: @organization.google_click_id = current_user.google_click_id in the copy block (line 43); :google_click_id and :adroll_first_party_cookie removed from organization_params; app-wide sweep at a0d59115d shows zero remaining param-sourced reads of google_click_id outside sign_up_params/oauth session; OrganizationForm.tsx cookie read, payload keys, and useCookieValue import all removed — PASS",
+    "12. Migrations: 20260724183710 adds google_click_id string to USERS; 20260724183711 (organizations) adds only the six new columns and does NOT re-add google_click_id or adroll_first_party_cookie — both pre-exist in git show a0d59115d:db/schema.rb organizations table alongside adroll_first_party_cookie — PASS",
+    "13. Four extended spec files cover google_click_id per SPEC §10: registrations_controller_spec (magic_create carry/nil/existing-user-inert, create both ways), user_from_omniauth_spec (persist/omit-nil/existing-untouched), omniauth_callbacks_controller_spec (session seed + exhaustive with(...) incl. the nil example), organizations_controller_spec (copy-from-current_user, nils, INVERTED request-body example asserting current_user's gclid-abc123 lands instead of 'from-body', header comment rewritten) — PASS"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 8,
+  "focus_area": "End-to-end broadcast->handler contract: backend JOB_CRITERIA_EXTRACTION_COMPLETE payload shape vs frontend TS interface, handler case, and useAiJobCriteria query-key invalidation match",
+  "files_reviewed": [
+    "app/javascript/ats/src/websockets/WebsocketGlobalChannelHandler.tsx",
+    "app/javascript/shared/types/aiSummaryWebsocketPayloads.ts",
+    "app/javascript/shared/queryHooks/useAiJobCriteria.ts",
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/jobs/generate_ai_job_application_summary_job.rb",
+    "app/channels/global_channel.rb",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/RegenerateJobCriteriaConfirmModal.tsx"
+  ],
+  "findings": []
+}

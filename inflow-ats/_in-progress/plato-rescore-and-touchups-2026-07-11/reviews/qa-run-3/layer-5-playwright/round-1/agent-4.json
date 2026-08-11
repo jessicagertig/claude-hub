@@ -1,0 +1,28 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 4,
+  "assignment": "Per-stage modal STATE 3 (unchecked, processable > 0, normal credit variant) on Senior Engineer / Screen (SPEC 1.2 state 3), display only; plus partial-selection STATE 2 check (only the 2 reviewed candidates selected) proving processableCount reflects the selection, not the stage. Cancel only, never submit.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as Rezu May (Acme Inc.)",
+    "Clicked 'Senior Engineer' job title → candidates view opened on Inbox",
+    "Clicked 'Screen' stage link (badge 5). Candidate list showed exactly 5: Yesenia Bernhard (Good fit chip), Cornelius Jenkins (Excellent fit chip), Brent Lubowitz, Refugio Ondricka, Wally Blanda (no chips) — 2 reviewed / 3 unreviewed as expected",
+    "Clicked the Screen stage-name select-all checkbox → all 5 row checkboxes checked",
+    "Opened Bulk options three-dot menu → clicked 'Run Plato reviews' → 'Review candidates' modal opened",
+    "STATE 3 body copy byte-level match (DOM innerHTML): \"3 of the 5 candidates selected from this hiring stage don't have a Plato review yet. Each successful review uses one AI credit, so running this uses up to <b>3</b> credits from your balance of <b>20</b> available.\" — displayed balance was 20 as expected, no recompute needed",
+    "Verified via browser_evaluate: bold <b> on 3 (candidatesToScoreCount) and 20 (available) exactly as SPEC marks them; NO 'Up to ' prefix on the lead sentence; NO overestimate info block ('This count may be an overestimate.' absent from DOM); NO shortfall sentence",
+    "Verified 'Generate reviews' submit button ENABLED (disabled=false); rescore checkbox present, unchecked, enabled (checked=false, disabled=false); checkbox label 'Also re-review candidates that already have a review' with description 'Recommended if you've changed the candidate requirements in the job description.'; Statement block 'You will receive an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' present",
+    "Screenshot state 3, then clicked Cancel — modal closed, no submit",
+    "Clicked select-all checkbox again → all 5 unchecked; individually checked only Yesenia Bernhard and Cornelius Jenkins (the 2 reviewed, identified by fit chips per navigation map)",
+    "Reopened Bulk options → 'Run Plato reviews'. STATE 2 body copy byte-level match: \"0 of the 2 candidates selected from this hiring stage don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.\" — numeric 0, no credit sentence, no bold, no overestimate block",
+    "Verified 'Generate reviews' DISABLED (a11y tree [disabled] + DOM disabled=true); rescore checkbox unchecked and enabled. Confirms processableCount reflects the SELECTION (0 of 2) not the stage (stage has 3 unreviewed)",
+    "Screenshot state 2, clicked Cancel — modal closed, no submit ever issued",
+    "Unchecked both candidates to leave a clean no-selection state",
+    "Console check (full session): 0 error/warning-level messages beyond known noise — react-router history deprecations, 'Store does not have a valid reducer', heap-api.com 404. No rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summaries errors, no React errors"
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-4/agent-4-state3-all5-unchecked.png",
+    "/tmp/qa-run-3-l5/agent-4/agent-4-state2-partial2-unchecked.png"
+  ],
+  "findings": []
+}

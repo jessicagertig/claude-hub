@@ -1,0 +1,23 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 5,
+  "agent_index": 8,
+  "slice": "webhook delicacy audit",
+  "findings": [],
+  "verified": [
+    "line-count accounting: git diff a0d59115d..33dffbe3e -- app/jobs/stripe_webhook_handler_job.rb numstat = 34 added / 0 removed (32 non-blank + 2 blank additions); file 498 -> 532 lines; exactly two hunks, headers @@ -208,6 +208,20 @@ and @@ -295,6 +309,26 @@ — matches prior accounting (34/0, hunks @ -208 and -295)",
+    "every diff line classified: hunk 1 (14 lines, new-file 211-224) = sanctioned insertion 2 (SPEC §5.3, canceled_subscription in customer.subscription.deleted main branch); hunk 2 (20 lines, new-file 312-331) = sanctioned insertion 1 (SPEC §5.2, conversions in invoice.paid main-plan branch); zero lines fall outside the two sanctioned insertions; zero '-' lines (no removals, no modifications)",
+    "byte-identity of everything outside the insertions: extracted 33dffbe3e:stripe_webhook_handler_job.rb, deleted lines 211-224 and 312-331, cmp against a0d59115d version = byte-identical — no reordering, no whitespace churn, no attribute-access changes, no cleanup anywhere in the file",
+    "fix commit 7574df408: spec files only (spec/jobs/stripe_webhook_handler_subscription_events_spec.rb, 3+/0-); webhook file untouched",
+    "fix commit e850c74fe: spec files only (spec/jobs/stripe_webhook_handler_subscription_events_spec.rb, 1+/0-); webhook file untouched",
+    "fix commit 549039a0c: spec files only (spec/jobs/stripe_webhook_handler_subscription_events_spec.rb, 7+/0-); webhook file untouched",
+    "fix commit 33dffbe3e: spec files only (4 spec files, 166+/15-); webhook file untouched",
+    "blob-hash proof: 33dffbe3e:app/jobs/stripe_webhook_handler_job.rb = d8756cfb974a1a3df6da8058fba9f51416544ec9 at 89286fba8, 7574df408, e850c74fe, 549039a0c, and 33dffbe3e — the file was written once in the feature commit and untouched by all four fix commits; git log over the range shows only 89286fba8 touching it",
+    "insertion 2 (§5.3) internals: appended at END of the else-branch body after the EngagementReport::GeneratorJob.perform_later line, before the branch's end; own begin/rescue StandardError so the branch's existing rescue never sees ledger failure; plain `if organization` conditional inside the rescue-wrapped block per §5.3's nil-organization handling; call args exactly per spec (organization: organization, event_type: 'canceled_subscription', to_plan: organization.plan, stripe_subscription_id: stripe_subscription_id); stripe_subscription_id and organization are pre-existing branch locals (stripe_subscription_id = object.id at branch top); own contextual logging (Rails.logger.error with org/subscription/msg + ap e); nothing extra",
+    "insertion 1 (§5.2) internals: appended at END of the invoice.paid main-plan else-branch body after organization.organization_ai_credit_balance&.reset_ai_credits, before the branch's end; below the raise CustomStripeSubscriptionMissingError guard per §4; own begin/rescue StandardError; §4 predicate exact — object.amount_paid.to_i > 0, then stripe_subscription.trial_end.present? -> 'trial_converted_to_paid' else 'converted_to_paid' via the pre-existing `stripe_subscription = Stripe::Subscription.retrieve(object.subscription)` local (live retrieve, not the event payload snapshot, no status field); call args exactly per spec (organization: organization, event_type: subscription_event_type, to_plan: organization.plan, stripe_subscription_id: object.subscription, amount: object.amount_paid); from_plan not passed (left nil per §5.2); selection is a full if/else expression assigned to subscription_event_type (D10 shape); house-safe access forms only (direct top-level fields matching existing branch style; rescue logging mirrors the existing three-tier rescue's `object&.id`/`object&.subscription` style); nothing extra",
+    "three-tier rescue in invoice.paid (Stripe::StripeError / ActiveRecord::RecordInvalid+RecordNotFound / StandardError) byte-identical to base and positioned after the insertion's self-contained rescue — the addition can never reach those tiers",
+    "subscription.deleted branch's single existing rescue StandardError ('Stripe Webhook Error - subscription.deleted') byte-identical to base",
+    "§11.6 disclosed: rollout misclassification of pre-existing already-converted subscriptions (no backfill -> first post-deploy paid invoice records a false conversion) is a spec-level OPEN QUESTION for Jessica, not a diff deviation; the diff implements the spec as written"
+  ]
+}

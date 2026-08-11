@@ -1,0 +1,39 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "run": 5,
+  "head": "fc3f047f9",
+  "agents_dispatched": 15,
+  "agents_reporting": 15,
+  "team_coverage": "All 22 changed files assigned to >=1 agent; utils.js sanitizer double-covered (agents 5,6); all 3 backend controllers + user model covered by focused + cross-cutting agents (1,2,3,12); the 5 new spec files covered by two dedicated ghost-test hunters (14,15).",
+  "high_plus_count": 0,
+  "findings": [
+    {
+      "id": "l2-r2-a1-F1",
+      "severity": "LOW",
+      "title": "utm_data reaches the jsonb column as two different in-memory types on the two write paths (provably correct at Rails 6.1.7.7; latent-fragility observation)",
+      "file": "app/controllers/api/v1/registrations_controller.rb",
+      "line": 99,
+      "description": "#create path passes a permitted ActionController::Parameters (via expanded_params.merge) so sanitize_for_mass_assignment calls .to_h -> HashWithIndifferentAccess before the jsonb cast; #magic_create builds a plain Ruby Hash so the nested Parameters rides raw into the assignment. Both persist a correct jsonb hash today because actionpack 6.1.7.7 delegates ActionController::Parameters#as_json to @parameters (strong_parameters.rb:246-247). Independently re-verified by agent-12. Correct at this HEAD; noted only so the two-type divergence is on record.",
+      "disposition": "COLLECT (LOW) — no user-facing defect; does not block convergence."
+    },
+    {
+      "id": "l2-r2-a14-F1",
+      "severity": "LOW",
+      "title": "Org 'ignores attribution values sent in the request body' test proves copy-from-user wins, not that strong params rejects the body value",
+      "file": "spec/controllers/api/v1/organizations_controller_spec.rb",
+      "line": 53,
+      "description": "The test is falsifiable and not a ghost test (deleting the four copy lines makes the result nil, failing the assertion). It does not independently prove organization_params rejects a body utm_source, but there is no gap because utm_source genuinely is not permitted (organizations_controller.rb:119). Optional strengthening only.",
+      "disposition": "COLLECT (LOW) — no defect; does not block convergence."
+    }
+  ],
+  "settled_rulings_respected": "No agent re-flagged M1/M2/M3/M4 or any of the 9 recorded LOW siblings. Baselines (utils.test.js absent, ~148 pre-existing RSpec failures, pre-existing `ap`/`Devise.mappings[:user]` lines) noted as out-of-scope, not flagged as feature defects.",
+  "notable_deep_checks": [
+    "agents 5 + 6 independently confirmed query-string v6.1.0 parse() alphabetizes keys and the sanitizer correctly derives occurrence order from the raw string (failure-pattern #28 handled); surrogate-safe truncation and rule-13 no-fabrication verified against library source.",
+    "agent-7 + agent-13 definitively located the camelCase->snake_case conversion at api.ts:52 (allKeysToSnake), matching sign_up_params snake_case permits; same house convention as pre-existing loginIntent/referral.",
+    "agent-12 independently re-proved utm_data jsonb serialization across all four write paths (no fabricated {}, no stringified Parameters, no wrapper).",
+    "agent-3 confirmed zero callers remain on the old positional from_omniauth signature.",
+    "agents 14 + 15 confirmed all 5 new specs are falsifiable (no ghost tests), carry correct devise.mapping[:api_v1_user] where required, correct :test queue-adapter around blocks (rule 31), and correct stub type-match (rule 7)."
+  ],
+  "gate": "CLEAN ROUND (0 HIGH+). First clean round of Layer 2 (round-1 was VOID). One more consecutive clean round (round-3) required to converge."
+}

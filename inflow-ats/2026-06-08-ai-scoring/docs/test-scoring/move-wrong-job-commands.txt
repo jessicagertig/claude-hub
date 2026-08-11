@@ -1,0 +1,23 @@
+# Run in rails console (bin/rails console)
+
+# 1. Find the job
+job = Job.where(title: 'Team Lead, Customer Support (Remote)', organization_id: Organization.find_by(name: 'Stack 24').id).order('job_applications_count DESC').first
+puts "Job: #{job.id} — #{job.title} (#{job.job_applications.count} applications)"
+
+# 2. Create "Wrong Job" hiring stage
+wrong_job_stage = job.hiring_stages.create!(name: 'Wrong Job', kind: :kind_in_process)
+puts "Created stage: #{wrong_job_stage.id} — #{wrong_job_stage.name}"
+
+# 3. Find data analyst job applications
+da_job_app_ids = []
+TextractResult.joins(job_application: :job).where(jobs: { id: job.id }).where.not(textract_job_result_text: [nil, '']).find_each do |tr|
+  if tr.textract_job_result_text.downcase.match?(/data scien|data analy|machine learn|deep learn|data engineer/)
+    da_job_app_ids << tr.job_application_id
+  end
+end
+da_job_app_ids.uniq!
+puts "#{da_job_app_ids.length} data analyst applications to move"
+
+# 4. Move them
+JobApplication.where(id: da_job_app_ids).update_all(hiring_stage_id: wrong_job_stage.id)
+puts "Done — moved #{da_job_app_ids.length} applications to '#{wrong_job_stage.name}'"

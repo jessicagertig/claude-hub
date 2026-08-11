@@ -1,0 +1,33 @@
+{
+  "agent": 3,
+  "round": 1,
+  "layer": 5,
+  "scope": "Feature flag OFF -- Plato elements hidden",
+  "test_server": "http://app.lvh.me:5007",
+  "user": "rezu.may@wrkhq.com",
+  "flag_state": "AI_APPLICANT_SUMMARY OFF",
+  "url_tested": "http://app.lvh.me:5007/jobs/17773/stages/124384/applicants/13501/overview",
+  "candidate": "Alonso Parker",
+  "job": "Software Engineer",
+  "screenshots": [
+    "/Users/jessica/claude-hub/inflow-ats/2026-06-11-ai-display/.playwright-mcp/qa-run6-agent3-01-candidate-view-full.png",
+    "/Users/jessica/claude-hub/inflow-ats/2026-06-11-ai-display/.playwright-mcp/qa-run6-agent3-02-sidebar-nav.png",
+    "/Users/jessica/claude-hub/inflow-ats/2026-06-11-ai-display/.playwright-mcp/qa-run6-agent3-03-overview-tab.png"
+  ],
+  "findings": [],
+  "checks": {
+    "plato_nav_item_absent": {
+      "result": "PASS",
+      "detail": "Sidebar nav contains exactly: Overview, Resume, Messages, Files, Private notes. No 'Plato' nav item is present. Snapshot ref e261 confirms the complete nav link list."
+    },
+    "plato_overview_callout_absent": {
+      "result": "PASS",
+      "detail": "Activity feed (aria-label 'List of activities that have occured on this application', ref e348) contains only: a 'Manually added by Rezu May' entry and action buttons (Add a comment, Start a review, Request a review). No PlatoOverviewCallout card, no 'Plato' text, no gradient chip is present."
+    },
+    "console_errors": {
+      "result": "PASS",
+      "detail": "7 console errors detected, all pre-existing infrastructure issues unrelated to Plato: heap analytics CDN 404, history library deprecation warnings (3), Redux combineReducers warning (2). Zero Plato-related errors."
+    }
+  },
+  "summary": "PASS. With AI_APPLICANT_SUMMARY feature flag OFF, all Plato UI elements are correctly hidden. The sidebar nav shows the expected 5 items (Overview, Resume, Messages, Files, Private notes) with no Plato entry. The Overview activity feed contains no PlatoOverviewCallout card or any Plato-related content. No Plato-related console errors observed."
+}

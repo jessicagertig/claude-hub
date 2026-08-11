@@ -1,0 +1,207 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume shows backend service development experience but lacks specific evidence of architecting or deploying multi-cloud racks or environments."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with alerting and logging (refactoring logging for Elasticsearch) and reliability (dual-write mechanisms for data consistency), but lacks evidence for multi-cloud failover strategies."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly lists Go/Golang as their primary language across all three professional roles (Razorpay, Zocket, DotPe) in backend production environments."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "There is no mention of Kubernetes, cluster management, or service mesh technologies in the resume."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "No mention of Terraform or other Infrastructure as Code (IaC) tools in the resume."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with specific AWS services (SQS, S3, Redshift) but does not demonstrate broad management of compute, network, or security infrastructure."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has developed a SaaS subscription solution at Zocket, showing exposure to platform-level development, though this is not explicitly an infrastructure abstraction PaaS."
+    },
+    {
+      "criterion_text": "Excellent communication skills",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The resume explicitly mentions 'Intra and Inter-Team Communication' as a skill gained at Zocket."
+    },
+    {
+      "criterion_text": "Ability to work cross functionally",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The resume mentions 'Team Management' and 'Inter-Team Communication', which implies cross-functional interaction, though specific cross-functional projects are not detailed."
+    },
+    {
+      "criterion_text": "Thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate's experience at Razorpay (a known high-growth environment) and Zocket involve high-throughput services and rapid feature development."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of cloud marketplace integration experience."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of multi-cloud or hybrid-cloud environment work."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate lists 'System Design' and mentions high-throughput services (3K RPS) and SaaS multi-tier plans, which relate to these concepts."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate works with distributed messaging systems like RabbitMQ and AWS SQS, demonstrating exposure to distributed systems."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate explicitly mentions refactoring logging for Elasticsearch and Kibana processing, which is part of the ELK stack."
+    },
+    {
+      "criterion_text": "Ability to design backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has demonstrated backend service design in Go (APIs, SaaS integration, Marketing Rules Engine), but not specifically PaaS orchestrator/scheduler logic."
+    },
+    {
+      "criterion_text": "Ability to build backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Similar to the design criteria, the candidate has built Go backend services and integrations, but not PaaS-specific orchestrators."
+    },
+    {
+      "criterion_text": "Ability to maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has maintained backend services at Razorpay and Zocket, though not in a PaaS infrastructure context."
+    },
+    {
+      "criterion_text": "Ability to work closely with the infrastructure team to integrate with Kubernetes.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No mention of infrastructure team collaboration or Kubernetes."
+    },
+    {
+      "criterion_text": "Ability to integrate with Kubernetes components such as clusters, deployments, and autoscaling.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of Kubernetes integration."
+    },
+    {
+      "criterion_text": "Ability to integrate with Terraform as infrastructure as code.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of Terraform integration."
+    },
+    {
+      "criterion_text": "Ability to work across AWS, GCP, Azure, and other cloud platforms.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has worked with AWS services but lacks evidence of working across multiple different cloud providers (GCP/Azure)."
+    },
+    {
+      "criterion_text": "Ability to collaborate with product and UX teams to deliver features for developers.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate's experience in SaaS development at Zocket implies collaboration with product stakeholders, although not specifically documented as UX collaboration."
+    },
+    {
+      "criterion_text": "Ability to improve CLI usage for developers.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No mention of CLI development or tooling improvement."
+    },
+    {
+      "criterion_text": "Ability to enhance CI/CD workflows for developers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists 'Gitlab CI/CD' as a technical skill and has direct experience utilizing it in professional roles."
+    },
+    {
+      "criterion_text": "Ability to enable marketplace and cloud provider integrations for developers.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of marketplace integration enabling."
+    },
+    {
+      "criterion_text": "Ability to create better observability and logging experiences for developers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate refactored logging systems and optimized Kibana processing to reduce log search time, demonstrating this ability."
+    },
+    {
+      "criterion_text": "Ability to participate in code reviews for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "As a Software Development Engineer, participation in code reviews is a standard function, though not explicitly detailed."
+    },
+    {
+      "criterion_text": "Ability to mentor others in backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of mentoring experience."
+    },
+    {
+      "criterion_text": "Ability to help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate contributed to legacy db schema normalization and setup testing mechanisms at Razorpay, which involve defining development best practices."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines is a strong plus.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists CI/CD (Gitlab) as a skill and utilized it professionally."
+    },
+    {
+      "criterion_text": "Familiarity with developer tooling is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with Git, Docker, and logging/indexing tools, which are core developer tools."
+    },
+    {
+      "criterion_text": "Some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate integrated Shopify and Stripe as payment gateways at Zocket, which involves third-party platform integration."
+    }
+  ],
+  "computed_score": {
+    "points": 96.0,
+    "max": 208,
+    "percentage": 46.2
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "agent": "agent-1",
+  "round": 2,
+  "focus": "Cross-cutting data flow verification",
+  "findings": [
+    {
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationNavItem.tsx",
+      "line": 26,
+      "summary": "JobApplicationNavItem checks summaryStatus === \"succeeded\" but the AiJobApplicationSummaryStatus enum only has values \"none\", \"current\", \"regenerating\". The harvey dot will never render.",
+      "detail": "JobApplicationListContainer (line 222) passes jobApplication.aiJobApplicationSummaryStatus?.status as the summaryStatus prop. The AiJobApplicationSummaryStatus model enum (app/models/ai_job_application_summary_status.rb:7-11) defines status values as none (0), current (1), regenerating (2). The frontend type (app/javascript/shared/types/jobApplication.ts:4) matches: \"none\" | \"current\" | \"regenerating\". But JobApplicationNavItem line 26 compares summaryStatus === \"succeeded\" -- a value that does not exist in this enum. This is a leftover from the old AiJobApplicationSummary.status which had \"succeeded\" as a pipeline status. The check should be summaryStatus === \"current\" to show the harvey dot when a completed summary exists.",
+      "trace": "JobApplicationListContainer.tsx:222-223 -> JobApplicationNavItem.tsx:26 -> AiJobApplicationSummaryStatus model enum (none/current/regenerating) -> TypeScript type AiJobApplicationSummaryStatus.status (none/current/regenerating)"
+    }
+  ],
+  "verified_correct": [
+    {
+      "check": "Backend serializer association",
+      "result": "PASS. JobApplicationSerializer (line 40-41) has has_one :ai_job_application_summary_status with AiJobApplicationSummaryStatusSerializer. Model (job_application.rb:31) has has_one :ai_job_application_summary_status. ShallowJobApplicationSerializer (line 18-19) uses the same serializer."
+    },
+    {
+      "check": "Serializer attributes match TypeScript type",
+      "result": "PASS. Serializer exposes: id, ai_job_application_summary_id, status, score_percentage, headline, integrated_role_analysis, updated_at. TypeScript type has: id, aiJobApplicationSummaryId, status, scorePercentage, headline, integratedRoleAnalysis, updatedAt. All snake_case->camelCase transformations are correct."
+    },
+    {
+      "check": "No remaining old aiJobApplicationSummary property on jobApplication",
+      "result": "PASS. grep for aiJobApplicationSummary (excluding SummaryStatus, SummaryId, SummaryFull, and query hook internals) returns no results. The old property is fully removed from the JobApplication interface and all consumers."
+    },
+    {
+      "check": "PlatoTab consumer field access",
+      "result": "PASS. PlatoTab.tsx:39 reads jobApplication.aiJobApplicationSummaryStatus. Uses summaryStatus?.status, summaryStatus?.aiJobApplicationSummaryId, summaryStatus?.headline, summaryStatus?.scorePercentage, summaryStatus?.updatedAt -- all fields exist on the AiJobApplicationSummaryStatus TypeScript interface."
+    },
+    {
+      "check": "JobApplicationActivity consumer field access",
+      "result": "PASS. Lines 399-410 read jobApplication.aiJobApplicationSummaryStatus?.status, ?.headline, ?.integratedRoleAnalysis, ?.scorePercentage, ?.updatedAt -- all present on the type."
+    },
+    {
+      "check": "PlatoOverviewCallout prop type",
+      "result": "PASS. Receives summaryStatusValue (string from aiJobApplicationSummaryStatus.status) and hasResume (boolean). Its interface accepts \"none\" | \"current\" | \"regenerating\" | null which matches the status enum."
+    },
+    {
+      "check": "PlatoGeneratedReviewCallout prop types",
+      "result": "PASS. Receives headline (string), roleFit (string), scorePct (number), generatedAgo (string) -- all derived from aiJobApplicationSummaryStatus fields."
+    },
+    {
+      "check": "useAiJobApplicationSummary query key matches websocket invalidation",
+      "result": "PASS. Hook uses query key [\"aiJobApplicationSummary\", aiJobApplicationSummaryId] (line 42). WebsocketJobChannelHandler invalidates [\"aiJobApplicationSummary\"] (line 75) which is a prefix match -- React Query prefix matching will invalidate all keys starting with \"aiJobApplicationSummary\". WebsocketGlobalChannelHandler (line 226) also invalidates [\"aiJobApplicationSummary\"]. useUpdateJobApplication (useJobApplication.ts:224) also invalidates [\"aiJobApplicationSummary\"]. All three invalidation sites use the same prefix."
+    },
+    {
+      "check": "WebSocket handler also invalidates jobApplication query",
+      "result": "PASS. WebsocketJobChannelHandler line 74 invalidates [\"jobApplication\"] on ai_summary_status_change, which will refetch the job application and its embedded aiJobApplicationSummaryStatus from the serializer."
+    }
+  ]
+}

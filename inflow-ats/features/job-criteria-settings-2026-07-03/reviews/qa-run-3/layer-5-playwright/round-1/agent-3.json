@@ -1,0 +1,26 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 3,
+  "assignment": "ZERO-CRITERIA FAILURE state — job 28056 'QA Zero Criteria Failure' (SPEC §8.2 state 2), Plato AI settings Job criteria section at /jobs/28056/setup/ai; plus Regenerate confirm modal copy (SPEC §8.5)",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as Rezu May (org Acme Inc.); jobs list showed all 6 seeded QA jobs + Senior Engineer.",
+    "Clicked job title heading 'QA Zero Criteria Failure' → landed on /jobs/28056/stages/196337/applicants (job page, 0 candidates).",
+    "Clicked 'Job setup' left nav → /jobs/28056/setup/details.",
+    "Clicked 'Plato AI settings' nav item (second column, flag-gated, present/active) → /jobs/28056/setup/ai.",
+    "Snapshot of Job criteria section: intro paragraph present ('Plato extracts scoring criteria from your job description ... To change them, edit your job description.') with inline 'job description' link → /jobs/28056/setup/description. Body renders EmptyState (NOT a card): icon + heading 'No criteria found' + message. Action row shows a single 'Regenerate criteria' button — NO 'View criteria', NO criteria card, NO Core/Preferred/Bonus count rail. Right sidebar 'Criteria tiers' glossary present.",
+    "Verified EmptyState icon via DOM: SVG path 'M10.29 3.86L1.82 18...' + two warning lines (12,9→12,13 and 12,17→12.01,17) = Feather alert-triangle. Matches SPEC §8.2 state 2.",
+    "Verified heading text verbatim: 'No criteria found'. Verified message verbatim: 'No scoring criteria were found in the job description. Plato won't review candidates until it has criteria to score against.' Both match SPEC §8.2 state 2 exactly.",
+    "Screenshot of section saved: /tmp/qa-run-3-l5/agent-3/01-zero-criteria-section.png.",
+    "browser_console_messages(level=error): exactly 7 errors — 1 heap-api.com 404, 4 react-router history deprecation warnings, 2 'Store does not have a valid reducer' Redux warnings. All on the KNOWN pre-existing list. Zero feature-referencing errors (no aiJobCriteria/JobCriteria/useAiJobCriteria/React errors).",
+    "Clicked 'Regenerate criteria' → confirm modal opened. Verified copy vs SPEC §8.5: title 'Regenerate job criteria?'; lead paragraph 'Plato will re-extract scoring criteria from the current job description. Reviews that have already run keep the criteria they were scored against.'; statement box with refresh-cw icon (verified DOM: polylines '23 4 23 10 17 10' + '1 20 1 14 7 14' + arc path = Feather refresh-cw) reading 'Regenerating works best when you have changed the parts of the description that affect scoring, like requirements or responsibilities. Keeping regenerations rare keeps scores comparable across candidates. If the criteria change significantly, you can also regenerate all candidate reviews.'; footer primary 'Regenerate criteria' + secondary 'Cancel'. Component class RegenerateJobCriteriaConfirmModal_Styled-Statement confirms the correct new component. All match SPEC §8.5.",
+    "Screenshot of modal saved: /tmp/qa-run-3-l5/agent-3/02-regenerate-modal.png.",
+    "Clicked 'Cancel' (NEVER the confirm Regenerate button) — modal dismissed cleanly, no mutation fired, still on /jobs/28056/setup/ai. Re-checked console: still exactly the same 7 known errors, no new ones.",
+    "Copy rules (SPEC §10) spot-checked: no em dashes, sentence case, 'extract'/'re-extract' vocabulary, static button labels with no interpolated counts. All pass."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-3/01-zero-criteria-section.png",
+    "/tmp/qa-run-3-l5/agent-3/02-regenerate-modal.png"
+  ],
+  "findings": []
+}

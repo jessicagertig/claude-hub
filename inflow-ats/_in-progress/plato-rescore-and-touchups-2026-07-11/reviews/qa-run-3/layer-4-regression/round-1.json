@@ -1,0 +1,25 @@
+{
+  "layer": "regression",
+  "round": 1,
+  "suites_run": {
+    "rspec": {
+      "ran": true,
+      "passed": true,
+      "summary": "26 examples, 0 failures",
+      "files": [
+        {"file": "spec/interactors/create_ai_summary_generation_spec.rb", "examples": 2, "failures": 0},
+        {"file": "spec/controllers/api/v1/ai_job_application_summaries_controller_spec.rb", "examples": 2, "failures": 0},
+        {"file": "spec/mailers/bulk_all_stages_ai_summary_result_mailer_spec.rb", "examples": 2, "failures": 0},
+        {"file": "spec/interactors/queue_bulk_ai_summary_jobs_spec.rb", "examples": 9, "failures": 0},
+        {"file": "spec/interactors/create_bulk_ai_summary_generation_spec.rb", "examples": 5, "failures": 0},
+        {"file": "spec/controllers/api/v1/bulk_ai_job_application_summaries_controller_spec.rb", "examples": 6, "failures": 0}
+      ],
+      "failures": []
+    },
+    "cypress": {
+      "ran": false,
+      "reason": "not in owner-scoped Layer 4 list; Cypress pre-commit suite (56 specs) already ran green on both QA fix commits"
+    }
+  },
+  "findings": []
+}

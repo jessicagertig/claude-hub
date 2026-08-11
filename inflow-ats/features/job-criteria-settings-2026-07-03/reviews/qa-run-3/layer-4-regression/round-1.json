@@ -1,0 +1,70 @@
+{
+  "layer": "regression",
+  "run": "qa-run-3",
+  "round": 1,
+  "environment": "RAILS_ENV=test, test DB cleaned via DELETE /cypress/cleanup (wiped L3-seeded Flipper global gates) before the run; test server left running/idle on 5007; fresh rspec process per invocation",
+  "suites_run": {
+    "rspec_feature_specs": {
+      "ran": true,
+      "passed": true,
+      "files": [
+        "spec/controllers/api/v1/ai_job_criteria_controller_spec.rb",
+        "spec/controllers/api/v1/bulk_ai_job_application_summaries_controller_spec.rb",
+        "spec/interactors/queue_bulk_ai_summary_jobs_spec.rb",
+        "spec/interactors/validate_ai_summary_generation_spec.rb",
+        "spec/interactors/validate_auto_ai_summary_generation_spec.rb",
+        "spec/jobs/extract_job_criteria_job_spec.rb",
+        "spec/models/ai_job_criteria_spec.rb",
+        "spec/models/job_criteria_lifecycle_spec.rb",
+        "spec/models/textract_result_ai_trigger_spec.rb",
+        "spec/serializers/api/v1/job_ai_job_criteria_serializer_spec.rb",
+        "spec/services/ai_job_application_action/scoring/extract_criteria_spec.rb",
+        "spec/services/ai_job_application_action/scoring/score_job_application_spec.rb"
+      ],
+      "summary": "154 examples, 0 failures"
+    },
+    "rspec_bulk_generate_ai_summaries_job_spec": {
+      "ran": true,
+      "passed": false,
+      "summary": "16 examples, 9 failures",
+      "feature_regressions": 0,
+      "note": "All 9 failures share one pre-existing root cause: the spec calls/stubs `job_instance.on_complete` as an instance method, but `BulkGenerateAiSummariesJob` defines `on_complete` only via the job-iteration DSL block (`on_complete do...end`, production line 100), which is NOT an instance method; rspec verify_partial_doubles raises 'does not implement #on_complete'. The feature diff touches NEITHER the production `on_complete` block NOR these spec examples (confirmed: `git diff develop...HEAD` contains no `on_complete`). The feature's OWN 2 new examples ('marks the claim row :failed when validation fails', 'zero-criteria job batch ... marks every claim row :failed and still fires the failure completion notification') PASS. Matches the orchestrator-provided known pre-existing set (broken at develop base)."
+    },
+    "rspec_consumer_specs": {
+      "ran": true,
+      "passed": false,
+      "files": [
+        "spec/jobs/generate_ai_job_application_summary_job_spec.rb",
+        "spec/interactors/create_bulk_ai_summary_generation_spec.rb",
+        "spec/services/ai_job_application_action/orchestrate_spec.rb",
+        "spec/interactors/find_or_create_ai_job_application_summary_status_spec.rb"
+      ],
+      "summary": "43 examples, 1 failure",
+      "feature_regressions": 0,
+      "note": "Ran the specs that consume the modified shared code (generate_ai_summary_with_credit_flow funnel guard, the validators). The single failure — GenerateAiJobApplicationSummaryJob 'broadcasts failed status when the pipeline raises' (spec line 233) — is PRE-EXISTING and NOT a feature regression. The test stubs `generate_ai_summary_with_credit_flow` to raise BEFORE any AiJobApplicationSummary is created; the analog job's own private `broadcast_completion` then hits `return unless ai_job_application_summary` (no summary record) and skips the broadcast, so the expected failed broadcast never fires. The feature's change to that method is fully stubbed out; `git diff develop HEAD` for both `app/jobs/generate_ai_job_application_summary_job.rb` and its spec is EMPTY (byte-identical to develop, no branch commits touched them), so it fails identically at develop base. Deterministic (fails in isolation and as a single example — not flaky)."
+    },
+    "cypress": {"ran": false, "reason": "no Cypress specs added or in-scope (SPEC §2/§12: no Cypress changes; no existing job-setup Cypress coverage to run)"}
+  },
+  "findings": [
+    {
+      "id": "l4-med-001",
+      "severity": "MED",
+      "classification": "pre-existing (existed before this feature; broken at develop base)",
+      "title": "9 pre-existing failures in bulk_generate_ai_summaries_job_spec.rb: on_complete referenced as instance method",
+      "test_file": "spec/jobs/bulk_generate_ai_summaries_job_spec.rb (:158, :195, :220, :244, :284, :308, :336, :354, :380)",
+      "root_cause": "Spec treats the job-iteration `on_complete do...end` DSL as a callable instance method (`job_instance.on_complete` / stubbing it); verify_partial_doubles raises 'does not implement #on_complete'. Not in the feature diff.",
+      "feature_related": false
+    },
+    {
+      "id": "l4-med-002",
+      "severity": "MED",
+      "classification": "pre-existing (byte-identical to develop; NOT in feature diff)",
+      "title": "1 pre-existing failure in generate_ai_job_application_summary_job_spec.rb: failed broadcast not fired when pipeline stub raises pre-summary-creation",
+      "test_file": "spec/jobs/generate_ai_job_application_summary_job_spec.rb:233",
+      "root_cause": "Stub raises before an AiJobApplicationSummary exists; analog job's broadcast_completion returns early on `return unless ai_job_application_summary`, so no AI_SUMMARY_COMPLETE/failed broadcast. Analog job + spec byte-identical to develop; feature method stubbed out.",
+      "feature_related": false
+    }
+  ],
+  "high_plus_count": 0,
+  "verdict": "PASS — 0 feature-introduced regressions. All observed failures (9 + 1) are pre-existing and broken identically at the develop base (proven by diff analysis: none of the failing production code or spec examples are in the feature diff; analog job + spec are byte-identical to develop). Feature's own new tests pass. Advance to Layer 5."
+}

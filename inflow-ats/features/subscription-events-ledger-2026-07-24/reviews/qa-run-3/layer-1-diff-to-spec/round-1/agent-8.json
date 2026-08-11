@@ -1,0 +1,26 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 3,
+  "agent_index": 8,
+  "slice": "webhook delicacy audit",
+  "findings": [],
+  "verified": [
+    "git diff a0d59115d..e850c74fe -- app/jobs/stripe_webhook_handler_job.rb contains exactly two hunks (@@ -208,6 +208,20 @@ and @@ -295,6 +309,26 @@); every added line classified as sanctioned insertion 2 (SPEC.md 5.3, hunk 1, 14 lines) or sanctioned insertion 1 (SPEC.md 5.2, hunk 2, 20 lines); nothing else",
+    "zero removed or modified lines: git diff --numstat reports 34 insertions / 0 deletions; no '-' lines anywhere in the file diff",
+    "line-count accounting: 14 + 20 = 34 added lines in two hunks at -208 and -295, independently recounted from the raw diff; matches prior rounds' report exactly",
+    "fix commit 7574df408 --stat: touched ONLY spec/jobs/stripe_webhook_handler_subscription_events_spec.rb (+3); webhook file untouched",
+    "fix commit e850c74fe --stat: touched ONLY spec/jobs/stripe_webhook_handler_subscription_events_spec.rb (+1); webhook file untouched",
+    "insertion 1 placement (5.2): appended at the END of the invoice.paid main-plan else-branch body, immediately after organization.organization_ai_credit_balance&.reset_ai_credits and before the branch's closing end; surrounding lines byte-identical to base a0d59115d",
+    "insertion 1 internals (5.2 + 4): own begin/rescue StandardError with contextual Rails.logger.error (org/invoice/subscription ids) + ap e (house style); predicate object.amount_paid.to_i > 0 exactly per SPEC 4; discriminator stripe_subscription.trial_end.present? -> 'trial_converted_to_paid' else 'converted_to_paid' as a full if/else expression (D10); call args exactly organization:, event_type:, to_plan: organization.plan, stripe_subscription_id: object.subscription, amount: object.amount_paid; from_plan omitted per spec; nothing extra",
+    "insertion 1 uses the PRE-EXISTING stripe_subscription local (Stripe::Subscription.retrieve(object.subscription) at the top of the branch, present in base); NO new Stripe retrieve inside the insertion",
+    "insertion 2 placement (5.3): appended at the END of the subscription.deleted main else-branch body, immediately after the EngagementReport::GeneratorJob.perform_later line and before the branch's closing end; surrounding lines byte-identical to base",
+    "insertion 2 internals (5.3): own begin/rescue StandardError with contextual Rails.logger.error + ap e; plain 'if organization' conditional inside the rescue-wrapped block per spec's nil-organization ruling; call args exactly organization:, event_type: 'canceled_subscription', to_plan: organization.plan, stripe_subscription_id: stripe_subscription_id; no amount (per spec); nothing extra",
+    "insertion 2 uses the PRE-EXISTING stripe_subscription_id local (stripe_subscription_id = object.id at branch entry, present in base); no new Stripe calls",
+    "invoice.paid three-tier rescue (Stripe::StripeError / ActiveRecord::RecordInvalid+RecordNotFound / StandardError) byte-identical between base and head, positioned after insertion 1; ledger block carries its OWN rescue so failures never reach the tiers",
+    "subscription.deleted outer rescue StandardError ('Stripe Webhook Error - subscription.deleted') byte-identical between base and head",
+    "no branch reordering, no whitespace churn, no attribute-access changes, no cleanup anywhere in the file: the only diff content is the two additive rescue-isolated blocks",
+    "guard ordering (pipeline rule 8): insertion 1 sits after the raise CustomStripeSubscriptionMissingError guard as SPEC 4 requires; insertion 2 sits inside the non-credit-pack else branch behind the ai_credit_subscription_plan_lookup_key? guard (D2 structural enforcement)",
+    "11.6 rollout-misclassification behavior observed as disclosed; not a finding per instructions"
+  ]
+}

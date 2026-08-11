@@ -1,0 +1,35 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 8,
+  "assignment": "(A) NETWORK/PAYLOAD verification of the GET /jobs/<id>/ai_job_criteria endpoint for the SUCCEEDED job (28055) and the ZERO-CRITERIA job (28056). (B) Copy-rule + flag-gate sweep (SPEC §10): no em dashes, static button labels with no interpolated counts, timestamps only in the card description, and confirm the flag-gated 'Plato AI settings' nav item is present.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc.), jobs list rendered with all 6 seeded QA jobs + Senior Engineer.",
+    "SUCCEEDED (28055): clicked 'QA Succeeded' card -> job candidates page -> clicked 'Job setup' -> setup sidebar shown -> 'Plato AI settings' nav item PRESENT (ref, /jobs/28055/setup/ai) -> clicked it -> landed /jobs/28055/setup/ai.",
+    "28055 Job criteria section: criteria CARD present with Plato disc + 'Job criteria' + description 'Plato extracted these from your job description 34 minutes ago.'; count rail Core 2 / Preferred 1 / Bonus 1; action row 'View criteria' + 'Regenerate criteria'; right sidebar 'Criteria tiers' glossary (Core/Preferred/Bonus). Screenshot taken.",
+    "28055 NETWORK: browser_network_requests (filter ai_job_criteria) shows exactly ONE request: GET http://app.lvh.me:5007/api/v1/jobs/28055/ai_job_criteria => 200 OK. No loop, no /ai_job_criteria/0, no failing request.",
+    "28055 PAYLOAD (response-body): {\"criteria\":[{\"text\":\"5+ years Ruby on Rails experience\",\"tier\":\"tier_1\",...},{...tier_1},{...tier_2},{...tier_3}],\"extracted_at\":\"2026-07-09T01:46:34.152Z\",\"status\":\"succeeded\",\"zero_criteria_failure\":false}. status succeeded; criteria non-empty (4); zero_criteria_failure false; tier VALUES snake_case (tier_1/tier_2/tier_3). Correct.",
+    "28055 console (level error): 7 errors, ALL pre-existing (4 react-router history deprecations, 2 'Store does not have a valid reducer' Redux, 1 heap-api.com 404). No feature-referencing errors.",
+    "ZERO-CRITERIA (28056): navigated back to /jobs -> clicked 'QA Zero Criteria Failure' -> 'Job setup' -> 'Plato AI settings' nav item PRESENT (/jobs/28056/setup/ai) -> clicked -> landed /jobs/28056/setup/ai.",
+    "28056 Job criteria section: EmptyState (icon) with heading 'No criteria found' and message 'No scoring criteria were found in the job description. Plato won’t review candidates until it has criteria to score against.'; action row 'Regenerate criteria' ONLY (no View criteria). Screenshot taken.",
+    "28056 NETWORK: exactly ONE request GET http://app.lvh.me:5007/api/v1/jobs/28056/ai_job_criteria => 200 OK. No loop, no /ai_job_criteria/0, no failing request.",
+    "28056 PAYLOAD (response-body): {\"criteria\":null,\"extracted_at\":null,\"status\":\"failed\",\"zero_criteria_failure\":true}. status failed; zero_criteria_failure true; criteria null (no older success). Correct.",
+    "28056 console (level error): same 7 pre-existing errors, no feature-referencing errors.",
+    "COPY-RULE SWEEP (both states): NO em dashes anywhere in the Job criteria section (intro paragraph, card description, empty-state message, tiers glossary all clean — only regular hyphens in 'Auto-generation', 'Must-haves', 'Nice-to-have'). Button labels STATIC with no interpolated counts: 'View criteria', 'Regenerate criteria' (28055), 'Regenerate criteria' (28056). Timestamp appears ONLY in the card description on 28055 ('...34 minutes ago.'); no timestamp on the 28056 empty state. Flag-gate confirmed: 'Plato AI settings' nav item reachable on both jobs (AI_APPLICANT_SUMMARY flag ON)."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-8/28055-succeeded-ai-settings.png",
+    "/tmp/qa-run-3-l5/agent-8/28056-zero-criteria-ai-settings.png"
+  ],
+  "findings": [
+    {
+      "id": "l5-r1-a8-001",
+      "severity": "MED",
+      "title": "GET /ai_job_criteria wire payload uses snake_case top-level keys (extracted_at, zero_criteria_failure), not camelCase",
+      "url": "http://app.lvh.me:5007/api/v1/jobs/28055/ai_job_criteria",
+      "expected": "Assignment stated the response payload has camelCased top-level keys (criteria, extractedAt, status, zeroCriteriaFailure).",
+      "actual": "The raw HTTP response body is snake_case: 28055 -> {\"criteria\":[...],\"extracted_at\":\"...\",\"status\":\"succeeded\",\"zero_criteria_failure\":false}; 28056 -> {\"criteria\":null,\"extracted_at\":null,\"status\":\"failed\",\"zero_criteria_failure\":true}. This is the standard Rails serializer output; the frontend camelizes it via its interceptor (matches the assignment's '(frontend camelCase)' note). Report-only, NOT a defect: HTTP 200 on both, single non-looping request, no /ai_job_criteria/0 fallback, correct data shape (succeeded+non-empty criteria vs failed+zeroCriteriaFailure+null criteria), tier VALUES stay snake_case (tier_1/2/3), and both UI states rendered correctly — so the frontend consumed the payload correctly.",
+      "evidence": "browser_network_request response-body for req #70 (28055) and #71 (28056); UI screenshots 28055-succeeded-ai-settings.png and 28056-zero-criteria-ai-settings.png"
+    }
+  ]
+}

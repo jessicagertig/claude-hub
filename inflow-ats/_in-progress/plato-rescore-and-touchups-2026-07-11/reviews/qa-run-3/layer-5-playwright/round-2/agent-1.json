@@ -1,0 +1,22 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 1,
+  "assignment": "Per-stage modal STATE 1 (no selection) + checkbox disabled (SPEC 1.1 + 1.2 state 1), display only. Senior Engineer > Inbox, nothing selected > Bulk options > Run Plato reviews.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already authenticated as rezu.may@wrkhq.com (Acme Inc). Jobs list rendered: Design Lead + Senior Engineer.",
+    "Clicked 'Senior Engineer' — landed on /jobs/29092/stages/203589/applicants/20977/overview, Inbox stage selected showing 3 candidates (Agnes Sipes, Carl Dietrich 'Weak fit', Emilee Hand 'Good fit'). Confirmed round-1 note: Agnes Sipes shows an ORGANIC review ('Quality analyst with a focus on manual testing and defect management', Poor fit) — no 'Seeded review —' headline.",
+    "Verified NO candidate checkboxes checked. Opened the Bulk options three-dot menu at the top right of the candidate-list column, clicked 'Run Plato reviews'.",
+    "Modal 'Review candidates' opened in no-selection state. Byte-level JS comparison (textContent === pinned SPEC string): body paragraph EXACT match to 'No candidates selected. Use the checkboxes next to the candidate names to select the candidates to generate reviews for. To select all candidates within this hiring stage, use the checkbox next to the stage name.' (bodyExact: true, first-diff index -1). SPEC.md pinned strings verified pure ASCII via grep -P before comparison.",
+    "Checkbox present: input[name='rescore'], label 'Also re-review candidates that already have a review', description 'Recommended if you've changed the candidate requirements in the job description.' Wrapper textContent === label + description exactly (combinedIsExactlyLabelPlusDesc: true).",
+    "Checkbox DISABLED verified 3 ways: (1) input.disabled === true; (2) Playwright force-click on the input — checked stayed false; (3) raw DOM label.click() on label[for='rescore'] — checked stayed false. Normal Playwright click on the label refused with 'element is not enabled'. Checkbox never toggled.",
+    "Statement block byte-EXACT (stmtExact: true): 'You will receive an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' Rendered in bordered box with mail icon per SPEC 1.4 (visible in screenshot).",
+    "Submit button 'Generate reviews' DISABLED (isDisabled true, re-verified after all click attempts). Nothing submitted.",
+    "Screenshot taken, clicked Cancel — modal closed (input[name='rescore'] gone from DOM).",
+    "Console check: 184 messages, 7 [ERROR] lines all in the known pre-existing noise list (4x react-router history deprecation, 2x 'Store does not have a valid reducer', 1x heap-api.com 404). Zero feature-referencing errors (no rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summaries failures, no React errors)."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-1/state1-no-selection-modal.png"
+  ],
+  "findings": []
+}

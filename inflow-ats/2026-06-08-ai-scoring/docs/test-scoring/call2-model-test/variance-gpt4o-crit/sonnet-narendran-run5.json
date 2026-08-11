@@ -1,0 +1,99 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive experience architecting and managing multi-cloud environments. At Civo, they 'Architected and managed the high-performance GPU infrastructure' and 'Enhanced reliability and operations for the Civo cloud platform'. At nClouds, they 'Streamlined scalable multi-tenant AWS EKS platforms' and at Lineten they 'Conceptualized multi-region Kubernetes clusters'. They have AWS and Azure skills listed and experience across multiple cloud platforms."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has strong experience with CI/CD workflows, observability, and logging. They 'Championed GitOps adoption (ArgoCD, GitHub Actions)' and 'Implemented unified observability stack (Prometheus/Grafana)'. However, there's no specific evidence of collaborating with product/UX teams or working on CLI improvements or marketplace integrations."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Strong evidence across multiple roles. At Civo, they 'improved system uptime by 99.9%' and worked on 'platform observability (alerting/metric gathering)'. At nClouds, they 'Implemented unified observability stack (Prometheus/Grafana), customizing alerting pipelines' and embedded 'security best practices'. They designed 'zero-downtime major version upgrades' showing rollback capabilities."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with Go (listed in programming languages) and extensive cloud deployment experience. They've 'Championed GitOps adoption' and worked on infrastructure best practices, but there's no explicit evidence of code reviews or mentoring others."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Go is listed in their programming languages skills, and they mention 'custom Golang controllers' at Lineten, demonstrating production Go experience in backend systems context."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Extensive Kubernetes experience demonstrated across multiple roles. They have Kubestronaut, CKS, CKA, CKAD certifications. They 'Conceptualized multi-region Kubernetes clusters', worked with 'Managed K3s', and have service mesh experience (Linkerd, Istio listed in skills). They designed 'zero-downtime major version upgrades' for K3s control plane."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Terraform is prominently featured across multiple roles. At nClouds they 'Streamlined scalable multi-tenant AWS EKS platforms using Terraform' and at Lineten they used 'Terraform and custom Golang controllers'. Terraform is listed in their DevOps skills."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Strong hands-on experience with AWS and Azure. They worked extensively with 'AWS EKS platforms', 'Airflow on AWS', managed storage migrations, implemented security best practices, and have both AWS and Azure listed in skills. Multiple roles show deep cloud platform experience."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Extensive experience with PaaS concepts at Civo working on 'Civo cloud platform', 'Managed K3s', 'DBaaS', and 'Kubeflow (Kfaas) MLOps environment'. They understand infrastructure abstraction through their work on managed services and developer platforms."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Strong CI/CD experience with 'GitOps adoption (ArgoCD, GitHub Actions)' and 'doubling CI/CD deployment speed'. They have extensive developer tooling experience with Docker, Helm, and various CI/CD tools. However, no specific evidence of marketplace or cloud provider integrations."
+    },
+    {
+      "criterion_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has worked in remote, collaborative environments and has experience as a consultant which requires communication skills. They've 'Collaborated on platform observability' and worked across multiple organizations. However, there's no explicit evidence of cross-functional work or communication skills in professional settings."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence in the resume of experience with cloud marketplaces, publishing solutions, or marketplace integrations."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Strong evidence across multiple roles. They 'Conceptualized multi-region Kubernetes clusters', worked on 'multi-tenant AWS EKS platforms', 'Orchestrated operators and releases across all active regions', and ensured 'high availability' of AI/ML platforms. They achieved '99.9% system uptime'."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Extensive experience with open source technologies including Kubernetes, ArgoCD, Prometheus, Grafana, and many others listed in their skills. Their work with distributed Kubernetes clusters, multi-region deployments, and cloud-native technologies demonstrates distributed systems experience."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "Strong evidence across multiple roles. They 'Implemented unified observability stack (Prometheus/Grafana)', worked on 'platform observability (alerting/metric gathering)', and 'Implemented a centralized Observability Platform (Prometheus, Grafana, Thanos)'. Prometheus, Grafana, and other observability tools are listed in their skills."
+    }
+  ],
+  "computed_score": {
+    "points": 75.0,
+    "max": 92,
+    "percentage": 81.5
+  }
+}

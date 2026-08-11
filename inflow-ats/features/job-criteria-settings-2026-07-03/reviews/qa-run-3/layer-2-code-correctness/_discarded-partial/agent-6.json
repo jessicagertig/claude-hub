@@ -1,0 +1,28 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 6,
+  "focus_area": "Websocket round-trip contract: backend broadcast payload (extract_job_criteria_job.rb#broadcast_completion) -> GlobalChannel -> WebsocketGlobalChannelHandler JOB_CRITERIA_EXTRACTION_COMPLETE case -> JobCriteriaExtractionCompletePayload type -> useAiJobCriteria query/mutation. Verified field-for-field and query-key consistency end-to-end.",
+  "files_reviewed": [
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/javascript/ats/src/websockets/WebsocketGlobalChannelHandler.tsx",
+    "app/javascript/shared/types/aiSummaryWebsocketPayloads.ts",
+    "app/javascript/shared/queryHooks/useAiJobCriteria.ts",
+    "app/jobs/generate_ai_job_application_summary_job.rb",
+    "app/channels/global_channel.rb",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAiSettings.tsx",
+    "app/serializers/api/v1/job_serializer.rb"
+  ],
+  "findings": [
+    {
+      "id": "l2-a6-001",
+      "severity": "LOW",
+      "title": "Backend broadcasts errorMessage but the WS handler never consumes it",
+      "file": "app/javascript/ats/src/websockets/WebsocketGlobalChannelHandler.tsx",
+      "line": 250,
+      "description": "extract_job_criteria_job.rb:57 conditionally adds payload[:errorMessage] to the broadcast, and JobCriteriaExtractionCompletePayload declares errorMessage?: string (aiSummaryWebsocketPayloads.ts:34), but the JOB_CRITERIA_EXTRACTION_COMPLETE case (WebsocketGlobalChannelHandler.tsx:250-261) never reads payload.errorMessage. The 'other failure' branch shows a static generic toast ('Could not generate job criteria for {jobTitle}'). This is intentional per SPEC 8.6 (static, button-free, no interpolated error) and exactly mirrors the AI_SUMMARY_COMPLETE analog, which also carries errorMessage in its payload/type but does not read it in the handler (lines 216-234). No behavioral consequence; recorded only as an observation.",
+      "recommendation": "No action. Spec-compliant and analog-consistent. The carried errorMessage is available for the REST payload / future copy without affecting the toast."
+    }
+  ]
+}

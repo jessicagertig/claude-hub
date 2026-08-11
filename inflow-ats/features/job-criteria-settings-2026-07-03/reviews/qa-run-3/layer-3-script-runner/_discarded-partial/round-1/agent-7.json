@@ -1,0 +1,26 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 7,
+  "focus_area": "Api::V1::AiJobCriteriaController#create decision logic (SPEC §5.2): Flipper guard, blank-description guard, happy path, in-flight no-op, draft-job regenerate, response payload. Pundit auth gate covered by another agent.",
+  "method": "Real authenticated HTTP. Drove the ACTUAL controller action end-to-end via ActionDispatch::Integration::Session (in-process, full middleware/routing/Pundit/serializer stack) authenticated through the real production magic-link flow (MagicLink.generate -> GET /magic_links/validate -> sign_in('api_v1_user', user)). Not a reimplementation. Enqueue observation via ActiveJob::Base.queue_adapter = :test with a hard safety gate asserting the adapter is TestAdapter before any POST (test env default is :inline, which would run ExtractJobCriteriaJob -> real OpenAI). No job ever executed; no OpenAI call. All 3 seed states used (ai-org-published-job, ai-disabled-org, ai-org-unpublished-job).",
+  "files_reviewed": [
+    "app/controllers/api/v1/ai_job_criteria_controller.rb",
+    "app/controllers/api/v1/base_controller.rb",
+    "app/controllers/application_controller.rb",
+    "app/models/job.rb (extract_job_criteria_immediately)",
+    "app/models/ai_job_criteria.rb",
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/serializers/api/v1/job_ai_job_criteria_serializer.rb"
+  ],
+  "scenarios_verified": [
+    "S1 HAPPY PATH (published + AI ON, no in-flight row): POST -> 200; exactly ONE new pending AiJobCriteria row created; exactly ONE ExtractJobCriteriaJob enqueued with args [new_row.id, current_organization_user.id] (observed [2661, 35388]); response body = JobAiJobCriteriaSerializer payload {criteria:null, extracted_at:null, status:'pending', zero_criteria_failure:false}.",
+    "S2 BLANK DESCRIPTION (description nulled via update_columns to avoid callback side effects; Flipper ON): POST -> 422 with errors.general == ['This job needs a description before Plato can extract criteria. Add one in Job setup.']; NO row created; NO enqueue; single clean 422 (guard returned, no fall-through/double-render).",
+    "S3 FLIPPER DISABLED (ai-disabled-org seed, AI_APPLICANT_SUMMARY OFF, published job WITH description): POST -> 422 with errors.general == ['AI summaries are not enabled for this organization.']; NO row created; NO enqueue; single clean 422 -> confirms the Flipper guard returns BEFORE the blank-description check and before extraction.",
+    "S4a IN-FLIGHT NO-OP (latest row status in_progress): POST -> 200; NO new row (extract_job_criteria_immediately no-ops via its in_progress guard); NO enqueue; payload status == 'in_progress' (current in-flight payload).",
+    "S4b IN-FLIGHT NO-OP (latest row status retrying): POST -> 200; NO new row (retrying guard); NO enqueue; payload status == 'retrying'.",
+    "S5 DRAFT JOB (ai-org-unpublished-job seed, draft/unpublished, AI ON, has description): POST -> 200; exactly ONE new pending row; exactly ONE ExtractJobCriteriaJob enqueued with args [new_row.id, current_organization_user.id] (observed [2663, 35390]); payload status 'pending'. Confirms regenerate is allowed in any job state per SPEC §10 — no job-status check blocks it."
+  ],
+  "guard_return_verification": "Both guards confirmed to `return` after rendering with no fall-through: in S2 and S3 the response is a single clean 422 error body (a fall-through to render_one would raise AbstractController::DoubleRenderError), no AiJobCriteria row is created, and no job is enqueued. Guard ordering confirmed: Flipper check precedes the blank-description check (S3 renders the AI-not-enabled message even though the job has a description).",
+  "findings": []
+}

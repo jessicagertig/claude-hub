@@ -1,0 +1,332 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 14,
+  "run": 5,
+  "focus_area": "REVERSE MAPPING SWEEP — entire diff, hunk by hunk, diff-to-spec direction exclusively, against SPEC.md as amended",
+  "findings": [],
+  "mapping_table": {
+    "app/controllers/api/v1/organizations_controller.rb": [
+      {
+        "hunk": "@@ -29,6 +29,10 @@ #create: four @organization.utm_source/utm_campaign/utm_data/internal_ref = current_user.<same> assignments inserted after the existing created_via copy",
+        "spec": "SPEC.md §4.4 (D5)",
+        "verdict": "CONFORMS — exact four lines in spec order, placed at the created_via analog site (organizations_controller.rb:31 analog, §8); organization_params NOT modified, values never from request"
+      }
+    ],
+    "app/controllers/api/v1/registrations_controller.rb": [
+      {
+        "hunk": "@@ -93,7 +93,11 @@ magic_create user_params connect-intent branch: utm_source/utm_campaign/utm_data/internal_ref merged from sign_up_params",
+        "spec": "SPEC.md §4.2 (D3) — 'the four keys must be present in the resulting hash in both branches'",
+        "verdict": "CONFORMS — exact keys and sign_up_params[:*] sources per the §4.2 code block; raw, no mapping"
+      },
+      {
+        "hunk": "@@ -102,7 +106,11 @@ magic_create user_params default branch: same four keys merged",
+        "spec": "SPEC.md §4.2 (D3)",
+        "verdict": "CONFORMS — second branch covered; no identify/track/redirect/response-shape change anywhere in magic_create"
+      },
+      {
+        "hunk": "@@ -299,7 +307,7 @@ sign_up_params: adds :utm_source, :utm_campaign, :internal_ref and utm_data: {} as trailing argument",
+        "spec": "SPEC.md §4.1 (D3) — questions_controller.rb options: {} permit form, hash-permit trailing",
+        "verdict": "CONFORMS — utm_data: {} is the trailing argument of permit; §4.3 (create/password path) is satisfied by this hunk alone, per spec 'No change beyond 4.1'"
+      }
+    ],
+    "app/controllers/api/v1/users/omniauth_callbacks_controller.rb": [
+      {
+        "hunk": "@@ -19,7 +19,15 @@ google_oauth2: User.from_omniauth call converted to keyword form with merged_tracking['utm_source'/'utm_campaign'/'utm_data'/'internal_ref']",
+        "spec": "SPEC.md §4.7 (D9)",
+        "verdict": "CONFORMS — character-for-character match to the §4.7 code block (auth:, created_via:, partner_source:, four string-key merged_tracking reads); nothing else in the action changed (PosthogIdentifyJob/PosthogTrackJob/redirect are context lines)"
+      }
+    ],
+    "app/javascript/ats/src/views/sessions/OnboardingProfile.tsx": [
+      {
+        "hunk": "@@ -9,6 +9,7 @@ import { trackEvent } from \"@shared/lib/posthog\"",
+        "spec": "SPEC.md §5.6 (D18) — 'trackEvent imported from @shared/lib/posthog'",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "@@ -24,6 +25,15 @@ mount effect: isNewOwner ? trackEvent(\"organization_owner_email_verified\") : trackEvent(\"invited_user_email_verified\"), empty deps, eslint-disable-next-line react-hooks/exhaustive-deps",
+        "spec": "SPEC.md §5.6 (D18; replaces void D12 per D19)",
+        "verdict": "CONFORMS — verified at HEAD: comment placement matches the AuthRegister.tsx:53-56 house pattern exactly (inside the effect body, before `}, []);`); isNewOwner/wasInvited computed at component top (lines 17-18 at HEAD) as §5.6 cites; plain calls, no properties; exactly one of two events fires"
+      }
+    ],
+    "app/javascript/ats/src/views/sessions/components/AuthForm.tsx": [
+      {
+        "hunk": "@@ -6,6 +6,8 @@ imports sanitizeTrackingParams (@shared/lib/utils) and trackEvent (@shared/lib/posthog)",
+        "spec": "SPEC.md §5.1 (helper name/location), §5.2 (D14 import)",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "@@ -36,6 +38,7 @@ const [trackingParams] = React.useState(sanitizeTrackingParams(location.search))",
+        "spec": "SPEC.md §5.2 capture (D1, D4) — raw location.search through the helper, held in state, sanitize-before-state, no setter",
+        "verdict": "CONFORMS — same state mechanism as the referral/partner analogs (line 37/38); single-object state shape is an allowed plan-level choice"
+      },
+      {
+        "hunk": "@@ -75,12 +78,17 @@ magicLink payload gains utmSource/utmCampaign/utmData/internalRef alongside referral/partner; onSuccess fires trackEvent(\"user_signed_up_client_side\") before onComplete",
+        "spec": "SPEC.md §5.2 (D2 payload; D14 step-2 event)",
+        "verdict": "CONFORMS — four camelCase fields (§5 case convention); plain call, no properties, before onComplete; shared-form semantics are the accepted §11 note 1"
+      },
+      {
+        "hunk": "@@ -117,7 +125,15 @@ GoogleSSOButton gains utmSource/utmCampaign/utmData/internalRef props",
+        "spec": "SPEC.md §5.2 SSO props (D7)",
+        "verdict": "CONFORMS — passed alongside existing referral/partner at the line-120 analog site"
+      }
+    ],
+    "app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx": [
+      {
+        "hunk": "@@ -10,10 +10,23 @@ Props interface + destructure gain utmSource?/utmCampaign?/utmData?/internalRef? (utmData?: Record<string, any>)",
+        "spec": "SPEC.md §5.3 (D7) — 'Extend Props with utmSource?, utmCampaign?, utmData?, internalRef?'",
+        "verdict": "CONFORMS — optional props; TS type shape is mechanism-level"
+      },
+      {
+        "hunk": "@@ -49,6 +62,22 @@ hidden inputs: utm_source/utm_campaign/internal_ref with typeof===\"string\" && length>0 guard; utm_data as one input per key, name={\"utm_data[\"+key+\"]\"}, same per-key guard",
+        "spec": "SPEC.md §5.3 (D7) — render-only-when-present analog pattern, Rails-nested naming, per-key string/non-empty guard",
+        "verdict": "CONFORMS — snake_case wire names (SSO bypasses allKeysToSnake, §5); `utmData != undefined` is the house null/undefined guard form; React key={key} is list-render mechanics, not behavior; null/\"\" values dropped exactly per the §5.3 stated consequence"
+      }
+    ],
+    "app/javascript/ats/src/views/sessions/components/OrganizationForm.tsx": [
+      {
+        "hunk": "@@ -7,6 +7,7 @@ import { trackEvent } from \"@shared/lib/posthog\"",
+        "spec": "SPEC.md §5.7 (D13)",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "@@ -67,6 +68,7 @@ createOrganization onSuccess fires trackEvent(\"organization_created\") before onComplete(data)",
+        "spec": "SPEC.md §5.7 (D13)",
+        "verdict": "CONFORMS — plain call, no properties, before onComplete(data); no identify call added (§5.7 'No identify call added here')"
+      }
+    ],
+    "app/javascript/ats/src/views/sessions/components/ProfileForm.tsx": [
+      {
+        "hunk": "@@ -5,6 +5,7 @@ import { trackEvent } from \"@shared/lib/posthog\"",
+        "spec": "SPEC.md §5.8 (D16)",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "@@ -63,6 +64,11 @@ updateMe onSuccess: props.isNewOwner ? organization_owner_user_name_submitted : invited_user_name_submitted, before props.onComplete()",
+        "spec": "SPEC.md §5.8 (D16) — keyed on the existing isNewOwner prop; else-branch catches wasInvited and the neither-true edge",
+        "verdict": "CONFORMS — exactly one of two plain no-property calls, before onComplete"
+      }
+    ],
+    "app/javascript/ats/src/views/sessions/components/SignupForm.tsx": [
+      {
+        "hunk": "@@ -7,6 +7,8 @@ imports sanitizeTrackingParams + trackEvent",
+        "spec": "SPEC.md §5.5 (D10, D14)",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "@@ -21,6 +23,7 @@ const [trackingParams] = React.useState(sanitizeTrackingParams(props.location.search))",
+        "spec": "SPEC.md §5.5 capture (D10) — same helper, raw props.location.search, state like the existing referral state (line 23 analog)",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "@@ -61,10 +64,15 @@ register payload gains the four fields alongside firstName/lastName/email/password/inviteToken/referral; onSuccess fires trackEvent(\"user_signed_up_client_side\") before props.onComplete()",
+        "spec": "SPEC.md §5.5 (D10 payload; D14 event)",
+        "verdict": "CONFORMS — plain call, no properties, before onComplete"
+      }
+    ],
+    "app/javascript/shared/lib/posthog.ts": [
+      {
+        "hunk": "@@ -23,8 +23,12 @@ identifyUser: window.logger on the not-loaded skip path and the fire path",
+        "spec": "SPEC.md §1 'Already applied on the branch' + §5.9 — commit as part of this PR, no further change",
+        "verdict": "CONFORMS — exactly both paths, nothing else touched in the file"
+      }
+    ],
+    "app/javascript/shared/lib/utils.js": [
+      {
+        "hunk": "@@ -2,6 +2,8 @@ imports queryString and decodeUriComponent",
+        "spec": "SPEC.md §5.1 — helper calls queryString.parse internally; key decoding mirrors the parse's decoder (mechanism plan-level)",
+        "verdict": "CONFORMS — decode-uri-component phantom-dependency concern is on the SETTLED LOW list, not re-flagged"
+      },
+      {
+        "hunk": "@@ -18,6 +20,73 @@ TRACKING_VALUE_MAX_LENGTH/UTM_DATA_MAX_KEYS constants, sanitizeTrackingValue, sanitizeTrackingParams — raw-string key-occurrence scan (queryString.extract(search).split(\"&\"), +→space, split(\"=\")[0], decodeUriComponent, first-seen dedupe), values from queryString.parse, camelCase output fields utmSource/utmCampaign/internalRef/utmData, utm_-prefix filter excluding utm_source/utm_campaign, .slice(0, 10) occurrence-order cap, presence-gated field assignment (!== undefined), utmData only when ≥1 key",
+        "spec": "SPEC.md §5.1 (D4): input contract (raw location.search, order from raw string, values from parse); output contract; rules 1-3; absence semantics (D3/D6, no fabricated fallbacks); placement alongside standardizeQueryParamsObject",
+        "verdict": "CONFORMS — rule 1: isArray → value[0] (first occurrence, parse builds arrays in occurrence order per §5.1); rule 2 AS AMENDED (l1-run4-001): .slice(0, 255) then drop trailing code unit in 0xD800–0xDBFF via charCodeAt check → 254 units on a split pair — matches §5.1 rule 2 amended text exactly; rule 3: first 10 utm_* keys by raw-string occurrence order; absence: no || \"\" / no {} fabrication, utmData absent when empty, valueless ?utm_source → null passes through as-is (isString(null) false → returned untouched); placed directly after standardizeQueryParamsObject at top of file"
+      }
+    ],
+    "app/javascript/shared/queryHooks/useSession.ts": [
+      {
+        "hunk": "@@ -24,7 +24,18 @@ + @@ -34,6 +45,10 @@ register: utmSource/utmCampaign/utmData/internalRef added to destructured parameters and variables",
+        "spec": "SPEC.md §5.4 (D2, D10) — register: 'the same four to the destructured parameters and variables'",
+        "verdict": "CONFORMS — register has no inline TS type and the spec requires none for it"
+      },
+      {
+        "hunk": "@@ -47,6 +62,10 @@ + @@ -56,6 +75,10 @@ + @@ -77,6 +100,10 @@ magicLink: four added to destructured parameters, inline TS type (utmSource?: string | null, utmCampaign?: string | null, utmData?: Record<string, any> | null, internalRef?: string | null), and variables",
+        "spec": "SPEC.md §5.4 (D2) — magicLink: 'destructured parameters, the inline TS type, and the variables object'",
+        "verdict": "CONFORMS — all three sites; no change to useMagicLink/useRegister hook wrappers"
+      }
+    ],
+    "app/models/user.rb": [
+      {
+        "hunk": "@@ -376,7 +376,7 @@ from_omniauth signature → def self.from_omniauth(auth:, created_via:, partner_source: nil, utm_source: nil, utm_campaign: nil, utm_data: nil, internal_ref: nil)",
+        "spec": "SPEC.md §4.6 (D9) — keyword conversion, exact declared order, auth:/created_via: required",
+        "verdict": "CONFORMS — character-for-character match to §4.6; `ap` debug lines are pre-existing context per the brief's KNOWN BASELINES"
+      },
+      {
+        "hunk": "@@ -386,6 +386,10 @@ four omniauth_user.utm_* = assignments inside the first_or_create block, after partner_source",
+        "spec": "SPEC.md §4.6 (D9) — assignment only inside first_or_create, raw (no &.downcase), creation-time only",
+        "verdict": "CONFORMS — post-block behavior (assign_attributes/update/enqueue_complete_user_setup) untouched (not in diff)"
+      }
+    ],
+    "config/initializers/omniauth.rb": [
+      {
+        "hunk": "@@ -11,7 +11,7 @@ allowed_keys = %w[partner referral utm_source utm_campaign utm_data internal_ref]",
+        "spec": "SPEC.md §4.5 (D8) — exact list, no other change to the setup lambda",
+        "verdict": "CONFORMS — single-line change; existing loop handles the new keys per §4.5"
+      }
+    ],
+    "db/migrate/20260715233505_add_attribution_columns_to_users.rb": [
+      {
+        "hunk": "new file — AddAttributionColumnsToUsers: add_column users utm_source :string, utm_campaign :string, utm_data :jsonb, internal_ref :string",
+        "spec": "SPEC.md §3 (D6) — spec-proposed file/class name, four columns, no defaults, no null constraints, no indexes, no backfill",
+        "verdict": "CONFORMS — matches the §3 table exactly; frozen_string_literal magic comment is house convention, carries no schema effect"
+      }
+    ],
+    "db/migrate/20260715233506_add_attribution_columns_to_organizations.rb": [
+      {
+        "hunk": "new file — AddAttributionColumnsToOrganizations: identical four-column set on organizations",
+        "spec": "SPEC.md §3 (D6)",
+        "verdict": "CONFORMS — identical column set per §3; no data migration exists (correct)"
+      }
+    ],
+    "db/schema.rb": [
+      {
+        "hunk": "version 2026_06_11_120003 → 2026_07_15_233506; organizations table +4 columns (t.string utm_source, t.string utm_campaign, t.jsonb utm_data, t.string internal_ref); users table +4 identical columns",
+        "spec": "SPEC.md §3 (D6) — mechanical schema dump of the two migrations",
+        "verdict": "CONFORMS — no defaults/null:false on any of the eight lines (deliberate contrast with settings jsonb per §3); version matches the later migration timestamp; hunk contexts confirm organizations (hud_display_visibility/process_templates boundary) and users (partner_source/sign_on_provider + users indexes)"
+      }
+    ],
+    "spec/controllers/api/v1/organizations_controller_spec.rb": [
+      {
+        "hunk": "file plumbing: around block swapping queue_adapter to :test; before block stubbing authenticate_api_v1_user!/current_user/authorize/set_sentry_context",
+        "spec": "SPEC.md §9 item 4 ('stub authenticate_api_v1_user!/current_user/Pundit per the ai-credit spec pattern') + §9 preamble suite conventions; queue-adapter around per the bulk_ai_job_application_summaries precedent (pipeline rule 31)",
+        "verdict": "CONFORMS — test isolation plumbing, pins no behavior"
+      },
+      {
+        "hunk": "example 'copies all four attribution values from current_user onto the organization'",
+        "spec": "SPEC.md §9 item 4 first clause; behavior §4.4",
+        "verdict": "CONFORMS — raw-value asserts including verbatim 'SomeRawValue' and hash round-trip"
+      },
+      {
+        "hunk": "example 'ignores attribution values sent in the request body'",
+        "spec": "SPEC.md §4.4 — 'organization_params is NOT modified — the values never come from the request'",
+        "verdict": "CONFORMS — extra example pinning a cited spec sentence, permitted"
+      },
+      {
+        "hunk": "example 'creates an organization with nil in all four columns'",
+        "spec": "SPEC.md §9 item 4 second clause; §4.4 'A user with nil columns produces an organization with nil columns'",
+        "verdict": "CONFORMS"
+      }
+    ],
+    "spec/controllers/api/v1/registrations_controller_spec.rb": [
+      {
+        "hunk": "file plumbing: include Devise::Test::ControllerHelpers; before sets @request.env['devise.mapping'] = Devise.mappings[:api_v1_user]; queue-adapter around block; header comment documenting login_intent: 'hire' requirement",
+        "spec": "SPEC.md §9 item 1 (both Devise lines mandated; every magic_create POST must include login_intent: 'hire' to route around the pre-existing connect-branch nil crash — settled M2)",
+        "verdict": "CONFORMS — all four magic_create POSTs carry login_intent: 'hire'"
+      },
+      {
+        "hunk": "example 'stores the four attribution values raw as sent' (magic_create new-user branch, multi-key utm_data)",
+        "spec": "SPEC.md §9 item 1 bullet 2; behavior §4.2",
+        "verdict": "CONFORMS — verbatim 'SomeRawValue' assert (no downcase/mapping), multi-key utm_data hash round-trips with string keys"
+      },
+      {
+        "hunk": "example 'leaves all four columns nil when none of the params are sent' (magic_create)",
+        "spec": "SPEC.md §9 item 1 bullet 3 — nil in all four, utm_data nil not {}",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "example 'does not modify the existing user attribution columns' (existing-confirmed branch)",
+        "spec": "SPEC.md §9 item 1 bullet 4; §4.2 'adding the keys is inert there'",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "example 'resends confirmation and does not modify the attribution columns' (existing-unconfirmed branch)",
+        "spec": "SPEC.md §9 item 1 bullet 5 (the sign_in/warden branch)",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "POST #create examples: four params persisted raw / absent params → nil columns",
+        "spec": "SPEC.md §9 item 1 bullet 6; behavior §4.3 (assignment via sign_up_params through expanded_params)",
+        "verdict": "CONFORMS"
+      }
+    ],
+    "spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb": [
+      {
+        "hunk": "file plumbing: include Devise::Test::ControllerHelpers; devise.mapping before; omniauth.auth stub; allow(User).to receive(:from_omniauth); queue-adapter around",
+        "spec": "SPEC.md §9 item 3 (helpers mandated; mapping per §9 item 1 precedent / pipeline rule 30 — dispatch plumbing, pins nothing)",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "example 'calls from_omniauth with keywords and the string-key tracking values from the session' — seeds session[:oauth_tracking] with six string keys, asserts the full keyword call, asserts redirect",
+        "spec": "SPEC.md §9 item 3 — pins the keyword call-site conversion and string-key session read; created_via/partner_source/redirect asserts pin §4.7's full call shape and 'redirect stay as they are'",
+        "verdict": "CONFORMS — all asserted values trace to §4.7 + pre-existing get_created_via behavior the call carries"
+      },
+      {
+        "hunk": "example 'passes nil for all four attribution values when no tracking rode the session'",
+        "spec": "SPEC.md §4.7 with absent tracking + §7 constraint 2 (nil for absent at every layer)",
+        "verdict": "CONFORMS — extra example pinning cited spec sentences, permitted"
+      }
+    ],
+    "spec/controllers/hire/confirmations_controller_spec.rb": [
+      {
+        "hunk": "file plumbing: queue-adapter around block",
+        "spec": "pipeline rule 31 precedent; pins nothing",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "example 'redirects to the bare email_confirmed=true URL on successful confirmation'",
+        "spec": "SPEC.md §9 item 5 + §4.8 (D19) — success redirect bare, no id/email params",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "example 'redirects to the unchanged failure URL for an invalid token'",
+        "spec": "SPEC.md §9 item 5 + §4.8 — failure redirect /auth?email_confirmed=false unchanged",
+        "verdict": "CONFORMS — controller itself correctly ABSENT from the diff (brief KNOWN BASELINES / D19)"
+      }
+    ],
+    "spec/models/user_from_omniauth_spec.rb": [
+      {
+        "hunk": "file plumbing: queue-adapter around block (from_omniauth enqueues complete-user-setup work)",
+        "spec": "pipeline rule 31 precedent; pins nothing",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "example 'creates a user with the four attribution values stored raw' (asserts partner_source 'WWR' → 'wwr')",
+        "spec": "SPEC.md §9 item 2 bullets 1+3 — keyword interface, values persisted raw, partner_source still downcased",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "example 'leaves all four columns nil when the keywords are omitted'",
+        "spec": "SPEC.md §9 item 2 bullet 1 second clause — omitted keywords → nil columns",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "example 'does not assign attribution values to an existing user' (not_to change(User, :count))",
+        "spec": "SPEC.md §9 item 2 bullet 2 — SSO login leaves all four untouched, assignment only inside first_or_create",
+        "verdict": "CONFORMS"
+      },
+      {
+        "hunk": "example 'requires the auth and created_via keywords' (ArgumentError both ways)",
+        "spec": "SPEC.md §9 item 2 bullet 3 — auth:/created_via: required",
+        "verdict": "CONFORMS"
+      }
+    ]
+  },
+  "spec_coverage": {
+    "assigned_requirements": [
+      "Reverse mapping of every hunk in every one of the 22 changed files to a mandating SPEC.md (as amended) section",
+      "Universe check of git diff --name-only 62dd55867..fc3f047f9 against the §2 stack-scope list + 2 migrations + schema.rb + 5 §9 spec files",
+      "Test examples screened for pinning of unspecced behavior",
+      "l1-run4-001 amendment verification (§5.1 rule 2 / §7 constraint 1 / §11 note 4 vs shipped sanitizeTrackingValue)"
+    ],
+    "verified": [
+      "Universe: 22 diff files == 22 legitimate files exactly (backend 5: registrations/organizations/omniauth_callbacks controllers, user.rb, omniauth.rb; frontend 9: utils.js, AuthForm, SignupForm, GoogleSSOButton, useSession, OnboardingProfile, OrganizationForm, ProfileForm, posthog.ts; 2 migrations; schema.rb; 5 §9 spec files). Zero extras, zero absences. Correct absences confirmed: Auth.tsx, app/controllers/hire/confirmations_controller.rb (D19), app/javascript/shared/lib/utils.test.js (§9 Jessica ruling), organization.rb, serializers, api.ts, Sidekiq jobs, Cypress files",
+      "Every hunk in all 22 files mapped to a mandating spec section (mapping_table above); zero untraceable hunks",
+      "§9 event-name grep at HEAD: git grep user_signed_up_client_side app/ matches exactly the two frontend callsites (AuthForm.tsx:91, SignupForm.tsx:75); server 'user_signed_up' strings unmodified (registrations_controller.rb:52/190, omniauth_callbacks_controller.rb:35, invites_controller.rb:80 — all context, none in diff)",
+      "§4.6 call-site universe at HEAD: git grep -ln from_omniauth → user.rb (definition), omniauth_callbacks_controller.rb (sole call site, keyword form) + the two new spec files (keyword form) — no unconverted call site",
+      "§5.6 house pattern verified at HEAD: OnboardingProfile effect's eslint-disable placement matches AuthRegister.tsx:53-56 exactly; isNewOwner/wasInvited computed at component top",
+      "Test-example screen: every example in all 5 spec files pins a cited §4/§9 spec sentence; the two extra examples beyond the §9 bullets (organizations 'ignores attribution values sent in the request body'; omniauth-callbacks nil-tracking example) pin §4.4 and §4.7/§7-2 sentences respectively — not findings; plumbing (queue-adapter arounds, Devise mapping lines, stubs) pins no behavior"
+    ],
+    "missing": []
+  },
+  "notes": "REVERSE SWEEP COMPLETE, 0 findings. Every hunk of the 1057-line diff traces to a mandating SPEC.md (as amended) section — full table above at file/hunk granularity, spec files at example-group granularity. Prior finding l1-run4-001 verified resolved: all three amendment sites (§5.1 rule 2, §7 constraint 1, §11 note 4) now describe the shipped sanitizeTrackingValue behavior accurately and consistently — .slice(0, 255) followed by the charCodeAt trailing-high-surrogate (0xD800–0xDBFF) drop yielding 254 code units on a split pair; the shipped code at utils.js matches the amended text and the repo was untouched (HEAD fc3f047f9, code hunk identical to the sanctioned fa51c91a5 fix). Settled rulings respected: decode-uri-component import, setup-lambda callback-phase behavior, uncapped server side (M1), connect-branch nil crash routed around via login_intent: 'hire' (M2), bracket-key 400s (M3), and the D18/D19 event relocation (M4) were mapped, not re-flagged. Nothing in the diff adds identify calls, touches PosthogTrackJob/PosthogIdentifyJob call sites, modifies serializers, or introduces fallback fabrication (§7 constraints 2/6/7 hold in the diff-to-spec direction)."
+}

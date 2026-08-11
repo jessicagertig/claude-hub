@@ -1,0 +1,23 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 9,
+  "focus_area": "ExtractJobCriteriaJob retry_on + exhaustion block + StandardError rescue + completion broadcast (SPEC §7)",
+  "files_reviewed": [
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/services/ai_job_application_action/scoring/extract_criteria.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/errors/custom_error_ai_summary.rb",
+    "app/channels/global_channel.rb",
+    "app/jobs/generate_ai_job_application_summary_job.rb"
+  ],
+  "method": "rails runner under RAILS_ENV=test with ActiveJob::Base.queue_adapter=:test, ActiveJob::TestHelper, AiJobApplicationAction::Scoring::ExtractCriteria#extract monkeypatched to raise/succeed (no real OpenAI), and GlobalChannel.broadcast_to captured. 32 assertions across 6 scenario variants; all PASS.",
+  "scenarios_verified": {
+    "1_retry_not_exhausted": "CustomErrorAiSummary raised once -> perform_now did not re-raise (retry_on handled it); job RE-ENQUEUED (enqueued_jobs grew to 1, args [row_id, org_user_id]); NO broadcast on the retry; row stayed non-terminal (retrying), proving the StandardError rescue did NOT catch CustomErrorAiSummary.",
+    "2_exhaustion_with_requesting_id": "Extractor always raises CustomErrorAiSummary; perform_enqueued_jobs drove all 3 attempts (performed_jobs==3) then the exhaustion block ran WITHOUT raising (no NoMethodError on job.arguments.first/second); row ends status=failed with error_message=error&.message; EXACTLY ONE broadcast with action=JOB_CRITERIA_EXTRACTION_COMPLETE, payload.status=failed, zeroCriteriaFailure=false, errorMessage present, delivered to the requesting user.",
+    "3_exhaustion_no_requesting_id": "Args [row_id] and [row_id, nil] both: row ends status=failed (failure still written) but NO broadcast (nil requesting id -> OrganizationUser.find_by(id: nil) is nil -> broadcast_completion returns early).",
+    "4_standard_error": "Plain RuntimeError: with requesting id -> row failed, error_message=e.message, NO retry enqueued (RuntimeError not retryable), exactly ONE broadcast status=failed; without requesting id -> row failed, NO broadcast. perform_now did not re-raise.",
+    "5_custom_error_precedence": "rescue CustomErrorAiSummary precedes rescue StandardError in perform; CustomErrorAiSummary is re-raised and handled by retry_on rather than caught/terminal-failed by the StandardError rescue (confirmed structurally and by Scenario 1 re-enqueue + non-failed row)."
+  },
+  "findings": []
+}

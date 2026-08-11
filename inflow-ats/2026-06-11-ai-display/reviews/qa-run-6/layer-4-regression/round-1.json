@@ -1,0 +1,28 @@
+{
+  "layer": "regression",
+  "round": 1,
+  "run": 6,
+  "suites_run": {
+    "cypress": {
+      "ran": true,
+      "passed": true,
+      "summary": "All 33 Cypress specs passed on all 8 commits via pre-commit hook (yarn cy:run against RAILS_ENV=test server). The pre-commit hook (bin/run-cypress-precommit) starts a test Rails+Sidekiq server and runs the full Cypress suite.",
+      "method": "pre-commit hook on every commit"
+    },
+    "rspec": {
+      "ran": false,
+      "reason": "No RSpec specs exist for the modified frontend components. The only specs mentioning AI_APPLICANT_SUMMARY are backend-only (queue_bulk_ai_summary_jobs_spec.rb, generate_ai_job_application_summary_job_spec.rb) which test the backend pipeline unchanged by this feature."
+    }
+  },
+  "findings": [],
+  "commits_verified": [
+    "9150765c2 - Original implementation",
+    "5966ce409 - Fix QA Layer 1 findings",
+    "20353afcc - Fix lazy fetch",
+    "4ce718fe6 - Fix zero-credits guard",
+    "4b2446956 - Revert route gating",
+    "9aef60e21 - Fix connector tick",
+    "451169723 - Fix dark mode icon color",
+    "add603e76 - Fix credit loading race"
+  ]
+}

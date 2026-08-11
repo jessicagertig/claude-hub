@@ -1,0 +1,229 @@
+{
+  "name": "major-giving-lead",
+  "title": "Major Giving Lead",
+  "call2_count": 24,
+  "final_count": 27,
+  "decomp_count": 2,
+  "t1": 4,
+  "t2": 23,
+  "t3": 0,
+  "soft_t1": 0,
+  "criteria": [
+    {
+      "text": "A minimum of 5 years of experience in nonprofit fundraising",
+      "tier": "tier_1",
+      "tier_reasoning": "signal: \"minimum\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "A minimum of 5 years of experience in nonprofit fundraising, with a demonstrated track record of success in major gifts fundraising."
+    },
+    {
+      "text": "Demonstrated track record of success in major gifts fundraising",
+      "tier": "tier_1",
+      "tier_reasoning": "signal: \"demonstrated track record\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "A minimum of 5 years of experience in nonprofit fundraising, with a demonstrated track record of success in major gifts fundraising."
+    },
+    {
+      "text": "Experience at a direct service organization",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: \"experience\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience at a direct service organization, preferably an organization that is focused on youth development or technology-based training"
+    },
+    {
+      "text": "Preferably an organization that is focused on youth development or technology-based training",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: \"preferably\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience at a direct service organization, preferably an organization that is focused on youth development or technology-based training"
+    },
+    {
+      "text": "Excellent interpersonal and communication skills",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception (soft skills cap at tier_2 despite strong signal \"excellent\")",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Excellent interpersonal and communication skills, with the ability to build relationships with high net worth individuals."
+    },
+    {
+      "text": "Ability to build relationships with high net worth individuals",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: \"ability to\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Excellent interpersonal and communication skills, with the ability to build relationships with high net worth individuals."
+    },
+    {
+      "text": "Proven ability to develop and implement effective major gifts fundraising strategies",
+      "tier": "tier_1",
+      "tier_reasoning": "signal: \"proven\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Proven ability to develop and implement effective major gifts fundraising strategies."
+    },
+    {
+      "text": "Experience working with CRM databases",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: \"experience working with\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience working with CRM databases and fundraising tools for donor management and prospect research."
+    },
+    {
+      "text": "Experience working with fundraising tools for donor management and prospect research",
+      "tier": "tier_2",
+      "tier_reasoning": "signal: \"experience working with\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Experience working with CRM databases and fundraising tools for donor management and prospect research."
+    },
+    {
+      "text": "In-depth knowledge of fundraising best practices and trends in major gifts fundraising within the nonprofit sector",
+      "tier": "tier_1",
+      "tier_reasoning": "signal: \"in-depth\"",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "In-depth knowledge of fundraising best practices and trends in major gifts fundraising within the nonprofit sector."
+    },
+    {
+      "text": "Strong organizational and project management abilities",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Strong organizational and project management abilities, with the capacity to manage multiple priorities and meet deadlines."
+    },
+    {
+      "text": "Capacity to manage multiple priorities and meet deadlines",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Strong organizational and project management abilities, with the capacity to manage multiple priorities and meet deadlines."
+    },
+    {
+      "text": "Self-motivated",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Self-motivated and able to work both independently and collaboratively as part of a team."
+    },
+    {
+      "text": "Able to work both independently and collaboratively as part of a team",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Self-motivated and able to work both independently and collaboratively as part of a team."
+    },
+    {
+      "text": "A passion for education",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "A passion for education, technology, and empowering young people."
+    },
+    {
+      "text": "A passion for technology",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "A passion for education, technology, and empowering young people."
+    },
+    {
+      "text": "A passion for empowering young people",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "A passion for education, technology, and empowering young people."
+    },
+    {
+      "text": "Develop and execute a comprehensive major gifts fundraising strategy that aligns with Hack Club’s mission and fundraising objectives",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Develop and execute a comprehensive major gifts fundraising strategy that aligns with Hack Club’s mission and fundraising objectives."
+    },
+    {
+      "text": "Work with co-founders to identify, research and qualify potential major donors",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Work with co-founders to identify, research and qualify potential major donors."
+    },
+    {
+      "text": "Cultivate and maintain strong relationships with current and prospective major donors and high net worth individuals through regular communications and meetings, donor-focused events, and on-going stewardship",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Cultivate and maintain strong relationships with current and prospective major donors and high net worth individuals through regular communications and meetings, donor-focused events, and on-going stewardship."
+    },
+    {
+      "text": "Create compelling proposals and presentations that effectively communicate Hack Club’s impact and the value of major donor support",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Create compelling proposals and presentations that effectively communicate Hack Club’s impact and the value of major donor support."
+    },
+    {
+      "text": "Collaborate with board members, staff and volunteers to engage major donors in fundraising efforts and develop donor stewardship plans",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Collaborate with board members, staff and volunteers to engage major donors in fundraising efforts and develop donor stewardship plans."
+    },
+    {
+      "text": "Ensure timely and personalized stewardship of major donors, including regular communication, recognition, and impact reporting",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Ensure timely and personalized stewardship of major donors, including regular communication, recognition, and impact reporting."
+    },
+    {
+      "text": "Work with Digital Fundraising Manager to maintain accurate and up-to-date donor records in the organization's CRM database",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Work with Digital Fundraising Manager to maintain accurate and up-to-date donor records in the organization's CRM database and provide regular reports on major donor fundraising activities to the co-founders."
+    },
+    {
+      "text": "Provide regular reports on major donor fundraising activities to the co-founders",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Work with Digital Fundraising Manager to maintain accurate and up-to-date donor records in the organization's CRM database and provide regular reports on major donor fundraising activities to the co-founders."
+    },
+    {
+      "text": "Represent Hack Club at relevant fundraising events, community gatherings, and donor cultivation activities to expand the organization's network and visibility",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Represent Hack Club at relevant fundraising events, community gatherings, and donor cultivation activities to expand the organization's network and visibility."
+    },
+    {
+      "text": "Expected to travel to various cities across the United States for donor meetings and cultivation events",
+      "tier": "tier_2",
+      "tier_reasoning": "default — no signal word",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "The Lead is expected to travel to various cities across the United States for donor meetings and cultivation events."
+    }
+  ]
+}

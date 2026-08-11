@@ -1,0 +1,102 @@
+{
+  "criteria": [
+    {
+      "original": {
+        "text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"strong\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+      },
+      "action": "decompose",
+      "reasoning": "This criterion combines distinct skill areas: CI/CD pipelines, developer tooling, and cloud marketplace/provider integrations, which are independent requirements.",
+      "decomposed": [
+        {
+          "text": "Familiarity with CI/CD pipelines",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"strong\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+        },
+        {
+          "text": "Familiarity with developer tooling",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"strong\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+        },
+        {
+          "text": "Exposure to marketplace or cloud provider integrations",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"strong\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"experience\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios."
+      },
+      "action": "decompose",
+      "reasoning": "This combines the skill of working in multi-cloud/hybrid cloud environments with the skill of managing customer-facing deployment scenarios, which are independent.",
+      "decomposed": [
+        {
+          "text": "Experience working in multi-cloud or hybrid cloud environments",
+          "tier": "tier_2",
+          "tier_reasoning": "signal: \"experience\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios."
+        },
+        {
+          "text": "Experience with customer facing deployment scenarios",
+          "tier": "tier_2",
+          "tier_reasoning": "signal: \"experience\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios."
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "Experience with open source projects or distributed systems.",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"experience with\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Experience with open source projects or distributed systems."
+      },
+      "action": "decompose",
+      "reasoning": "Open source contribution and distributed systems design are distinct skill areas.",
+      "decomposed": [
+        {
+          "text": "Experience with open source projects",
+          "tier": "tier_2",
+          "tier_reasoning": "signal: \"experience with\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Experience with open source projects or distributed systems."
+        },
+        {
+          "text": "Experience with distributed systems",
+          "tier": "tier_2",
+          "tier_reasoning": "signal: \"experience with\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Experience with open source projects or distributed systems."
+        }
+      ]
+    }
+  ]
+}

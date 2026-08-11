@@ -1,0 +1,75 @@
+{
+  "agent": "agent-2",
+  "round": 2,
+  "layer": 5,
+  "qa_run": "qa-run-6",
+  "test_server": "http://app.lvh.me:5007",
+  "flag_state": "AI_APPLICANT_SUMMARY=OFF",
+  "user": "rezu.may@wrkhq.com",
+  "job": "Software Engineer (id: 17773)",
+  "applicant": "Alonso Parker (id: 13501)",
+  "url_tested": "http://app.lvh.me:5007/jobs/17773/stages/124384/applicants/13501/overview",
+
+  "results": {
+    "login": "PASS - already authenticated as Rezu May, redirected to /jobs",
+    "plato_nav_absent": "PASS",
+    "plato_overview_callout_absent": "PASS"
+  },
+
+  "findings": [
+    {
+      "check": "Sidebar nav does NOT show Plato entry",
+      "result": "PASS",
+      "detail": "Applicant sidebar tabs are exactly: Overview, Resume, Messages, Files, Private notes. No Plato tab present.",
+      "evidence": "DOM query: sidebarTabs returned 8 href entries (3 candidate list links + 5 tab links). None contain 'plato'. Full tab list: Overview, Resume, Messages, Files, Private notes."
+    },
+    {
+      "check": "Overview tab does NOT show PlatoOverviewCallout card",
+      "result": "PASS",
+      "detail": "Overview panel contains only the activity feed and action buttons. No PlatoOverviewCallout rendered.",
+      "evidence": "DOM query for [data-testid*='plato' i], [class*='plato' i], [id*='plato' i] returned 0 elements. document.body.innerText.toLowerCase().includes('plato') returned false."
+    }
+  ],
+
+  "console_errors": [
+    {
+      "level": "error",
+      "message": "Warning: Please use `require('history').createBrowserHistory` instead of `require('history/createBrowserHistory')`. Support for the latter will be removed in the next major release.",
+      "assessment": "pre-existing - unrelated to Plato feature flag"
+    },
+    {
+      "level": "error",
+      "message": "Warning: Please use `require('history').createHashHistory` instead of `require('history/createHashHistory')`. Support for the latter will be removed in the next major release.",
+      "assessment": "pre-existing - unrelated to Plato feature flag"
+    },
+    {
+      "level": "error",
+      "message": "Warning: Please use `require('history').createMemoryHistory` instead of `require('history/createMemoryHistory')`. Support for the latter will be removed in the next major release.",
+      "assessment": "pre-existing - unrelated to Plato feature flag"
+    },
+    {
+      "level": "error",
+      "message": "Warning: Please use `require('history').PathUtils` instead of `require('history/PathUtils')`. Support for the latter will be removed in the next major release.",
+      "assessment": "pre-existing - unrelated to Plato feature flag"
+    },
+    {
+      "level": "error",
+      "message": "Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers.",
+      "assessment": "pre-existing - unrelated to Plato feature flag (appears twice)"
+    },
+    {
+      "level": "error",
+      "message": "Failed to load resource: the server responded with a status of 404 () @ https://cdn.heapanalytics.com/js/heap-.js:0",
+      "assessment": "pre-existing - Heap analytics missing key, unrelated to Plato feature flag"
+    }
+  ],
+
+  "console_errors_related_to_plato": [],
+
+  "screenshots": [
+    "/Users/jessica/claude-hub/inflow-ats/2026-06-11-ai-display/.playwright-mcp/agent-2-r2-01-job-overview-no-plato-nav.png",
+    "/Users/jessica/claude-hub/inflow-ats/2026-06-11-ai-display/.playwright-mcp/agent-2-r2-02-sidebar-nav-tabs.png"
+  ],
+
+  "overall_verdict": "PASS - With AI_APPLICANT_SUMMARY flag OFF, the Plato feature is fully hidden: no Plato sidebar nav entry and no PlatoOverviewCallout on the Overview tab. All 7 console errors are pre-existing and unrelated to the Plato feature."
+}

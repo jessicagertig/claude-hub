@@ -1,0 +1,25 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 4,
+  "agents_dispatched": 15,
+  "agents_reporting": 15,
+  "findings": [
+    {
+      "id": "l1-run4-001",
+      "type": "VIOLATION",
+      "severity": "HIGH",
+      "title": "SPEC.md §5.1 rule 2 does not record the sanctioned surrogate-safe truncation semantics",
+      "spec_requirement": "SPEC.md §5.1 sanitization rule 2: 'Truncate string values to 255 characters.' (echoed at §7.1 and §11 note 4)",
+      "evidence": "app/javascript/shared/lib/utils.js sanitizeTrackingValue (3 lines added by fix commit fa51c91a5): after .slice(0, 255), a trailing lone high surrogate (charCode 0xD800-0xDBFF) is dropped, yielding 254 code units at that boundary. The code is the sanctioned qa-run-2 Layer-2 l2-B1 HIGH fix (lone-surrogate JSON escape caused the entire signup POST to 400) — delta-reviewed and approved in the prior run (reviews/QA-COMPLETE.md) — but SPEC.md was amended only for D18/D19, never for this. Layer 1 criterion: the change does not trace to the spec text; a re-implementer following §5.1 literally would reintroduce the 400.",
+      "found_by": ["agent-8 (l1-r1-a8-F1)", "agent-14 (l1-r1-a14-F1)"],
+      "corroborated_by": ["agent-15 (noted as QA-sanctioned but exceeding the spec's literal text)"],
+      "recommendation": "Amend SPEC.md — not the code. Update §5.1 rule 2 to record the approved semantics (truncate to 255 code units, then drop a trailing lone high surrogate left by the slice), with provenance (fix commit fa51c91a5, qa-run-2 l2-B1). Per the stale-references-after-amendments failure pattern, update every other reference to the truncation rule in the same amendment (§7.1, §11 note 4) so no stale '255' text remains that contradicts the recorded semantics."
+    }
+  ],
+  "spec_coverage": {
+    "total_areas": 15,
+    "areas_clean": 14,
+    "notes": "Every SPEC.md numbered requirement (§2-§11) was traced by at least two agents; agent-14 built the full 22-file reverse mapping table and agent-15 the full forward coverage table. Only untraceable diff content across the entire range: the 3 surrogate-truncation lines above. The decode-uri-component key-scan (fix 299cf9465) was examined by agents 7, 8, 14, 15 and judged traceable: §5.1 declares the key-scan mechanism plan-level ('the contract is: order comes from the raw string, values from the parse'), and the decoder-agreement is part of that mechanism."
+  }
+}

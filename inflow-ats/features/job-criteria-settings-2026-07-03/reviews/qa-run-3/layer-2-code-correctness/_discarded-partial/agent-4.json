@@ -1,0 +1,38 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 4,
+  "focus_area": "zero-criteria review guard chain: ValidateAiSummaryGeneration, ValidateAutoAiSummaryGeneration, QueueBulkAiSummaryJobs, TextractResult#generate_ai_summary_with_credit_flow (funnel guard) + ordering, nil guards, optional job input, race window",
+  "files_reviewed": [
+    "app/interactors/validate_ai_summary_generation.rb",
+    "app/interactors/validate_auto_ai_summary_generation.rb",
+    "app/interactors/queue_bulk_ai_summary_jobs.rb",
+    "app/models/textract_result.rb",
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/jobs/generate_ai_job_application_summary_job.rb",
+    "app/jobs/bulk_generate_ai_summaries_job.rb",
+    "app/controllers/api/v1/bulk_ai_job_application_summaries_controller.rb",
+    "spec/models/textract_result_ai_trigger_spec.rb"
+  ],
+  "findings": [
+    {
+      "id": "l2-a4-001",
+      "severity": "LOW",
+      "title": "Funnel guard uses non-safe-nav job_application.job — verified no NoMethodError path (brief's nil-job question)",
+      "file": "app/models/textract_result.rb",
+      "line": 70,
+      "description": "The new funnel guard `return if job_application.job.zero_criteria_extraction_failure?` dereferences `job_application.job` without safe navigation, while line 62 (`organization = job_application&.job&.organization`) in the same method uses safe-nav on both. I checked whether a nil job could NoMethodError here: (1) `JobApplication belongs_to :job` is required (job_application.rb:14, no `optional: true`, no `belongs_to_required_by_default = false` override found), so a persisted job_application always has a job; (2) the immediately-following pre-existing line 72 (`job_application.job.extract_job_criteria_if_needed`) already dereferences `job_application.job` with identical non-safe-nav, and line 67 (`job_application.latest_ai_job_application_summary`) already dereferences `job_application` non-safe — so the new guard introduces NO new crash surface (any nil-job would crash one line later at 72, pre-existing). Conclusion: not a defect; the guard matches the established non-safe-nav pattern of its neighbor. The line-62 safe-nav is over-defensive/inconsistent but pre-existing. Recording only because the brief specifically asked this question.",
+      "recommendation": "No change required. (If ever normalizing, the whole method — 62/67/70/72 — should agree; but that is pre-existing style, out of feature scope.)"
+    },
+    {
+      "id": "l2-a4-002",
+      "severity": "LOW",
+      "title": "Pre-existing: debug `ap` block dereferences @job_application/@organization before the nil-guards (ValidateAiSummaryGeneration)",
+      "file": "app/interactors/validate_ai_summary_generation.rb",
+      "line": 18,
+      "description": "The debug `ap has_resume?` (line 18 -> has_resume? = @job_application.has_resume, non-safe-nav) and `ap credits_available?` (line 20 -> credits_available? = @organization.ai_credits_available?, non-safe-nav) run BEFORE the protective `context.fail!(...) if @job_application.nil?` / `if @organization.nil?` guards at lines 24-25. A nil job_application or organization would raise NoMethodError from the debug block before the friendly fail!. This is PRE-EXISTING (not in the feature diff — the feature added only line 30) and effectively unreachable in practice (all real callers pass a non-nil job_application, and belongs_to :job/organization requiredness makes @organization non-nil). Noting per the fresh-cold-read mandate; unrelated to the zero-criteria feature. The feature's own added guard (line 30) is correctly placed AFTER the nil-safe checks and uses `@job_application.job&.` safe-nav, so it is not implicated.",
+      "recommendation": "No feature change. Pre-existing; out of scope. If ever cleaned up, move the nil `context.fail!` guards above the `ap` debug block."
+    }
+  ]
+}

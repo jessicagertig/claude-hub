@@ -1,0 +1,99 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience deploying isolated test environments on Debian/Devuan using VirtualBox and managing infrastructure with tools like Ansible. They also contributed to a Go-based project using Canonical Juju for distributed PostgreSQL clustering. However, there's no specific evidence of multi-cloud deployment or customer account management."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features for developers such as improving CLI usage, enhancing CI/CD workflows, enabling marketplace and cloud provider integrations, and creating better observability and logging experiences.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience building developer tools like DebForge CLI tool and has written deployment guides. They've worked on observability aspects through their load balancer project with health checks and have experience with web dashboards for firewall management. However, there's no direct evidence of collaboration with product/UX teams or CI/CD workflow improvements."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate demonstrates security experience through RBAC implementation, API key middleware, and JWT-based authentication. They've implemented health checks in their load balancer project and have experience with monitoring aspects. However, there's no evidence of alerting systems, rollback capabilities, or multi-cloud failover strategies."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has authored 10+ deployment guides which shows knowledge sharing and documentation of best practices. They have extensive Go backend development experience. However, there's no direct evidence of participating in code reviews or mentoring others."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has extensive Go programming experience including building a distributed ETL pipeline processing 1K+ daily events, developing production-grade load balancer, full-stack web applications with authentication, and contributing to Go-based projects. Multiple projects demonstrate production-level Go backend development."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "There is no mention of Kubernetes, container orchestration, or related technologies in the resume. The candidate has Docker experience but no evidence of Kubernetes knowledge."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with Ansible for infrastructure management and has worked with Canonical Juju for distributed systems orchestration. While these are IaC-related tools, there's no specific mention of Terraform or cross-cloud provider infrastructure management."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "There is no mention of AWS, GCP, or Azure in the resume. The candidate has experience with local/on-premise infrastructure and VirtualBox environments, but no evidence of major cloud platform experience."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has built developer tools like DebForge CLI and load balancers that abstract complexity, and has experience with Canonical Juju which is a cloud orchestration platform. Their work on deployment guides and infrastructure automation shows understanding of abstraction concepts, though no direct PaaS experience is mentioned."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has extensive experience building developer tooling including CLI tools, load balancers, and deployment automation. They use Git, Bitbucket, and have experience with various development tools. However, there's no specific mention of CI/CD pipelines or marketplace integrations."
+    },
+    {
+      "criterion_text": "Excellent communication skills, ability to work cross functionally, and thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has demonstrated technical communication through authoring 10+ deployment guides and technical blogs. They've worked in remote team environments and contributed to various projects. However, there's no specific evidence of cross-functional collaboration or fast-moving product environment experience."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no mention of cloud marketplace experience or integrations with AWS Marketplace, GCP Marketplace, or Azure Marketplace in the resume."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with distributed systems through their ETL pipeline work using goroutines, load balancer development with health checks, and PostgreSQL clustering with Juju. They've implemented RBAC which relates to multi-tenant concepts. However, there's no specific evidence of multi-region or high availability architecture design."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has contributed to open-source tools, built distributed systems including a Go-based ETL pipeline processing events from multiple APIs using goroutines, and worked on distributed PostgreSQL clustering with Canonical Juju. They've also created open-source projects like DebForge and BalancerX."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has implemented health checks in their load balancer project and has experience with diagnostics in their firewall dashboard. They've worked on observability aspects but there's no specific mention of Prometheus, Grafana, or ELK stack tools."
+    }
+  ],
+  "computed_score": {
+    "points": 49.0,
+    "max": 92,
+    "percentage": 53.3
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 7,
+  "assignment": "ALL-STAGES modal (RunPlatoReviewAllModal) zero-state + checked-state on Design Lead (2 candidates, both with current reviews) — SPEC 1.5, display only",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc.)",
+    "Clicked 'Design Lead' job title → job page opened at /jobs/29093/stages/203596/applicants/21039/overview; Inbox shows 2 candidates (Rowan Ellis 'Good fit', Quinn Barrett 'Excellent fit') — both with current reviews as expected",
+    "Clicked 'Run Plato' on the Plato Reviews card (sparkle disc, 'Plato βeta scores every candidate on role fit and skills.') → RunPlatoReviewAllModal opened, title 'Review all candidates'",
+    "ZERO-STATE (unchecked) verified byte-exact via DOM textContent: body paragraph EXACTLY '0 candidates in this job don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.' — numeric 0; NO credit sentence anywhere in modal; 'Review all' button disabled=true",
+    "Checkbox verified: input name='rescore' present, unchecked, enabled; label EXACTLY 'Also re-review candidates that already have a review'; description EXACTLY 'Recommended if you've changed the candidate requirements in the job description.'",
+    "Statement block verified byte-exact: 'The hiring team gets an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' — mail icon confirmed as feather envelope svg (path M4 4h16... + polyline 22,6 12,13 2,6) inside div with emotion class RunPlatoReviewAllModal_Statement",
+    "CHECKED the checkbox → body first sentence EXACTLY '2 candidates in this job will be reviewed, including candidates that already have a review.' — NO leading 'The' (verified via innerHTML); followed by credit sentence EXACTLY 'Each successful review uses one AI credit, so running this uses up to 2 credits from your balance of 20 available.' with <b>2</b> and <b>20</b> bold; displayed balance 20 matched the expected 20 (no recompute needed); 'Review all' button disabled=false (ENABLED); Statement block unchanged",
+    "Toggled checkbox back OFF → zero-state body returned exactly, credit sentence gone, 'Review all' disabled=true again, checkbox unchecked",
+    "Console check: 0 errors, 0 warnings in the session buffer (192 info messages); no feature-referencing errors",
+    "Clicked Cancel → modal closed, rescore input gone from DOM; NO Plato run was submitted at any point",
+    "Harness note (not a product finding): browser_take_screenshot and raw CDP Page.captureScreenshot hung indefinitely because the headful browser window was occluded and produced no compositor frames; fixed with page.bringToFront(), after which screenshots worked normally. Temporarily injected then removed a CSS animation-kill style tag during diagnosis; page state unaffected."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-7/01-all-stages-modal-zero-state-unchecked.png",
+    "/tmp/qa-run-3-l5/agent-7/02-all-stages-modal-checked-state.png"
+  ],
+  "findings": []
+}

@@ -1,0 +1,44 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 5,
+  "findings": [
+    {
+      "id": "l1-001",
+      "type": "VIOLATION",
+      "title": "PlatoOverviewCallout connector tick clipped by overflow:hidden on Styled.Card",
+      "spec_requirement": "The card has a connector tick below it (a 4px-wide, 24px-tall divider line, matching the feed connector pattern in Styled.Event ::after pseudo-element at JobApplicationActivity.tsx lines 671-681).",
+      "evidence": "PlatoOverviewCallout.tsx Styled.Card has overflow: hidden (to contain the absolutely-positioned gradient bar). The connector tick is a ::after pseudo-element at top: 100%. overflow: hidden clips anything outside the element bounds, making the tick invisible. The analog (Styled.Event in JobApplicationActivity.tsx) uses position: relative without overflow: hidden.",
+      "recommendation": "Remove overflow: hidden from Styled.Card. Contain Styled.Bar by giving it matching border-radius for the left corners, or use an inner wrapper with overflow:hidden for the bar while keeping the card unclipped.",
+      "agents": [1]
+    }
+  ],
+  "dismissed": [
+    {
+      "id": "l1-d1",
+      "title": "Header Regenerate replaced by Buy credits when zero credits",
+      "agent": 2,
+      "reason": "Spec line 87 says 'When credits are zero and a generate action would be shown, show the existing buy-credits pattern.' Regenerate IS a generate action (it triggers useGenerateAiSummary). The phrase 'a generate action would be shown' is not limited to Empty/Failed states. Removing this guard would reintroduce Layer 2 code-correctness bug l2-001 where clicking Regenerate with zero credits hits a backend rejection with no useful error path."
+    },
+    {
+      "id": "l1-d2",
+      "title": "onOpen uses match.url.replace() instead of spec's match.url/ai",
+      "agent": 5,
+      "reason": "The spec says 'Use history.push(`${match.url}/ai`)' but this is a spec bug. JobApplicationActivity is rendered at the /overview Route, so match.url is '.../applicants/123/overview'. Using ${match.url}/ai produces '.../applicants/123/overview/ai' which is a non-existent route. The implementation correctly strips the last segment with match.url.replace(/\\/[^/]+$/, '') to get '.../applicants/123' then navigates to '.../applicants/123/ai'. The implementation is correct; the spec is wrong."
+    }
+  ],
+  "user_directed_overrides": [
+    "Spec section 4 says import FeatureFlipper/useFeatureFlipper/Features, wrap Route in FeatureFlipper, make possiblePaths conditional. User explicitly overrode: Route is unconditional, possiblePaths is static ['overview', 'resume', 'messages', 'files', 'notes', 'ai'], no FeatureFlipper imports in JobApplicationContainer. Matches AccountIntegrationsContainer pattern where only NavItems are gated."
+  ],
+  "spec_coverage": {
+    "total_requirements": 52,
+    "implemented": 52,
+    "missing": 0,
+    "deviating": 1,
+    "details": [
+      "1 deviation: connector tick clipped by overflow:hidden (rendering bug, not a missing implementation)",
+      "2 findings dismissed with reasoning",
+      "1 user-directed override documented"
+    ]
+  }
+}

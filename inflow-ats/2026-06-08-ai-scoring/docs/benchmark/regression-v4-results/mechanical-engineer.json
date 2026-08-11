@@ -1,0 +1,126 @@
+{
+  "meta": {
+    "version": 4,
+    "name": "mechanical-engineer",
+    "kind": "standard",
+    "title": "Mechanical Engineer",
+    "description": "Mechanical Engineer — 6 binary, balanced tiers",
+    "cost": 0.001262
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Aralab is a leading manufacturer of environmental chambers and is committed to make sure that our clients can simulate all kinds of environment from simulating the harshest North Pole climate to the hottest places on earth. We are a engineering-driven company and hundreds of renowned research institutions and multinational companies have partnered with us for the past 40 years.\n\nOur equipment has all kinds of purposes, from helping Formula 1 teams delivering more reliable cars to fighting cancer and even solving mass food production problems through crop science.\n\nCurrently we are a team of highly motivated and committed 100 members based in Sintra and we are looking for a Mechanical Engineer to join this amazing team.\n\nWant to fly through our factory?"
+      },
+      {
+        "heading": "Your Role",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Create and unleash mechanical designs using CAD, CAM, and 3D CAD software to bring ideas to life;\nOversee project implementation, ensuring everything hits those design specs with precision;\nKeep projects on track and crush deadlines to deliver milestones and final outputs;\nCraft detailed technical reports, design specs, and operational manuals that'll guide the way;\nWork hand-in-hand with the electrical and refrigeration systems teams to create seamless, integrated design solutions."
+      },
+      {
+        "heading": "About You",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Degree in Mechanical Engineering;\nAt least 3 years of experience in mechanical design and development;\nProficient in using SolidWorks for both 3D and 2D design;\nStrong analytical and problem-solving skills;\nDetail-oriented with a professional attitude, reliability, and excellent communication skills;\nTeam player with a strong ability to collaborate effectively with others;\nProficient in English."
+      },
+      {
+        "heading": "Why Aralab?",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "Performance-based bonuses;\nProvided company phone and workstation;\nHealth insurance coverage from day one;\nEngaging company-wide events and teambuilding activities."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Create and unleash mechanical designs using CAD, CAM, and 3D CAD software to bring ideas to life",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Create and unleash mechanical designs using CAD, CAM, and 3D CAD software to bring ideas to life;"
+      },
+      {
+        "text": "Oversee project implementation, ensuring everything hits those design specs with precision",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Oversee project implementation, ensuring everything hits those design specs with precision;"
+      },
+      {
+        "text": "Keep projects on track and crush deadlines to deliver milestones and final outputs",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Keep projects on track and crush deadlines to deliver milestones and final outputs;"
+      },
+      {
+        "text": "Craft detailed technical reports, design specs, and operational manuals that'll guide the way",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Craft detailed technical reports, design specs, and operational manuals that'll guide the way;"
+      },
+      {
+        "text": "Work hand-in-hand with the electrical and refrigeration systems teams to create seamless, integrated design solutions",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Work hand-in-hand with the electrical and refrigeration systems teams to create seamless, integrated design solutions."
+      },
+      {
+        "text": "Degree in Mechanical Engineering",
+        "tier": "tier_1",
+        "tier_reasoning": "required",
+        "binary": true,
+        "source_text": "Degree in Mechanical Engineering;"
+      },
+      {
+        "text": "At least 3 years of experience in mechanical design and development",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "At least 3 years of experience in mechanical design and development;"
+      },
+      {
+        "text": "Proficient in using SolidWorks for both 3D and 2D design",
+        "tier": "tier_1",
+        "tier_reasoning": "proficient",
+        "binary": true,
+        "source_text": "Proficient in using SolidWorks for both 3D and 2D design;"
+      },
+      {
+        "text": "Strong analytical and problem-solving skills",
+        "tier": "tier_1",
+        "tier_reasoning": "strong",
+        "binary": true,
+        "source_text": "Strong analytical and problem-solving skills;"
+      },
+      {
+        "text": "Detail-oriented with a professional attitude, reliability, and excellent communication skills",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Detail-oriented with a professional attitude, reliability, and excellent communication skills;"
+      },
+      {
+        "text": "Team player with a strong ability to collaborate effectively with others",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Team player with a strong ability to collaborate effectively with others;"
+      },
+      {
+        "text": "Proficient in English",
+        "tier": "tier_1",
+        "tier_reasoning": "proficient",
+        "binary": true,
+        "source_text": "Proficient in English."
+      }
+    ]
+  }
+}

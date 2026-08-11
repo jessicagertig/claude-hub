@@ -1,0 +1,45 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 3,
+  "focus_area": "frontend capture + QA fix",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "§5 preamble (camelCase payload fields; raw utmData inner keys)",
+      "§5.1 (D4 full contract: raw location.search input; occurrence order from raw string; values from parse; first-of-repeated; 255/value; 10-key cap; absence semantics; null pass-through)",
+      "§5.2 (capture state analog referral; magicLink payload; SSO props; user_signed_up_client_side before onComplete)",
+      "§5.4 (magicLink + register destructure/type/variables; hook wrappers untouched)",
+      "§5.5 (SignupForm capture/payload/event)",
+      "§9.6 (Jest coverage incl. 3 fix-added tests, executed)",
+      "§7 constraints 1, 2, 9",
+      "FIX VERIFICATION (a) decoder identity, (b) empirical helper execution, (c) fix-commit scope vs FAILURE-REPORT"
+    ],
+    "verified": [
+      "§5 preamble",
+      "§5.1",
+      "§5.2",
+      "§5.4",
+      "§5.5",
+      "§9.6",
+      "§7.1",
+      "§7.2",
+      "§7.9",
+      "FIX (a)",
+      "FIX (b)",
+      "FIX (c)"
+    ],
+    "missing": []
+  },
+  "verification_notes": {
+    "§5.1 helper contract": "app/javascript/shared/lib/utils.js sanitizeTrackingParams: input is the raw location.search string; queryString.parse(search) supplies values; key occurrence order derived from queryString.extract(search).split(\"&\") with per-token key derivation param.replace(/\\+/g, \" \").split(\"=\")[0] then decodeUriComponent — byte-identical to query-string 6.1.0 parse()'s own key derivation (node_modules/query-string/index.js lines 147-154: param.replace(/\\+/g, ' ').split('='), formatter(decode(key, options), ...) where decodeComponent = require('decode-uri-component')). sanitizeTrackingValue: array → [0] (first occurrence — parse builds repeat arrays in occurrence order, verified in formatter for arrayFormat 'none'); strings sliced to 255; non-strings (null) pass through unchanged. utmDataKeys: filter indexOf(\"utm_\")===0, excludes utm_source/utm_campaign, membership check parsedParams[key] !== undefined, slice(0,10) on occurrence order. utmSource/utmCampaign/internalRef set only when parsedParams[<name>] !== undefined; utmData set only when utmDataKeys.length > 0 — no || fallbacks, no fabricated {} anywhere. Valueless ?utm_source parses to null and lands as utmSource: null (pinned by test).",
+    "§5.2 AuthForm": "app/javascript/ats/src/views/sessions/components/AuthForm.tsx: const [trackingParams] = React.useState(sanitizeTrackingParams(location.search)) directly beside the referral/partner analog states (no setter, sanitization before state). magicLink call adds utmSource/utmCampaign/utmData/internalRef alongside referral/partner. GoogleSSOButton receives the four as props plus existing referral/partner. trackEvent(\"user_signed_up_client_side\") fires in magicLink onSuccess BEFORE onComplete({ email: cleanedEmail, ...data }); trackEvent imported from @shared/lib/posthog. No property payload on the event.",
+    "§5.4 useSession": "app/javascript/shared/queryHooks/useSession.ts: magicLink gains the four in the destructure, the inline TS type (utmSource?: string | null; utmCampaign?: string | null; utmData?: Record<string, any> | null; internalRef?: string | null), and variables. register gains the four in the destructure and variables (register had no inline type before and still has none — matches spec, which requires type update only for magicLink). git diff confirms useMagicLink/useRegister hook wrappers untouched; no other change in the file.",
+    "§5.5 SignupForm": "app/javascript/ats/src/views/sessions/components/SignupForm.tsx: const [trackingParams] = React.useState(sanitizeTrackingParams(props.location.search)) beside the referral analog; register payload includes the four alongside firstName/lastName/email/password/inviteToken/referral; trackEvent(\"user_signed_up_client_side\") in register onSuccess before props.onComplete().",
+    "§7 constraints": "1: sanitization exists only in the frontend helper — no server-side sanitization introduced in this group. 2: absent params yield undefined fields that drop out of the JSON body (no || \"\", no || {} anywhere in the group's diff). 9: utmData inner keys are the decoded URL param names verbatim — never camelCased (empirically: utm_x%C2 → key \"utm_x\\ufffd\", utm_medium → \"utm_medium\").",
+    "§9.6 Jest": "Executed: cd /Users/jessica/wrk/wrk-corp/inflow-ats && nvm use && npx jest app/javascript/shared/lib/utils.test.js → Test Suites: 1 passed; Tests: 11 passed, 11 total (8 pre-existing + 3 fix-added). All spec-required cases present: 255 truncation (top-level AND utmData); repeated-param first occurrence (top-level AND utmData); 10-key cap test lists utm_z..utm_q,utm_a (reverse-alphabetical — an implementation taking order from parse's sorted output fails it); utm_source/utm_campaign exclusion; empty-search → {} with hasOwnProperty false for all four fields; utmData absent when only utm_source present; valueless param → null; internal_ref captured, non-utm params excluded; malformed-key regression pin (utm_x%C2 keyed as \"utm_x\\ufffd\").",
+    "FIX (a) decoder identity": "utils.js now imports decode-uri-component and uses it for the scan key (the decodeURIComponent+try/catch is gone). query-string 6.1.0 declares decode-uri-component ^0.2.0 and requires it at index.js line 3; installed copy is node_modules/decode-uri-component@0.2.0 and it is the ONLY copy — find node_modules -type d -name decode-uri-component returns exactly one directory (no nested copy under query-string or anywhere else), so both the helper's import and query-string's own require resolve to the same module. jest.config.js moduleNameMapper remaps neither package. Scan and parse keys can no longer diverge for any input.",
+    "FIX (b) empirical execution": "Executed the actual helper code (CommonJS-transformed copy of utils.js, resolving against the repo's node_modules, Node via nvm use) on \"?utm_x%C2=1&utm_medium=m\": result {\"utmData\":{\"utm_x\\ufffd\":\"1\",\"utm_medium\":\"m\"}} — both keys land in utmData keyed exactly as queryString.parse decodes them (parse keys [\"utm_medium\",\"utm_x\\ufffd\"]; key-set identity with parse: true). All four additional FAILURE-REPORT reproduction classes now capture: utm_%C3%A9% → \"utm_é%\", utm_a%FE%FF → \"utm_a\\ufffd\\ufffd\", utm_%E2%98%83%E2 → \"utm_☃%E2\", utm_100%25%E2 → \"utm_100%%E2\".",
+    "FIX (c) commit scope": "git diff 8dcc2f06f..299cf9465 touches exactly 2 files: app/javascript/shared/lib/utils.js (the decoder swap — 1 import line + replacing the 6-line try/catch with the single decodeUriComponent line; no restructuring, output contract untouched, no other function touched) and app/javascript/shared/lib/utils.test.js (3 tests appended after the existing 8; the 3 match FAILURE-REPORT F2's required assertions 1/2/3 exactly; no existing test modified or weakened). No package.json change (decode-uri-component imported as the existing transitive dependency, exactly as the FAILURE-REPORT sanctioned). Nothing in the fix commit falls outside the F1/F2 scope."
+  }
+}

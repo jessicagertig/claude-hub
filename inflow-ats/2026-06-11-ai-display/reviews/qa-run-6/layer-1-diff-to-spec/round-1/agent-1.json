@@ -1,0 +1,69 @@
+{
+  "agent": 1,
+  "run": 6,
+  "layer": 1,
+  "round": 1,
+  "focus": "New components -- PlatoMark.tsx and PlatoOverviewCallout.tsx",
+  "spec_sections": [1, 3],
+  "files_reviewed": [
+    "app/javascript/ats/src/components/shared/PlatoMark.tsx",
+    "app/javascript/ats/src/views/jobApplications/PlatoOverviewCallout.tsx"
+  ],
+  "run5_fix_verification": {
+    "overflow_hidden_removed_from_card": true,
+    "connector_tick_unclipped": "Styled.Card has no overflow:hidden. The ::after pseudo-element sits at top:100% outside the card bounds and is not clipped.",
+    "styled_bar_border_radius": "Styled.Bar has border-radius: ${t.poly.radii.md} 0 0 ${t.poly.radii.md}. Left corners match the card's border-radius; right corners are 0, so the bar stays contained within the card's rounded left edge. Fix is correct."
+  },
+  "findings": [
+    {
+      "id": "A1-H1",
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoOverviewCallout.tsx",
+      "line": 31,
+      "description": "Failed-state subtitle uses a typographic Unicode em dash (—) rather than the spec's en-dash-space pattern. Spec section 3 table row 3 specifies: \"No credit was used -- open to retry.\" The implementation renders: \"No credit was used — open to retry.\" The spec source uses double-hyphen which in markdown renders as an em dash, so this is functionally identical copy. However the spec string is the authoritative source and the implementation deviates from its literal character sequence.",
+      "fix": "Change the subtitle string to match the spec exactly: \"No credit was used -- open to retry.\" or verify with the spec author whether the typographic em dash is acceptable. If the spec author confirms intent was an em dash, document the deviation as approved."
+    }
+  ],
+  "compliant_requirements": [
+    "PlatoMark: variant prop accepts 'sparkle' | 'sparkles' | 'wand', default 'sparkle'",
+    "PlatoMark: size prop default 16",
+    "PlatoMark: SVG uses currentColor for stroke/fill in all three variants",
+    "PlatoMark: aria-hidden='true' present on SVG element",
+    "PlatoMark: all three variant SVG paths present (sparkle, sparkles, wand)",
+    "PlatoChip: size default 28, radius default 7, variant default 'sparkle'",
+    "PlatoChip: gradient is linear-gradient(120deg, #FBD7FF 10%, #FFDEC1 90%)",
+    "PlatoChip: hairline inset 0 0 0 1px rgba(0,0,0,0.07) present",
+    "PlatoChip: star size is Math.round(size * 0.62)",
+    "PlatoChip: glyph color always colors.gray[900] regardless of dark mode",
+    "PlatoChip: gradient same in both light and dark mode (brand element, no dark ternary on background)",
+    "PlatoChip: no overflow:hidden on Styled.Chip",
+    "Styled.Wrapper: no overflow:hidden",
+    "Styled component labels: PlatoMark_Wrapper, PlatoMark_Chip present",
+    "PlatoOverviewCallout: Props interface has jobApplication: any and onOpen: () => void",
+    "PlatoOverviewCallout: Styled.Card is styled.button with full reset CSS (appearance, background, border, padding, text-align, width, cursor, font)",
+    "PlatoOverviewCallout: card border 1px solid t.poly.color.border",
+    "PlatoOverviewCallout: card border-radius t.poly.radii.md",
+    "PlatoOverviewCallout: card background t.poly.color.cardCanvas",
+    "PlatoOverviewCallout: hover border-color t.poly.color.borderHover",
+    "PlatoOverviewCallout: transition border-color 0.2s ease",
+    "PlatoOverviewCallout: PlatoChip size=32 radius=8",
+    "PlatoOverviewCallout: Styled.Bar absolutely positioned, width 3px, gradient linear-gradient(120deg, #fbd7ff 10%, #ffdec1 90%)",
+    "PlatoOverviewCallout: Styled.Bar border-radius matches card left corners (t.poly.radii.md 0 0 t.poly.radii.md)",
+    "PlatoOverviewCallout: connector tick ::after present on Styled.Card, width 4px, height t.spacing[6], color t.dark ? t.color.gray[800] : t.color.gray[200]",
+    "PlatoOverviewCallout: connector tick ::after NOT clipped (no overflow:hidden on card)",
+    "PlatoOverviewCallout: Title 14px/600/loudText",
+    "PlatoOverviewCallout: Subtitle 13px/secondaryText/single-line ellipsis",
+    "PlatoOverviewCallout: CTA display-only text with chevron-right icon",
+    "PlatoOverviewCallout: card onClick={onOpen} only -- no generate mutation invoked from card",
+    "PlatoOverviewCallout: state evaluation order -- succeeded first, failed second, generating third, no-summary+hasResume fourth, fallback last",
+    "PlatoOverviewCallout: all 6 state copy rows verified -- titles, subtitles, and CTAs match spec",
+    "PlatoOverviewCallout: row 4 generating state covers pending/in_progress/extracted/textract_processing",
+    "PlatoOverviewCallout: export default PlatoOverviewCallout",
+    "PlatoOverviewCallout: styled component labels present (PlatoOverviewCallout_Card, _Bar, _TextColumn, _Title, _Subtitle, _Cta)"
+  ],
+  "notes": [
+    "The failed-state subtitle deviation (A1-H1) is a literal character difference between spec and implementation. The semantic meaning is identical. The spec author should confirm whether the typographic em dash is intentional, in which case the spec should be updated to match rather than the code changed.",
+    "PlatoMark accepts an undocumented `color` prop not listed in the spec's PlatoMarkProps. The spec says 'Uses currentColor for stroke/fill' without listing a color prop. The prop defaults to 'currentColor' so baseline behavior is compliant. PlatoChip uses it to pass colors.gray[900] for the chip glyph color as spec requires. This is an implementation detail that works correctly but represents minor undocumented surface area.",
+    "Run 5 fixes verified correct: overflow:hidden removed from Styled.Card, Styled.Bar has rounded left corners matching card border-radius."
+  ]
+}

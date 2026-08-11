@@ -1,0 +1,19 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 1,
+  "focus_area": "Authorization (SPEC §9) + full API layer (routes §5.1, controller §5.2, serializer §5.3), including controller spec auth contexts",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §5.1 (nested singleton route with explicit controller)",
+      "SPEC §5.2 (controller show/create: ordering, authorize, Flipper, blank-desc, extract, render, error strings, 422)",
+      "SPEC §5.3 (serializer attributes, latest_succeeded vs latest, safe-nav, no fabricated fallbacks)",
+      "SPEC §9 (authorization: create -> update?, show -> show?, update? semantics, no new policy methods)",
+      "SPEC §12 (controller spec: #show/#create coverage + the two amended auth contexts)"
+    ],
+    "implemented": 5,
+    "missing": 0,
+    "notes": "Fresh independent re-verification of round 1; all assigned requirements match the spec exactly. AUTH (§9): controller create calls `authorize job, :update?` (ai_job_criteria_controller.rb:13, was `:update_ai_settings?` per auth commit 859c85ead — verified the commit is exactly +21/-2 across only the controller and its spec, no scope creep); show calls `authorize job, :show?` (line 6). `JobPolicy#update?` = `on_hiring_team?` = `is_org_admin? || record.users.include?(user)` (job_policy.rb:20-22,58-60) — JobPolicy's own on_hiring_team? overrides ApplicationPolicy's; no new policy methods added. Both auth spec contexts genuinely exercise `update?` and are FALSIFIABLE, not ghost: (a) hiring-team member context creates an org_user + HiringTeamMembership with `hiring_team_ai_credits_control_enabled=false` and asserts 200 on both show and create — under the OLD gate `update_ai_settings?` = `can_use_ai_credits?` = `is_org_admin? || (is_org_user? && hiring_team_ai_credits_control_enabled?)` this user resolves FALSE and would 403, so reverting the gate would fail this test; Job#users flows through hiring_team_memberships->organization_users->users so `record.users.include?(hiring_team_user)` is true, and OrganizationUser#jobs (through hiring_team_memberships) makes show? true; (b) outsider context (org_user, no membership, not admin) asserts 403 on create — update? resolves false, and removing authorize would 200/fail the test. `user_not_authorized` renders status 403 (matches have_http_status(:forbidden)); test helpers `create_credit_test_organization_user(role:)`, `credit_test_owner_organization_user`, `create_credit_test_job(description:)` all exist with matching signatures. ROUTES (§5.1): `resource :ai_job_criteria, only: [:show, :create], controller: 'ai_job_criteria'` nested inside `resources :jobs do` (routes.rb:266) — singleton resource + explicit controller, exact match. CONTROLLER (§5.2): ordering exists->authorize->Flipper->blank-desc->extract->render is exact; Flipper string 'AI summaries are not enabled for this organization.' and blank-desc string 'This job needs a description before Plato can extract criteria. Add one in Job setup.' both exact; render_general_errors returns 422 (:unprocessable_entity); create passes requesting_organization_user_id: current_organization_user.id; no params method (zero body params, compliant). SERIALIZER (§5.3): attributes [:criteria, :extracted_at, :status, :zero_criteria_failure] exact; criteria/extracted_at from latest_succeeded_ai_job_criteria (status_succeeded.order desc), status from latest_ai_job_criteria (order desc), zero_criteria_failure from zero_criteria_extraction_failure? predicate; all safe-nav, no `|| false`/`|| []` fabricated fallbacks — matches the payload state table. #show/#create controller examples assert real payload values and behavioral outcomes (row creation, enqueue-with-args, 422 for blank/flipper, no-op 200 for in_progress/retrying, draft+published) — all falsifiable, none tautological. No findings."
+  }
+}

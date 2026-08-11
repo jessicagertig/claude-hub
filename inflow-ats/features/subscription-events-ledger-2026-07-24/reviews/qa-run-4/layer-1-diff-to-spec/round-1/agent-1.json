@@ -1,0 +1,17 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 4,
+  "agent_index": 1,
+  "slice": "trial_started writer chain",
+  "findings": [],
+  "verified": [
+    "organization.rb committed diff (a0d59115d..549039a0c) is exactly the two sanctioned hunks: (1) subscription_started_trial_after_commit? branch replaces Discord::NotifyFreeTrialStartedJob.perform_later(id) with CreateSubscriptionEvent.call(organization: self, event_type: 'trial_started', to_plan: plan, stripe_subscription_id: stripe_subscription_id) — byte-identical to SPEC §5.1's specified call; (2) trial_converted_to_paid_after_commit? branch removes only Discord::NotifyTrialConvertedToPaidJob.perform_later(id). Diff stat: 3 lines. Nothing else in organization.rb changed.",
+    "Slack lines (Notification::FreeTrialStartedJob, Notification::TrialConvertedToPaidJob), ap log lines, and organization_ai_credit_balance&.reset_ai_credits are byte-identical context lines in the diff.",
+    "Callback chain traced in committed 549039a0c: after_commit :handle_after_commit_on_update, on: [:update] (organization.rb:58) -> handle_after_commit_on_update -> handle_subscription_status_change_after_commit (gated on saved_changes.key?('stripe_subscription_status')) -> if subscription_started_trial_after_commit?, whose predicate is previous_status.nil? && current_status == 'trialing' (organization.rb:1188-1196) — the writer fires on exactly nil -> 'trialing'.",
+    "No amount param in the trial_started writer call; CreateSubscriptionEvent merges context.amount only when present, so amount stays nil (SPEC §5.1/§6). trial_started is not in SubscriptionEvent::CONVERSION_EVENT_TYPES, so the conversion uniqueness guard does not apply; the 5-minute dedupe plus the exact transition gate guard this writer, per §5.1.",
+    "enum trial_started: 7 present on SubscriptionEvent; the interactor's return unless organization guard sits above the ap logging lines (§6 guard-order fix), and organization: self is always present on this path.",
+    "spec/models/organization_subscription_events_spec.rb (SPEC §9.4) is non-vacuous. Test 1: create_credit_test_organization(stripe_active: false) yields nil stripe_subscription_status (helper verified at spec/support/ai_credits_test_helpers.rb:21-73; update_columns for ids skips callbacks), then update to 'trialing' asserts change(SubscriptionEvent, :count).by(1), event_type/organization_id/to_plan/stripe_subscription_id on the row, Slack enqueued, and Discord::NotifyFreeTrialStartedJob exactly(:once) — deleting the writer fails the count and Discord assertions; re-adding the callback-site Discord line fails exactly(:once). Test 2: trialing -> active via update asserts no row created, Slack still enqueued, and Discord::NotifyTrialConvertedToPaidJob not enqueued — restoring the removed Discord line fails it. Queue adapter :test around-block present per pipeline rule 31.",
+    "No unsanctioned changes bleed into this slice: Discord job files untouched (not in diff stat); callback registry and transition predicates unchanged from the reference map."
+  ]
+}

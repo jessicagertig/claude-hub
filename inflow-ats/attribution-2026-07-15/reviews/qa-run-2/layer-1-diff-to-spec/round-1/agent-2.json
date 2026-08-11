@@ -1,0 +1,47 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 2,
+  "focus_area": "backend controllers + specs",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "§4.1 (D3 permit: three plain params + utm_data: {} trailing hash-permit, questions_controller analog)",
+      "§4.2 (magic_create merges the four into user_params in BOTH branches; raw; nil-for-absent; existing-user branches inert; no identify/track/redirect/response-shape change)",
+      "§4.3 (create path — no change beyond permit)",
+      "§4.4 (D5 four current_user copies alongside created_via; organization_params NOT modified)",
+      "§4.8 (D12 success redirect /auth?email_confirmed=true&id=<user.id>&email=<CGI.escape(email)>; failure line unchanged)",
+      "§6 (authorization unchanged)",
+      "§9.1 / §9.4 / §9.5 (scenario presence + falsifiability; login_intent: 'hire' on every magic_create POST; devise mapping + Devise::Test::ControllerHelpers)",
+      "§7 constraints 2, 4, 5"
+    ],
+    "verified": [
+      "§4.1",
+      "§4.2",
+      "§4.3",
+      "§4.4",
+      "§4.8",
+      "§6",
+      "§9.1",
+      "§9.4",
+      "§9.5",
+      "§7.2",
+      "§7.4",
+      "§7.5"
+    ],
+    "missing": []
+  },
+  "verification_notes": {
+    "§4.1 permit": "app/controllers/api/v1/registrations_controller.rb sign_up_params now reads params.permit(:name, :first_name, :last_name, :email, :password, :beta_token, :registration_stripe_plan, :referral, :partner, :organization_slug, :login_intent, :utm_source, :utm_campaign, :internal_ref, utm_data: {}) — the three plain params added, utm_data: {} is the TRAILING argument, matching the questions_controller.rb options: {} analog form. No pre-existing permit entry removed or reordered.",
+    "§4.2 magic_create": "Both branches of the user_params conditional (connect-intent branch with connect_login_intent_organization_id, and the default branch) gain exactly the four keys utm_source/utm_campaign/utm_data/internal_ref, each sourced from sign_up_params[...] — raw, no &.downcase, no mapping (deliberate contrast with the adjacent partner_source: params[:partner]&.downcase, which is untouched). sign_up_params[<key>] is nil when the param is absent, satisfying nil-for-absent. Existing-user branches verified inert: the confirmed branch reads only user_params[:email] (MagicLink.generate(email: user_params[:email], ...)), the unconfirmed branch reads only the found user — neither assigns attributes. git diff shows the file's ONLY hunks are the two merge additions and the permit line: no identify/track/redirect/response-shape change anywhere in magic_create (both existing-user JSON responses and the new-user render json: {message:, needs_email_confirmation:, accepted_an_invite:} are byte-untouched).",
+    "§4.3 create": "Zero diff hunks in #create. expanded_params = sign_up_params.merge(created_via:, partner_source:) → build_resource picks up the four automatically once permitted. Confirmed by the controller spec's POST #create raw-persistence test.",
+    "§4.4 organizations#create": "app/controllers/api/v1/organizations_controller.rb lines 32-35 add exactly @organization.utm_source/utm_campaign/utm_data/internal_ref = current_user.<same>, immediately after the existing @organization.created_via = current_user.created_via analog and before authorize @organization (authorize position unchanged). organization_params (lines 118+) is untouched — it still permits none of the four; the whole file diff is those 4 lines. Values never come from the request (the spec file's tamper test pins this).",
+    "§4.8 confirmations#show": "app/controllers/hire/confirmations_controller.rb line 18: redirect_to \"/auth?email_confirmed=true&id=#{user.id}&email=#{CGI.escape(user.email)}\" — exact spec-proposed param names and order, CGI.escape on email. Failure line 21 redirect_to '/auth?email_confirmed=false' byte-identical. Success branch guarded by user.errors.blank? so id/email always present; no other change in the file.",
+    "§6 authorization": "No before_action/skip changes in any of the three controllers. organizations#create keeps authorize @organization; Hire::ConfirmationsController still authenticates solely via User.confirm_by_token; registrations endpoints remain unauthenticated Devise api_v1_user scope.",
+    "§9.1 registrations spec": "spec/controllers/api/v1/registrations_controller_spec.rb: type: :controller, include Devise::Test::ControllerHelpers (line 15, per the bulk_ai_job_application_summaries_controller_spec.rb line 7 precedent) AND @request.env['devise.mapping'] = Devise.mappings[:api_v1_user] in before. All 4 magic_create POSTs include login_intent: 'hire' (lines 33, 53, 79, 108), routing around the pre-existing connect-branch organization.id NoMethodError without fixing it. All 6 required scenarios present: new-user raw persistence (mixed-case 'SomeRawValue' asserted verbatim — falsifiable against a downcasing implementation; multi-key utm_data asserted as a string-keyed hash round-trip), new-user all-nil (utm_data asserted be_nil, not {}), existing-confirmed inert, existing-unconfirmed inert (branch reaches sign_in, hence the warden requirement), create-path with/without the four. Ghost-test check: the positive assertions fail if the permit additions or either branch's merge is removed (values would be nil); the inert tests fail if existing users were updated. Recaptcha::Verifier#verify returns VerificationResult.new(true) when Rails.env.test? (app/services/recaptcha/verifier.rb line 16) — no stub needed, as the spec states.",
+    "§9.4 organizations spec": "spec/controllers/api/v1/organizations_controller_spec.rb: type: :controller, stubs authenticate_api_v1_user!/current_user/authorize/set_sentry_context per the ai-credit spec pattern (organization_ai_credit_purchases_purchase_top_up_spec.rb); all four names verified real (Api::V1::BaseController before_actions authenticate_api_v1_user!/set_sentry_context; ApplicationController include Pundit with no verify_authorized after_action, so stubbing authorize is safe). Both required scenarios present: attributed current_user → identical four values on the Organization; nil current_user columns → nil Organization columns. Extra tamper test (utm_source: 'attacker' in the organization body → stored value stays 'SomeRawValue') traces to §4.4/'organization_params is NOT modified' and §6; safe because config.load_defaults 6.0 leaves action_on_unpermitted_parameters at :log. Falsifiable: removing the four copy lines yields nil/'attacker' ≠ 'SomeRawValue'.",
+    "§9.5 confirmations spec": "spec/controllers/hire/confirmations_controller_spec.rb: success test asserts the full redirect URL including id and CGI.escape(user.email), using 'confirm+test@example.com' whose '+'/'@' force real URL-encoding ('confirm%2Btest%40example.com') — an unescaped implementation fails the exact-match matcher. Failure test asserts the byte-identical '/auth?email_confirmed=false' with no id/email. Route verified: config/routes.rb line 577 get '/email_confirmation', to: 'confirmations#show'. Hire::BaseController has no auth before_action; OrgOwnerUpdateJob handled by the around :test queue adapter.",
+    "§7 constraints": "2 (nil-for-absent): no || fallbacks anywhere in the three controllers' diffs; sign_up_params yields nil for absent keys; schema columns are nullable with no defaults (db/schema.rb users + organizations blocks). 4 (raw storage): no downcasing/mapping on any of the four in any controller; specs pin mixed-case verbatim storage. 5 (creation-time only): user assignment only via build_resource(user_params) in the new-user branch and #create; organization assignment only in organizations#create from current_user; existing-user branches verified read-only; specs pin both inert branches.",
+    "trace_chain": "SPEC.md/approved-decisions.md → git diff 62dd55867..299cf9465 → app/controllers/api/v1/registrations_controller.rb (full read incl. magic_create tail, get_created_via, accept_invite, add_connect_user) → app/controllers/api/v1/organizations_controller.rb (create + organization_params) → app/controllers/hire/confirmations_controller.rb → app/controllers/api/v1/base_controller.rb → app/controllers/hire/base_controller.rb → app/controllers/application_controller.rb (render_one, include Pundit) → app/services/recaptcha/verifier.rb → config/application.rb (load_defaults 6.0) → config/routes.rb:577 → db/schema.rb → the three new spec files → precedents spec/controllers/api/v1/organization_ai_credit_purchases_purchase_top_up_spec.rb + bulk_ai_job_application_summaries_controller_spec.rb → spec/support/api_factories.rb + rails_helper (no global Devise::Test wiring)."
+  }
+}

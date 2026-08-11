@@ -1,0 +1,15 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 14,
+  "focus": "FALSE-POSITIVE guard-safety / over-blocking prevention: the zero-criteria review guard must block ONLY genuine terminal zero-criteria failures (latest row failed + message in ZERO_CRITERIA_ERROR_MESSAGES) and must NOT over-block. Drove ValidateAiSummaryGeneration.call and ValidateAutoAiSummaryGeneration.call (all preconditions valid) plus Job#zero_criteria_extraction_failure? directly. SPEC.md 4.3, 6.4, 8.2.",
+  "scenarios_run": [
+    "Isolated setup: built own uniquely-suffixed org/user/owner_ou/job(with description)/candidate/job_application; read-only confirmed global AI_APPLICANT_SUMMARY flag enabled; stubbed only not-under-test preconditions (has_resume=true on ja, ai_credits_available?=true on every reachable org instance); hard-safety stubbed SubmitResumeToTextractJob/GenerateAiJobApplicationSummaryJob/ExtractJobCriteriaJob perform_later to no-op so no real AI/Textract call can fire.",
+    "CONTROL (falsifiability): latest row = terminal zero-criteria failure (Criteria array is empty) -> Job#zero_criteria_extraction_failure? == true AND BOTH validators fail with EXACT message 'No scoring criteria were found in the job description. Regenerate job criteria in Plato AI settings before running reviews.'. Proves the guard is reachable and the 'not blocked' assertions below are not ghost tests.",
+    "Case (a): in-flight row (pending, then in_progress, then retrying) created NEWER (created_at 5s ago) stacked on top of an OLDER (created_at 1h ago) zero-criteria failed row. For each: asserted older row IS zero_criteria_failure? at row level, latest_ai_job_criteria is the in-flight row, predicate == false, and NEITHER validator blocked by zero-criteria guard. Proves guard reads LATEST row, not 'any row'.",
+    "Case (b): latest row = NON-zero-criteria failure, tested 'Job description is blank', 'Failed to parse AI response: something', and an arbitrary StandardError message. Each: row-level zero_criteria_failure? false, predicate false, neither validator blocked by the zero-criteria guard.",
+    "Case (c): latest row succeeded (with criteria) -> predicate false, not blocked. Case (c2): succeeded row NEWER over an older zero-criteria failed row -> predicate false, not blocked.",
+    "Case (d): no ai_job_criteria rows at all -> latest_ai_job_criteria nil, predicate returns nil (falsey), neither validator blocked by the zero-criteria guard."
+  ],
+  "findings": []
+}

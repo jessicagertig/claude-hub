@@ -1,0 +1,22 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 4,
+  "slice": "migration + enum + uniqueness invariant",
+  "findings": [],
+  "verified": [
+    "Migration db/migrate/20260725033136_add_stripe_subscription_id_and_amount_to_subscription_events.rb: add_column :subscription_events, :stripe_subscription_id, :string and add_column :subscription_events, :amount, :integer — both nullable, no defaults, no backfill, no currency column (SPEC §3)",
+    "Partial unique index is SINGLE-COLUMN on stripe_subscription_id with unique: true and where: 'event_type IN (2, 8)' (name idx_subscription_events_conversion_stripe_sub_id — SPEC-PROPOSED free choice); matches the binding invariant of at most one conversion-type row per stripe_subscription_id",
+    "Migration shape matches analog 20260723222212_add_adroll_click_id_to_users.rb (frozen_string_literal, Migration[6.1], def change, bare add_column) plus add_index; creation migration 20250907194956_create_subscription_events.rb consulted for index style",
+    "Committed db/schema.rb diff (a0d59115d..89286fba8) contains EXACTLY: version bump 2026_07_24_183711 -> 2026_07_25_033136, t.string stripe_subscription_id, t.integer amount, and the partial unique index (Postgres-normalized where '(event_type = ANY (ARRAY[2, 8]))') — nothing else",
+    "Enum in app/models/subscription_event.rb: trial_started: 7 and trial_converted_to_paid: 8 added; converted_to_paid: 2 unchanged; values 0/1 (assigned_free_plan_on_creation, assigned_free_plan) byte-identical; 3/4/5/6 untouched; grep of the full committed diff shows NO writers for downgraded_to_free/upgraded_plan/downgraded_plan (comment references only)",
+    "Stale comment block corrected: new comment lines 0-8 match the enum mapping exactly (old block mislabeled 0/1 and duplicated '1:'); D2 comment present stating MAIN subscription events only with AI-credit events living in OrganizationAiCreditPurchase / AiCreditBalanceTransaction",
+    "SubscriptionEvent::CONVERSION_EVENT_TYPES = %w[converted_to_paid trial_converted_to_paid].freeze — maps to enum values exactly {2, 8}, matching the index condition",
+    "Interactor guard conversion_duplicate_exists? (app/interactors/create_subscription_event.rb) queries SubscriptionEvent.where(event_type: CONVERSION_EVENT_TYPES).where(stripe_subscription_id: ...) — by stripe_subscription_id ALONE (no organization scoping), matching the single-column index; check runs BEFORE build and before the 5-minute dedupe; duplicate -> context.fail! (graceful, logged, never raised)",
+    "Raced-delivery backstop: method-level rescue ActiveRecord::RecordNotUnique logs via Rails.logger.error and context.fail! with the same graceful message (SPEC §6)",
+    "Guard-order fix applied: return unless organization moved ABOVE the two ap logging lines (the nil-organization NoMethodError path is gone); existing event_params, 5-minute dedupe, and assigned_free_plan* behavior otherwise unchanged; new params merged only when present so existing callers get nil columns",
+    "Tests (spec/interactors/create_subscription_event_spec.rb): cross-type uniqueness guard both directions (converted_to_paid blocks trial_converted_to_paid and vice versa, count stays 1); RecordNotUnique backstop test stubs conversion_duplicate_exists? false to force the index path (fails if the index is deleted — non-vacuous); new params persisted; params-absent -> nil columns; assigned_free_plan/assigned_free_plan_on_creation 5-min dedupe unchanged with exact message; nil-organization no-raise no-op test (fails if the guard-order fix is reverted — non-vacuous); create_credit_test_organization helper confirmed at spec/support/ai_credits_test_helpers.rb:21; queue-adapter :test around-block present per pipeline rule 31",
+    "Uniqueness invariant end-to-end: spec/jobs/stripe_webhook_handler_subscription_events_spec.rb:111 'creates exactly one row across duplicate deliveries and does not raise' asserts count change of 1 and conversion-type row count == 1",
+    "D11 glance (not my slice): git diff for app/jobs/stripe_webhook_handler_job.rb contains EXACTLY two purely-additive, begin/rescue StandardError-isolated blocks at the two sanctioned insertion points (end of invoice.paid main-plan else branch after reset_ai_credits; end of subscription.deleted else branch after EngagementReport::GeneratorJob, with the plain 'if organization' nil guard per §5.3); no branch reordering, no attribute-access changes, no removals — no BLOCKER"
+  ]
+}

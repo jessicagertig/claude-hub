@@ -1,0 +1,99 @@
+{
+  "agent": "agent-4",
+  "assignedFiles": [
+    "app/javascript/ats/src/components/shared/PlatoMark.tsx",
+    "app/javascript/shared/types/aiJobApplicationSummary.ts",
+    "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts"
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "file": "app/javascript/shared/types/aiJobApplicationSummary.ts",
+      "line": 22,
+      "severity": "MED",
+      "category": "type-safety",
+      "title": "AiAssessment marks careerNarrative and experienceClassifications as optional, but the backend schema requires them",
+      "description": "The backend JSON schema (app/services/ai_job_application_action/summary/prompts/resume_assessment.rb line 117) declares `career_narrative` and `experience_classifications` in its `required` array. The OpenAI structured output with `strict: true` guarantees they are always present. However, the TypeScript AiAssessment interface (lines 22-23) marks `careerNarrative?: string` and `experienceClassifications?: any[]` as optional with `?`. This is technically defensive -- being more permissive than the backend is non-breaking and guards against future schema changes. However, it means consuming code must add unnecessary null checks for fields that are always present. The spec (lines 176-185) explicitly matches this optionality, so this is spec-compliant. Classified MED because it is intentional defensive typing per the spec, not a behavioral bug.",
+      "evidence": "Backend schema required array: `required: %w[primary_domain secondary_domain tertiary_domain experience_classifications key_skills career_narrative standout_accomplishments]` (resume_assessment.rb:117). TS type: `careerNarrative?: string; experienceClassifications?: any[];` (aiJobApplicationSummary.ts:22-23). Spec lines 182-184 show the same `?` optionality.",
+      "suggestedFix": "No change needed -- this is spec-compliant defensive typing. If tighter types are desired later, remove the `?` from both fields."
+    },
+    {
+      "id": "F2",
+      "file": "app/javascript/shared/types/aiJobApplicationSummary.ts",
+      "line": 16,
+      "severity": "LOW",
+      "category": "type-safety",
+      "title": "AiAssessment types primaryDomain and secondaryDomain as nullable, but backend schema does not allow null",
+      "description": "The backend JSON schema defines `primary_domain.name` and `secondary_domain.name` as `type: 'string'` (not `['string', 'null']`), and both objects are in the `required` array. The backend will never return null for these. However, the TS type allows `primaryDomain: { name: string; reasoning: string } | null`. The spec (line 188) explicitly says 'The `| null` on `primaryDomain`/`secondaryDomain` is defensive -- both are always present in practice, but this guards against unexpected data.' This is intentional per the spec.",
+      "evidence": "Backend: `primary_domain` and `secondary_domain` have `required: %w[name reasoning]` with `name: { type: 'string' }` (resume_assessment.rb:64-80). TS: `primaryDomain: { name: string; reasoning: string } | null` (aiJobApplicationSummary.ts:16-17). Spec line 188 confirms this is intentional defensive typing.",
+      "suggestedFix": "No change needed -- spec-compliant. Consuming code must handle the null case defensively (optional chaining), which is the intent."
+    },
+    {
+      "id": "F3",
+      "file": "app/javascript/ats/src/components/shared/PlatoMark.tsx",
+      "line": 26,
+      "severity": "LOW",
+      "category": "pattern-violation",
+      "title": "PlatoMark uses inline style objects while WandIcon analog uses Emotion css prop",
+      "description": "The spec says to follow WandIcon.tsx as the pattern for inline SVG components. WandIcon uses the Emotion `css` prop for sizing (`css={css`height: 1.25em; width: 1.25em;`}`). PlatoMark uses inline React `style` props and plain object spreads instead. This is a minor pattern deviation. However, WandIcon is a simpler fixed-size component, while PlatoMark has dynamic size props that make inline style objects more practical. The PlatoMark does use Emotion styled components for the Wrapper and Chip, so it partially follows the codebase pattern. The spec does not mandate the css prop specifically -- it only says to follow WandIcon for the 'inline SVG pattern.'",
+      "evidence": "WandIcon.tsx line 11: `css={css` height: 1.25em; ...`}`. PlatoMark.tsx line 14-18: `const base = { width: size, height: size, viewBox: '0 0 24 24', style: { display: 'block' as const } }` spread onto `<svg {...base}>`. Spec line 37: 'Pattern to follow: WandIcon... for inline SVG pattern.'",
+      "suggestedFix": "No change required -- the dynamic size prop justifies the pattern difference. If consistency is desired, the width/height could be applied via a styled svg component instead of inline style."
+    },
+    {
+      "id": "F4",
+      "file": "app/javascript/ats/src/components/shared/PlatoMark.tsx",
+      "line": 63,
+      "severity": "LOW",
+      "category": "edge-case",
+      "title": "PlatoMark accepts arbitrary color prop values without sanitization, but XSS risk is negligible",
+      "description": "The `color` prop (string, default 'currentColor') is applied via `style={{ color }}` on the wrapper span. In React, inline style values are escaped by React's style handling -- they are set via `element.style.color = value`, not via innerHTML. This means arbitrary strings cannot inject scripts or HTML. A malicious color value like `red; background: url(evil)` would be ignored by the browser's CSS parser because React sets individual properties, not raw CSS text. No XSS risk.",
+      "evidence": "Line 63: `<Styled.Wrapper style={{ color }}>`. React applies inline styles via DOM properties, not string interpolation.",
+      "suggestedFix": "No change needed. React's style handling prevents injection."
+    },
+    {
+      "id": "F5",
+      "file": "app/javascript/ats/src/components/shared/PlatoMark.tsx",
+      "line": 13,
+      "severity": "LOW",
+      "category": "edge-case",
+      "title": "PlatoMark and PlatoChip accept size=0 or negative numbers producing invisible or invalid SVGs",
+      "description": "Both `PlatoMark` (line 13, `size` default 16) and `PlatoChip` (line 77, `size` default 28) accept any number for size. A `size=0` produces a 0x0 SVG that is invisible. A negative number produces negative width/height attributes on the SVG and negative CSS dimensions on the chip, which browsers treat as invalid (collapsed to 0). `PlatoChip` compounds this: `Math.round(0 * 0.62) = 0` and `Math.round(-5 * 0.62) = -3`. In practice, these components are only instantiated internally with hardcoded sizes (e.g., `PlatoChip` at size 22, 26, 28, 32 in the spec), so this edge case cannot occur at runtime. No validation is needed.",
+      "evidence": "PlatoMark line 13: `size = 16`. PlatoChip line 77: `size = 28`. Line 80: `Math.round(size * 0.62)`. Spec only references specific hardcoded sizes: 22 (sidebar), 26 (tab header), 28 (default), 32 (callout).",
+      "suggestedFix": "No change needed -- all call sites use positive hardcoded sizes. If the component were exposed as a public API, a `Math.max(1, size)` clamp would be appropriate."
+    },
+    {
+      "id": "F6",
+      "file": "app/javascript/ats/src/components/shared/PlatoMark.tsx",
+      "line": 89,
+      "severity": "LOW",
+      "category": "pattern-violation",
+      "title": "Styled namespace uses bare object assignment instead of the theme callback pattern",
+      "description": "The codebase convention (per spec lines 220-228) is `Styled.ComponentName = styled.div((props: any) => { const t: any = props.theme; return css`...`; })`. PlatoMark.tsx uses the simpler `styled.span` with a template literal directly (lines 92-96, 98-106) without the theme callback. This is acceptable here because neither Styled.Wrapper nor Styled.Chip uses theme tokens -- the gradient is hardcoded brand colors and the wrapper has no theme-dependent styles. If dark mode adjustments were needed, the theme callback pattern would be required.",
+      "evidence": "Line 92: `Styled.Wrapper = styled.span` with backtick template. Line 98: `Styled.Chip = styled.span` with backtick template. Convention from spec: `styled.div((props: any) => { const t: any = props.theme; return css`...`; })`.",
+      "suggestedFix": "No change needed -- the components do not use theme tokens. The simpler form is appropriate."
+    },
+    {
+      "id": "F7",
+      "file": "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts",
+      "line": 44,
+      "severity": "LOW",
+      "category": "logic-correctness",
+      "title": "useAiJobApplicationSummary enabled guard uses > 0 check which is redundant with !! check but correct",
+      "description": "Line 44: `{ enabled: !!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0 }`. The `!!aiJobApplicationSummaryId` check already catches 0, null, undefined, and NaN. The `> 0` check additionally guards against negative numbers. Since database IDs are always positive integers, the `> 0` is a sensible defensive check. Both conditions together correctly prevent the query from firing when no valid summary ID is available. The query key (line 42) uses only `aiJobApplicationSummaryId`, not `jobApplicationId`, which means if the same summary ID were fetched for different job applications, the cache would serve stale data. In practice this cannot happen because summary IDs are globally unique (database primary keys).",
+      "evidence": "Line 42-44: `useQuery(['aiJobApplicationSummary', aiJobApplicationSummaryId], () => getAiJobApplicationSummary(jobApplicationId, aiJobApplicationSummaryId), { enabled: !!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0 })`.",
+      "suggestedFix": "No change needed. The guard is correct and defensive."
+    },
+    {
+      "id": "F8",
+      "file": "app/javascript/shared/queryHooks/useAiJobApplicationSummary.ts",
+      "line": 9,
+      "severity": "LOW",
+      "category": "logic-correctness",
+      "title": "generateAiSummary sends jobApplicationId in both URL path and request body",
+      "description": "The mutation sends `jobApplicationId` in the URL path (line 10: `/job_applications/${params.jobApplicationId}/...`) and also in the request body via `{ aiJobApplicationSummary: params }` (line 11), which after `allKeysToSnake` becomes `{ ai_job_application_summary: { job_application_id: N } }`. The backend controller (api/v1/ai_job_application_summaries_controller.rb) only reads `params[:job_application_id]` from the URL routing params and ignores the body entirely. The duplicate is harmless but unnecessary. This is a pre-existing pattern, not introduced by this feature.",
+      "evidence": "Line 10: path includes `${params.jobApplicationId}`. Line 11: body includes `{ aiJobApplicationSummary: params }` where params has `jobApplicationId`. Controller line 5: `params[:job_application_id]` comes from the route, not the body.",
+      "suggestedFix": "No change needed -- pre-existing pattern, harmless duplicate. Could simplify to `variables: {}` but not worth the churn."
+    }
+  ],
+  "summary": "All three assigned files are correct and spec-compliant. No HIGH-severity findings. The AiAssessment type's optional markers (F1, F2) are intentionally defensive per the spec. PlatoMark's SVG rendering is correct across all three variants with proper aria-hidden, currentColor inheritance, and stroke attribute handling. The query hook's enabled guard and mutation pattern are both correct. Minor pattern deviations (F3, F6) are justified by the components' specific needs. Edge cases (F4, F5) are prevented by the call-site usage patterns."
+}

@@ -1,0 +1,7 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 1,
+  "scenario": "Job#extract_job_criteria_immediately guard matrix (SPEC 4.1). Seeded ai-org-published-job.json; drove job.extract_job_criteria_immediately against the seeded 'Senior Engineer' job (id 27606) using ActiveJob queue_adapter = :test to capture ExtractJobCriteriaJob enqueues without executing. Manipulated the latest AiJobCriteria row status per sub-case (rows created/destroyed directly; no real OpenAI extraction run). Verified DB row deltas and enqueued job args for all 6 sub-cases: (1) blank description, (2) latest in_progress, (3) latest retrying, (4) latest pending, (5) latest succeeded, (6) requesting_organization_user_id threading with/without kwarg. Every case matched SPEC 4.1: blank/in_progress/retrying no-op (0 new rows, 0 enqueues); pending creates a new pending row + enqueue (deliberate no pending guard, adjudicated, not flagged); succeeded creates a new row + enqueue (succeeded guard lives only in _if_needed); with kwarg enqueues args [new_row_id, 35378]; without kwarg enqueues args [new_row_id, nil]. No deviations from spec.",
+  "findings": []
+}

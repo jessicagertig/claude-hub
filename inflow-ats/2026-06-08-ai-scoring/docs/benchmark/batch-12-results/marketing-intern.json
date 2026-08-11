@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "batch": 12,
+    "criteria_prompt_version": 8,
+    "job_id": 21367,
+    "title": "Marketing Intern",
+    "organization": "Robomart",
+    "cost": 0.00069
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": "About the team",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Robomart is an extremely ambitious startup with the vision of giving consumers anything they need - instantaneously. Marketing team members are the champions of our business, and are responsible for ensuring that this promise gets delivered."
+      },
+      {
+        "heading": "About the role",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "You’ll have an opportunity to be a part of a team that is revolutionizing retail by creating a new way to shop and work at the ground level for a game changing service in its early stages."
+      },
+      {
+        "heading": "Responsibilities",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Manage our social media channels\nWork collaboratively with our analytics team members to derive insights\nEngage with senior management to define marketing KPIs\nDiscover novel ways to onboard users"
+      },
+      {
+        "heading": "Requirements",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Experience managing social media accounts\nBasic understanding of marketing principles\nAmbitious, relentless attitude to learn"
+      },
+      {
+        "heading": "Preferred",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Degree in marketing or communications from a top college\nExperience interning at a high growth startup\nExtreme passion for delivery, logistics and retail"
+      },
+      {
+        "heading": "Benefits",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "Joining an exciting venture-backed startup at the ground level\nFlexible hours\nAbility to transition to a full time role\nStock options (once transitioned into full time role)"
+      },
+      {
+        "heading": "About Us",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Based in Santa Monica, Calif., Robomart, Inc. has created the world’s first mobile supermarket through its fleet of on-demand, automated stores. Robomarts are engineered with cutting-edge technology, giving consumers the fastest possible way to get their groceries. Founded in 2017 by serial entrepreneurs with deep domain expertise in delivery, robotics, and retail, the company is venture backed and on a mission is to create the most convenient way to shop. To learn more about Robomart, visit robomart.co."
+      },
+      {
+        "heading": "How to Apply",
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "Does this role sound like a good fit? Email us at talent@robomart.co or fill out the application below.\nInclude the role's title in your subject line.\nSend along links that best showcase the relevant things you've built and done."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "legal",
+        "type": "non_criteria",
+        "content": "Robomart is an Equal Employment Opportunity employer that proudly pursues and hires a diverse workforce. Robomart does not make hiring or employment decisions of people and other sentient beings on the basis of race, color, religion or religious belief, ethnic or national origin, nationality, sex, gender, gender identity, sexual orientation, disability, age, military or veteran status, or any other basis protected by applicable local, state, or federal laws or prohibited by Company policy. Robomart also strives for a healthy and safe workplace and strictly prohibits harassment of any kind."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Manage our social media channels",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Manage our social media channels"
+      },
+      {
+        "text": "Work collaboratively with our analytics team members to derive insights",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Work collaboratively with our analytics team members to derive insights"
+      },
+      {
+        "text": "Engage with senior management to define marketing KPIs",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Engage with senior management to define marketing KPIs"
+      },
+      {
+        "text": "Discover novel ways to onboard users",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Discover novel ways to onboard users"
+      },
+      {
+        "text": "Experience managing social media accounts",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"experience with/in/using\" is a tier_2 signal",
+        "binary": false,
+        "source_text": "Experience managing social media accounts"
+      },
+      {
+        "text": "Basic understanding of marketing principles",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"understanding of\" is a tier_2 signal",
+        "binary": false,
+        "source_text": "Basic understanding of marketing principles"
+      },
+      {
+        "text": "Ambitious, relentless attitude to learn",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Ambitious, relentless attitude to learn"
+      },
+      {
+        "text": "Degree in marketing or communications from a top college",
+        "tier": "tier_2",
+        "tier_reasoning": "default tier_2 for preferred section",
+        "binary": true,
+        "source_text": "Degree in marketing or communications from a top college"
+      },
+      {
+        "text": "Experience interning at a high growth startup",
+        "tier": "tier_2",
+        "tier_reasoning": "default tier_2 for preferred section",
+        "binary": false,
+        "source_text": "Experience interning at a high growth startup"
+      },
+      {
+        "text": "Extreme passion for delivery, logistics and retail",
+        "tier": "tier_2",
+        "tier_reasoning": "default tier_2 for preferred section",
+        "binary": false,
+        "source_text": "Extreme passion for delivery, logistics and retail"
+      }
+    ]
+  }
+}

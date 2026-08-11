@@ -1,0 +1,29 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "run": 3,
+  "head": "859c85ead",
+  "agents_dispatched": 8,
+  "agents_reporting": 8,
+  "coverage": {
+    "agent-1": "app/jobs/extract_job_criteria_job.rb — signature, broadcast_completion helper, 3 broadcast sites, retry_on exhaustion block; structural analog diff vs generate_ai_job_application_summary_job.rb",
+    "agent-2": "app/models/job.rb (gating change, zero_criteria_extraction_failure?, latest-row lookups) + app/models/ai_job_criteria.rb (constants, zero_criteria_failure?, enum)",
+    "agent-3": "app/controllers/api/v1/ai_job_criteria_controller.rb + config/routes.rb + app/serializers/api/v1/job_ai_job_criteria_serializer.rb + JobPolicy auth enforcement trace",
+    "agent-4": "zero-criteria review guard chain — validate_ai_summary_generation, validate_auto_ai_summary_generation, queue_bulk_ai_summary_jobs, bulk_ai_job_application_summaries_controller, textract_result funnel guard (ordering + nil-safety + entry-point coverage)",
+    "agent-5": "app/jobs/bulk_generate_ai_summaries_job.rb claim-row :failed fix + queue_bulk re-claim interaction + constant substitutions in extract_criteria.rb / score_job_application.rb (byte-exact value check)",
+    "agent-6": "frontend display-state derivation — JobCriteriaSection.tsx (§8.2 priority table, loading+disabled, no fabricated fallbacks) + jobCriteriaTiers.ts + JobSetupAiSettings.tsx wiring",
+    "agent-7": "RegenerateJobCriteriaConfirmModal.tsx (mutation ownership, loading+disabled, frozen-prop trap) + JobCriteriaViewModal.tsx + useAiJobCriteria.ts",
+    "agent-8": "end-to-end WebSocket contract — extract_job_criteria_job broadcast payload vs WebsocketGlobalChannelHandler case vs aiSummaryWebsocketPayloads interface vs useAiJobCriteria query-key/Number() match"
+  },
+  "findings": [],
+  "high_plus_count": 0,
+  "med_count": 0,
+  "low_count": 4,
+  "low_findings": [
+    {"id": "l2-a3-001", "title": "Serializer runs the two latest-row lookups twice each on a single render (2 distinct queries x2)", "note": "convention-consistent inefficiency, no correctness impact"},
+    {"id": "l2-a6-001", "title": "Dead `history` prop declared/passed but never read in JobCriteriaSection (Link used instead)", "note": "vestigial qa-run-2 minimal-fix residue, `any`-typed dead code, no runtime effect; already accepted L1 qa-run-3"},
+    {"id": "l2-a6-002", "title": "isInFlight folds in react-query isFetching, causing a transient button-disable flash on any background refetch", "note": "spec-sanctioned per §8.2/§8.3 isInFlight derivation"},
+    {"id": "l2-a7-001", "title": "JobCriteriaViewModal criterion rows keyed by array index", "note": "static frozen read-only list, no reordering, no actionable consequence"}
+  ],
+  "verdict": "Round 1 raw-clean of HIGH+ (0 BLOCKER / 0 HIGH / 0 MED / 4 LOW), 8 fresh agents, every changed source file covered with overlap on the highest-risk areas (extract_job_criteria_job exhaustion/broadcast, the guard chain, the display-state matrix, the WS end-to-end contract). Structural analog diff vs generate_ai_job_application_summary_job.rb clean; authorization gate (update?/show?) enforces with no bypass path; guard chain nil-safe and correctly ordered; §6.3 claim-row fix genuinely un-poisons candidates; constants byte-exact so zero-criteria detection cannot silently break; WS key names/case/Number() all match. Need one more clean round to converge — dispatch round-2 with fresh reshuffled agents."
+}

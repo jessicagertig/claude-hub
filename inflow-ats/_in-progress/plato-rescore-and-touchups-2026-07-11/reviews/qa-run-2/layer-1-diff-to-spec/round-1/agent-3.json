@@ -1,0 +1,45 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 3,
+  "focus": "All three backend spec files (bulk_all_stages_ai_summary_result_mailer_spec.rb vs SPEC 1.7; create_ai_summary_generation_spec.rb vs SPEC 2.8; ai_job_application_summaries_controller_spec.rb vs SPEC 2.8) + verification of fix commit 970b0f4b2 (RUN 2 ADDENDUM / qa-run-1 l1-7-001)",
+  "findings": [
+    {
+      "id": "l1-3-001",
+      "severity": "HIGH",
+      "title": "Interactor spec false-path example omits the bulk analog's count-unchanged assertion (SPEC 2.8 'same assertion pairs')",
+      "spec_requirement": "SPEC 2.8: \"false returns the existing summary and enqueues nothing — the same assertion pairs create_bulk_ai_summary_generation_spec.rb makes for the bulk interactor.\" The bulk analog's rescore-path false example (create_bulk_ai_summary_generation_spec.rb:96-112) wraps the call in expect { ... }.not_to change { job_application.ai_job_application_summaries.count } in addition to asserting result.ai_summary.id eq existing.id.",
+      "file": "spec/interactors/create_ai_summary_generation_spec.rb",
+      "evidence": "The new spec's false-path example (lines 55-63) asserts result.ai_summary.id eq existing.id and .not_to have_enqueued_job(GenerateAiJobApplicationSummaryJob), but does NOT assert that ai_job_application_summaries.count is unchanged. The bulk analog's corresponding example asserts both id-equality and count-invariance. Mitigating context (reported per Layer 1 rule, not rationalized away): the SPEC's explicitly named behaviors — existing summary returned, nothing enqueued — ARE both asserted; the substituted not_to have_enqueued_job assertion has no bulk counterpart because the bulk interactor never enqueues; and the false path IS falsifiable against a gate revert/removal (removing the gate entirely makes both existing assertions fail: new row id != existing.id and a job is enqueued). The only defect class the omission leaves uncovered is code that returns the existing summary in context yet also silently persists an extra row without enqueuing. The true-path example carries the full analog assertion set (success?, id not eq, status pending, existing.reload.status succeeded, existing.reload.stale false) plus the SPEC-mandated have_enqueued_job(GenerateAiJobApplicationSummaryJob).",
+      "recommendation": "Add .not_to change { job_application.ai_job_application_summaries.count } (compound with the existing not_to have_enqueued_job) to the false-path example so the assertion pair matches the bulk analog exactly, or obtain an owner ruling that the enqueue-substitution satisfies 'same assertion pairs'."
+    }
+  ],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "SPEC 1.7(a) mailer spec arity reconciled: complete called with 6 args including total",
+      "SPEC 1.7(b) #complete subject and tags updated to the real mailer's strings",
+      "SPEC 1.7(c) #failed subject updated to the real mailer's string",
+      "SPEC 1.7(d) single-recipient assertion replaced with multi-recipient (active present, inactive absent) in both #complete and #failed, falsifiably",
+      "SPEC 1.7(e) variables asserted NOT to contain user_first_name in both methods",
+      "SPEC 2.8 interactor spec: true path builds new pending summary + enqueues GenerateAiJobApplicationSummaryJob; false path returns existing summary + enqueues nothing; assertions falsifiable by reverting the gate",
+      "SPEC 2.8 interactor spec: validation_result double stubs textract_pending: false (create_ai_summary_generation.rb:41 fall-through read)",
+      "SPEC 2.8 controller spec: request without rescore_requested rejected; with it, value threads onto job_application.ai_summary_rescore_requested; stubs match production call shapes (known-failure #7)",
+      "RUN 2 ADDENDUM: fix commit 970b0f4b2 present, correct, MINIMAL (one test payload line only), rejection test genuinely falsifiable (outer require passes, only inner raises)"
+    ],
+    "implemented": [
+      "SPEC 1.7(a): spec/mailers/bulk_all_stages_ai_summary_result_mailer_spec.rb:24 calls complete(user.id, job.id, 5, 1, 2, 8) matching the 6-arg signature complete(user_id, job_id, succeeded_count, failed_count, skipped_count, total); variables[:total_count] asserted eq 8 (line 37)",
+      "SPEC 1.7(b): subject asserted \"Your Plato reviews for #{job.title} are ready\" and tags ['polymer','user-facing'] (spec lines 29-30) — verified verbatim against the committed mailer (bulk_all_stages_ai_summary_result_mailer.rb:20,23)",
+      "SPEC 1.7(c): #failed subject asserted \"We couldn't complete your Plato reviews for #{job.title}\" (spec line 55) — matches mailer line 53",
+      "SPEC 1.7(d): both examples map params[:to] to emails and assert include(active_member.user.email) / not_to include(inactive_member.user.email) (spec lines 32-34, 57-59). Falsifiable: create_credit_test_organization_user creates a fresh User with a unique random email per call (spec/support/ai_credits_test_helpers.rb:85-92, 11-19), distinct from organization.owner — a revert to single-user to: [{name: @user.full_name, email: @user.email}] yields emails == [owner.email] and the include(active_member...) assertion fails in both methods; dropping .actives (scope :actives = where(is_active: true), organization_user.rb:48) makes the not_to include(inactive...) assertion fail. inactive_member is deactivated via update!(is_active: false) after being shoveled into job.organization_users (has_many through: :hiring_team_memberships, job.rb:48)",
+      "SPEC 1.7(e): params[:variables] asserted not_to have_key(:user_first_name) in both #complete (line 36) and #failed (line 61); the committed mailer's variables hashes contain no user_first_name and the @user = User.find(user_id) loads are removed while user_id stays in both signatures (mailer lines 4, 37) — a greeting revert fails the assertion",
+      "SPEC 2.8 interactor true path: spec/interactors/create_ai_summary_generation_spec.rb:41-53 — existing succeeded non-stale summary, ai_summary_rescore_requested = true, asserts success?, new id != existing.id, status 'pending', existing untouched (succeeded/stale false), wrapped in expect{}.to have_enqueued_job(GenerateAiJobApplicationSummaryJob). Falsifiable: reverting the gate at create_ai_summary_generation.rb:36 to `if active_ai_summary` returns the existing summary and enqueues nothing — both the id-inequality and have_enqueued_job assertions fail",
+      "SPEC 2.8 interactor false path: lines 55-63 assert id eq existing and not_to have_enqueued_job — falsifiable against gate removal (see finding l1-3-001 for the one assertion-pair deviation from the bulk analog)",
+      "SPEC 2.8 textract_pending stub: validation_result double is double('validation_result', textract_result: textract_result, textract_pending: false) (spec line 34) — covers the create_ai_summary_generation.rb:41 read on the fall-through path that the bulk spec's double omits",
+      "SPEC 2.8 controller rejection test: posts ai_job_application_summary: { irrelevant: 'x' } (non-empty, missing only rescore_requested) and expects ActionController::ParameterMissing. Outer params.require(:ai_job_application_summary) passes on a non-empty hash, so the raised ParameterMissing can only come from the inner .require(:rescore_requested) (controller line 44); no rescue_from ActionController::ParameterMissing exists in application_controller.rb or api/v1/base_controller.rb (only Pundit::NotAuthorizedError), so the exception propagates in the controller spec. Removing the inner require leaves nothing to raise and the raise_error expectation fails — genuinely falsifiable",
+      "SPEC 2.8 controller threading test: stubs CreateAiSummaryGeneration.call with a block capturing args[:job_application], posts ai_job_application_summary: { rescore_requested: true }, asserts :ok and captured_job_application.ai_summary_rescore_requested to be true. ai_summary_rescore_requested is `attribute :ai_summary_rescore_requested, :boolean, default: false` on JobApplication (job_application.rb:11), so absent threading the assertion fails against the false default. Stub shapes match production reads (known-failure #7): ValidateAiSummaryGeneration double supplies success?/textract_result/textract_pending (all the controller path reads), CreateAiSummaryGeneration stub returns success? + a real persisted AiJobApplicationSummary so render_one serializes a genuine record",
+      "RUN 2 ADDENDUM: git show 970b0f4b2 — exactly 1 file, 1 insertion(+), 1 deletion(-): the rejection test payload line changed from ai_job_application_summary: {} to ai_job_application_summary: { irrelevant: 'x' }. Nothing else in the commit. Matches the FAILURE-REPORT.md prescribed minimum fix verbatim. Working tree is clean for all six reviewed files (git diff HEAD empty for them), so committed code == reviewed code (pipeline rule 15)",
+      "EXECUTION: RAILS_ENV=test bundle exec rspec on all three spec files — 6 examples, 0 failures"
+    ],
+    "missing": []
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 2,
+  "assignment": "SUCCEEDED state (job 28055 'QA Succeeded') criteria card + count rail + action row, and the VIEW CRITERIA slide-over (SPEC §8.2 state 4, §8.4).",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as Rezu May, org Acme Inc.; all 6 seeded QA jobs + Senior Engineer visible.",
+    "Clicked 'QA Succeeded' title -> /jobs/28055/stages/196330/applicants (job page).",
+    "Clicked 'Job setup' left-nav -> /jobs/28055/setup/details.",
+    "Clicked 'Plato AI settings' setup nav item -> /jobs/28055/setup/ai. 'Plato AI settings' page shows 'Plato reviews' section then 'Job criteria' section (h4).",
+    "Verified criteria CARD: Plato disc icon present; title 'Job criteria'; description 'Plato extracted these from your job description 10 minutes ago.' (relative time present and sensible, uses 'extracted' vocabulary).",
+    "Verified count rail: Core=2, Preferred=1, Bonus=1 (matches seed); each tier row (Core/Preferred/Bonus) has its own icon.",
+    "Verified action row has BOTH 'View criteria' and 'Regenerate criteria' buttons (static labels, no interpolated counts).",
+    "Verified intro paragraph copy uses 'extracts'/'extracted' vocabulary, sentence case, no em dashes; inline 'job description' link -> /jobs/28055/setup/description.",
+    "Clicked 'View criteria' -> right slide-over (FullModal) opened. Header 'Job criteria' (h2) + Close (X) button.",
+    "Verified slide-over description paragraph verbatim: 'New reviews score candidates against these. To change them, edit the job description. Reviews that have already run keep the criteria they were scored against.'",
+    "Verified tier-grouped list: Core (2): '5+ years Ruby on Rails experience', 'PostgreSQL and relational database design'; Preferred (1): 'REST API design'; Bonus (1): 'Experience mentoring engineers'. Each tier has an icon + count. NO tier-hint sentences. Read-only (no editable inputs).",
+    "Closed slide-over via Close (X) — modal wrapper removed from DOM, confirmed closed.",
+    "Re-opened 'View criteria', pressed Escape — slide-over closed (description text gone). Esc close works.",
+    "Checked console (level error, all): exactly the 7 KNOWN pre-existing errors (4 react-router history deprecation warnings, 2 'Store does not have a valid reducer' Redux warnings, 1 heap-api.com 404). No new feature-referencing errors (no aiJobCriteria/JobCriteria/useAiJobCriteria/ai_job_criteria/React errors)."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-2/01-succeeded-card.png",
+    "/tmp/qa-run-3-l5/agent-2/02-view-criteria-slideover.png"
+  ],
+  "findings": []
+}

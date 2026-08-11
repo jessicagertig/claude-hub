@@ -1,0 +1,34 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 4,
+  "agent_index": 7,
+  "slice": "Discord enqueue moves + Slack untouched",
+  "findings": [
+    {
+      "id": "r4-l1-a7-001",
+      "severity": "HIGH",
+      "title": "Third Discord move (Notification::PaidSubscriptionDeletedJob) has no old-site-returns falsifiability: restoring the removed discord call passes the entire suite",
+      "detail": "The removal of the `discord(organization_id, ended_at)` call and the private `discord` method from app/jobs/notification/paid_subscription_deleted_job.rb (SPEC §2 removal shape) is untested in the old-site-returns direction. No example anywhere at 549039a0c PERFORMS Notification::PaidSubscriptionDeletedJob — git grep for PaidSubscriptionDeletedJob across spec/ hits only spec/jobs/stripe_webhook_handler_subscription_events_spec.rb, whose subscription.deleted example runs under the :test queue adapter and only asserts `have_enqueued_job(Notification::PaidSubscriptionDeletedJob)`; the Slack job is enqueued, never executed, so a regression restoring the discord call inside its #perform would never fire in any example. Consequence if the old site returns: every committed spec still passes while production double-notifies Discord on every subscription deletion (once from the Slack job's perform, once from the SubscriptionEvent fan-out). Contrast: the other two moves ARE pinned in this direction — spec/models/organization_subscription_events_spec.rb:30 asserts Discord::NotifyFreeTrialStartedJob `.exactly(:once)` through the real nil→trialing transition (a restored callback line makes it 2), and line 50 asserts Discord::NotifyTrialConvertedToPaidJob `not_to have_been_enqueued` on the trialing→active flip. Fix shape: an example that performs Notification::PaidSubscriptionDeletedJob (perform_now or perform_enqueued_jobs) with a valid organization and asserts Discord::NotifySubscriptionDeletedJob is not enqueued (Slack path stubbed per house pattern). Same falsifiability-gap class as the four HIGHs from runs 1-3.",
+      "files": [
+        "app/jobs/notification/paid_subscription_deleted_job.rb",
+        "spec/jobs/stripe_webhook_handler_subscription_events_spec.rb",
+        "spec/models/subscription_event_fanout_spec.rb"
+      ],
+      "spec_refs": ["§2 (removal shape)", "§9.3/§9.4 (falsifiability lens per slice instruction 6)"]
+    }
+  ],
+  "verified": [
+    "Removal shape 1 (organization.rb:1128-1134 branch): Discord::NotifyFreeTrialStartedJob.perform_later(id) removed, replaced in place by the §5.1 CreateSubscriptionEvent.call(organization: self, event_type: 'trial_started', to_plan: plan, stripe_subscription_id: stripe_subscription_id); Notification::FreeTrialStartedJob line and organization_ai_credit_balance&.reset_ai_credits byte-identical in context.",
+    "Removal shape 2 (organization.rb:1136-1140 branch): only Discord::NotifyTrialConvertedToPaidJob.perform_later(id) removed; Notification::TrialConvertedToPaidJob line stays; no other hunks in organization.rb in the diff.",
+    "Removal shape 3 (paid_subscription_deleted_job.rb): the discord(organization_id, ended_at) call and the private discord method (3 lines) removed; committed file at 549039a0c retains ended_at param, @ended_at assignment, slack method, and blocks using @ended_at (timestamp = @ended_at || Time.now.to_i) byte-identical — exactly the §2 shape.",
+    "All three moved Discord jobs enqueue ONLY from the SubscriptionEvent fan-out: git grep at 549039a0c (app/lib/config, non-spec) shows exactly one enqueue site each — subscription_event.rb:42 (NotifyFreeTrialStartedJob), :45 (NotifyTrialConvertedToPaidJob), :51 (NotifySubscriptionDeletedJob, guarded on organization.subscription_canceled_at.present?, .to_i on a present value only — §7 nil rule honored).",
+    "Discord job FILES untouched: git diff a0d59115d..549039a0c --stat over app/jobs/discord/ is empty; the only non-fan-out grep hits are the three class-definition lines.",
+    "Slack Notification::* fully untouched: the only Notification:: file in the diff is paid_subscription_deleted_job.rb, containing only the sanctioned 5 deleted lines; enqueue sites Notification::FreeTrialStartedJob, Notification::TrialConvertedToPaidJob (organization.rb) and Notification::PaidSubscriptionDeletedJob.perform_later (stripe_webhook_handler_job.rb:210 context) all present unchanged at 549039a0c.",
+    "Enqueue accounting balances: 3 Discord enqueue sites removed (organization.rb x2, paid_subscription_deleted_job.rb x1), 3 added (subscription_event.rb fan-out), zero Discord enqueues added or removed anywhere else in the 11-file diff; unrelated Discord jobs (NotifyDailySummaryJob, NotifyJobPublishedJob, NotifySubscriptionPastDueJob, NotifyDowngradeScheduledJob, etc.) all at pre-existing sites, none in the diff.",
+    "D11 delicacy: stripe_webhook_handler_job.rb diff is exactly two hunks, both purely additive rescue-isolated begin/rescue blocks at the two §5 sanctioned insertion points (end of subscription.deleted else-branch after EngagementReport::GeneratorJob; end of invoice.paid else-branch after reset_ai_credits); no if/else touched, no reordering, no attribute-access changes — no BLOCKER.",
+    "Falsifiability move A (NotifyFreeTrialStartedJob): organization_subscription_events_spec.rb:30 asserts .exactly(:once) through the real nil->trialing update — fails at 2 if the old callback line returns AND fails at 0 if the fan-out enqueue is deleted; subscription_event_fanout_spec.rb:26 independently pins the fan-out enqueue.",
+    "Falsifiability move B (NotifyTrialConvertedToPaidJob): organization_subscription_events_spec.rb:50 asserts not_to have_been_enqueued on the trialing->active flip (fails if the old line returns); subscription_event_fanout_spec.rb:38 asserts the fan-out enqueue for a trial_converted_to_paid row (fails if deleted).",
+    "Falsifiability move C (NotifySubscriptionDeletedJob): fan-out-deleted direction pinned (subscription_event_fanout_spec.rb:67 with exact args organization.id + subscription_canceled_at.to_i; :82 pins the nil-subscription_canceled_at skip); old-site-returns direction NOT pinned — finding r4-l1-a7-001."
+  ]
+}

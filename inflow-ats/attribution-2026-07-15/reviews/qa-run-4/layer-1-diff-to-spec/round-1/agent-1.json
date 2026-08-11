@@ -1,0 +1,39 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 1,
+  "focus_area": "Data model — db/migrate/20260715233505_add_attribution_columns_to_users.rb, db/migrate/20260715233506_add_attribution_columns_to_organizations.rb, db/schema.rb hunks",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "SPEC.md §3: two migrations, one per table, identical column sets",
+      "SPEC.md §3: column names/types exactly utm_source string, utm_campaign string, utm_data jsonb, internal_ref string",
+      "SPEC.md §3: no defaults, no null constraints, no indexes on any of the four columns",
+      "SPEC.md §3: explicit contrast with settings jsonb columns (default: {}, null: false) — verify at HEAD that new jsonb columns have no default while settings does",
+      "SPEC.md §3: migration class names match file names",
+      "SPEC.md §3 / §8: migration shape follows analog db/migrate/20260622182504_add_ai_summary_and_criteria_columns_to_jobs.rb",
+      "SPEC.md §3: no model changes for the four columns (no validations, enums, attr_accessor in user.rb/organization.rb); organization.rb has NO edit in the diff at all",
+      "SPEC.md §7.2: nil for absent at DB layer — no jsonb default",
+      "SPEC.md §7.3: no backfill — no data migration in the diff, no db/data/ file in the range",
+      "schema.rb version line updated to 2026_07_15_233506"
+    ],
+    "verified": [
+      "Two migrations exist, one per table: diff lines 503-518 create db/migrate/20260715233505_add_attribution_columns_to_users.rb (add_column :users x4), diff lines 519-534 create db/migrate/20260715233506_add_attribution_columns_to_organizations.rb (add_column :organizations x4). Column sets identical across the two files, same order (utm_source, utm_campaign, utm_data, internal_ref), matching the spec §3 table order.",
+      "Column names/types exact: add_column :users, :utm_source, :string / :utm_campaign, :string / :utm_data, :jsonb / :internal_ref, :string — same four for :organizations. jsonb (not json) confirmed in both migrations and in schema.rb (t.jsonb \"utm_data\" at HEAD lines 1091 and 1287).",
+      "No defaults, no null constraints, no indexes: every add_column call in both migrations has zero options — no default:, no null:, no add_index anywhere in either file. schema.rb at HEAD shows all eight new column lines bare (t.string \"utm_source\" etc., no options).",
+      "Settings contrast verified at HEAD: db/schema.rb:1039 (organizations) and db/schema.rb:1266 (users) both read t.jsonb \"settings\", default: {}, null: false, while the new t.jsonb \"utm_data\" at db/schema.rb:1091 (organizations) and db/schema.rb:1287 (users) has no default and no null constraint.",
+      "Class names match file names: AddAttributionColumnsToUsers in 20260715233505_add_attribution_columns_to_users.rb; AddAttributionColumnsToOrganizations in 20260715233506_add_attribution_columns_to_organizations.rb.",
+      "Analog shape match (structural manifest, row by row): magic comment '# frozen_string_literal: true' SAME; superclass ActiveRecord::Migration[6.1] SAME; def change SAME; statement form add_column :table, :name, :type SAME; one migration per table SAME; no indexes SAME; column options DIFFERENT (analog has default: 0, null: false on its two counter columns; new migrations have none) — deviation forced by spec §3's explicit none/none/none column table, so conforming.",
+      "No model changes for the columns: app/models/user.rb diff (dump lines 466-489) contains only the from_omniauth keyword-signature change and four direct setter assignments inside the first_or_create block — no validations, no enums, no attr_accessor for the four columns, and no &.downcase on any of them (only the pre-existing partner_source&.downcase remains). Direct setters are spec-sanctioned by §3 ('assigned by mass assignment (build_resource) or direct setters'); the from_omniauth change itself is §4.6 territory (another reviewer's assignment).",
+      "organization.rb untouched: not in the diff file list (23 files, none is app/models/organization.rb); git diff 62dd55867..fc3f047f9 -- app/models/organization.rb is empty.",
+      "§7.2 DB layer: no jsonb default anywhere — confirmed in both migration files and schema.rb at HEAD.",
+      "§7.3 no backfill: git diff --stat 62dd55867..fc3f047f9 -- db/ shows exactly 3 files (the two migrations + schema.rb, 29 insertions / 1 deletion); git log --name-status for db/data/ in the range is empty.",
+      "Schema version line: db/schema.rb:13 at HEAD reads ActiveRecord::Schema.define(version: 2026_07_15_233506) — matches the highest migration timestamp; diff hunk shows the change from 2026_06_11_120003.",
+      "Schema hunk table placement: organizations hunk falls at HEAD lines 1089-1092 inside create_table \"organizations\" (line 1033, next table process_templates at 1095); users hunk at 1285-1288 inside create_table \"users\" (line 1248).",
+      "Diff-to-spec direction: every db/ hunk traced — 20260715233505 migration → §3; 20260715233506 migration → §3; schema.rb version line → migration consequence; schema.rb organizations +4 → §3; schema.rb users +4 → §3. No other db/ change exists in the range (10+10+10 insertion stat accounts for every line).",
+      "Committed-vs-working-tree (pipeline rule 15): git diff HEAD --stat for db/, app/models/user.rb, app/models/organization.rb is empty; md5 of both migration files at HEAD equals md5 on disk. The reviewed code is the committed code at fc3f047f9."
+    ],
+    "missing": []
+  },
+  "notes": "Zero findings; every assigned requirement traces to concrete diff lines and every db/-area hunk traces back to SPEC.md §3/§7.2/§7.3. One observation for completeness, not a finding: db/schema.rb lines 104/108 also contain utm_source/utm_campaign string columns, but those belong to the pre-existing ahoy_visits table (Ahoy analytics), are untouched by the diff, and are unrelated to this feature. The only DIFFERENT row in the analog structural manifest is column options (analog's counter columns carry default: 0, null: false; the new columns carry none), which is exactly what spec §3's column table mandates — the deviation is spec-forced, and the analog's third column (internal_job_criteria, :text) is itself option-free, matching the new columns' form precisely."
+}

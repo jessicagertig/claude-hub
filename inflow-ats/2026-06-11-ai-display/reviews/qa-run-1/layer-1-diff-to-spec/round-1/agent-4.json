@@ -1,0 +1,11 @@
+[
+  {
+    "id": "A4-R1-1",
+    "severity": "HIGH",
+    "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+    "line": "37-40",
+    "spec_section": "PlatoTab component > Internally fetches",
+    "finding": "useAiJobApplicationSummary is called unconditionally on every render, violating spec requirement to fetch 'only when a summary exists and status is succeeded'. The implementation passes `aiSummary?.id || 0` as aiJobApplicationSummaryId, which resolves to 0 when no summary exists. The hook (useAiJobApplicationSummary.ts lines 34-45) has no `enabled` guard and uses react-query's default `enabled: true`, so it immediately fires GET /job_applications/{id}/ai_job_application_summaries/0 -- a guaranteed 404 -- on every page load for candidates without summaries, and on every render for candidates with pending/in_progress/extracted/textract_processing/failed summaries. The spec says: 'Full structured data via useAiJobApplicationSummary -- only when a summary exists and status is succeeded.' The existing analog (AiJobApplicationSummaryFeedItem.tsx line 33) does not have this problem because that component only renders when a summary exists. PlatoTab renders for all states including no-summary. Fix: pass `{ enabled: summaryExists && status === 'succeeded' }` as a third argument to useQuery inside the hook, or conditionally call the hook by restructuring the component (e.g., extract the succeeded state into a child component that calls the hook).",
+    "diff_excerpt": "const { data: fullSummary } = useAiJobApplicationSummary({\n    jobApplicationId: jobApplication.id,\n    aiJobApplicationSummaryId: aiSummary?.id || 0,\n  });"
+  }
+]

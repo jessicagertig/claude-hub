@@ -1,0 +1,105 @@
+{
+  "meta": {
+    "batch": 14,
+    "criteria_prompt_version": 8,
+    "job_id": 23876,
+    "title": "Machine Learning Engineer",
+    "organization": "Valar Labs",
+    "cost": 0.000392
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Valar Labs is a well funded, fast-growing AI diagnostics startup backed by leading VCs revolutionizing oncology and urology through cutting-edge technology and innovation. We are dedicated to improving patient outcomes through the development and deployment of novel AI-driven diagnostics to reduce treatment uncertainty for oncologists and patients. Our team comprises accomplished researchers, and passionate individuals committed to shaping the future of healthcare."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Machine Learning Engineers at Valar Labs build clinical grade AI that is used by oncologists worldwide."
+      },
+      {
+        "heading": "Key Responsibilities:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Architect key components of the deep learning platform\nTrain robust and interpretable deep learning models for impactful medical tasks\nDesign purpose built datasets alongside medical oncologists to tackle clinically relevant questions\nBuild full stack deep learning solutions from research to deployment"
+      },
+      {
+        "heading": "Qualifications:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Publications in top conferences/journals in the Medical AI space\nAbility to develop modular replicable machine learning platforms\nStrong understanding of PyTorch, PyTorch Lightning and Cloud Infrastructure for machine learning\nExperience deploying production AI models\n(Optional) Experience with Pathology data"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Architect key components of the deep learning platform",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Architect key components of the deep learning platform"
+      },
+      {
+        "text": "Train robust and interpretable deep learning models for impactful medical tasks",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Train robust and interpretable deep learning models for impactful medical tasks"
+      },
+      {
+        "text": "Design purpose built datasets alongside medical oncologists to tackle clinically relevant questions",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Design purpose built datasets alongside medical oncologists to tackle clinically relevant questions"
+      },
+      {
+        "text": "Build full stack deep learning solutions from research to deployment",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Build full stack deep learning solutions from research to deployment"
+      },
+      {
+        "text": "Publications in top conferences/journals in the Medical AI space",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Publications in top conferences/journals in the Medical AI space"
+      },
+      {
+        "text": "Ability to develop modular replicable machine learning platforms",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Ability to develop modular replicable machine learning platforms"
+      },
+      {
+        "text": "Strong understanding of PyTorch, PyTorch Lightning and Cloud Infrastructure for machine learning",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Strong understanding\"",
+        "binary": false,
+        "source_text": "Strong understanding of PyTorch, PyTorch Lightning and Cloud Infrastructure for machine learning"
+      },
+      {
+        "text": "Experience deploying production AI models",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"Experience deploying\" is a tier_2 signal",
+        "binary": false,
+        "source_text": "Experience deploying production AI models"
+      },
+      {
+        "text": "Experience with Pathology data",
+        "tier": "tier_3",
+        "tier_reasoning": "signal: \"Optional\"",
+        "binary": false,
+        "source_text": "(Optional) Experience with Pathology data"
+      }
+    ]
+  }
+}

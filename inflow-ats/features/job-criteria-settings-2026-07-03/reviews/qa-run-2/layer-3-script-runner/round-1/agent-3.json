@@ -1,0 +1,21 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 3,
+  "focus": "Zero-criteria detection predicates at runtime: AiJobCriteria#zero_criteria_failure?, Job#zero_criteria_extraction_failure?, and the exact contents/drift-safety of ZERO_CRITERIA_ERROR_MESSAGES.",
+  "scenarios_run": [
+    "Seeded ai-org-published-job.json (paid Acme Inc. org, AI_APPLICANT_SUMMARY on, 1 published 'Senior Engineer' job id=27281, 0 criteria rows).",
+    "Via test_frr: printed AiJobCriteria::ZERO_CRITERIA_ERROR_MESSAGES and asserted exact 3-member set incl. 'Criteria array is empty'; byte-checked each; confirmed the three writer-referenced constants are guard members.",
+    "Built AiJobCriteria rows directly on the seeded job in each target state (failed/succeeded/pending/in_progress/retrying x member/non-member/nil/empty error_message) and asserted row.zero_criteria_failure? and job.zero_criteria_extraction_failure? (latest-row) for each; plus a 2-row ordering test proving latest_ai_job_criteria selection. 39/39 assertions PASS. Rows self-cleaned (job restored to 0 rows)."
+  ],
+  "findings": [],
+  "verifications_passed": [
+    "ZERO_CRITERIA_ERROR_MESSAGES is a frozen 3-element array byte-identical to the expected strings: 'No criteria sections found in job description', 'No criteria extracted from job description', 'Criteria array is empty'. Named constants ZERO_CRITERIA_NO_SECTIONS_ERROR_MESSAGE / _NONE_EXTRACTED_ / _EMPTY_ARRAY_ match those literals exactly.",
+    "Zero message-drift is structurally impossible: all three writer sites assign the named constants, not string literals -- extract_criteria.rb:62 -> ZERO_CRITERIA_NO_SECTIONS_ERROR_MESSAGE, extract_criteria.rb:122 -> ZERO_CRITERIA_NONE_EXTRACTED_ERROR_MESSAGE, score_job_application.rb:43 -> ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE. Runtime confirmed each written constant is a member of the guard array. No drift.",
+    "For each of the 3 ZERO messages a failed row returns zero_criteria_failure? TRUE and, as the latest row, drives Job#zero_criteria_extraction_failure? TRUE.",
+    "Negative cases all correct: failed + non-member ('OpenAI timeout' and the real generic writer message 'Job description is blank' from extract_criteria.rb:32) => FALSE; succeeded row with error_message='Criteria array is empty' => FALSE (status gate); pending/in_progress/retrying with a ZERO message => FALSE; failed with nil or '' error_message => FALSE.",
+    "Semantic split verified: generic-failure state (failed + non-member) is NOT treated as zero-found, zero-found state (failed + member) IS -- this is what drives which empty-state message the UI shows.",
+    "Latest-row selection: Job#latest_ai_job_criteria orders by created_at DESC and Job#zero_criteria_extraction_failure? reflects only the newest row (newer zero-found overrides older generic, and vice-versa).",
+    "Non-focus note (NOT a defect): has_many :ai_job_criteria has no dependent: option, so the collection's delete_all nullifies job_id (NOT NULL violation). Grep confirms no production code calls delete_all/destroy_all/clear on the association, so there is no runtime nullify path -- surfaced only in test setup and worked around with a Relation-scoped delete."
+  ]
+}

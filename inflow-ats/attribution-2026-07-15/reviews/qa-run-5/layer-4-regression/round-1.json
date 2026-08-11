@@ -1,0 +1,26 @@
+{
+  "layer": "regression",
+  "round": 1,
+  "run": 5,
+  "suites_run": {
+    "rspec": {
+      "ran": true,
+      "passed": true,
+      "summary": "17 examples, 0 failures, 0 pending",
+      "files": [
+        "spec/controllers/api/v1/registrations_controller_spec.rb",
+        "spec/controllers/api/v1/organizations_controller_spec.rb",
+        "spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb",
+        "spec/controllers/hire/confirmations_controller_spec.rb",
+        "spec/models/user_from_omniauth_spec.rb"
+      ],
+      "failures": []
+    },
+    "cypress": {
+      "ran": false,
+      "reason": "known baseline 56/56; heavy; not required"
+    }
+  },
+  "findings": [],
+  "notes": "Branch attribution-work-qa, HEAD fc3f047f960cc7eda5bdee8141ad7443bfebefef (matches expected fc3f047f9). All 5 attribution spec files verified present, then run together in ONE rspec invocation. Command: bash -lic 'cd /Users/jessica/wrk/wrk-corp/inflow-ats && RAILS_ENV=test bundle exec rspec spec/controllers/api/v1/registrations_controller_spec.rb spec/controllers/api/v1/organizations_controller_spec.rb spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb spec/controllers/hire/confirmations_controller_spec.rb spec/models/user_from_omniauth_spec.rb --no-color'. Full summary line verbatim: 'Finished in 0.9288 seconds (files took 1.63 seconds to load) / 17 examples, 0 failures' (Randomized with seed 10894). git grep -l for from_omniauth|RegistrationsController|OrganizationsController|OmniauthCallbacks over spec/ surfaced only 4 files, ALL already in the 5-file set (organizations_controller_spec, registrations_controller_spec, users/omniauth_callbacks_controller_spec, user_from_omniauth_spec); confirmations_controller_spec does not match those grep patterns but is included in the run. No additional pre-existing relevant specs beyond the 5 were surfaced, so nothing extra to run. Zero failures; no intersection with the ~148 pre-existing AI-credit/AI-summary baseline failures (none of those specs were run). Cypress not run per instructions (known baseline 56/56)."
+}

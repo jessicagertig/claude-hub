@@ -1,0 +1,8 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "run": 5,
+  "agent_index": 5,
+  "findings": [],
+  "notes": "SCENARIO: POST /api/v1/sign_up with NO attribution params (only first_name/last_name/email/password, no `name` key) => all four attribution columns must be nil, utm_data nil NEVER {}. WORKFLOW: qa_harness cleanup then seed default-user-and-org.json (29 steps, all 200). Curl POST http://app.lvh.me:5007/api/v1/sign_up body {\"first_name\":\"Nora\",\"last_name\":\"Attless\",\"email\":\"noattr-r2a5-1784599498@example.com\",\"password\":\"password123\"} => HTTP_STATUS:200, response body created user id 39375, created_via=created_via_signup, organization_id=null (no attribution fields echoed in SessionSerializer, none sent). DB VERIFY via test_frr (bash -lic 'cd repo && test_frr /tmp/l3_r2_a5.rb'), User.find_by(email:) id=39375: utm_source.inspect => nil (nil?=true); utm_campaign.inspect => nil (nil?=true); internal_ref.inspect => nil (nil?=true); utm_data.inspect => nil; utm_data.class => NilClass; utm_data.nil? => true; utm_data == {} => false. VERDICT printed ALL_FOUR_NIL=true, UTM_DATA_IS_EMPTY_HASH_BUG=false. Correct per spec: absent params leave nil columns and utm_data is genuine NULL, not an empty jsonb hash. No defect."
+}

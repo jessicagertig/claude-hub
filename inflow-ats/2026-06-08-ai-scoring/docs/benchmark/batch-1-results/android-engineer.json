@@ -1,0 +1,105 @@
+{
+  "meta": {
+    "batch": 1,
+    "criteria_prompt_version": 10,
+    "job_id": 23236,
+    "title": "Android Engineer",
+    "organization": "Facer",
+    "cost": 0.000382
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Facer, the world’s largest watch face platform for smartwatches, is looking for an iOS engineer to help develop and ship features for its Android and wearOS apps."
+      },
+      {
+        "heading": "WHAT YOU'LL BE DOING",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Lead the future of smartwatches and build new features for Facer's Android mobile and WearOS watch apps.\nCollaborate with Facer's engineering team on large scale efforts spanning the whole Facer platform\nParticipate in a very collaborative team effort to deliver the best experience possible to our users."
+      },
+      {
+        "heading": "WHAT WE NEED FROM YOU!",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Computer Science degree (BS or MS), or proof of involvement in large scale mobile apps\nConversant in Java and Kotlin\nExperience in OpenGL is a plus\nExcellent English verbal and written communication skills\nHighly organized, self-starter with attention to detail"
+      },
+      {
+        "heading": "SOUNDS AMAZING! WHAT NOW!?",
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "Interviews are set to begin immediately. Go ahead and apply today!"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Lead the future of smartwatches and build new features for Facer's Android mobile and WearOS watch apps.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Lead the future of smartwatches and build new features for Facer's Android mobile and WearOS watch apps."
+      },
+      {
+        "text": "Collaborate with Facer's engineering team on large scale efforts spanning the whole Facer platform",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Collaborate with Facer's engineering team on large scale efforts spanning the whole Facer platform"
+      },
+      {
+        "text": "Participate in a very collaborative team effort to deliver the best experience possible to our users.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Participate in a very collaborative team effort to deliver the best experience possible to our users."
+      },
+      {
+        "text": "Computer Science degree (BS or MS)",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: 'required' implied, as 'Proof of involvement' is an alternative requirement",
+        "binary": true,
+        "source_text": "Computer Science degree (BS or MS), or proof of involvement in large scale mobile apps"
+      },
+      {
+        "text": "Proof of involvement in large scale mobile apps",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: 'required' implied, as it is an alternative to having a degree",
+        "binary": true,
+        "source_text": "Computer Science degree (BS or MS), or proof of involvement in large scale mobile apps"
+      },
+      {
+        "text": "Conversant in Java and Kotlin",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Conversant in Java and Kotlin"
+      },
+      {
+        "text": "Experience in OpenGL is a plus",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: 'is a plus'",
+        "binary": false,
+        "source_text": "Experience in OpenGL is a plus"
+      },
+      {
+        "text": "Excellent English verbal and written communication skills",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: 'Excellent'",
+        "binary": false,
+        "source_text": "Excellent English verbal and written communication skills"
+      },
+      {
+        "text": "Highly organized, self-starter with attention to detail",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: 'Highly'",
+        "binary": false,
+        "source_text": "Highly organized, self-starter with attention to detail"
+      }
+    ]
+  }
+}

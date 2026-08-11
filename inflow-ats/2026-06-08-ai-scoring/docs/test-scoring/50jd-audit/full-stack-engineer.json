@@ -1,0 +1,101 @@
+{
+  "name": "full-stack-engineer",
+  "title": "Full Stack Engineer",
+  "call2_count": 11,
+  "final_count": 11,
+  "decomp_count": 0,
+  "t1": 6,
+  "t2": 4,
+  "t3": 1,
+  "soft_t1": 0,
+  "criteria": [
+    {
+      "text": "Computer Science degree (BS or MS)",
+      "tier": "tier_1",
+      "tier_reasoning": "tier_1 heading 'WHAT WE NEED FROM YOU!'",
+      "binary": true,
+      "contains_title_technology": false,
+      "source_text": "Computer Science degree (BS or MS), or proof of involvement in large-scale mobile apps or websites"
+    },
+    {
+      "text": "Proof of involvement in large-scale mobile apps or websites",
+      "tier": "tier_1",
+      "tier_reasoning": "tier_1 heading 'WHAT WE NEED FROM YOU!'",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Computer Science degree (BS or MS), or proof of involvement in large-scale mobile apps or websites"
+    },
+    {
+      "text": "Conversant in Javascript & TypeScript",
+      "tier": "tier_1",
+      "tier_reasoning": "tier_1 heading 'WHAT WE NEED FROM YOU!'",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Conversant in Javascript & TypeScript along with an understanding of best practices in modern web app development"
+    },
+    {
+      "text": "Understanding of best practices in modern web app development",
+      "tier": "tier_1",
+      "tier_reasoning": "tier_1 heading 'WHAT WE NEED FROM YOU!'",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Conversant in Javascript & TypeScript along with an understanding of best practices in modern web app development"
+    },
+    {
+      "text": "Experience using the Angular framework to create complex, component-driven web applications",
+      "tier": "tier_1",
+      "tier_reasoning": "tier_1 heading 'WHAT WE NEED FROM YOU!'",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "On the front-end, experience using the Angular framework to create complex, component-driven web applications (+ bonus points for experience with AngularJS framework)"
+    },
+    {
+      "text": "Experience with AngularJS framework",
+      "tier": "tier_3",
+      "tier_reasoning": "contains 'bonus points'",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "On the front-end, experience using the Angular framework to create complex, component-driven web applications (+ bonus points for experience with AngularJS framework)"
+    },
+    {
+      "text": "Experience using Node.js & MongoDB to design and create APIs that can be used at scale by millions of mobile clients",
+      "tier": "tier_1",
+      "tier_reasoning": "tier_1 heading 'WHAT WE NEED FROM YOU!'",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "On the back-end, experience using Node.js & MongoDB to design and create APIs that can be used at scale by millions of mobile clients"
+    },
+    {
+      "text": "Excellent English verbal and written communication skills",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception (communication) overrides tier_1 signal 'Excellent'",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Excellent English verbal and written communication skills"
+    },
+    {
+      "text": "Highly organized",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception (organizational skills) overrides tier_1 signal 'Highly'",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Highly organized, self-starter with attention to detail."
+    },
+    {
+      "text": "Self-starter",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception (self-motivation) defaults to tier_2",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Highly organized, self-starter with attention to detail."
+    },
+    {
+      "text": "Attention to detail",
+      "tier": "tier_2",
+      "tier_reasoning": "soft skills exception (attention to detail) defaults to tier_2",
+      "binary": false,
+      "contains_title_technology": false,
+      "source_text": "Highly organized, self-starter with attention to detail."
+    }
+  ]
+}

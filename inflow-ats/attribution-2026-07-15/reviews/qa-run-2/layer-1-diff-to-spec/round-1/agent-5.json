@@ -1,0 +1,42 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 5,
+  "focus_area": "cross-cutting + full-diff sweep",
+  "findings": [],
+  "traceability": {
+    "app/controllers/api/v1/organizations_controller.rb": "§4.4 (D5) — four values copied from current_user alongside the existing created_via copy; organization_params untouched; authorize @organization unchanged (§6)",
+    "app/controllers/api/v1/registrations_controller.rb": "§4.1 (sign_up_params + :utm_source/:utm_campaign/:internal_ref and trailing utm_data: {}), §4.2 (four keys merged into user_params in BOTH branches of the conditional), §4.3 (create needs no further change)",
+    "app/controllers/api/v1/users/omniauth_callbacks_controller.rb": "§4.7 (D9) — keyword-form from_omniauth call with the four values from merged_tracking string keys; nothing else in the action changed",
+    "app/controllers/hire/confirmations_controller.rb": "§4.8 (D12) — success redirect gains id + CGI.escape(user.email); failure redirect unchanged",
+    "app/models/user.rb": "§4.6 (D9) — from_omniauth all-keyword signature in the exact specified order; four raw assignments inside the first_or_create block only; the sole model file permitted by §2",
+    "config/initializers/omniauth.rb": "§4.5 (D8) — allowed_keys exactly %w[partner referral utm_source utm_campaign utm_data internal_ref]; no other lambda change",
+    "db/migrate/20260715233505_add_attribution_columns_to_users.rb": "§3 (D6) — four columns, string/string/jsonb/string, no defaults, no null constraints, no indexes",
+    "db/migrate/20260715233506_add_attribution_columns_to_organizations.rb": "§3 (D6) — identical column set on organizations",
+    "db/schema.rb": "§3 — mechanical artifact of the two migrations (version bump + eight column lines, four per table, no defaults)",
+    "app/javascript/ats/src/views/sessions/Auth.tsx": "§5.6 (D12) — second useEffect deps [emailConfirmed], bare return unless true, both-present guard (house form x != undefined), identifyUser({ id: Number(id), email }) then trackEvent(\"email_verified\")",
+    "app/javascript/ats/src/views/sessions/components/AuthForm.tsx": "§5.2 (D1/D2/D7/D14) — sanitizeTrackingParams into useState, four camelCase fields in the magicLink payload, four props to GoogleSSOButton, trackEvent(\"user_signed_up_client_side\") before onComplete",
+    "app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx": "§5.3 (D7) — four optional Props, hidden inputs with the analog render-only-when-present guard, utm_data one input per key with Rails-nested naming and the per-key string+length guard",
+    "app/javascript/ats/src/views/sessions/components/OrganizationForm.tsx": "§5.7 (D13) — trackEvent(\"organization_created\") before onComplete(data); no identify added",
+    "app/javascript/ats/src/views/sessions/components/ProfileForm.tsx": "§5.8 (D16) — isNewOwner ? organization_owner_user_name_submitted : invited_user_name_submitted, before onComplete",
+    "app/javascript/ats/src/views/sessions/components/SignupForm.tsx": "§5.5 (D10/D14) — sanitizeTrackingParams(props.location.search) into state, four fields in the register payload, trackEvent(\"user_signed_up_client_side\") before onComplete",
+    "app/javascript/shared/lib/posthog.ts": "§5.9/§1 — window.logger on identifyUser fire + skip paths (explicitly excluded from findings; matches spec)",
+    "app/javascript/shared/lib/utils.js": "§5.1 (D4) + FAILURE-REPORT F1 — sanitizeTrackingParams placed beside standardizeQueryParamsObject; order from raw string, values from queryString.parse; 255 truncation, first-occurrence, 10-key cap, absence semantics; F1 fix swaps native decodeURIComponent+catch for decode-uri-component",
+    "app/javascript/shared/lib/utils.test.js": "§9.6 + FAILURE-REPORT F2 — 8 original tests incl. non-alphabetical occurrence-order cap test; F2 adds utmData 255-truncation, utmData repeated-param first-occurrence, and malformed-percent-key regression pin; no existing test modified",
+    "app/javascript/shared/queryHooks/useSession.ts": "§5.4 (D2/D10) — magicLink: four params in destructure + inline TS type + variables; register: destructure + variables; hook wrappers untouched",
+    "spec/controllers/api/v1/registrations_controller_spec.rb": "§9.1 — Devise::Test::ControllerHelpers + devise.mapping; login_intent: 'hire' on every magic_create POST; raw-storage ('SomeRawValue'), all-nil, existing-confirmed, existing-unconfirmed, create with/without params",
+    "spec/models/user_from_omniauth_spec.rb": "§9.2 — keyword interface persisted/omitted-nil, existing user untouched, auth:/created_via: required (ArgumentError), partner_source still downcased, new values raw",
+    "spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb": "§9.3 — stubs omniauth.auth, seeds session[:oauth_tracking] with string keys, asserts from_omniauth received the keyword call with the four merged-tracking values; nil case covered",
+    "spec/controllers/api/v1/organizations_controller_spec.rb": "§9.4 — current_user with values → identical Organization values; nils → nils; extra request-body-tamper test pins §4.4's 'values never come from the request'",
+    "spec/controllers/hire/confirmations_controller_spec.rb": "§9.5 — success redirect contains email_confirmed=true + id + URL-encoded email; failure redirect byte-identical"
+  },
+  "spec_coverage": {
+    "section_2_scope_both_directions": "PASS — diff is exactly the 24 files from git diff --stat; every file maps to §2 stack scope (db/schema.rb as the §3 migration artifact; 6 test files per §9). Not-touched sweep clean: git diff --name-only matches nothing for serializer|polic|app/jobs|api.ts|context|cypress; only model touched is user.rb",
+    "section_3_migrations": "PASS — two migrations only, identical four-column sets, no defaults/null-constraints/indexes, no db/data backfill",
+    "section_6_authorization": "PASS — no config/routes.rb change, no new endpoints, no policy files in diff, authorize @organization unchanged, confirmations stays token-authenticated",
+    "section_7_constraints": "PASS all 10 — (1) capture-side-only sanitization: no server-side sanitization added, backend assigns raw; (2) fabricated-fallback grep on added lines (|| \"\"/{}/[]/0) → zero hits; (3) no backfill; (4) raw storage: no downcase/get_created_via on added lines; (5) creation-time only: assignments confined to first_or_create block, magic_create user_params, organizations#create — pinned by §9.1/§9.2 non-modification tests; (6) zero serializer diff; (7) zero PosthogTrackJob/PosthogIdentifyJob touches in diff; (8) all five event names exact, plain trackEvent, no properties; (9) utm_data inner keys raw param names; (10) new files = 2 migrations + 6 test files exactly, all other changes are edits",
+    "section_9_greps": "PASS — git grep -n user_signed_up_client_side app/ → exactly AuthForm.tsx:91 and SignupForm.tsx:75; the diff's only user_signed_up occurrences are those two added client-side calls, server user_signed_up string unmodified",
+    "section_10_deferred_absent": "PASS — no page-view/auth-register-arrival event, no browser-side login event, no serializer exposure of the four columns, no server-side identify/event at confirmations#show (diff there is the redirect string only), no backfill or data migration",
+    "fix_commit_audit": "PASS — git diff 8dcc2f06f..299cf9465 touches only app/javascript/shared/lib/utils.js (F1: native decodeURIComponent+catch replaced by decode-uri-component, the exact preferred mechanism; no restructure, no contract change, no other function touched, no package.json change) and app/javascript/shared/lib/utils.test.js (F2: exactly the 3 required assertions added; existing 8 tests unmodified). Nothing outside FAILURE-REPORT scope"
+  }
+}

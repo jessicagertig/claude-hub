@@ -1,0 +1,24 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 6,
+  "focus": "SPEC 2.1 (CreateAiSummaryGeneration gate change) + SPEC 2.8 (spec/interactors/create_ai_summary_generation_spec.rb)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "2.1 create_ai_summary_generation.rb:36 gate becomes `if active_ai_summary && !job_application.ai_summary_rescore_requested`, identical to create_bulk_ai_summary_generation.rb:45",
+      "2.1 the gate is the ONLY change to the interactor (no other line changes)",
+      "2.8 new spec/interactors/create_ai_summary_generation_spec.rb: rescore true builds new PENDING row + enqueues GenerateAiJobApplicationSummaryJob; rescore false returns existing + enqueues nothing",
+      "2.8 assertions FALSIFIABLE by reverting the gate (not a ghost test)",
+      "2.8 validation_result double stubs textract_pending: false"
+    ],
+    "implemented": [
+      "2.1 gate change: diff hunk on create_ai_summary_generation.rb touches ONLY line 36; `-    if active_ai_summary` / `+    if active_ai_summary && !job_application.ai_summary_rescore_requested`. Char-for-char IDENTICAL to bulk analog create_bulk_ai_summary_generation.rb:45 (`if active_ai_summary && !job_application.ai_summary_rescore_requested`).",
+      "2.1 no other change in the file: the ap debug lines (:22-28), textract_pending branch (:41), pending build+enqueue (:55-72), and requested_by_organization_user_id set (:45,:58) are all present and unchanged. No EXTRA/unspecced changes in the hunk.",
+      "2.8 new file (new file mode 100644, 63 lines). Test 1 (rescore true): creates existing succeeded non-stale summary, sets job_application.ai_summary_rescore_requested = true, asserts result.ai_summary.id NOT eq existing.id, status eq 'pending', existing untouched, and `have_enqueued_job(GenerateAiJobApplicationSummaryJob)`. Test 2 (rescore false): asserts result.ai_summary.id eq existing.id and `not_to have_enqueued_job(GenerateAiJobApplicationSummaryJob)`.",
+      "2.8 FALSIFIABLE: mentally reverting the gate to `if active_ai_summary` makes active_ai_summary truthy in Test 1, returning existing early -> result.ai_summary.id would eq existing.id (fails `not_to eq`), status stays 'succeeded' (fails `eq 'pending'`), and nothing enqueues (fails `have_enqueued_job`). Not tautological.",
+      "2.8 validation_result double stubs textract_pending: false at line 34 (`double('validation_result', textract_result: textract_result, textract_pending: false)`). Required because the rescore-true fall-through path reads validation_result.textract_pending at create_ai_summary_generation.rb:41; the stub is present so no unstubbed-message error."
+    ],
+    "missing": []
+  }
+}

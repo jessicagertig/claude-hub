@@ -1,0 +1,139 @@
+{
+  "meta": {
+    "batch": 29,
+    "criteria_prompt_version": 9,
+    "job_id": 31405,
+    "title": "Full-Stack Software Engineer",
+    "organization": "Tablespace Games",
+    "cost": 0.000647
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "THIS IS NOT A REAL JOB. \nDO NOT APPLY.  \nTHIS IS A TEST ACCOUNT.\nAt Tablespace Games, we seek to harness the boundless energy and imagination of our players. Our mission is to create entertainment that inspires creativity, sparks passion, forges friendships, and fosters communities around the globe. We're a dynamic, innovative game development studio specializing in multiplayer experiences that bring people together.\nAs a small but rapidly growing startup, we're committed to pushing the boundaries of what's possible in online gaming while maintaining a fun, collaborative work environment. Our team is passionate about crafting immersive, engaging experiences that resonate with players worldwide. We believe in the power of games to connect people, inspire creativity, and create lasting memories.\nAt Acme Games, every team member plays a crucial role in shaping our games and our company culture. We value diversity, creativity, and a player-first mindset in everything we do. Join us in our mission to revolutionize the gaming industry and create experiences that truly matter to our global community of players."
+      },
+      {
+        "heading": "The Role",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "As a Software Engineer, you'll work directly with our Senior Software Engineer to build out our engineering team. You'll have complete ownership over the features you build, from ideation and design to development and production. We work in a product-focused environment, where engineers are their own PMs and everyone cares deeply about the end-user. We're constantly pushing high-demand features, and you'll be able to define and implement a variety of products while solving exciting and unique technical challenges surrounding efficiency and optimization."
+      },
+      {
+        "heading": "About You:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "You have 2+ years of industry experience as a Software Engineer at a high-growth startup or tech company\nYou’re experienced in building large-scale, full-stack web apps (React, TypeScript, Firebase/Firestore/Cloud Functions)\nYou have strong familiarity with Frontend and Styling\nYou’re experienced in building and instrumenting high performance and scalable systems\nYou’re familiar with NoSQL architecture and data design\nYou’re focused on software quality, design, testing, and documentation"
+      },
+      {
+        "heading": "Bonus points:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "You love to learn new things — you aren't afraid to test out 5 rich text editors and build your own mini-libraries to fill in the features that existing frameworks lack.\nYou thrive on collaboration and support — you’re not afraid to jump on a call to debug or walk through a challenge at a moment's notice.\nYou have a passion for making professional development and career growth accessible to all!"
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "legal",
+        "type": "non_criteria",
+        "content": "Tablespace Games is proud to be an equal employment workplace committed to promoting an inclusive work environment free of discrimination and harassment. We encourage candidates of all backgrounds to apply"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "You'll work directly with our Senior Software Engineer to build out our engineering team.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "As a Software Engineer, you'll work directly with our Senior Software Engineer to build out our engineering team."
+      },
+      {
+        "text": "You'll have complete ownership over the features you build, from ideation and design to development and production.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You'll have complete ownership over the features you build, from ideation and design to development and production."
+      },
+      {
+        "text": "Engineers are their own PMs and everyone cares deeply about the end-user.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "We work in a product-focused environment, where engineers are their own PMs and everyone cares deeply about the end-user."
+      },
+      {
+        "text": "You'll be able to define and implement a variety of products while solving exciting and unique technical challenges surrounding efficiency and optimization.",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "We're constantly pushing high-demand features, and you'll be able to define and implement a variety of products while solving exciting and unique technical challenges surrounding efficiency and optimization."
+      },
+      {
+        "text": "You have 2+ years of industry experience as a Software Engineer at a high-growth startup or tech company",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You have 2+ years of industry experience as a Software Engineer at a high-growth startup or tech company"
+      },
+      {
+        "text": "You’re experienced in building large-scale, full-stack web apps (React, TypeScript, Firebase/Firestore/Cloud Functions)",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"experienced in\"",
+        "binary": false,
+        "source_text": "You’re experienced in building large-scale, full-stack web apps (React, TypeScript, Firebase/Firestore/Cloud Functions)"
+      },
+      {
+        "text": "Strong familiarity with Frontend and Styling",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Strong familiarity\"",
+        "binary": false,
+        "source_text": "You have strong familiarity with Frontend and Styling"
+      },
+      {
+        "text": "You’re experienced in building and instrumenting high performance and scalable systems",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"experienced in\"",
+        "binary": false,
+        "source_text": "You’re experienced in building and instrumenting high performance and scalable systems"
+      },
+      {
+        "text": "You’re familiar with NoSQL architecture and data design",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"familiar with\"",
+        "binary": false,
+        "source_text": "You’re familiar with NoSQL architecture and data design"
+      },
+      {
+        "text": "Focused on software quality, design, testing, and documentation",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "You’re focused on software quality, design, testing, and documentation"
+      },
+      {
+        "text": "You love to learn new things — you aren't afraid to test out 5 rich text editors and build your own mini-libraries to fill in the features that existing frameworks lack.",
+        "tier": "tier_3",
+        "tier_reasoning": "signal: \"Bonus points\"",
+        "binary": false,
+        "source_text": "You love to learn new things — you aren't afraid to test out 5 rich text editors and build your own mini-libraries to fill in the features that existing frameworks lack."
+      },
+      {
+        "text": "You thrive on collaboration and support — you’re not afraid to jump on a call to debug or walk through a challenge at a moment's notice.",
+        "tier": "tier_3",
+        "tier_reasoning": "signal: \"Bonus points\"",
+        "binary": false,
+        "source_text": "You thrive on collaboration and support — you’re not afraid to jump on a call to debug or walk through a challenge at a moment's notice."
+      },
+      {
+        "text": "You have a passion for making professional development and career growth accessible to all!",
+        "tier": "tier_3",
+        "tier_reasoning": "signal: \"Bonus points\"",
+        "binary": false,
+        "source_text": "You have a passion for making professional development and career growth accessible to all!"
+      }
+    ]
+  }
+}

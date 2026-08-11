@@ -1,0 +1,20 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 5,
+  "agent_index": 4,
+  "assignment": "trial_started callback chain live",
+  "findings": [],
+  "verified": [
+    "Real callback chain: seed basic-org (plan_simple_ats_free, stripe_subscription_status nil, stripe_subscription_id set in-script to sub_qa5_agent4_trial), then real organization.update!(stripe_subscription_status: 'trialing') -> exactly one SubscriptionEvent row id 3358: event_type trial_started, to_plan plan_simple_ats_free (== org.plan), stripe_subscription_id sub_qa5_agent4_trial (== org column), amount nil, from_plan nil",
+    "Fan-out enqueued exactly once each (queue_adapter :test): PosthogTrackJob(41107 = owner.id, 'trial_started', props) x1 and Discord::NotifyFreeTrialStartedJob([37133 = org id]) x1; no Discord::NotifyTrialConvertedToPaidJob from any old site; posthog props live: {stripe_subscription_id, stripe_customer_id cus_UxVVH7LdPKuA18, to_plan} — amount and all 13 attribution fields absent via .compact (org/owner have none)",
+    "Pre-existing branch behavior intact: Slack Notification::FreeTrialStartedJob enqueued x1, and reset_ai_credits ran live (OrganizationAiCreditBalance.last_reset_at nil -> 2026-07-26 22:26:23 UTC written by ResetAiCredits)",
+    "Non-trigger transitions (fresh cleanup/seed): 'trialing' -> 'active' via update! -> zero SubscriptionEvent rows, no Discord::NotifyFreeTrialStartedJob, no Discord::NotifyTrialConvertedToPaidJob, no PosthogTrackJob; Slack Notification::TrialConvertedToPaidJob still enqueued x1 (pre-existing, spec-stated consequence). nil -> 'active' -> zero rows, zero fan-out enqueues",
+    "Dedupe: second nil->trialing flip on the same org within 5 minutes (status reset via update_column, then real update!) -> interactor 5-minute dedupe blocked the second row (trial_started count still 1), no second fan-out (Discord free-trial still x1, Posthog still x1); observed: Slack Notification::FreeTrialStartedJob enqueued again on the deduped flip (unconditional in the callback branch before the interactor — pre-existing behavior)",
+    "Console-row property (SPEC §11.3, accepted — verified, not filed): direct SubscriptionEvent.create!(organization:, event_type: 'trial_started', to_plan:, stripe_subscription_id:) fired the fan-out (+1 PosthogTrackJob, +1 Discord::NotifyFreeTrialStartedJob)"
+  ],
+  "scripts": [
+    "/tmp/qa5_agent4_trial_started.rb",
+    "/tmp/qa5_agent4_non_triggers.rb"
+  ]
+}

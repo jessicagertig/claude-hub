@@ -1,0 +1,23 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 8,
+  "focus_area": "ExtractJobCriteriaJob#broadcast_completion payload correctness (SPEC §7)",
+  "files_reviewed": [
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/channels/global_channel.rb"
+  ],
+  "method": "Ran /tmp/agent8_broadcast_test.rb via `RAILS_ENV=test foreman run rails runner` against the running inflow_test DB. queue_adapter=:test; GlobalChannel.broadcast_to monkeypatched to capture (model, kwargs); no OpenAI/extraction invoked. Built AiJobCriteria rows on seeded job 'Senior Engineer' (id 27615) + admin OrganizationUser 'Rezu May' (id 35391), calling ExtractJobCriteriaJob.new.send(:broadcast_completion, row, org_user.id). Rows cleaned via delete_all (0 remaining).",
+  "assertions": [
+    "case1 succeeded+criteria -> exactly 1 broadcast; model==requesting user; action 'JOB_CRITERIA_EXTRACTION_COMPLETE'; payload status 'succeeded', jobId==job.id, jobTitle==job.title, zeroCriteriaFailure false, NO errorMessage key. PASS",
+    "case2 failed+ZERO_CRITERIA msg -> status 'failed', zeroCriteriaFailure TRUE, errorMessage== the message. PASS",
+    "case3 failed+non-zero msg ('Failed to parse AI response: x') -> status 'failed', zeroCriteriaFailure false, errorMessage== the message. PASS",
+    "case4 failed+error_message nil -> status 'failed', zeroCriteriaFailure false, NO errorMessage key. PASS",
+    "case5 non-terminal (pending, in_progress, retrying) -> NO broadcast (return unless succeeded||failed). PASS (all 3)",
+    "case6 requesting_organization_user_id 0 and a bogus large id -> NO broadcast (return unless requesting_organization_user). PASS",
+    "case7 fresh-read: stale in-memory row 'pending' while DB row updated to 'succeeded' via update_all -> broadcast uses DB state, status 'succeeded' (in_mem_pending confirmed true). Proves AiJobCriteria.find_by(id:) fresh read is load-bearing. PASS",
+    "broadcast-site gating (code read): success path gated `if requesting_organization_user_id` (line 23); retry_on exhaustion block guards `if ai_job_criteria` before `job.send(:broadcast_completion, ...)` (lines 9-12); StandardError rescue gated `if ai_job_criteria && requesting_organization_user_id` (line 34). All match SPEC §7."
+  ],
+  "findings": []
+}

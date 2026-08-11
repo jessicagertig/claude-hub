@@ -1,0 +1,42 @@
+{
+  "layer": "playwright",
+  "run": "qa-run-3",
+  "round": 1,
+  "agents_dispatched": 8,
+  "agents_reporting": 8,
+  "execution_model": "single shared browser -> agents dispatched STRICTLY SEQUENTIALLY (each ran alone). Team scaled to the bounded UI surface (one settings tab, 6 display states, 2 modals, 1 sidebar) + navigation + network + copy. No agent triggered a real extraction (the Regenerate/Generate CONFIRM button was never clicked; in-flight loading verified via a pre-seeded in_progress row). Display states seeded directly via rails runner (allowed app-context write) to avoid paid AI calls.",
+  "high_plus_count": 0,
+  "med_count": 1,
+  "low_count": 1,
+  "coverage": {
+    "navigation_by_clicks": "agent-1: jobs list -> job -> Job setup -> Plato AI settings reachable via clicks (flag-gated nav item present). PASS",
+    "state_never_ran": "agent-1 (28054): file-text EmptyState, 'No job criteria have been generated', Generate-only. PASS",
+    "state_succeeded_and_view_modal": "agent-2 (28055): criteria card, count rail Core2/Preferred1/Bonus1, View+Regenerate; View slide-over content + tier list + close (X/Esc). PASS",
+    "state_zero_criteria_failure": "agent-3 (28056): alert-triangle 'No criteria found' + exact message, Regenerate-only, no card. PASS",
+    "state_other_failure": "agent-4 (28057): alert-triangle 'Criteria generation failed' + exact message, Regenerate-only; correctly DISCRIMINATED from zero-found. PASS",
+    "state_in_flight": "agent-5 (28058): never-extracted EmptyState + Generate button loading/disabled (backend-driven), no View; loading SURVIVES RELOAD. PASS",
+    "state_regenerating_over_success": "agent-6 (28059): OLD criteria card retained + Regenerate loading + View available; persists on reload. PASS",
+    "regenerate_confirm_modal": "agent-7 (28055): title + lead + refresh-cw statement box + primary/secondary buttons all verbatim per SPEC 8.5; Cancel closes, never confirmed. PASS",
+    "sidebar_glossary": "agent-7: 'Criteria tiers' h3 + intro + Core/Preferred/Bonus entries; 'count most/less toward the score' phrasing, no weight/heaviest, no em dashes. PASS",
+    "network_and_payload": "agent-8 (28055,28056): GET /jobs/:id/ai_job_criteria -> 200, correct payload per state, tier values snake_case, NO looping, NO /ai_job_criteria/0. PASS",
+    "copy_rules_and_flag_gate": "agent-8: no em dashes, static labels, timestamp only in card; Plato AI settings nav present (AI_APPLICANT_SUMMARY on). PASS",
+    "console_errors": "all 8 agents: exactly the 7 known pre-existing errors (history deprecations, Redux reducer warnings, heap-api 404); NO feature-referencing errors."
+  },
+  "findings": [
+    {
+      "id": "l5-r1-a1-001",
+      "severity": "LOW",
+      "title": "Never-ran 'Generate criteria' button opens the shared 'Regenerate job criteria?' confirm modal ('re-extract' wording)",
+      "classification": "report-only, SPEC-SANCTIONED",
+      "detail": "SPEC §8.3/§8.5 reuse RegenerateJobCriteriaConfirmModal (headerTitleText 'Regenerate job criteria?') for both the Generate and Regenerate actions. The section button label correctly differs (Generate vs Regenerate); only the shared modal title/copy says 'Regenerate'. Matches spec; noted for transparency."
+    },
+    {
+      "id": "l5-r1-a8-001",
+      "severity": "MED",
+      "title": "GET /ai_job_criteria wire payload uses snake_case top-level keys (extracted_at, zero_criteria_failure)",
+      "classification": "report-only, per-design",
+      "detail": "The raw HTTP response uses snake_case top-level keys; the frontend api.ts interceptor camelCases them to extractedAt/zeroCriteriaFailure (SPEC §5.3 'frontend camelCase after api.ts transform'). Matches the documented design; not a defect."
+    }
+  ],
+  "verdict": "CLEAN (round 1 of 2). 0 HIGH+. Advance to round 2 for the second consecutive clean round."
+}

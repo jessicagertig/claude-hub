@@ -1,0 +1,19 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 12,
+  "focus": "Zero-criteria error-message CONSTANTS and their wiring into the writer services (SPEC.md §4.2): constant values, ZERO_CRITERIA_ERROR_MESSAGES membership+frozen, zero_criteria_failure? drift-free guard, and confirming writers use constant references (not stale literals) with unchanged string values.",
+  "scenarios_run": [
+    "Source read of app/models/ai_job_criteria.rb: 3 constants + ZERO_CRITERIA_ERROR_MESSAGES.freeze + zero_criteria_failure? = status_failed? && ZERO_CRITERIA_ERROR_MESSAGES.include?(error_message)",
+    "Source read of extract_criteria.rb:62 (ZERO_CRITERIA_NO_SECTIONS_ERROR_MESSAGE) and :122 (ZERO_CRITERIA_NONE_EXTRACTED_ERROR_MESSAGE) — both constant references",
+    "Source read of score_job_application.rb:43 (ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE) — constant reference",
+    "grep app/ lib/ for the 3 constant names and the 3 raw string literals: literals appear ONLY in ai_job_criteria.rb constant definitions (lines 7-9); no stale-literal writers remain",
+    "git log -S on the string literals: writer diff shows pure literal->constant substitution, string VALUES unchanged (no behavior change)",
+    "extract_job_criteria_job.rb exhaustion block (line 10) and StandardError rescue (line 33) write raw error&.message/e&.message — NOT the zero-criteria constants",
+    "test_frr runtime: asserted the 3 constant values exactly; ZERO_CRITERIA_ERROR_MESSAGES == the 3 in order and .frozen?",
+    "test_frr runtime: built isolated org/job; failed AiJobCriteria row with each constant value => zero_criteria_failure? true",
+    "test_frr runtime drift proof: failed row with one-char-off 'Criteria array is empty!' => false; succeeded row with matching text => false (must be status_failed?)",
+    "test_frr runtime: 'Job description is blank', 'Failed to parse AI response: ...', generic StandardError message => NOT in ZERO_CRITERIA_ERROR_MESSAGES and zero_criteria_failure? false (land in generic failure state)"
+  ],
+  "findings": []
+}

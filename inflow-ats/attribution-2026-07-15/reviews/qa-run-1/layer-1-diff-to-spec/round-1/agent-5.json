@@ -1,0 +1,29 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 5,
+  "focus_area": "organizations + confirmations controllers",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "SPEC 4.4 (D5) — copy four attribution values from current_user onto new Organization; organization_params not modified; no re-capture from request params",
+      "SPEC 4.8 (D12) — success redirect /auth?email_confirmed=true&id=<user.id>&email=<url-encoded user.email>; failure redirect unchanged",
+      "SPEC 6 — authorization unchanged (Pundit authorize @organization stays; confirmations stays token-authenticated via User.confirm_by_token)",
+      "SPEC 9.4 — organizations_controller_spec: four values copied identically; nils -> nils; stub authenticate_api_v1_user!/current_user/Pundit per ai-credit pattern",
+      "SPEC 9.5 — confirmations_controller_spec: success redirect contains email_confirmed=true + id + URL-encoded email; failure path unchanged",
+      "SPEC 7 constraint 2 — nil for absent at every layer, no fabricated fallbacks",
+      "SPEC 7 constraint 5 — creation-time only: organizations get values only at organizations#create, copied from current_user"
+    ],
+    "verified": [
+      "SPEC 4.4 — app/controllers/api/v1/organizations_controller.rb:32-35 adds exactly the four assignments (@organization.utm_source/utm_campaign/utm_data/internal_ref = current_user.<same>) immediately after the existing created_via copy at line 31, matching the spec snippet in order and mechanism. organization_params (lines 118-145) is untouched — the permit list contains no utm/internal_ref keys — and nothing in the action reads the four values from params. The diff for this file contains no other hunk.",
+      "SPEC 4.8 — app/controllers/hire/confirmations_controller.rb:18 is the sole changed line: redirect_to \"/auth?email_confirmed=true&id=#{user.id}&email=#{CGI.escape(user.email)}\" — spec-proposed param names id/email, CGI.escape exactly as the spec exemplifies (and CGI.escape is the established house form: app/controllers/api/v1/billing_controller.rb:43,347-349,427). The failure redirect at line 21 (/auth?email_confirmed=false) is byte-identical to before. In the success branch user is the persisted confirmed User (user.errors.blank?), so id/email are always present.",
+      "SPEC 6 — authorize @organization remains at organizations_controller.rb:37, after the new assignments, unchanged; ApplicationController includes Pundit with no verify_authorized after_action, so the spec's authorize stub is safe. Hire::BaseController adds no authentication before_action; confirmations remains token-authenticated solely via User.confirm_by_token. No policy or endpoint changes in either file.",
+      "SPEC 9.4 — spec/controllers/api/v1/organizations_controller_spec.rb (new file, A in diff): stubs authenticate_api_v1_user!, current_user, and authorize exactly per the ai-credit pattern (spec/controllers/api/v1/organization_ai_credit_purchases_purchase_top_up_spec.rb:40-43); the additional set_sentry_context stub has suite precedent (bulk_ai_job_application_summaries_controller_spec.rb). Test 1: current_user with utm_source 'SomeRawValue', utm_campaign, jsonb utm_data hash, internal_ref -> asserts all four identical on the created Organization including hash round-trip. Test 2 (traces to 4.4's 'values never come from the request'): request-body utm_source: 'attacker' is ignored — safe because Rails' action_on_unpermitted_parameters defaults to :log in test, so the unpermitted key is dropped, not raised. Test 3: current_user with nil columns -> all four Organization columns nil, utm_data asserted nil (not {}), pinning constraint 7.2. The around block switching queue_adapter to :test is load-bearing plumbing, not stray code: config/environments/test.rb:64 sets :inline, and Organization creation enqueues OrgSetupJob/NotifyNewOrganizationJob/Discord::NotifyNewOrganizationJob at after_commit (app/models/organization.rb:56,184-188), which would execute inline without it.",
+      "SPEC 9.5 — spec/controllers/hire/confirmations_controller_spec.rb (new file, A in diff): success test creates a user whose email ('confirm+test@example.com') contains '+' and '@', so the exact-URL redirect_to assertion is falsifiable on the encoding requirement — an unencoded implementation would produce a different Location header and fail. Failure test asserts the exact unchanged '/auth?email_confirmed=false' with no id/email. Same justified queue-adapter around block (OrgOwnerUpdateJob.perform_later on the success path; :inline default).",
+      "SPEC 7 constraint 2 — no || fallbacks or fabricated defaults anywhere in the four files; nil user columns propagate to nil organization columns and the spec asserts it (including utm_data nil, not {}).",
+      "SPEC 7 constraint 5 — within these files organizations receive the values only in #create; the update action and organization_params contain no attribution keys.",
+      "Diff-to-spec mapping — every added line in the four assigned files traces to SPEC 4.4/4.8/9.4/9.5; no untraceable code. Both spec files are wholly new (git diff --name-status: A), so no pre-existing spec content was altered."
+    ],
+    "missing": []
+  }
+}

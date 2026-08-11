@@ -1,0 +1,22 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 5,
+  "focus": "AUTO candidate-review guard ValidateAutoAiSummaryGeneration zero-criteria check at runtime (app/interactors/validate_auto_ai_summary_generation.rb) — the automatic-scoring counterpart of the manual ValidateAiSummaryGeneration guard. Verified it blocks auto AI review when the job's latest AiJobCriteria is a zero-criteria failure and allows otherwise, and confirmed parity with the manual guard.",
+  "scenarios_run": [
+    "Seed ai-org-with-candidates.json (paid org 32262, AI_APPLICANT_SUMMARY on, published 'Senior Engineer' job with description, 3 candidates). Created an OrganizationAiCreditBalance (daily_credits_remaining=1000) and stubbed has_resume=true so all prior guards (flipper, resume, credits, description) genuinely pass and the interactor REACHES the zero-criteria guard (its last guard). Called ValidateAutoAiSummaryGeneration.call(job_application:) directly on a real JobApplication (id 20177) built on the seeded job via test_frr; downstream GenerateAiJobApplicationSummaryJob/SubmitResumeToTextractJob/CreateAiSummaryGeneration stubbed to no-ops.",
+    "S2 ZERO-CRITERIA BLOCK: latest AiJobCriteria = failed + 'Criteria array is empty' (zero_criteria_failure?=true) -> guard fires.",
+    "S3 ALLOW: latest = succeeded with non-empty criteria (zero_criteria_failure?=false) -> guard does NOT fire.",
+    "S4a NEVER-EXTRACTED: 0 AiJobCriteria rows (latest=nil, zero_criteria_extraction_failure?=nil) -> guard does NOT fire.",
+    "S4b GENERIC-FAILURE: latest = failed + 'OpenAI request timed out' (non-member message, zero_criteria_failure?=false) -> guard does NOT fire.",
+    "S5 parity: byte-compared the zero-criteria guard line + message between ValidateAutoAiSummaryGeneration and ValidateAiSummaryGeneration."
+  ],
+  "findings": [],
+  "verifications_passed": [
+    "S2 BLOCK: with all prior guards satisfied, a failed zero-criteria latest AiJobCriteria ('Criteria array is empty') causes ValidateAutoAiSummaryGeneration to context.fail! with the EXACT user-facing message 'No scoring criteria were found in the job description. Regenerate job criteria in Plato AI settings before running reviews.' — auto scoring is blocked, not silently proceeding.",
+    "S2 SHORT-CIRCUIT: on the zero-criteria failure, context.textract_result and context.textract_pending are both nil (the interactor's success outputs are never set), and none of the stubbed downstream jobs (GenerateAiJobApplicationSummaryJob / SubmitResumeToTextractJob / CreateAiSummaryGeneration) were invoked — the failed context returns before any enqueue.",
+    "S3 ALLOW: a succeeded-with-criteria latest lets the interactor succeed (success?=true, error=nil) and set the auto-path outputs textract_result=nil, textract_pending=true — the zero-criteria guard correctly does NOT fire.",
+    "S4a/S4b DISTINCT STATES: never-extracted (0 rows -> zero_criteria_extraction_failure? nil) and generic non-zero-criteria failure (failed row whose error_message is not one of AiJobCriteria::ZERO_CRITERIA_ERROR_MESSAGES) both pass the guard (success?=true) — only a true zero-criteria failure blocks, matching AiJobCriteria#zero_criteria_failure? semantics.",
+    "S5 PARITY: ValidateAutoAiSummaryGeneration (auto) and ValidateAiSummaryGeneration (manual) use the IDENTICAL guard `context.fail!(...) if @job_application.job&.zero_criteria_extraction_failure?` with the IDENTICAL message, both positioned as the final fail! guard (after resume/credits/description). The auto path is protected exactly like the manual path — no missing, weaker, or divergent check. No HIGH gap."
+  ]
+}

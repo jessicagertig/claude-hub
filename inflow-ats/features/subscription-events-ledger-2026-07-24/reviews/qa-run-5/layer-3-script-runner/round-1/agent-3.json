@@ -1,0 +1,19 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 5,
+  "agent_index": 3,
+  "assignment": "uniqueness invariant + redelivery live",
+  "findings": [],
+  "verified": [
+    "Immediate redelivery: same paid invoice.paid (amount_paid=4900, trial_end present) delivered twice back-to-back through StripeWebhookHandlerJob.new.handle_stripe_event -> exactly one conversion row (trial_converted_to_paid, amount 4900); neither delivery raised",
+    "Redelivery beyond dedupe window: update_column(:created_at, 10.minutes.ago) on the conversion row, then redelivery -> still exactly one conversion row (check-first guard in CreateSubscriptionEvent#conversion_duplicate_exists?, not the 5-minute dedupe); handle_stripe_event completed without raising; existing branch behavior ran again live: stripe_current_period_end_at updated to the redelivery epoch (observed 1795731659) and stripe_update_default_payment_method invoked; original row id 3353 untouched",
+    "Index backstop live: direct SubscriptionEvent.create! of a second conversion-type row (converted_to_paid) for the same stripe_subscription_id raised ActiveRecord::RecordNotUnique against idx_subscription_events_conversion_stripe_sub_id (verified live via connection.indexes: unique, single-column [stripe_subscription_id], partial where event_type = ANY (ARRAY[2, 8]))",
+    "Non-conversion types NOT blocked: canceled_subscription and trial_started rows with the SAME stripe_subscription_id inserted fine alongside the conversion row (final ledger for the subscription id: 1 conversion + 1 canceled_subscription + 1 trial_started)",
+    "Renewal semantics: with the backdated conversion row present, a later paid invoice for the same subscription -> no second row, and the renewal still updated stripe_current_period_end_at; a DIFFERENT subscription id (sub_qa5_agent3_second, trial_end absent, amount_paid=9900) -> new converted_to_paid row with amount 9900 and the event-sourced subscription id; first subscription's single conversion row untouched",
+    "Fan-out side observation (queue_adapter :test): enqueued tally PosthogTrackJob x4 (one per fan-out row), Discord::NotifyTrialConvertedToPaidJob x1, Discord::NotifyFreeTrialStartedJob x1, and NO Discord::NotifySubscriptionDeletedJob for the canceled_subscription row (organization.subscription_canceled_at nil -> skip per SPEC §7)"
+  ],
+  "scripts": [
+    "/tmp/qa5_agent3_uniqueness.rb"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 9,
+  "focus_area": "frontend capture + payloads",
+  "findings": [
+    {
+      "id": "l1-a9-1",
+      "type": "VIOLATION",
+      "title": "sanitizeTrackingParams silently drops utm_* params whose key contains malformed percent-encoding, because its key decoder diverges from queryString.parse's decoder",
+      "spec_requirement": "SPEC §5.1: utmData is \"an object holding every other param whose name starts with utm_ (i.e. excluding utm_source and utm_campaign), keyed by its param name, each value sanitized\"; the helper's contract is \"order comes from the raw string, values from the parse\". Nothing in the spec or the approved deviations permits dropping a utm_* param that queryString.parse captures.",
+      "evidence": "app/javascript/shared/lib/utils.js:44-50 decodes each scanned key with native decodeURIComponent and falls back to the RAW key on throw; query-string v6.1.0 parse() decodes keys with decodeComponent from decode-uri-component 0.2.0 (node_modules/query-string/index.js parse(): formatter(decode(key, options), ...)), which best-effort-decodes malformed sequences instead of throwing (e.g. '%C2' -> '\\uFFFD', node_modules/decode-uri-component/index.js customDecodeURIComponent). When the two decoders disagree, the occurrence-order key never matches any parse key, and utils.js:73 (parsedParams[key] !== undefined) filters the param out of utmData entirely. Empirically verified against the repo's installed libraries: sanitizeTrackingParams(\"?utm_x%C2=1&utm_medium=m\") returns {utmData:{utm_medium:\"m\"}} while queryString.parse(\"?utm_x%C2=1&utm_medium=m\") returns {\"utm_medium\":\"m\",\"utm_x\\uFFFD\":\"1\"} — a param whose parse-decoded name starts with utm_ is absent from utmData. Scope: only utm_* keys whose percent-encoding native decodeURIComponent rejects (decode-uri-component tries the native decoder first, so well-formed keys are identical on both paths); the param is dropped, never mis-valued, and utm_source/utm_campaign/internal_ref (literal names) are unaffected.",
+      "recommendation": "Decode the scanned key with the same decoder queryString.parse uses — e.g. import decodeComponent from \"decode-uri-component\" (already a transitive dependency of the pinned query-string 6.1.0) in place of the native decodeURIComponent+catch — or derive occurrence order by locating each of Object.keys(parsedParams) in the raw string, so the order-scan keys and the parse keys cannot diverge. Alternatively obtain an explicit ruling that utm_* params with malformed percent-encoded names may be dropped, and record it as an approved deviation."
+    }
+  ],
+  "spec_coverage": {
+    "assigned": [
+      "§5 preamble — camelCase payload fields utmSource/utmCampaign/utmData/internalRef; utmData inner keys are raw URL param names",
+      "§5.1 (D4) — helper takes raw location.search; occurrence order derived from raw string (parse sorts keys alphabetically); camelCase output fields; repeated param -> first occurrence; 255-char truncation; max 10 utm_* keys by occurrence order; absence semantics (absent -> absent/undefined, no || \"\" or {} fabrication, utmData only when >=1 extra utm_* captured; ?utm_source -> null passes through)",
+      "§5.2 (D1/D2/D14) — AuthForm capture via sanitizeTrackingParams before state, analog referral state; four fields in magicLink payload; utm props passed to GoogleSSOButton; trackEvent(\"user_signed_up_client_side\") plain call before onComplete in magicLink onSuccess; import from @shared/lib/posthog",
+      "§5.4 (D2/D10) — useSession.ts magicLink: destructured params + inline TS type + variables; register: destructured params + variables; hook wrappers unchanged",
+      "§5.5 (D10/D14) — SignupForm same capture, four in register payload, trackEvent before props.onComplete in register onSuccess",
+      "§9.6 — Jest test: 255-truncation; repeated-param first occurrence; 10-key cap with NON-alphabetical param order so a sorted implementation fails; utm_source/utm_campaign excluded from utmData; absent -> absent fields; utmData absent when no extras",
+      "§7 constraints 1 (capture-side-only sanitization), 2 (nil for absent, no fabricated fallbacks), 9 (utmData inner keys raw param names)"
+    ],
+    "verified": [
+      "§5 preamble — verified: payloads use utmSource/utmCampaign/utmData/internalRef (AuthForm.tsx:81-84, SignupForm.tsx:67-70, useSession.ts:48-51,103-106); helper keys utmData by decoded raw param name, not camelCased (utils.js:80); allKeysToSnake recursion into utmData confirmed as the spec-noted existing mechanism (structure.js allKeysToSnake, canonical utm_* names pass lodash snakeCase unchanged)",
+      "§5.1 — verified against node_modules/query-string/index.js (v6.1.0: parse ends in Object.keys(ret).sort().reduce; repeated keys accumulate [].concat in occurrence order and skip keysSorter via the !Array.isArray guard; extract slices from the first '?'): raw-string input, occurrence-order scan, first-of-array (utils.js:31), .slice(0,255) truncation (utils.js:32), .slice(0,10) cap (utils.js:75), conditional field assignment with no || fallbacks (utils.js:56-83), utmData only when utmDataKeys.length > 0 (utils.js:77), ?utm_source -> null passes through; behavior also confirmed empirically by executing the helper against the installed library — EXCEPT the malformed-percent-encoded-key divergence reported as l1-a9-1",
+      "§5.2 — verified: AuthForm.tsx:41 useState(sanitizeTrackingParams(location.search)) with no setter, analog to referral state at line 39; payload lines 81-84 alongside referral/partner; GoogleSSOButton props lines 131-134; trackEvent at line 91 before onComplete at line 92; imports at lines 9-10; absent fields serialize out (explicit undefined survives allKeysToSnake as undefined and is dropped by axios JSON serialization — traced through api.ts apiMutate and structure.js)",
+      "§5.4 — verified: useSession.ts register destructure lines 34-37 + variables lines 48-51; magicLink destructure lines 65-68 + inline type lines 78-81 + variables lines 103-106; useMagicLink/useRegister wrappers unchanged in the diff",
+      "§5.5 — verified: SignupForm.tsx:26 capture from props.location.search; payload lines 67-70; trackEvent line 75 before props.onComplete() line 76; imports lines 10-11",
+      "§9.6 — verified: app/javascript/shared/lib/utils.test.js covers all six required assertions; the 10-key cap test lists utm_z..utm_q,utm_a (non-alphabetical) and asserts exact key order via toEqual, so an alphabetically-sorted implementation produces [utm_a,utm_q,...,utm_y] and fails; absence asserted via hasOwnProperty for all four fields; file is picked up by jest.config.js default testMatch; executed — 8/8 pass",
+      "§7 constraints 1, 2, 9 — verified: sanitization exists only in the frontend helper; no fabricated fallbacks anywhere in the assigned files; utmData inner keys are raw param names"
+    ],
+    "missing": []
+  }
+}

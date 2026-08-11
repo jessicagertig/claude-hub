@@ -1,0 +1,118 @@
+{
+  "criteria": [
+    {
+      "original": {
+        "text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"solid\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+      },
+      "action": "decompose",
+      "reasoning": "The criterion lists distinct sub-areas of Kubernetes proficiency that represent different knowledge domains (design, networking, workload types) that can be independently evaluated.",
+      "decomposed": [
+        {
+          "text": "Solid understanding of Kubernetes cluster design and deployments",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        },
+        {
+          "text": "Solid understanding of Kubernetes autoscaling",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        },
+        {
+          "text": "Solid understanding of Kubernetes service mesh or networking",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        },
+        {
+          "text": "Solid understanding of stateful vs stateless workloads in Kubernetes",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"solid\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads."
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"experience in\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+      },
+      "action": "decompose",
+      "reasoning": "The list of cloud infrastructure components (services, network, compute, storage, security) involves distinct operational skill sets.",
+      "decomposed": [
+        {
+          "text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure managing services, network, and compute",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"experience in\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+        },
+        {
+          "text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure managing storage and security",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"experience in\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security."
+        }
+      ]
+    },
+    {
+      "original": {
+        "text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"strong\"",
+        "binary": false,
+        "contains_title_technology": false,
+        "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+      },
+      "action": "decompose",
+      "reasoning": "This combines three distinct technical areas: CI/CD, general developer tooling, and specific marketplace/integration experience.",
+      "decomposed": [
+        {
+          "text": "Familiarity with CI/CD pipelines",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"strong\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+        },
+        {
+          "text": "Familiarity with developer tooling",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"strong\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+        },
+        {
+          "text": "Exposure to marketplace or cloud provider integrations is a strong plus",
+          "tier": "tier_1",
+          "tier_reasoning": "signal: \"strong\"",
+          "binary": false,
+          "contains_title_technology": false,
+          "source_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations is a strong plus."
+        }
+      ]
+    }
+  ]
+}

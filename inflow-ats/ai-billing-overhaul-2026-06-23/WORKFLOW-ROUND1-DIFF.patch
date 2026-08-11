@@ -1,0 +1,1258 @@
+diff --git a/app/controllers/api/v1/organization_ai_credit_purchases_controller.rb b/app/controllers/api/v1/organization_ai_credit_purchases_controller.rb
+index a041efc96..4770629dc 100644
+--- a/app/controllers/api/v1/organization_ai_credit_purchases_controller.rb
++++ b/app/controllers/api/v1/organization_ai_credit_purchases_controller.rb
+@@ -13,7 +13,7 @@ class Api::V1::OrganizationAiCreditPurchasesController < Api::V1::BaseController
+   end
+ 
+   def checkout
+-    authorize :billing, :create_subscription?
++    authorize :billing, :checkout?
+ 
+     lookup_key = organization_ai_credit_purchase_params[:stripe_price_lookup_key]
+     unless OrganizationAiCreditPurchase.ai_credit_subscription_plan_lookup_key?(lookup_key)
+@@ -49,20 +49,16 @@ class Api::V1::OrganizationAiCreditPurchasesController < Api::V1::BaseController
+       stripe_checkout_session_id: session.id,
+       stripe_price_lookup_key: lookup_key,
+       subscription_credits_per_period: credits_per_period,
+-      amount_cents_paid: 0
++      stripe_amount: 0
+     )
+-    unless purchase.save
+-      Rails.logger.error "organization_ai_credit_purchases#checkout: failed to create purchase: #{purchase.errors.full_messages.join(', ')}"
+-      render_general_errors(['Failed to create purchase record'])
+-      return
++    if purchase.save
++      render json: { url: session.url, sessionId: session.id }, status: :created
++    else
++      render_errors(purchase)
+     end
+-
+-    render json: { redirectUrl: session.url }
+   rescue Stripe::StripeError => e
+-    Rails.logger.error "Stripe error in organization_ai_credit_purchases#checkout: org_id=#{current_organization&.id} lookup_key=#{organization_ai_credit_purchase_params[:stripe_price_lookup_key]} msg=#{e.message}"
+-    ap e
+-    Sentry.capture_exception(e, extra: { org_id: current_organization&.id, action: 'organization_ai_credit_purchases#checkout' })
+-    render_general_errors(['Something went wrong with the payment processor. Please try again or contact support@polymer.co if the issue persists.'])
++    Rails.logger.error "Stripe Checkout Session Error: #{e.message}"
++    render json: { error: e.message }, status: :unprocessable_entity
+   end
+ 
+   def purchase_top_up
+@@ -74,78 +70,82 @@ class Api::V1::OrganizationAiCreditPurchasesController < Api::V1::BaseController
+       return
+     end
+ 
+-    prices = Stripe::Price.list(lookup_keys: [lookup_key], active: true, limit: 1)
+-    price = prices.data.first
+-    unless price
+-      render_general_errors(['Price not found in Stripe for this lookup key'])
+-      return
+-    end
+-
+-    # Pre-create the purchase record FIRST (mirrors WWR + the subscription
+-    # #checkout path), then either charge a model method on it (payment method
+-    # on file) or attach a Checkout Session id. Credits are granted later by the
+-    # invoice.paid webhook (ai_credit_pack_top_up branch) -> ApplyAiCreditPurchase,
+-    # which FINDS this record.
+     purchase = OrganizationAiCreditPurchase.new(
+       organization: current_organization,
+       kind: :one_off,
+       stripe_price_lookup_key: lookup_key,
+       one_off_credits_granted: OrganizationAiCreditPurchase.ai_credit_allocation_for_lookup_key(lookup_key),
+-      amount_cents_paid: 0,
++      stripe_amount: 0,
+       currency: 'usd'
+     )
+-    unless purchase.save
+-      Rails.logger.error "organization_ai_credit_purchases#purchase_top_up: failed to create purchase: #{purchase.errors.full_messages.join(', ')}"
+-      render_general_errors(['Failed to create purchase record'])
+-      return
+-    end
+ 
+-    if current_organization.stripe_default_payment_method_on_file
+-      # Payment method on file -> charge it immediately (no Stripe redirect).
+-      # Mirrors BoardWwrListing#charge_for_listing. The charge stamps
+-      # stripe_invoice_id on the record via update_columns.
+-      purchase.charge_default_payment_method
+-      render json: { charged: true }
+-      return
+-    end
++    Rails.logger.info 'New AI Credit One-Off Purchase'
++    Rails.logger.info purchase.inspect
+ 
+-    session = Stripe::Checkout::Session.create(
+-      customer: current_organization.stripe_customer_id,
+-      mode: 'payment',
+-      payment_method_types: ['card'],
+-      line_items: [{ price: price.id, quantity: 1 }],
+-      invoice_creation: {
+-        enabled: true,
+-        invoice_data: {
++    if current_organization.stripe_default_payment_method_on_file
++      if purchase.save
++        purchase.charge_default_payment_method
++        render_one(purchase, Api::V1::OrganizationAiCreditPurchaseSerializer)
++      else
++        render_errors(purchase)
++      end
++    else
++      if purchase.save
++        amount = purchase.calculate_charge_amount
++
++        @description = OrganizationAiCreditPurchase::AI_CREDIT_AMOUNTS_BY_LOOKUP_KEY.dig(lookup_key, :name) || "Plato AI Credit Top-Up"
++        @invoice_description = "Plato AI Credit Top-Up"
++
++        session = Stripe::Checkout::Session.create({
++          customer: current_organization.stripe_customer_id,
++          mode: 'payment',
++          line_items: [{
++            price_data: {
++              currency: 'usd',
++              product_data: {
++                name: @description,
++                description: @invoice_description
++              },
++              unit_amount: amount
++            },
++            quantity: 1
++          }],
++          payment_intent_data: {
++            metadata: {
++              organization_ai_credit_purchase_id: purchase.id,
++              organization_id: current_organization.id
++            }
++          },
++          invoice_creation: {
++            enabled: true,
++            invoice_data: {
++              description: @invoice_description,
++              metadata: {
++                organization_ai_credit_purchase_id: purchase.id
++              }
++            }
++          },
+           metadata: {
+-            organization_id: current_organization.id,
+             organization_ai_credit_purchase_id: purchase.id,
+-            stripe_price_lookup_key: lookup_key,
+-            ai_credit_pack_top_up: 'true'
+-          }
+-        }
+-      },
+-      success_url: "#{Variables::AtsRootUrl}/hire/settings/billing?ai_credit_top_up_success=1",
+-      cancel_url: "#{Variables::AtsRootUrl}/hire/settings/billing?ai_credit_top_up_cancel=1",
+-      metadata: {
+-        organization_id: current_organization.id,
+-        organization_ai_credit_purchase_id: purchase.id,
+-        ai_credit_pack_top_up: 'true'
+-      }
+-    )
++            organization_id: current_organization.id
++          },
++          success_url: "#{Variables::AtsRootUrl}/hire/settings/billing?ai_credit_top_up_success=1&session_id={CHECKOUT_SESSION_ID}",
++          cancel_url: "#{Variables::AtsRootUrl}/hire/settings/billing?ai_credit_top_up_cancel=1&session_id={CHECKOUT_SESSION_ID}"
++        })
+ 
+-    unless purchase.update(stripe_checkout_session_id: session.id)
+-      Rails.logger.error "organization_ai_credit_purchases#purchase_top_up: failed to attach checkout session: #{purchase.errors.full_messages.join(', ')}"
+-      render_general_errors(['Failed to create purchase record'])
+-      return
+-    end
++        purchase.update(stripe_checkout_session_id: session.id)
+ 
+-    render json: { redirectUrl: session.url }
++        render json: { url: session.url, sessionId: session.id }, status: :created
++      else
++        render_errors(purchase)
++      end
++    end
+   rescue Stripe::StripeError => e
+-    Rails.logger.error "Stripe error in organization_ai_credit_purchases#purchase_top_up: org_id=#{current_organization&.id} lookup_key=#{organization_ai_credit_purchase_params[:stripe_price_lookup_key]} msg=#{e.message}"
+-    ap e
+-    Sentry.capture_exception(e, extra: { org_id: current_organization&.id, action: 'organization_ai_credit_purchases#purchase_top_up' })
+-    render_general_errors(['Something went wrong with the payment processor. Please try again or contact support@polymer.co if the issue persists.'])
++    Rails.logger.error "Stripe Checkout Session Error: #{e.message}"
++    render json: { error: e.message }, status: :unprocessable_entity
++  rescue StandardError => e
++    Rails.logger.error "Failed to process AI credit one-off purchase top-up: #{e.message}"
++    render_general_errors(["Unable to process payment: #{e.message}"])
+   end
+ 
+   # OPEN CUSTOM PORTAL SESSION TO CHANGE A STRIPE SUBSCRIPTION
+@@ -183,7 +183,7 @@ class Api::V1::OrganizationAiCreditPurchasesController < Api::V1::BaseController
+     ap session
+     # Sync with Stripe is triggered on "Return to Polymer"
+ 
+-    PosthogTrackJob.perform_later(current_user.id, 'change_subscription_stripe_portal_opened', { price_id: determine_price_id })
++    PosthogTrackJob.perform_later(current_user.id, 'ai_credit_change_subscription_stripe_portal_opened', { price_id: determine_price_id })
+ 
+     render json: { redirectUrl: session.url }
+   rescue Pundit::NotAuthorizedError => e
+@@ -362,7 +362,6 @@ class Api::V1::OrganizationAiCreditPurchasesController < Api::V1::BaseController
+     purchase = current_organization.organization_ai_credit_purchases.subscription.find_by(subscription_status: [:active, :past_due])
+     ap purchase&.stripe_subscription
+     if purchase&.stripe_subscription_id.nil?
+-      # render json: { customer: nil, payment_method: nil }
+       render json: { subscription: nil }
+     else
+       begin
+diff --git a/app/interactors/apply_ai_credit_purchase.rb b/app/interactors/apply_ai_credit_purchase.rb
+index e5ea6c828..883a1d276 100644
+--- a/app/interactors/apply_ai_credit_purchase.rb
++++ b/app/interactors/apply_ai_credit_purchase.rb
+@@ -1,135 +1,105 @@
+ # frozen_string_literal: true
+ 
+-# ApplyAiCreditPurchase — records a completed Stripe credit pack purchase
+-# (one-off OR subscription) as credits. Called from the Stripe webhook handler:
+-#   - invoice.paid with ai_credit_pack_top_up metadata → call(kind: :one_off, ...)
+-#   - invoice.paid first-invoice → call(invoice: invoice, price: price, kind: :subscription)
++# ApplyAiCreditPurchase — single-purpose interactor that refreshes an org's
++# addon_subscription credit bucket on their AI credit subscription renewal.
++# Called by:
++#   - StripeWebhookHandlerJob on AI credit subscription invoice.paid
+ #
+-# Idempotent: uses stripe_checkout_session_id (one-off) or stripe_subscription_id
+-# (subscription) as the unique lookup key. Repeat webhook deliveries find the
+-# existing purchase and return it.
++# Behavior:
++#   1. Insert a subscription_credit_pack_reset_debit ledger row that zeros out
++#      whatever's left in the addon_subscription bucket (only if non-zero)
++#   2. Insert a subscription_credit_pack_purchase_credit row for the new
++#      period's allocation (only if positive)
++#   3. Set last_reset_at
++#   4. Clear notification timestamps and dedup booleans so notifications
++#      can re-fire in the new period
++#
++# One-off purchases are handled by
++# OrganizationAiCreditPurchase#grant_one_off_credits (called directly
++# from the webhook handler, mirroring
++# BoardWwrListing#finalize_stripe_payment + create_on_wwr).
+ class ApplyAiCreditPurchase
+   include Interactor
+ 
+   def call
+-    kind = context.kind
+-    case kind
+-    when :one_off
+-      apply_one_off
+-    when :subscription
+-      apply_subscription(context.invoice, context.price)
+-    else
+-      context.fail!(error: :invalid_kind, message: "kind must be :one_off or :subscription, got #{kind.inspect}")
+-    end
+-  end
+-
+-  private
+-
+-  # Accepts metadata params via context:
+-  #   organization_id — from invoice metadata
+-  #   amount_cents    — from invoice amount_paid
+-  #   currency        — from invoice currency
+-  #   purchase_id     — the OrganizationAiCreditPurchase id from invoice metadata
+-  #                     (stamped at creation, before the charge/pay) — the primary
+-  #                     lookup, mirroring WWR finding BoardWwrListing by
+-  #                     metadata.board_wwr_listing_id
+-  #   checkout_session_id — fallback idempotency key (from Stripe checkout session list, or nil)
+-  #   invoice_id      — fallback idempotency key (the invoice id)
+-  def apply_one_off
+-    organization = Organization.find(context.organization_id)
++    organization = context.organization
++    balance = organization.organization_ai_credit_balance
+ 
+-    # FIND the pre-created purchase (mirrors apply_subscription, and WWR's
+-    # find-by-metadata-id). The id is placed on the invoice metadata at creation
+-    # time — BEFORE Stripe::Invoice.pay — so the direct-charge path never races a
+-    # post-charge stripe_invoice_id stamp. Fall back to stripe_checkout_session_id
+-    # then stripe_invoice_id only if the metadata id is blank/not found.
+-    existing = OrganizationAiCreditPurchase.find_by(id: context.purchase_id) if context.purchase_id.present?
+-    existing ||= if context.checkout_session_id.present?
+-                   OrganizationAiCreditPurchase.find_by(stripe_checkout_session_id: context.checkout_session_id)
+-                 elsif context.invoice_id.present?
+-                   OrganizationAiCreditPurchase.find_by(stripe_invoice_id: context.invoice_id)
+-                 end
++    if balance.nil?
++      Rails.logger.error "ApplyAiCreditPurchase: org #{organization.id} has no ai_credit_balance"
++      context.fail!(
++        error: :missing_balance,
++        message: "Organization #{organization.id} has no ai_credit_balance row",
++        organization_id: organization.id
++      )
++    end
+ 
+-    unless existing
+-      return context.fail!(
++    purchase = OrganizationAiCreditPurchase.find_by(
++      stripe_subscription_id: context.invoice.subscription,
++      kind: :subscription
++    )
++    unless purchase
++      Rails.logger.error "ApplyAiCreditPurchase: no purchase for stripe_subscription_id #{context.invoice.subscription}"
++      context.fail!(
+         error: :missing_purchase,
+-        message: "no OrganizationAiCreditPurchase for purchase_id #{context.purchase_id.inspect} / checkout_session_id #{context.checkout_session_id.inspect} / invoice_id #{context.invoice_id.inspect}"
++        message: "no OrganizationAiCreditPurchase for stripe_subscription_id #{context.invoice.subscription}",
++        organization_id: organization.id
+       )
+     end
+ 
+-    context.purchase = existing
+-
+-    # Grant once: if this purchase already has its credit ledger row, a prior
+-    # invoice.paid delivery already granted. This is the structural grant-once guard.
+-    return if existing.ai_credit_balance_transactions.exists?(entry_type: :one_off_credit_pack_purchase_credit)
++    context.purchase = purchase
++
++    ApplicationRecord.transaction do
++      if balance.addon_subscription_credits_remaining.positive?
++        zero_out = AiCreditBalanceTransaction.new(
++          organization_ai_credit_balance: balance,
++          entry_type: :subscription_credit_pack_reset_debit,
++          bucket: :addon_subscription,
++          amount: -balance.addon_subscription_credits_remaining,
++          description: 'Subscription renewal reset — clear previous addon_subscription bucket'
++        )
++        unless zero_out.save
++          fail_with_record_invalid('reset row', zero_out.errors)
++        end
++      end
++
++      if purchase.subscription_credits_per_period.positive?
++        grant = AiCreditBalanceTransaction.new(
++          organization_ai_credit_balance: balance,
++          organization_ai_credit_purchase: purchase,
++          entry_type: :subscription_credit_pack_purchase_credit,
++          bucket: :addon_subscription,
++          amount: purchase.subscription_credits_per_period,
++          description: 'Credit pack subscription renewal'
++        )
++        unless grant.save
++          fail_with_record_invalid('grant row', grant.errors)
++        end
++      end
++
++      updated = balance.update(
++        last_reset_at: Time.current,
++        low_credit_notification_sent_at: nil,
++        zero_credit_notification_sent_at: nil,
++        sent_low_notification_since_increase: false,
++        sent_zero_notification_since_increase: false
++      )
+ 
+-    balance = organization.organization_ai_credit_balance
+-    return context.fail!(error: :missing_balance, message: "org #{organization.id} has no balance") unless balance
++      fail_with_record_invalid('balance period update', balance.errors) unless updated
+ 
+-    if existing.amount_cents_paid.to_i.zero? && context.amount_cents.present?
+-      existing.update(amount_cents_paid: context.amount_cents, currency: context.currency || existing.currency)
++      context.balance = balance
+     end
+-
+-    ledger = AiCreditBalanceTransaction.new(
+-      organization_ai_credit_balance: balance,
+-      organization_ai_credit_purchase: existing,
+-      entry_type: :one_off_credit_pack_purchase_credit,
+-      bucket: :addon,
+-      amount: existing.one_off_credits_granted,
+-      description: 'One-off credit pack purchase'
+-    )
+-    fail_with_record_invalid('credit grant ledger row', ledger.errors) unless ledger.save
+-
+-    balance.update_columns(
+-      sent_low_notification_since_increase: false,
+-      sent_zero_notification_since_increase: false
+-    )
+   end
+ 
+-  def apply_subscription(invoice, price)
+-    stripe_subscription_id = invoice.subscription
+-    organization = Organization.find_by(stripe_customer_id: invoice.customer)
+-    return context.fail!(error: :missing_organization, message: "no org for stripe_customer_id #{invoice.customer}") unless organization
+-
+-    existing = OrganizationAiCreditPurchase.find_by(stripe_subscription_id: stripe_subscription_id, kind: :subscription)
+-    unless existing
+-      return context.fail!(error: :missing_purchase, message: "no OrganizationAiCreditPurchase for stripe_subscription_id #{stripe_subscription_id}")
+-    end
+-
+-    context.purchase = existing
+-
+-    return if existing.stripe_invoice_id == invoice.id
+-
+-    balance = organization.organization_ai_credit_balance
+-    return context.fail!(error: :missing_balance, message: "org #{organization.id} has no balance") unless balance
+-
+-    period = invoice.lines.data.first&.period
+-    activated = existing.update(
+-      subscription_status: :active,
+-      subscription_current_period_start: period && Time.at(period.start).to_datetime,
+-      subscription_current_period_end: period && Time.at(period.end).to_datetime,
+-      stripe_invoice_id: invoice.id
+-    )
+-    fail_with_record_invalid('subscription activation', existing.errors) unless activated
+-
+-    ledger = AiCreditBalanceTransaction.new(
+-      organization_ai_credit_balance: balance,
+-      organization_ai_credit_purchase: existing,
+-      entry_type: :subscription_credit_pack_purchase_credit,
+-      bucket: :addon_subscription,
+-      amount: existing.subscription_credits_per_period,
+-      description: 'Credit pack subscription first invoice'
+-    )
+-    fail_with_record_invalid('credit grant ledger row', ledger.errors) unless ledger.save
+-
+-    balance.update_columns(
+-      sent_low_notification_since_increase: false,
+-      sent_zero_notification_since_increase: false
+-    )
+-  end
++  private
+ 
+   def fail_with_record_invalid(label, errors)
+-    Rails.logger.error "ApplyAiCreditPurchase #{label} failed: #{errors.full_messages.join(', ')}"
+-    context.fail!(error: :record_invalid, message: errors.full_messages.join(', '))
++    Rails.logger.error "ApplyAiCreditPurchase #{label} failed for org #{context.organization&.id}: #{errors.full_messages.join(', ')}"
++    ap errors
++    context.fail!(
++      error: :record_invalid,
++      message: "ApplyAiCreditPurchase #{label} failed for org #{context.organization&.id}: #{errors.full_messages.join(', ')}",
++      organization_id: context.organization&.id
++    )
+   end
+ end
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountBilling/AccountBillingAiCredits.tsx b/app/javascript/ats/src/views/accountAdmin/accountBilling/AccountBillingAiCredits.tsx
+index 0a22bb85a..c5505fda4 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountBilling/AccountBillingAiCredits.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountBilling/AccountBillingAiCredits.tsx
+@@ -75,9 +75,9 @@ function AccountBillingAiCredits() {
+           subscribe(
+             { stripePriceLookupKey: lookupKey },
+             {
+-              onSuccess: (data: { redirectUrl: string }) => {
++              onSuccess: (data: { url: string; sessionId: string }) => {
+                 addToast({ title: "Redirecting to Stripe checkout…", kind: "success" });
+-                window.location.href = data.redirectUrl;
++                window.location.href = data.url;
+               },
+               onError: (error: any) => {
+                 addToast({
+@@ -106,9 +106,11 @@ function AccountBillingAiCredits() {
+           purchase(
+             { stripePriceLookupKey: lookupKey },
+             {
+-              onSuccess: (data: { redirectUrl: string }) => {
+-                addToast({ title: "Redirecting to Stripe checkout…", kind: "success" });
+-                window.location.href = data.redirectUrl;
++              onSuccess: (data: { url?: string; sessionId?: string }) => {
++                if (data.url) {
++                  addToast({ title: "Redirecting to Stripe checkout…", kind: "success" });
++                  window.location.href = data.url;
++                }
+               },
+               onError: (error: any) => {
+                 addToast({
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiCreditSubscription.tsx b/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiCreditSubscription.tsx
+index 269e17591..800c0b6cb 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiCreditSubscription.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiCreditSubscription.tsx
+@@ -1,8 +1,8 @@
+ import React from "react";
+ import styled from "@emotion/styled";
+ import { css } from "@emotion/react";
++import { prettyDate } from "@shared/lib/time";
+ 
+-import { useOrganizationAiCreditBalance } from "@shared/queryHooks/useOrganizationAiCreditBalance";
+ import {
+   useOrganizationAiCreditPurchase,
+   useCheckoutAiCreditPack,
+@@ -15,25 +15,32 @@ import {
+ import { useToastContext } from "@shared/context/ToastContext";
+ import { useModalContext } from "@shared/context/ModalContext";
+ import { useCurrentSession } from "@ats/src/context/CurrentSessionContext";
++import { trackEvent } from "@shared/lib/posthog";
++
++import Icon from "@ats/src/components/shared/Icon";
++import Button from "@ats/src/components/shared/Button";
++import {
++  Promo,
++  CurrentSubscription,
++} from "@ats/src/views/accountAdmin/accountBilling/AccountBillingComponents";
++import ContactUsCallout from "@ats/src/views/accountAdmin/accountBilling/ContactUsCallout";
+ 
+ import CancelAiCreditSubscriptionConfirmModal from "@ats/src/views/accountAdmin/accountBilling/CancelAiCreditSubscriptionConfirmModal";
+ import PurchaseAiCreditTopUpConfirmModal from "./PurchaseAiCreditTopUpConfirmModal";
+ import AiSubscriptionTierCard, { AiCreditTier } from "./AiSubscriptionTierCard";
+ import AiCreditPackCard, { AiCreditPack } from "./AiCreditPackCard";
+-import AiSubscriptionStatus from "./AiSubscriptionStatus";
+ import LoadingIndicator from "@ats/src/components/shared/LoadingIndicator";
+-import { splitTiers, deriveTierButtonText } from "./aiSubscriptionHelpers";
++import { splitTiers, deriveTierButtonText, formatResetDate } from "./aiSubscriptionHelpers";
+ 
+ function AiCreditSubscription({ pricesData }: { pricesData: any }) {
+-  const { isLoading: isLoadingBalance } = useOrganizationAiCreditBalance();
+-  const { data: subscription, isLoading: isLoadingSubscription } = useOrganizationAiCreditPurchase();
++  const { data: subscription } = useOrganizationAiCreditPurchase();
+   const {
+     data: aiCreditCustomerSubscriptionData,
+     isFetching: isFetchingAiCreditCustomerSubscription,
+   } = useAiCreditCustomerSubscription({
+     refetchOnWindowFocus: false,
+   });
+-  const { mutate: subscribe, isLoading: isSubscribing } = useCheckoutAiCreditPack();
++  const { mutate: checkoutNewSubscription, isLoading: isCheckingOut } = useCheckoutAiCreditPack();
+   const {
+     mutate: changeSubscriptionViaStripePortal,
+     isLoading: isLoadingChangeSubscriptionViaStripePortal,
+@@ -53,12 +60,31 @@ function AiCreditSubscription({ pricesData }: { pricesData: any }) {
+     ? aiCreditCustomerSubscriptionData.subscription
+     : null;
+   const currentSubscriptionItemId = currentSubscription && currentSubscription.items.data[0].id;
+-  const isSubscribed = subscription?.subscriptionStatus === "active" || subscription?.subscriptionStatus === "past_due";
++  // A subscription is functionally active if Stripe status is active/past_due,
++  // OR if the local record is "canceled" but the period hasn't ended yet
++  // (CancelAiCreditSubscription sets local status to canceled immediately,
++  // but Stripe only sets cancel_at_period_end — credits remain usable).
++  const isCanceledButStillActive =
++    subscription?.subscriptionStatus === "canceled" &&
++    subscription?.subscriptionCurrentPeriodEnd != null &&
++    new Date(subscription.subscriptionCurrentPeriodEnd) > new Date();
++  const isSubscribed =
++    subscription?.subscriptionStatus === "active" ||
++    subscription?.subscriptionStatus === "past_due" ||
++    isCanceledButStillActive;
+   const currentCredits = isSubscribed ? subscription?.subscriptionCreditsPerPeriod || null : null;
+ 
+-  const redirectToStripe = (data: { redirectUrl: string }) => {
++  // Coupon / promo detection — matches analog (AccountBillingPlans)
++  const hasCoupon =
++    currentSubscription &&
++    currentSubscription.discount &&
++    currentSubscription.discount.coupon != undefined;
++  const discount = hasCoupon && currentSubscription.discount;
++  const coupon = discount && discount.coupon;
++
++  const redirectToStripe = (data: { url: string }) => {
+     addToast({ title: "Redirecting to Stripe checkout...", kind: "success" });
+-    window.location.href = data.redirectUrl;
++    window.location.href = data.url;
+   };
+ 
+   /**
+@@ -140,7 +166,42 @@ function AiCreditSubscription({ pricesData }: { pricesData: any }) {
+     );
+   };
+ 
+-  const handleSelectTier = (tier: AiCreditTier) => {
++  /**
++   * USED IF A CUSTOMER WANTS TO START A NEW AI CREDIT SUBSCRIPTION
++   */
++  const handleCheckoutNewSubscription = (tier: AiCreditTier) => {
++    checkoutNewSubscription(
++      { stripePriceLookupKey: tier.lookupKey },
++      {
++        onSuccess: (data: { url?: string; sessionId?: string }) => {
++          window.logger(
++            "%c[AiCreditSubscription] completed checkout for new AI credit subscription",
++            "background: orange; color: #1976D2",
++            data,
++          );
++          if (data.url) {
++            redirectToStripe({ url: data.url });
++          }
++        },
++        onError: (error: any) => {
++          const errorMessage =
++            error?.data?.errors?.general?.[0] || "Unable to start AI credit subscription checkout.";
++          window.logger(
++            "%c[AiCreditSubscription] ERROR creating checkout for new AI credit subscription",
++            "background: orange; color: white",
++            error,
++          );
++          addToast({ title: errorMessage, kind: "error" });
++        },
++      },
++    );
++  };
++
++  /**
++   * WRAPPER FOR AI CREDIT SUBSCRIPTION CHANGES WITH PAYMENT METHOD CHECK
++   * Separated from new-checkout per analog (AccountBillingPlans.handleChangeSubscriptionWithGate)
++   */
++  const handleChangeSubscription = (tier: AiCreditTier) => {
+     if (currentOrganization.stripeDefaultPaymentMethodOnFile) {
+       handleChangeSubscriptionViaStripePortal({
+         priceId: tier.priceId,
+@@ -154,16 +215,38 @@ function AiCreditSubscription({ pricesData }: { pricesData: any }) {
+     }
+   };
+ 
++  /**
++   * handleSelectTier — delegates to the correct flow.
++   * Matches analog (PlanCard.handleOnClickSubscriptionAction):
++   *   !subscribed -> new checkout
++   *   subscribed  -> change subscription
++   */
++  const handleSelectTier = (tier: AiCreditTier) => {
++    trackEvent("ai_credit_tier_selected", {
++      selected_tier_name: tier.name,
++      selected_tier_credits: tier.credits,
++      selected_tier_lookup_key: tier.lookupKey,
++      is_subscribed: isSubscribed,
++      current_credits: currentCredits,
++    });
++
++    if (!isSubscribed) {
++      handleCheckoutNewSubscription(tier);
++    } else {
++      handleChangeSubscription(tier);
++    }
++  };
++
+   const purchaseTopUp = (pack: AiCreditPack) => {
+     purchase(
+       { stripePriceLookupKey: pack.lookupKey },
+       {
+-        onSuccess: (data: { redirectUrl?: string; charged?: boolean }) => {
+-          if (data.redirectUrl) {
++        onSuccess: (data: { url?: string; sessionId?: string }) => {
++          if (data.url) {
+             // No payment method on file -> redirect to Stripe Checkout.
+-            redirectToStripe({ redirectUrl: data.redirectUrl });
++            redirectToStripe({ url: data.url });
+           } else {
+-            // Payment method on file -> charged immediately, no redirect.
++            // Payment method on file -> charged immediately, returns serialized purchase record.
+             // The mutation's onSuccess already invalidated the credit balance query.
+             addToast({ title: "Payment received — your credits will appear shortly.", kind: "success" });
+           }
+@@ -222,19 +305,73 @@ function AiCreditSubscription({ pricesData }: { pricesData: any }) {
+     );
+   };
+ 
++  window.logger("%c[AiCreditSubscription] render", "background: #ed79ed; color: #b5d0eb", {
++    currentOrganization,
++    subscription,
++    currentSubscription,
++    isSubscribed,
++    currentCredits,
++    hasCoupon,
++    discount,
++    coupon,
++    isCheckingOut,
++    isLoadingChangeSubscriptionViaStripePortal,
++    isLoadingUpdateWithPaymentMethod,
++  });
++
+   if (isFetchingAiCreditCustomerSubscription) {
+     return <LoadingIndicator label="Loading..." />;
+   }
+ 
+   return (
+     <Styled.Section>
+-      <AiSubscriptionStatus
+-        isSubscribed={isSubscribed}
+-        currentCredits={currentCredits}
+-        periodEndsAt={subscription?.subscriptionCurrentPeriodEnd}
+-        isCanceling={isCanceling}
+-        onClickCancel={handleCancelClick}
+-      />
++      {isSubscribed && isCanceledButStillActive && (
++        <CurrentSubscription>
++          <p>
++            <Icon name="info" />
++            <span>
++              Your AI credit subscription ends {formatResetDate(subscription?.subscriptionCurrentPeriodEnd)}. Credits remain usable until then.
++            </span>
++          </p>
++          <Button styleType="text" onClick={handleCancelClick} disabled={isCanceling}>
++            Cancel subscription
++          </Button>
++        </CurrentSubscription>
++      )}
++
++      {currentSubscription?.cancelAtPeriodEnd && (
++        <CurrentSubscription>
++          <p>
++            <Icon name="info" />
++            <span>
++              Your AI credit subscription is scheduled to be canceled on {prettyDate(currentSubscription.cancelAt)}.
++            </span>
++          </p>
++        </CurrentSubscription>
++      )}
++
++      {isSubscribed && !isCanceledButStillActive && (
++        <CurrentSubscription>
++          <p>
++            <Icon name="check" />
++            <span>
++              Active AI credit subscription: {currentCredits?.toLocaleString()} credits / month. Renews {formatResetDate(subscription?.subscriptionCurrentPeriodEnd)}.
++            </span>
++          </p>
++          <Button styleType="text" onClick={handleCancelClick} disabled={isCanceling}>
++            Cancel subscription
++          </Button>
++        </CurrentSubscription>
++      )}
++
++      {hasCoupon ? (
++        <Promo>
++          <h4>Promo code applied</h4>
++          <span>
++            {coupon.percentOff}% off until {prettyDate(discount.end)}
++          </span>
++        </Promo>
++      ) : null}
+ 
+       <Styled.Subtitle>{isSubscribed ? "Change your plan" : "Choose a credit subscription"}</Styled.Subtitle>
+       <Styled.OptionsContainer>
+@@ -250,8 +387,8 @@ function AiCreditSubscription({ pricesData }: { pricesData: any }) {
+                   buttonType: !isSubscribed && (tier as any).isMostPopular ? "primary" : "secondary",
+                 }}
+                 isCurrentPlan={isCurrent}
+-                hasActiveSubscription={isSubscribed}
+-                isLoading={isSubscribing || isLoadingChangeSubscriptionViaStripePortal || isLoadingUpdateWithPaymentMethod}
++                isLoading={isCheckingOut || isLoadingChangeSubscriptionViaStripePortal || isLoadingUpdateWithPaymentMethod}
++                isLoadingButton={isCheckingOut || isLoadingChangeSubscriptionViaStripePortal || isLoadingUpdateWithPaymentMethod}
+                 onSelect={handleSelectTier}
+               />
+             );
+@@ -259,6 +396,8 @@ function AiCreditSubscription({ pricesData }: { pricesData: any }) {
+         </Styled.Options>
+       </Styled.OptionsContainer>
+ 
++      <ContactUsCallout />
++
+       <Styled.Subtitle>One-time top-up packs</Styled.Subtitle>
+       <Styled.Hint>Add credits on top of your monthly allowance.</Styled.Hint>
+       <Styled.OptionsContainer>
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiSubscriptionStatus.tsx b/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiSubscriptionStatus.tsx
+index 812bc55d5..1e99482d4 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiSubscriptionStatus.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiSubscriptionStatus.tsx
+@@ -5,9 +5,10 @@ import { css } from "@emotion/react";
+ import { PlatoChip } from "@ats/src/components/shared/PlatoMark";
+ import { formatResetDate } from "./aiSubscriptionHelpers";
+ 
+-// Plato AI subscription status banner — one component for both states (active / none).
++// Plato AI subscription status banner — three states: active, canceling-at-period-end, none.
+ interface AiSubscriptionStatusProps {
+   isSubscribed: boolean;
++  isCanceledButStillActive?: boolean;
+   currentCredits: number | null;
+   periodEndsAt?: string | null;
+   isCanceling?: boolean;
+@@ -16,6 +17,7 @@ interface AiSubscriptionStatusProps {
+ 
+ const AiSubscriptionStatus: React.FC<AiSubscriptionStatusProps> = ({
+   isSubscribed,
++  isCanceledButStillActive = false,
+   currentCredits,
+   periodEndsAt,
+   isCanceling = false,
+@@ -25,7 +27,15 @@ const AiSubscriptionStatus: React.FC<AiSubscriptionStatusProps> = ({
+     <Styled.Banner>
+       <PlatoChip size={40} radius={10} />
+       <Styled.Body>
+-        {isSubscribed ? (
++        {isSubscribed && isCanceledButStillActive ? (
++          <>
++            <Styled.Status>Subscription ending</Styled.Status>
++            <Styled.Title>{currentCredits?.toLocaleString()} credits / month</Styled.Title>
++            <Styled.Description>
++              Your subscription ends {formatResetDate(periodEndsAt)} · credits remain usable until then
++            </Styled.Description>
++          </>
++        ) : isSubscribed ? (
+           <>
+             <Styled.Status>Active subscription</Styled.Status>
+             <Styled.Title>{currentCredits?.toLocaleString()} credits / month</Styled.Title>
+@@ -41,7 +51,7 @@ const AiSubscriptionStatus: React.FC<AiSubscriptionStatusProps> = ({
+           </>
+         )}
+       </Styled.Body>
+-      {isSubscribed && (
++      {isSubscribed && !isCanceledButStillActive && (
+         <Styled.CancelButton onClick={onClickCancel} disabled={isCanceling}>
+           Cancel subscription
+         </Styled.CancelButton>
+diff --git a/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiSubscriptionTierCard.tsx b/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiSubscriptionTierCard.tsx
+index ef80a00e1..241c26122 100644
+--- a/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiSubscriptionTierCard.tsx
++++ b/app/javascript/ats/src/views/accountAdmin/accountPlatoAi/AiSubscriptionTierCard.tsx
+@@ -18,16 +18,16 @@ export interface AiCreditTier {
+ interface AiSubscriptionTierCardProps {
+   tier: AiCreditTier;
+   isCurrentPlan: boolean;
+-  hasActiveSubscription: boolean;
+   isLoading?: boolean;
++  isLoadingButton?: boolean;
+   onSelect: (tier: AiCreditTier) => void;
+ }
+ 
+ const AiSubscriptionTierCard: React.FC<AiSubscriptionTierCardProps> = ({
+   tier,
+   isCurrentPlan,
+-  hasActiveSubscription,
+   isLoading = false,
++  isLoadingButton = false,
+   onSelect,
+ }) => {
+   return (
+@@ -60,6 +60,7 @@ const AiSubscriptionTierCard: React.FC<AiSubscriptionTierCardProps> = ({
+         ) : (
+           <Styled.Button
+             onClick={() => onSelect(tier)}
++            loading={isLoadingButton}
+             disabled={isLoading}
+             styleType={tier.buttonType || "secondary"}
+           >
+diff --git a/app/javascript/shared/queryHooks/useOrganizationAiCreditPurchase.ts b/app/javascript/shared/queryHooks/useOrganizationAiCreditPurchase.ts
+index 0b6a8c5f0..0688f86d0 100644
+--- a/app/javascript/shared/queryHooks/useOrganizationAiCreditPurchase.ts
++++ b/app/javascript/shared/queryHooks/useOrganizationAiCreditPurchase.ts
+@@ -56,7 +56,6 @@ function useChangeAiCreditSubscriptionViaStripePortal() {
+         mutationVariables,
+       });
+       queryClient.invalidateQueries(["currentOrganization"]);
+-      queryClient.invalidateQueries(["organizationAiCreditPurchase"]);
+     },
+   });
+ }
+@@ -85,7 +84,6 @@ function useUpdateAiCreditSubscriptionWithPaymentMethod() {
+         mutationVariables,
+       });
+       queryClient.invalidateQueries(["currentOrganization"]);
+-      queryClient.invalidateQueries(["organizationAiCreditPurchase"]);
+     },
+   });
+ }
+diff --git a/app/javascript/shared/types/organizationAiCreditPurchase.ts b/app/javascript/shared/types/organizationAiCreditPurchase.ts
+index aa1a31faa..f954b0bc4 100644
+--- a/app/javascript/shared/types/organizationAiCreditPurchase.ts
++++ b/app/javascript/shared/types/organizationAiCreditPurchase.ts
+@@ -9,7 +9,7 @@ export interface OrganizationAiCreditPurchase {
+   kind: string;
+   stripePriceLookupKey: string;
+   subscriptionCreditsPerPeriod: number;
+-  amountCentsPaid: number;
++  stripeAmount: number;
+   currency: string;
+   subscriptionStatus: OrganizationAiCreditPurchaseStatus;
+   subscriptionCurrentPeriodStart: string | null;
+diff --git a/app/jobs/stripe_webhook_handler_job.rb b/app/jobs/stripe_webhook_handler_job.rb
+index b774729bc..d505f6825 100644
+--- a/app/jobs/stripe_webhook_handler_job.rb
++++ b/app/jobs/stripe_webhook_handler_job.rb
+@@ -55,7 +55,7 @@ class StripeWebhookHandlerJob < ApplicationJob
+       ap object.keys
+       ap object
+ 
+-      if object.metadata&.[]('ai_credit_pack_subscription') == 'true'
++      if object.metadata.ai_credit_pack_subscription == 'true'
+         purchase = OrganizationAiCreditPurchase.find_by(stripe_checkout_session_id: object.id)
+         if purchase
+           # update_columns skips validations/callbacks intentionally: subscription_id
+@@ -131,33 +131,22 @@ class StripeWebhookHandlerJob < ApplicationJob
+             stripe_subscription_id: object.id,
+             kind: :subscription
+           )
+-          if purchase
+-            updated = purchase.update(
+-              stripe_price_lookup_key: plan_lookup_key,
+-              subscription_credits_per_period: OrganizationAiCreditPurchase.ai_credit_allocation_for_lookup_key(plan_lookup_key),
+-              subscription_status: object.status,
+-              subscription_current_period_start: Time.at(object.current_period_start).to_datetime,
+-              subscription_current_period_end: stripe_current_period_end_at
+-            )
+-            unless updated
+-              Rails.logger.error "subscription.updated credit-pack: could not update purchase #{purchase.id}: #{purchase.errors.full_messages.join(', ')}"
+-              ap purchase.errors
+-            end
+-          else
+-            Rails.logger.error "subscription.updated credit-pack: no OrganizationAiCreditPurchase for stripe_subscription_id #{object.id}"
+-          end
+-        elsif object.id == organization&.stripe_subscription_id
+-          # Main-plan subscription change. Guard against credit-pack
+-          # subscription.updated events clobbering org plan fields by only
+-          # running when this event is for the org's main subscription.
++          raise "subscription.updated: no OrganizationAiCreditPurchase for credit-pack subscription #{object.id}" unless purchase
++
++          purchase.update(
++            subscription_status: object.status,
++            subscription_current_period_end: stripe_current_period_end_at,
++            stripe_cancel_at_period_end: object.cancel_at_period_end
++          )
++        else
+           organization.update(
+             stripe_current_period_end_at: stripe_current_period_end_at,
+             stripe_subscription_status: object.status,
+             stripe_cancel_at_period_end: object.cancel_at_period_end
+           )
+-          organization.stripe_update_default_payment_method(object.default_payment_method) if object.default_payment_method
+           organization.sync_with_stripe
+         end
++        organization.stripe_update_default_payment_method(object.default_payment_method) if object.default_payment_method
+       rescue StandardError => e
+         ap 'Stripe Webhook Error - subscription.updated'
+         ap e
+@@ -171,17 +160,34 @@ class StripeWebhookHandlerJob < ApplicationJob
+       stripe_subscription_id = object.id
+       organization = Organization.find_by(stripe_customer_id: stripe_customer_id)
+       subscription_ended_at = object.ended_at
++      plan_lookup_key = object.items&.data&.first&.price&.lookup_key
+       begin
+         ap object
+         ap "Deleted At Time: #{Time.at(subscription_ended_at).to_datetime}"
+         ap "Subscription ID: #{object.id}"
+ 
+-        organization&.sync_with_stripe if stripe_subscription_id == organization&.stripe_subscription_id
++        if OrganizationAiCreditPurchase.ai_credit_subscription_plan_lookup_key?(plan_lookup_key)
++          # AI credit subscription canceled — update the purchase record only.
++          # Do NOT touch org main-plan fields, fire PaidSubscriptionDeletedJob,
++          # or fire EngagementReport::GeneratorJob.
++          purchase = OrganizationAiCreditPurchase.find_by(
++            stripe_subscription_id: stripe_subscription_id,
++            kind: :subscription
++          )
++          purchase&.update(
++            subscription_status: :canceled,
++            subscription_canceled_at: Time.at(subscription_ended_at).to_datetime,
++            subscription_current_period_end: Time.at(object.current_period_end).to_datetime,
++            stripe_cancel_at_period_end: false
++          )
++        else
++          organization&.sync_with_stripe if stripe_subscription_id == organization&.stripe_subscription_id
+ 
+-        # Below actions handled here to access 'subscription_ended_at' from Stripe Object
+-        organization&.update_column(:subscription_canceled_at, Time.at(subscription_ended_at).to_datetime)
+-        Notification::PaidSubscriptionDeletedJob.perform_later(organization&.id, subscription_ended_at)
+-        EngagementReport::GeneratorJob.perform_later(organization&.id, trigger: 'subscription_canceled')
++          # Below actions handled here to access 'subscription_ended_at' from Stripe Object
++          organization&.update_column(:subscription_canceled_at, Time.at(subscription_ended_at).to_datetime)
++          Notification::PaidSubscriptionDeletedJob.perform_later(organization&.id, subscription_ended_at)
++          EngagementReport::GeneratorJob.perform_later(organization&.id, trigger: 'subscription_canceled')
++        end
+       rescue StandardError => e
+         ap 'Stripe Webhook Error - subscription.deleted'
+         Rails.logger.error e
+@@ -209,27 +215,6 @@ class StripeWebhookHandlerJob < ApplicationJob
+       organization = Organization.find_by(stripe_customer_id: stripe_customer_id)
+ 
+       begin
+-        if object.metadata&.[]('ai_credit_pack_top_up') == 'true'
+-          # Look up the checkout session ID for idempotency and refund matching.
+-          # The org comes from invoice metadata — no list_line_items call needed.
+-          checkout_session_id = nil
+-          if object.payment_intent.present?
+-            sessions = Stripe::Checkout::Session.list(payment_intent: object.payment_intent, limit: 1)
+-            checkout_session_id = sessions.data.first&.id
+-          end
+-
+-          ApplyAiCreditPurchase.call(
+-            kind: :one_off,
+-            organization_id: object.metadata['organization_id'],
+-            amount_cents: object.amount_paid,
+-            currency: object.currency,
+-            purchase_id: object.metadata['organization_ai_credit_purchase_id'],
+-            checkout_session_id: checkout_session_id,
+-            invoice_id: object.id
+-          )
+-          return
+-        end
+-
+         if object.metadata&.[]('board_wwr_listing_id').present?
+           Rails.logger.info 'This was a one-off Invoice to pay for a WWR Job Listing'
+           ap 'WWR Job Listing Invoice'
+@@ -261,33 +246,42 @@ class StripeWebhookHandlerJob < ApplicationJob
+           return
+         end
+ 
++        if object.metadata&.[]('organization_ai_credit_purchase_id').present?
++          # One-off AI credit top-up invoice — look up the purchase by metadata ID,
++          # finalize payment, then grant credits (mirrors WWR finalize + create_on_wwr).
++          Rails.logger.info 'This was a one-off Invoice to pay for an AI Credit Top-Up'
++          ap 'AI Credit Top-Up Invoice'
++          purchase_id = object.metadata.organization_ai_credit_purchase_id.to_i
++          purchase = OrganizationAiCreditPurchase.find(purchase_id)
++
++          if purchase&.present?
++            purchase.finalize_stripe_payment
++
++            Rails.logger.info "AI credit one-off purchase #{purchase_id} payment confirmed"
++
++            purchase.grant_one_off_credits
++          end
++          return
++        end
++
++        raise CustomStripeSubscriptionMissingError if organization.stripe_subscription_id.nil?
++
+         stripe_subscription = Stripe::Subscription.retrieve(object.subscription)
+         subscription_lookup_key = stripe_subscription.items.data.first&.price&.lookup_key
+-        subscription_price = stripe_subscription.items.data.first&.price
+ 
+         if subscription_lookup_key && OrganizationAiCreditPurchase.ai_credit_subscription_plan_lookup_key?(subscription_lookup_key)
+-          handle_subscription_credit_pack_invoice_paid(object, subscription_price)
++          handle_subscription_credit_pack_invoice_paid(organization, object)
+         else
+-          raise CustomStripeSubscriptionMissingError if organization.stripe_subscription_id.nil?
+-
+-          updated = organization.update(stripe_current_period_end_at: Time.at(stripe_subscription.current_period_end).to_datetime)
+-          unless updated
+-            Rails.logger.error "Stripe invoice.paid: could not persist stripe_current_period_end_at on org #{organization.id}: #{organization.errors.full_messages.join(', ')}"
+-            ap organization.errors
+-          end
++          organization.update(stripe_current_period_end_at: Time.at(stripe_subscription.current_period_end).to_datetime)
+           organization.stripe_update_default_payment_method
+           organization.organization_ai_credit_balance&.reset_ai_credits
+         end
+-      rescue Stripe::StripeError => e
+-        Rails.logger.error "Stripe invoice.paid handler Stripe API error: org=#{organization&.id} invoice=#{object&.id} subscription=#{object&.subscription} msg=#{e.message}"
+-        ap e
+-      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
+-        Rails.logger.error "Stripe invoice.paid handler DB error: org=#{organization&.id} invoice=#{object&.id} msg=#{e.message}"
+-        ap e
+       rescue StandardError => e
+-        # Anything else is unexpected - log with full context.
+-        Rails.logger.error "Stripe invoice.paid handler UNEXPECTED error: #{e.class} org=#{organization&.id} invoice=#{object&.id} msg=#{e.message}"
+-        ap e
++        Rails.logger.error 'Handling Successful Invoice Payment Failed'
++        Rails.logger.error e
++
++        ap 'Handling Successful Invoice Payment Failed'
++        puts e
+       end
+     when 'charge.refunded'
+       charge = event.data.object
+@@ -454,7 +448,7 @@ class StripeWebhookHandlerJob < ApplicationJob
+     ApplyAiCreditRefund.call(purchase: purchase)
+   end
+ 
+-  def handle_subscription_credit_pack_invoice_paid(invoice, price)
++  def handle_subscription_credit_pack_invoice_paid(organization, invoice)
+     existing = OrganizationAiCreditPurchase.find_by(
+       stripe_subscription_id: invoice.subscription,
+       kind: :subscription
+@@ -466,6 +460,10 @@ class StripeWebhookHandlerJob < ApplicationJob
+       currency: invoice.currency
+     )
+ 
+-    ApplyAiCreditPurchase.call(invoice: invoice, price: price, kind: :subscription)
++    ApplyAiCreditPurchase.call(
++      organization: organization,
++      invoice: invoice,
++      kind: :subscription
++    )
+   end
+ end
+diff --git a/app/models/ai_credit_balance_transaction.rb b/app/models/ai_credit_balance_transaction.rb
+index bc8eb4ccc..1613a3119 100644
+--- a/app/models/ai_credit_balance_transaction.rb
++++ b/app/models/ai_credit_balance_transaction.rb
+@@ -20,6 +20,7 @@ class AiCreditBalanceTransaction < ApplicationRecord
+     # 30s — subscription credit pack purchases
+     subscription_credit_pack_purchase_credit: 30,
+     subscription_credit_pack_refund_debit:    31,
++    subscription_credit_pack_reset_debit:     32,
+ 
+     # 40s — admin actions
+     admin_credit:                             40,
+diff --git a/app/models/organization_ai_credit_purchase.rb b/app/models/organization_ai_credit_purchase.rb
+index 23e8ca155..c9651ef95 100644
+--- a/app/models/organization_ai_credit_purchase.rb
++++ b/app/models/organization_ai_credit_purchase.rb
+@@ -98,7 +98,7 @@ class OrganizationAiCreditPurchase < ApplicationRecord
+             :subscription_current_period_end,
+             presence: true,
+             if: -> { subscription? && stripe_subscription_id.present? }
+-  validates :amount_cents_paid,
++  validates :stripe_amount,
+             presence: true,
+             numericality: { greater_than_or_equal_to: 0 },
+             unless: -> { subscription? && stripe_subscription_id.blank? }
+@@ -111,54 +111,137 @@ class OrganizationAiCreditPurchase < ApplicationRecord
+             numericality: { greater_than: 0 },
+             if: :one_off?
+ 
++  def finalize_stripe_payment
++    update_columns(stripe_invoice_paid: true)
++  end
++
++  def is_active?
++    stripe_invoice_paid?
++  end
++
++  def paid?
++    stripe_invoice_paid?
++  end
++
++  #############################
++  # This is called by the Stripe Webhook if the Payment is successful via invoice.paid
++  #############################
++  def grant_one_off_credits
++    # Grant once: if this purchase already has its credit ledger row, a prior
++    # invoice.paid delivery already granted.
++    if ai_credit_balance_transactions.exists?(entry_type: :one_off_credit_pack_purchase_credit)
++      Rails.logger.warn "Already granted credits for AI credit one-off purchase: #{id}"
++      return
++    end
++
++    balance = organization.organization_ai_credit_balance
++
++    ledger = AiCreditBalanceTransaction.new(
++      organization_ai_credit_balance: balance,
++      organization_ai_credit_purchase: self,
++      entry_type: :one_off_credit_pack_purchase_credit,
++      bucket: :addon,
++      amount: one_off_credits_granted,
++      description: 'One-off credit pack purchase'
++    )
++    ledger.save!
++
++    balance.update(
++      low_credit_notification_sent_at: nil,
++      zero_credit_notification_sent_at: nil,
++      sent_low_notification_since_increase: false,
++      sent_zero_notification_since_increase: false
++    )
++
++    ap 'Granted AI credit one-off purchase credits'
++
++    broadcast_event('ai_credit_top_up_purchased')
++    broadcast_show_growl('AI Credit Top-Up purchased')
++
++    Notification::AiCreditTopUpPurchasedJob.perform_later(organization.id, id)
++  rescue StandardError => e
++    Rails.logger.info 'Could not grant AI credit one-off purchase credits'
++    Rails.logger.info e
++  end
++
++  def broadcast_event(event = 'ai_credit_top_up_purchased')
++    GlobalChannel.broadcast_to(organization.owner, action: event, payload: { organizationId: organization.id, organizationAiCreditPurchaseId: id })
++  end
++
++  def broadcast_show_growl(message)
++    GlobalChannel.broadcast_to(organization.owner, action: 'showGrowl', payload: { title: message, kind: 'success' })
++  end
++
++  def broadcast_error_growl(message)
++    GlobalChannel.broadcast_to(organization.owner, action: 'showGrowl', payload: { title: message, kind: 'error' })
++  end
++
++  # ⚠️ WARNING: This calculation MUST stay in sync with frontend pricing display
++  # See: Stripe price lookup keys in AI_CREDIT_AMOUNTS_BY_LOOKUP_KEY
++  # Prices are fetched from Stripe by lookup_key in the controller; this method
++  # mirrors BoardWwrListing#calculate_charge_amount structurally (amount lives on
++  # the model, not passed in from outside).
++  def calculate_charge_amount
++    prices = Stripe::Price.list(lookup_keys: [stripe_price_lookup_key], active: true, limit: 1)
++    price = prices.data.first
++    raise "No active Stripe price found for lookup key: #{stripe_price_lookup_key}" unless price
++
++    price.unit_amount
++  end
++
+   # Charges the organization's default payment method immediately for this
+   # already-saved one-off top-up purchase. Mirrors
+   # BoardWwrListing#charge_for_listing: create the record first, then charge a
+   # model method on it, then stamp the Stripe references via update_columns.
+-  # Credits are granted later by the invoice.paid webhook (ai_credit_pack_top_up
+-  # branch) -> ApplyAiCreditPurchase, which FINDS this record by stripe_invoice_id.
++  # Credits are granted later by the invoice.paid webhook
++  # (organization_ai_credit_purchase_id branch) -> finalize_stripe_payment +
++  # grant_one_off_credits, called on this record directly (found by metadata
++  # ID, same as BoardWwrListing).
+   #
+   # This is a model method doing Stripe BY DESIGN (the WWR analog). Stripe errors
+   # propagate to the caller (the controller rescues Stripe::StripeError).
+   def charge_default_payment_method
+-    # Already charged — this IS the double-charge guard.
+-    return if stripe_invoice_id.present?
++    amount = calculate_charge_amount
++    Rails.logger.info 'Attempt to charge for AI Credit Top-Up'
++    if stripe_invoice_id.present? && is_active?
++      ap 'Hmm, if trying to charge for an update because of expiration we run into a small issue'
++      return
++    end
++
+     return if organization.stripe_customer_id.blank?
+ 
+-    prices = Stripe::Price.list(lookup_keys: [stripe_price_lookup_key], active: true, limit: 1)
+-    price = prices.data.first
+-    return if price.blank?
++    pack_name = AI_CREDIT_AMOUNTS_BY_LOOKUP_KEY.dig(stripe_price_lookup_key, :name) || 'AI Credit Top-Up'
++    @description = "#{pack_name} - #{organization.name}"
++
++    @final_description = @description
++
++    Rails.logger.info 'Charging...'
+ 
+-    Stripe::InvoiceItem.create(
++    invoice_item = Stripe::InvoiceItem.create({
+       customer: organization.stripe_customer_id,
+-      price: price.id,
++      amount: amount,
++      currency: 'usd',
++      description: @final_description,
+       metadata: {
+-        organization_id: organization.id,
+-        organization_ai_credit_purchase_id: id,
+-        stripe_price_lookup_key: stripe_price_lookup_key,
+-        ai_credit_pack_top_up: 'true'
++        organization_ai_credit_purchase_id: id
+       }
+-    )
++    })
+ 
+-    invoice = Stripe::Invoice.create(
++    invoice = Stripe::Invoice.create({
+       customer: organization.stripe_customer_id,
+       collection_method: 'charge_automatically',
+-      auto_advance: true,
++      description: 'AI Credit Top-Up',
+       metadata: {
+-        organization_id: organization.id,
+-        organization_ai_credit_purchase_id: id,
+-        stripe_price_lookup_key: stripe_price_lookup_key,
+-        ai_credit_pack_top_up: 'true'
++        organization_ai_credit_purchase_id: id
+       }
+-    )
++    })
+ 
+     paid_invoice = Stripe::Invoice.pay(invoice.id)
+ 
+-    update_columns(
+-      stripe_invoice_id: invoice.id,
+-      amount_cents_paid: paid_invoice.amount_paid,
+-      currency: paid_invoice.currency
+-    )
++    update_columns(stripe_invoice_id: invoice.id, stripe_invoice_item_id: invoice_item.id, stripe_amount: amount)
++
++    Rails.logger.info 'Invoice Has Been Finalized'
++    Rails.logger.info [invoice_item, paid_invoice]
+ 
+     paid_invoice
+   end
+diff --git a/app/serializers/api/v1/organization_ai_credit_purchase_serializer.rb b/app/serializers/api/v1/organization_ai_credit_purchase_serializer.rb
+index 81b35f91d..12bf548fc 100644
+--- a/app/serializers/api/v1/organization_ai_credit_purchase_serializer.rb
++++ b/app/serializers/api/v1/organization_ai_credit_purchase_serializer.rb
+@@ -5,7 +5,7 @@ class Api::V1::OrganizationAiCreditPurchaseSerializer < ActiveModel::Serializer
+              :kind,
+              :stripe_checkout_session_id,
+              :stripe_price_lookup_key,
+-             :amount_cents_paid,
++             :stripe_amount,
+              :currency,
+              :one_off_credits_granted,
+              :subscription_credits_per_period,
+@@ -14,5 +14,6 @@ class Api::V1::OrganizationAiCreditPurchaseSerializer < ActiveModel::Serializer
+              :subscription_current_period_end,
+              :subscription_canceled_at,
+              :refunded_at,
+-             :created_at
++             :created_at,
++             :is_active?
+ end

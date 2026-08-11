@@ -1,0 +1,7 @@
+DEVIATION COUNT: 3
+
+DEVIATION: missing_balance guard — error logging parity | ANALOG: reset_ai_credits.rb:26-31 — logs `Rails.logger.error "ResetAiCredits: org #{organization.id} has no ai_credit_balance"` BEFORE calling `context.fail!` for the missing-balance case | OURS: apply_ai_credit_purchase.rb:40 — `return context.fail!(error: :missing_balance, message: "org #{organization.id} has no balance")` with NO preceding `Rails.logger.error` log line. The analog logs the missing-balance condition; ours fails silently (the interactor result is not checked by the caller, so no log is produced anywhere).
+
+DEVIATION: fail! payload omits organization_id | ANALOG: reset_ai_credits.rb:27-31 (missing_balance) and :85-89 (fail_with_record_invalid) — both pass `organization_id: organization.id` / `organization_id: context.organization&.id` in the `context.fail!` keyword payload | OURS: apply_ai_credit_purchase.rb:40 (missing_balance) and :72-75 (fail_with_record_invalid) — neither `context.fail!` call includes an `organization_id:` key; the fail payload carries only `error:` and `message:`.
+
+DEVIATION: fail_with_record_invalid missing `ap errors` | ANALOG: reset_ai_credits.rb:82-89 — `fail_with_record_invalid` does `Rails.logger.error ...` then `ap errors` then `context.fail!(...)` | OURS: apply_ai_credit_purchase.rb:72-75 — `fail_with_record_invalid` does `Rails.logger.error ...` then `context.fail!(...)` with NO `ap errors` call. The `ap errors` debug dump present in the analog is absent.

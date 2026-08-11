@@ -1,0 +1,25 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 6,
+  "assignment": "REGENERATING-OVER-SUCCESS state (job 28059 'QA Regenerating Over Success', SPEC §8.2 state 4+1: newer in_progress row over an older succeeded row). Expected: criteria CARD still shows OLD criteria (Core 2 / Preferred 1 / Bonus 1), Regenerate button in loading state, View criteria still available, backend-driven and reload-persistent.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as Rezu May (Acme Inc.); jobs list rendered with all 7 seeded jobs.",
+    "Clicked 'QA Regenerating Over Success' heading → landed on /jobs/28059/stages/196358/applicants (job page).",
+    "Clicked 'Job setup' left-nav link → /jobs/28059/setup/details.",
+    "Clicked 'Plato AI settings' setup nav item → /jobs/28059/setup/ai. Job criteria section rendered.",
+    "STEP 1 (criteria card): Card IS shown (not an empty state). Plato disc icon + 'Job criteria' + description 'Plato extracted these from your job description 24 minutes ago.' Count rail: Core 2 / Preferred 1 / Bonus 1 — matches the OLD succeeded row. (Note: assignment estimated '~a couple hours ago'; actual seed shows ~24 min ago — a seed-timing detail, still a past time reflecting the succeeded row, not a spec issue.)",
+    "STEP 2 (action row): 'View criteria' button present and enabled; 'Regenerate criteria' button present, [disabled], and rendering a '...' loading indicator instead of its label — loading state driven by the backend in_progress status over the old success. Verified via element screenshot 02.",
+    "STEP 3 (View criteria slide-over): Clicked 'View criteria'. Slide-over opened with header 'Job criteria' + Close (X), description 'New reviews score candidates against these. To change them, edit the job description. Reviews that have already run keep the criteria they were scored against.' Tier-grouped OLD criteria: Core (2) '5+ years Ruby on Rails experience', 'PostgreSQL and relational database design'; Preferred (1) 'REST API design'; Bonus (1) 'Experience mentoring engineers'. No tier-hint sentences. Closed via X.",
+    "STEP 4 (reload persistence): Reloaded /jobs/28059/setup/ai. Card still shows OLD criteria (Core 2 / Preferred 1 / Bonus 1, 'extracted ... 26 minutes ago'); 'Regenerate criteria' still [disabled] with '...' spinner (screenshot 04). Backend-driven persistence confirmed — View criteria still available.",
+    "STEP 5 (console): browser_console_messages level=error (all) returned exactly the 7 KNOWN pre-existing errors (1 heap-api.com 404, 4 react-router history deprecation warnings, 2 'Store does not have a valid reducer' Redux warnings). No new feature-referencing (aiJobCriteria / JobCriteria / /ai_job_criteria / React) errors.",
+    "Did NOT confirm any regenerate; never clicked the confirm-modal confirm button (never opened it); no cleanup; single shared browser."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-6/01-criteria-card-regenerating.png",
+    "/tmp/qa-run-3-l5/agent-6/02-regenerate-button-loading.png",
+    "/tmp/qa-run-3-l5/agent-6/03-view-criteria-slideover.png",
+    "/tmp/qa-run-3-l5/agent-6/04-regenerate-button-loading-after-reload.png"
+  ],
+  "findings": []
+}

@@ -1,0 +1,39 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 6,
+  "focus_area": "JobPolicy authorization gate for AiJobCriteriaController regenerate (authorize job, :update?) and show (authorize job, :show?) — SPEC §9 mid-QA auth change, commit 859c85ead. Verified real policy behavior for admin, non-admin hiring-team member, and outsider against a running RAILS_ENV=test app; also verified controller org-scoping prevents cross-org leak.",
+  "files_reviewed": [
+    "app/policies/job_policy.rb",
+    "app/policies/application_policy.rb",
+    "app/policies/ai_job_application_summary_policy.rb",
+    "app/controllers/api/v1/ai_job_criteria_controller.rb",
+    "app/models/job.rb",
+    "app/models/organization_user.rb",
+    "app/models/hiring_team_membership.rb"
+  ],
+  "verification_evidence": {
+    "seed_plan": "ai-org-member-on-hiring-team.json",
+    "principals_tested": {
+      "admin_rezu_may_org_owner": { "update?": true, "show?": true, "is_org_admin?": true },
+      "hiring_team_member_taylor_brooks_org_user": {
+        "update?": true,
+        "show?": true,
+        "is_org_admin?": false,
+        "in_job_users": true,
+        "update?_equals_on_hiring_team?": true,
+        "with_hiring_team_ai_credits_control_disabled": {
+          "can_use_ai_credits?": false,
+          "OLD_gate_update_ai_settings?": false,
+          "NEW_gate_update?": true,
+          "show?": true
+        }
+      },
+      "outsider_org_user_not_on_hiring_team": { "update?": false, "show?": false, "is_org_admin?": false, "in_job_users": false }
+    },
+    "assertions": "13/13 PASS",
+    "controller_scoping": "Both #show and #create wrap the lookup in exists(current_organization.jobs.where(id: params[:job_id]), 'no job found') and call authorize INSIDE that block, AFTER the org-scoped find. A cross-org job_id yields an empty relation -> 'no job found' rendered before authorize is ever reached; no cross-org record leaks and no authorize runs on an out-of-org Job.",
+    "show_vs_update_equivalence_note": "JobPolicy#show? (job_policy.rb:12-14) is NOT literally on_hiring_team?; it is (is_org_user? && current_organization_user.jobs.where(id: record.id).any?) || is_org_admin?. It differs from update?/on_hiring_team? only by an extra is_org_user? guard. That guard can only reject an org_interviewer on the hiring team, but HiringTeamMembership#check_organization_user_role forbids org_interviewer from being a hiring-team member (verified: 'Organization user cannot have an Interviewer role'). Therefore every real hiring-team member is org_user or above, is_org_user? is always satisfied, and show? is equivalent to update? for all reachable principals. No divergence, no gap."
+  },
+  "findings": []
+}

@@ -1,0 +1,129 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Design, build, and maintain backend services in Go",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume explicitly mentions 4 years of experience building scalable microservices using Golang, including specific frameworks like Gin and Mux."
+    },
+    {
+      "criterion_text": "Work with infrastructure team to integrate with Kubernetes",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The resume lists Kubernetes in skills, and the candidate mentions partnering with DevOps teams, but does not detail specific tasks involving integrating services into a Kubernetes environment."
+    },
+    {
+      "criterion_text": "Work with infrastructure team to integrate with Terraform",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "There is no mention of Terraform or infrastructure-as-code tools in the resume."
+    },
+    {
+      "criterion_text": "Architect, deploy, and maintain multi cloud racks and environments",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not demonstrate experience with multi-cloud architecture or hardware rack management."
+    },
+    {
+      "criterion_text": "Collaborate with product and UX teams to deliver features",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume notes partnering with frontend teams, participation in Agile teams, and developing features like a Risk Dashboard based on product requirements."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume cites significant experience in building fault-tolerant systems, achieving 99.99% uptime, and optimizing system performance and reliability."
+    },
+    {
+      "criterion_text": "Participate in code reviews, mentor others, and help define best practices",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume explicitly mentions participating in code reviews and contributing to product quality through testing and documentation."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "Candidate identifies as an expert in Golang and details high-volume production microservices built with the language."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "Kubernetes is listed in the skills section, but there is no specific evidence of handling cluster design, service mesh, or stateful vs stateless workload management."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of working with Terraform or equivalent IaC tools."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume explicitly mentions optimizing an EC2 batch workflow, which is an AWS service."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate built an internal developer utility to centralize API testing, showing an understanding of developer tooling, though not necessarily full-scale PaaS architecture."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines, developer tooling, and some exposure to marketplace or cloud provider integrations",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The resume lists CI/CD as a skill and mentions experience developing internal developer utilities and developer tools."
+    },
+    {
+      "criterion_text": "Excellent communication skills",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate lists experience in cross-functional collaboration and documentation, which implies professional communication, though not explicitly stated as a skill."
+    },
+    {
+      "criterion_text": "Ability to work cross functionally",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume explicitly mentions working cross-functionally in an Agile team."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of experience with cloud marketplaces."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume does not demonstrate experience with multi-cloud or hybrid environments."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with high availability and fault tolerance, but does not explicitly mention multi-region or multi-tenant specific designs."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume highlights extensive experience with distributed systems like Kafka and Redis and includes a project involving a worker pool framework."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume lists Kibana, Elasticsearch, and Grafana in the skills section and describes using these for observability."
+    }
+  ],
+  "computed_score": {
+    "points": 56.0,
+    "max": 88,
+    "percentage": 63.6
+  }
+}

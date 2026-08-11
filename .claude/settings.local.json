@@ -2,7 +2,15 @@
   "permissions": {
     "allow": [
       "mcp__claude_ai_Gmail__search_threads",
-      "mcp__claude_ai_Gmail__get_thread"
+      "mcp__claude_ai_Gmail__get_thread",
+      "Monitor",
+      "mcp__github__search_code",
+      "mcp__github__get_file_contents",
+      "mcp__github__search_repositories",
+      "mcp__github__search_issues",
+      "mcp__github__search_pull_requests",
+      "mcp__github__issue_read",
+      "mcp__github__list_issues"
     ]
   }
 }

@@ -1,0 +1,28 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 2,
+  "assignment": "Per-stage modal STATE 2 — unchecked, zero processable (SPEC 1.2 state 2), on Senior Engineer / Inbox (all 3 candidates have current reviews). Verify exact body copy, no credit sentence, no 'Up to' prefix, no overestimate block, submit disabled, checkbox enabled; toggle to checked state and back to verify the state machine transition; cancel without submitting.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc.).",
+    "Clicked 'Senior Engineer' job title -> candidates view opened on Inbox stage (3 candidates: Agnes Sipes, Carl Dietrich, Emilee Hand; all three verified to have current 'Seeded review —' Plato reviews via overview panel and fit chips).",
+    "Clicked the Inbox stage-name select-all checkbox -> all 3 row checkboxes checked.",
+    "Opened the Bulk options three-dot menu at the top right of the candidate list -> clicked 'Run Plato reviews' -> 'Review candidates' modal (BulkGenerateAiSummariesConfirmModal) opened in state 2.",
+    "STATE 2 (unchecked) byte-level assertion via DOM textContent: body paragraph is EXACTLY \"0 of the 3 candidates selected from this hiring stage don’t have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.\" — numeric 0 (not 'zero'/'No'). PASS.",
+    "STATE 2: no credit sentence — modal.textContent.includes('Each successful review') === false. PASS.",
+    "STATE 2: no 'Up to' prefix (includes('Up to') === false) and no overestimate info block (includes('overestimate') === false) — all 3 rows loaded so count is exact. PASS.",
+    "STATE 2: 'Generate reviews' submit button disabled === true; re-review checkbox disabled === false (enabled/clickable) and checked === false. PASS.",
+    "Statement block present with exact copy: 'You will receive an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.'",
+    "Screenshot of state 2 taken.",
+    "Toggled the 'Also re-review candidates that already have a review' checkbox ON -> body switched to checked state: \"The 3 candidates selected from this hiring stage will be reviewed, including candidates that already have a review. Each successful review uses one AI credit, so running this uses up to 3 credits from your balance of 20 available.\" with bold counts ['3','20']; 'Generate reviews' became enabled (disabled === false); still no 'Up to' and no overestimate block. Balance displayed 20 (fixture start, no prior consumption). PASS.",
+    "Screenshot of checked state taken.",
+    "Toggled the checkbox back OFF -> state 2 copy returned byte-identical, credit sentence gone, 'Generate reviews' disabled again, checkbox unchecked and still enabled. State machine round-trip PASS.",
+    "Clicked Cancel — modal closed, no submission. Verified modal text gone from DOM.",
+    "Console check across the whole session: 7 errors total, all known pre-existing noise (4x react-router history deprecation, 2x 'Store does not have a valid reducer' Redux warning, 1x heap-api.com 404). Zero new feature-referencing errors (no rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summaries/React errors)."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-2/agent-2-state2-unchecked-zero-processable.png",
+    "/tmp/qa-run-3-l5/agent-2/agent-2-state4-checked-toggle.png"
+  ],
+  "findings": []
+}

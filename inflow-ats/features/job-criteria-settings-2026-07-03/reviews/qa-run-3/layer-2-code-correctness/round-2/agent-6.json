@@ -1,0 +1,24 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agent_index": 6,
+  "focus_area": "Cross-cutting broadcast->toast->refetch chain (backend broadcast payload keys vs TS interface vs WS handler reads vs query-invalidate key) plus copy-rule compliance sweep of all new user-facing strings.",
+  "files_reviewed": [
+    "app/jobs/extract_job_criteria_job.rb",
+    "app/jobs/generate_ai_job_application_summary_job.rb",
+    "app/javascript/ats/src/websockets/WebsocketGlobalChannelHandler.tsx",
+    "app/javascript/shared/types/aiSummaryWebsocketPayloads.ts",
+    "app/javascript/shared/queryHooks/useAiJobCriteria.ts",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/components/JobCriteriaSection.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/RegenerateJobCriteriaConfirmModal.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/JobCriteriaViewModal.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/JobSetupAiSettings.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/jobCriteriaTiers.ts",
+    "app/controllers/api/v1/ai_job_criteria_controller.rb",
+    "app/interactors/validate_ai_summary_generation.rb",
+    "app/interactors/validate_auto_ai_summary_generation.rb",
+    "app/interactors/queue_bulk_ai_summary_jobs.rb",
+    "app/models/ai_job_criteria.rb"
+  ],
+  "findings": []
+}

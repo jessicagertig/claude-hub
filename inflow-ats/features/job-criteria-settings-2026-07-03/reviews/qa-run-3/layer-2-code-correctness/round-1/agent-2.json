@@ -1,0 +1,11 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 2,
+  "focus_area": "Job gating change (extract_job_criteria_immediately/_if_needed), zero-criteria predicate, AiJobCriteria constants + zero_criteria_failure? + resume_waiting_summaries + status enum/latest-row lookups",
+  "files_reviewed": [
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb"
+  ],
+  "findings": []
+}

@@ -1,0 +1,8 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 5,
+  "agent_index": 3,
+  "findings": [],
+  "notes": "Scenario: User.from_omniauth OMITTED attribution keywords => nil columns (utm_data nil, never {}); required-keyword contract. Ran cleanup + seeded default-user-and-org.json, then executed /tmp/l3_r1_a3_omitted_keywords.rb via bash -lic 'cd /Users/jessica/wrk/wrk-corp/inflow-ats && test_frr ...'. (a) Called User.from_omniauth(auth: OmniAuth::AuthHash.new(info:{email,first_name,last_name}), created_via: 'created_via_signup') for a FRESH email (l3-r1-a3-omitted-1784596177@example.com), omitting partner_source and all four utm keywords; reloaded the created User (id 39318, persisted? true). Actual printed values: utm_source => nil (nil? true); utm_campaign => nil (nil? true); internal_ref => nil (nil? true); utm_data.inspect => nil; utm_data.nil? => true; utm_data == {} ? => false; utm_data.class => NilClass. ALL FOUR NIL => YES. utm_data EMPTY-HASH FALLBACK (BAD) => NO -- utm_data is genuinely nil, NOT a fabricated {} (D3/D6/rule 13 satisfied). partner_source => nil. (b) Required-keyword contract: User.from_omniauth(created_via:'x') (no auth:) raised ArgumentError 'missing keyword: :auth' => YES; User.from_omniauth(auth: <hash>) (no created_via:) raised ArgumentError 'missing keyword: :created_via' => YES. Source app/models/user.rb:379 confirms the four utm values are assigned raw only inside the where(email:).first_or_create block (creation-time only). No findings."
+}

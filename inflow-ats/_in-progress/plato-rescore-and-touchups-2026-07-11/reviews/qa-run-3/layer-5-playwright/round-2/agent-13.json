@@ -1,0 +1,36 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 13,
+  "assignment": "Design Lead PlatoTab + balance-aware confirm modal copy, display only (no confirm): Quinn Barrett seeded current review + Regenerate present; Regenerate confirm modal shows live balance 15 then CANCEL with no POST; Rowan Ellis PlatoTab review + Regenerate present (modal not opened); per-stage bulk modal zero-processable state copy + submit disabled then Cancel; screenshots; console check.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc.). Design Lead (29093) and Senior Engineer (29092) listed.",
+    "Clicked Design Lead → landed on Inbox stage (2 candidates: Rowan Ellis, Quinn Barrett).",
+    "Clicked Quinn Barrett (21038) → Plato tab: seeded current review renders — headline 'Seeded review — experienced design lead', Excellent fit, 5 criteria (5/0/0), full sections (Fit, Scoring detail, Notable achievement, Relevant experience, Open questions, Skills). Header-right button text verified via DOM = 'Regenerate' — present on this non-stale current review (gating change applies on this untouched job).",
+    "Clicked Regenerate → ConfirmationModal 'Are you sure you want to regenerate?' body: 'Regenerating runs a fresh analysis of this candidate and replaces the existing review. Uses 1 credit of 15 remaining.' + 'Recommended when the resume has been updated or the job description has changed.' — LIVE balance 15 exactly (not stale 16/20). Clicked Cancel.",
+    "Network check after cancel: only GET /api/v1/job_applications/21038/ai_job_application_summaries/2534 => 200. No POST fired.",
+    "Clicked Rowan Ellis (21039) → Plato tab: seeded current review renders — headline 'Seeded review — mid-level designer, growing to lead', Good fit, 5 criteria (1/4/0). Header-right Regenerate button present (verified via DOM text, exactly 1 'Regenerate' button). Did NOT open the modal.",
+    "Per-stage bulk path: clicked Inbox stage select-all checkbox (both candidates checked) → opened Bulk options three-dot menu → clicked 'Run Plato reviews'. Modal 'Review candidates' opened in unchecked zero-processable state.",
+    "Byte-level body copy verified via DOM: '0 of the 2 candidates selected from this hiring stage don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.' — exact match (numeric 0, no credit sentence). Checkbox 'Also re-review candidates that already have a review' present, unchecked, enabled, with description 'Recommended if you've changed the candidate requirements in the job description.' Statement exact: 'You will receive an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' 'Generate reviews' button disabled=true.",
+    "Clicked Cancel; deselected both candidates via the select-all checkbox to restore state.",
+    "Network check at end: only two GETs of summaries 2534/2535, both 200. Zero POSTs to ai_job_application_summaries or bulk endpoints for the whole session.",
+    "Console check: 0 console errors at error level across the whole session; log contains only known noise (react-router history deprecations, Redux 'Store does not have a valid reducer', heap-api.com 404s) plus two Emotion dev warnings noted as LOW below. No feature-referencing errors (rescore, BulkGenerateAiSummaries, PlatoTab, ai_job_application_summaries failures, React errors)."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-13/01-quinn-barrett-platotab-regenerate.png",
+    "/tmp/qa-run-3-l5/agent-13/02-regenerate-confirm-modal-balance-15.png",
+    "/tmp/qa-run-3-l5/agent-13/03-rowan-ellis-platotab-regenerate.png",
+    "/tmp/qa-run-3-l5/agent-13/04-per-stage-modal-zero-processable.png"
+  ],
+  "findings": [
+    {
+      "id": "l5-r2-a13-001",
+      "severity": "LOW",
+      "title": "Emotion dev warning ':first-child is potentially unsafe when doing server-side rendering' logged twice during Quinn Barrett PlatoTab render",
+      "url": "http://app.lvh.me:5007/jobs/29093/stages/203596/applicants/21038/ai",
+      "expected": "No new console output attributable to the feature.",
+      "actual": "Two [ERROR]-level Emotion messages 'The pseudo class \":first-child\" is potentially unsafe when doing server-side rendering. Try changing it to \":first-of-type\".' fired from the vendor chunk (~19375ms, during the PlatoTab load for Quinn Barrett). Dev-mode styling lint from Emotion, no SSR in this app, no functional impact; cannot attribute to a specific feature component from the vendor stack trace. Report-only nitpick.",
+      "evidence": "console-2026-07-13T01-23-20-764Z.log lines 364-365 (session console log in .playwright-mcp/)"
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# Vague Scope (non-authoritative reference)
+
+Users can currently bulk-generate AI summaries for selected candidates within a single hiring stage. This feature adds a job-level action that scores all candidates across all stages at once, with no individual selection. It includes a rescore option so users can regenerate summaries for candidates who already have one. The backend needs a new endpoint, the existing interactor adapted for the rescore param, and the job's existing-summary count exposed through the serializer. The frontend needs a new trigger point at the job level and a confirm modal.

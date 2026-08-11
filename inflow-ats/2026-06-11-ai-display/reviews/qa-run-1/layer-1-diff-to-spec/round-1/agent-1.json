@@ -1,0 +1,37 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 1,
+  "focus_area": "PlatoMark.tsx",
+  "findings": [
+    {
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/components/shared/PlatoMark.tsx",
+      "line": 69,
+      "requirement": "Must use Emotion styled components (spec section 1, line: 'Must use Emotion styled components')",
+      "actual": "PlatoMark wraps its SVG in a plain `<span style={{ display: 'inline-flex', alignItems: 'center', color }}>` using an inline style attribute. This is not an Emotion styled component. The WandIcon analog (the spec's stated pattern to follow) uses the Emotion `css` prop via `css={css`...`}` for its styling. PlatoChip correctly uses `Styled.Chip` (an Emotion styled component), but PlatoMark's wrapper does not.",
+      "fix": "Either create a `Styled.Mark` (or `Styled.Wrapper`) Emotion styled component for the outer span, or use the Emotion `css` prop (importing `css` from `@emotion/react`) as the WandIcon analog does. The `color` prop value must still flow through to set CSS `color` on the wrapper for `currentColor` resolution."
+    }
+  ],
+  "spec_coverage": {
+    "total_requirements": 13,
+    "implemented": 12,
+    "missing": 0,
+    "deviating": 1,
+    "details": [
+      { "requirement": "PlatoMark component with 3 variants (sparkle/sparkles/wand)", "status": "implemented", "location": "lines 35-66" },
+      { "requirement": "Parameterized size prop (default 16)", "status": "implemented", "location": "line 13" },
+      { "requirement": "Uses currentColor for stroke/fill", "status": "implemented", "location": "lines 27, 53, 55, 69 (color prop sets CSS color which currentColor resolves to)" },
+      { "requirement": "aria-hidden='true' on SVG element", "status": "implemented", "location": "line 70" },
+      { "requirement": "PlatoChip component exported", "status": "implemented", "location": "lines 83-89, exported at line 91" },
+      { "requirement": "Star centered in gradient rounded square", "status": "implemented", "location": "Styled.Chip uses inline-flex + align-items/justify-content center" },
+      { "requirement": "Gradient is linear-gradient(120deg, #FBD7FF 10%, #FFDEC1 90%)", "status": "implemented", "location": "line 104 (lowercase hex is CSS-equivalent)" },
+      { "requirement": "Inset box-shadow 0 0 0 1px rgba(0,0,0,0.07)", "status": "implemented", "location": "line 105" },
+      { "requirement": "Star size = Math.round(size * 0.62)", "status": "implemented", "location": "line 86" },
+      { "requirement": "Glyph color always colors.gray[900]", "status": "implemented", "location": "line 86 passes colors.gray[900] via color prop" },
+      { "requirement": "Must use Emotion styled components", "status": "deviating", "location": "PlatoChip uses Styled.Chip (correct). PlatoMark wrapper uses inline style attribute (line 69) instead of Emotion styled component or css prop. See finding." },
+      { "requirement": "Gradient same in dark mode (brand element, not theme-dependent)", "status": "implemented", "location": "line 104 is a hardcoded CSS value, not theme-gated" },
+      { "requirement": "Pattern to follow: WandIcon (inline SVG pattern)", "status": "deviating", "location": "WandIcon uses css prop from @emotion/react. PlatoMark uses inline style attribute. Same finding as Emotion requirement above." }
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "organization_ai_credit_purchases": {
+    "count": 3,
+    "columns": [
+      "id",
+      "organization_id",
+      "kind",
+      "stripe_subscription_id",
+      "stripe_checkout_session_id",
+      "stripe_invoice_id",
+      "stripe_price_lookup_key",
+      "amount_cents_paid",
+      "currency",
+      "subscription_credits_per_period",
+      "one_off_credits_granted",
+      "subscription_current_period_start",
+      "subscription_current_period_end",
+      "subscription_status",
+      "subscription_canceled_at",
+      "refunded_at",
+      "created_at",
+      "updated_at"
+    ]
+  },
+  "ai_job_criteria": {
+    "count": 3,
+    "columns": [
+      "id",
+      "job_id",
+      "status",
+      "criteria",
+      "metadata",
+      "error_message",
+      "created_at",
+      "updated_at"
+    ]
+  },
+  "ai_job_application_summary_statuses": {
+    "count": 45,
+    "columns": [
+      "id",
+      "job_application_id",
+      "ai_job_application_summary_id",
+      "status",
+      "score_percentage",
+      "headline",
+      "integrated_role_analysis",
+      "created_at",
+      "updated_at"
+    ]
+  },
+  "bulk_ai_summary_job_applications": {
+    "count": 0,
+    "columns": [
+      "id",
+      "bulk_job_id",
+      "job_application_id",
+      "status",
+      "created_at",
+      "updated_at"
+    ]
+  }
+}

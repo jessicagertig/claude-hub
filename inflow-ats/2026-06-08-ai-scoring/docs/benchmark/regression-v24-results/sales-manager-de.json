@@ -1,0 +1,184 @@
+{
+  "meta": {
+    "version": 24,
+    "name": "sales-manager-de",
+    "kind": "problematic",
+    "title": "Sales Manager (m/w/d)",
+    "description": "German JD — tier assignment in non-English",
+    "cost": 0.003506
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "\"Grenzen verschieben, disruptiv denken, die Zukunft gestalten - Sei dabei, wenn wir die Talente von morgen formen.\"\nÜber uns:\nDas Franklin Institute of Applied Sciences steht für Disruption und Innovation in der sonst so staubigen Bildungsbranche. Unser Antrieb ist es, die Online-Bildungslandschaft stetig neu zu definieren und neu zu gestalten. Inspiriert von visionären Unternehmen, kombinieren wir Leistung, Innovation und unternehmerischen Geist, um der Branche immer einen Schritt voraus zu sein."
+      },
+      {
+        "heading": "Deine Aufgaben:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Führung von Verkaufsgesprächen und Aufbau von langfristigen Kundenbeziehungen\nUnterstützung bei der Erstellung von Angeboten und Verträgen\nAktive Teilnahme an Marketing- und Vertriebsaktivitäten, wie z.B. Messen und Events\nEnge Zusammenarbeit mit anderen Abteilungen, wie z.B. dem Produkt- und Marketing-Team\nAktive Weiterentwicklung der Vertriebsprozesse"
+      },
+      {
+        "heading": "Dein Profil:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Mindestens 2 Jahre Vertriebserfahrung im B2C Bereich\nStarke kommunikative Fähigkeiten und Überzeugungskraft\nHohe Kundenorientierung und Eigeninitiative; Effizienz und Excellence sind keine Fremdwörter für Dich\nEin(e) echte(r) \"People-Person\", der/die es versteht, Beziehungen aufzubauen und zu pflegen\nTeamplayer-Mentalität und Freude an der Zusammenarbeit mit anderen Abteilungen"
+      },
+      {
+        "heading": "Wir bieten:",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "Ein dynamisches und motiviertes Team mit starkem Netzwerk\nEine anspruchsvolle, abwechslungsreiche Tätigkeit mit hoher Eigenverantwortung\nAußergewöhnlich gute Aufstiegs- und Verdienstmöglichkeiten (Fixum + starke Provision)\nModernes Arbeitsumfeld und Ausstattung mit MacBook etc.\nWeitere Benefits wie Fitness-Mitgliedschaft etc."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "Du fühlst dich angesprochen? Dann bewirb dich jetzt und werde Teil der nächsten Bildungsrevolution!\nWir freuen uns auf Deine Bewerbung!"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Führung von Verkaufsgesprächen",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Führung von Verkaufsgesprächen und Aufbau von langfristigen Kundenbeziehungen"
+      },
+      {
+        "text": "Aufbau von langfristigen Kundenbeziehungen",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Führung von Verkaufsgesprächen und Aufbau von langfristigen Kundenbeziehungen"
+      },
+      {
+        "text": "Unterstützung bei der Erstellung von Angeboten und Verträgen",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Unterstützung bei der Erstellung von Angeboten und Verträgen"
+      },
+      {
+        "text": "Aktive Teilnahme an Marketing- und Vertriebsaktivitäten, wie z.B. Messen und Events",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Aktive Teilnahme an Marketing- und Vertriebsaktivitäten, wie z.B. Messen und Events"
+      },
+      {
+        "text": "Enge Zusammenarbeit mit anderen Abteilungen, wie z.B. dem Produkt- und Marketing-Team",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Enge Zusammenarbeit mit anderen Abteilungen, wie z.B. dem Produkt- und Marketing-Team"
+      },
+      {
+        "text": "Aktive Weiterentwicklung der Vertriebsprozesse",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Aktive Weiterentwicklung der Vertriebsprozesse"
+      },
+      {
+        "text": "Mindestens 2 Jahre Vertriebserfahrung im B2C Bereich",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Mindestens\"",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Mindestens 2 Jahre Vertriebserfahrung im B2C Bereich"
+      },
+      {
+        "text": "Starke kommunikative Fähigkeiten",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Starke\"",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Starke kommunikative Fähigkeiten und Überzeugungskraft"
+      },
+      {
+        "text": "Überzeugungskraft",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Starke\" (applied to the compound phrase)",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Starke kommunikative Fähigkeiten und Überzeugungskraft"
+      },
+      {
+        "text": "Hohe Kundenorientierung",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Hohe\"",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Hohe Kundenorientierung und Eigeninitiative; Effizienz und Excellence sind keine Fremdwörter für Dich"
+      },
+      {
+        "text": "Eigeninitiative",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Hohe\" (applied to the compound phrase)",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Hohe Kundenorientierung und Eigeninitiative; Effizienz und Excellence sind keine Fremdwörter für Dich"
+      },
+      {
+        "text": "Effizienz",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"keine Fremdwörter\"",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Hohe Kundenorientierung und Eigeninitiative; Effizienz und Excellence sind keine Fremdwörter für Dich"
+      },
+      {
+        "text": "Excellence",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"keine Fremdwörter\"",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Hohe Kundenorientierung und Eigeninitiative; Effizienz und Excellence sind keine Fremdwörter für Dich"
+      },
+      {
+        "text": "People-Person",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Ein(e) echte(r) \"People-Person\", der/die es versteht, Beziehungen aufzubauen und zu pflegen"
+      },
+      {
+        "text": "Fähigkeit, Beziehungen aufzubauen und zu pflegen",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"versteht\"",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Ein(e) echte(r) \"People-Person\", der/die es versteht, Beziehungen aufzubauen und zu pflegen"
+      },
+      {
+        "text": "Teamplayer-Mentalität",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Teamplayer-Mentalität und Freude an der Zusammenarbeit mit anderen Abteilungen"
+      },
+      {
+        "text": "Freude an der Zusammenarbeit mit anderen Abteilungen",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Teamplayer-Mentalität und Freude an der Zusammenarbeit mit anderen Abteilungen"
+      }
+    ]
+  }
+}

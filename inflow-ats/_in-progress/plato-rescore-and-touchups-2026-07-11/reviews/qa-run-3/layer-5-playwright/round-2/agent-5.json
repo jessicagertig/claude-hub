@@ -1,0 +1,25 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 5,
+  "assignment": "ALL-STAGES modal (RunPlatoReviewAllModal) on both jobs, display only — Senior Engineer unchecked/checked copy at balance 16, Design Lead zero-state/checked copy, toggle-off re-verification, button states, statement block, console check. Do NOT run.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc.). Jobs list shows Design Lead (2 candidates) and Senior Engineer (63 candidates).",
+    "Clicked 'Senior Engineer' → job page (Inbox 3, Screen 5, Interview 55). Plato Reviews card present in stages column with 'Plato βeta scores every candidate on role fit and skills.' and 'Run Plato' button.",
+    "Clicked 'Run Plato' → 'Review all candidates' modal opened. UNCHECKED body verified byte-exact via DOM textContent: '58 candidates in this job don't have a Plato review yet. Each successful review uses one AI credit. You are short 42 credits. The first 16 candidates will get reviews generated; the rest will be skipped.' (58 unreviewed − balance 16 = short 42 ✓). Statement block byte-exact: 'The hiring team gets an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' Checkbox label 'Also re-review candidates that already have a review' + description 'Recommended if you've changed the candidate requirements in the job description.' Review all button ENABLED.",
+    "Checked the re-review checkbox. CHECKED body verified byte-exact: '63 candidates in this job will be reviewed, including candidates that already have a review. Each successful review uses one AI credit. You are short 47 credits. The first 16 candidates will get reviews generated; the rest will be skipped.' — NO leading 'The' ✓; short 47 = 63 − 16 ✓; bold 47 rendered (screenshot). Statement block unchanged byte-exact. Button ENABLED. Cancelled the modal.",
+    "Navigated to /jobs → clicked 'Design Lead' → job page (Inbox 2). Clicked 'Run Plato' on the Plato Reviews card.",
+    "UNCHECKED zero-state verified byte-exact: '0 candidates in this job don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.' — numeric 0 ✓, no credit sentence ✓, Review all button DISABLED ✓. Statement block byte-exact and present.",
+    "Checked the checkbox. CHECKED body verified byte-exact: '2 candidates in this job will be reviewed, including candidates that already have a review. Each successful review uses one AI credit, so running this uses up to 2 credits from your balance of 16 available.' — no leading 'The' ✓, balance 16 ✓. Button ENABLED ✓.",
+    "Toggled the checkbox off → zero-state body returned byte-exact and Review all button DISABLED again ✓. Cancelled the modal; verified no modal remnants remained.",
+    "Console check (all 184 messages across the session): only known pre-existing noise — react-router history deprecation warnings, 'Store does not have a valid reducer' Redux warnings, heap-api.com 404s. Zero feature-referencing errors (no rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summaries/React errors).",
+    "No Plato run was submitted at any point — display-only assignment respected."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-5/01-senior-engineer-all-stages-unchecked.png",
+    "/tmp/qa-run-3-l5/agent-5/02-senior-engineer-all-stages-checked.png",
+    "/tmp/qa-run-3-l5/agent-5/03-design-lead-all-stages-unchecked-zero-state.png",
+    "/tmp/qa-run-3-l5/agent-5/04-design-lead-all-stages-checked.png"
+  ],
+  "findings": []
+}

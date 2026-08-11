@@ -1,0 +1,23 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 4,
+  "focus": "MANUAL candidate-review guard ValidateAiSummaryGeneration at runtime: must block a candidate AI review when the job's latest AiJobCriteria is a zero-criteria failure, and allow it in every other criteria state (succeeded-with-criteria, never-extracted, generic non-zero failure).",
+  "scenarios_run": [
+    "Seeded ai-org-with-candidates.json (paid AI org Acme Inc., AI_APPLICANT_SUMMARY flipper on, 1 published 'Senior Engineer' job with a description, 3 candidates -> 3 JobApplications). QA setup in the rails-runner script: granted the org 100 monthly AI credits (organization_ai_credit_balance) and attached a valid application/pdf resume to the first JobApplication so ALL earlier ValidateAiSummaryGeneration guards (flipper, resume, credits, description) pass and the interactor reaches the zero-criteria guard at line 30. Stubbed SubmitResumeToTextractJob.perform_later and GenerateAiJobApplicationSummaryJob.perform_later to no-ops so nothing external/OpenAI was ever enqueued.",
+    "S2 ZERO-CRITERIA BLOCK: latest AiJobCriteria = failed + error_message 'Criteria array is empty' (a ZERO_CRITERIA_ERROR_MESSAGES member). Called ValidateAiSummaryGeneration.call(job_application:, organization:).",
+    "S3 ALLOW: latest AiJobCriteria = succeeded with non-empty criteria [{name:'Android development',weight:5}]. Re-called the interactor with the same fully-valid context.",
+    "S4 NEVER-EXTRACTED: 0 AiJobCriteria rows on the job. Re-called the interactor.",
+    "S5 GENERIC-FAILURE: latest AiJobCriteria = failed + non-member error_message 'OpenAI request timed out'. Re-called the interactor."
+  ],
+  "findings": [],
+  "verifications_passed": [
+    "S2 BLOCK confirmed: with a zero-criteria failed latest row, Job#zero_criteria_extraction_failure? == true and ValidateAiSummaryGeneration returns context.failure? == true with error EXACTLY 'No scoring criteria were found in the job description. Regenerate job criteria in Plato AI settings before running reviews.' (matches the interactor line-30 string char-for-char). A candidate can NOT be scored against a zero-criteria job.",
+    "S2 guard fires BEFORE the textract section: with the stubs in place, $enq stayed empty after the failing call -- the interactor short-circuited on the zero-criteria context.fail! and never reached SubmitResumeToTextractJob/GenerateAiJobApplicationSummaryJob (and therefore never any OpenAI/Textract work).",
+    "Guard reads Job#zero_criteria_extraction_failure? (interactor line 30: `@job_application.job&.zero_criteria_extraction_failure?`), which delegates to latest_ai_job_criteria&.zero_criteria_failure? = status_failed? && ZERO_CRITERIA_ERROR_MESSAGES.include?(error_message). Confirmed at runtime: true for the zero-member failed row, false for the succeeded row and the generic-failure row.",
+    "S3 ALLOW confirmed: succeeded-with-criteria latest -> zero_criteria_extraction_failure? == false; interactor did NOT fail with the zero message and returned context.success? == true (fully-valid context, no OpenAI triggered).",
+    "S4 NEVER-EXTRACTED confirmed: 0 rows -> latest_ai_job_criteria nil -> zero_criteria_extraction_failure? == nil (falsy); the zero-criteria guard did NOT block (absence of extraction is not a failure) and the interactor succeeded.",
+    "S5 GENERIC-FAILURE confirmed: failed row with a non-member error_message ('OpenAI request timed out') -> zero_criteria_failure? == false, zero_criteria_extraction_failure? == false; the guard did NOT fire with the ZERO message and the interactor succeeded -- a generic extraction failure is correctly a different (non-review-blocking) state than a zero-criteria failure.",
+    "16/16 runtime assertions passed with 0 failures. Reviewed the committed guard on branch job-criteria-settings-qa (commit ee6b07c75, working tree clean)."
+  ]
+}

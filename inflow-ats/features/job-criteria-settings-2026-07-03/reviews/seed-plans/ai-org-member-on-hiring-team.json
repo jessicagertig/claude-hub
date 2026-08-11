@@ -1,0 +1,202 @@
+[
+  {
+    "method": "POST",
+    "path": "/cypress/users",
+    "body": {
+      "setActivePaidSubscription": true
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/cypress/jobs",
+    "body": {
+      "published": true,
+      "title": "Senior Engineer"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/cypress/users/create_member_and_assign_to_job",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "CUSTOM_DOMAINS"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/CUSTOM_DOMAINS/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "NOTIFICATION_SUMMARY_COUNTS"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/NOTIFICATION_SUMMARY_COUNTS/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "ANONYMIZE_CANDIDATES"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/ANONYMIZE_CANDIDATES/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "DISCORD_INTEGRATION"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/DISCORD_INTEGRATION/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "SLACK_INTEGRATION"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/SLACK_INTEGRATION/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "LINKEDIN_INTEGRATION"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/LINKEDIN_INTEGRATION/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "ZAPIER_INTEGRATION"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/ZAPIER_INTEGRATION/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "X_HIRING_INTEGRATION"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/X_HIRING_INTEGRATION/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "WHATJOBS_INTEGRATION"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/WHATJOBS_INTEGRATION/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "HIRING_STAGE_AUTOMATIONS"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/HIRING_STAGE_AUTOMATIONS/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "WEBFLOW_UPDATE_ALERTS"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/WEBFLOW_UPDATE_ALERTS/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "SLACK_INTEGRATION_GRANULAR_SETTINGS"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/SLACK_INTEGRATION_GRANULAR_SETTINGS/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "ORGANIZATION_DATA_EXPORTS"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/ORGANIZATION_DATA_EXPORTS/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "CUSTOMER_API"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/CUSTOMER_API/boolean",
+    "body": {}
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features",
+    "body": {
+      "name": "AI_APPLICANT_SUMMARY"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/flipper/features/AI_APPLICANT_SUMMARY/boolean",
+    "body": {}
+  }
+]

@@ -1,0 +1,63 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": "B",
+  "files_reviewed": [
+    "app/javascript/shared/lib/utils.js",
+    "app/javascript/ats/src/views/sessions/components/AuthForm.tsx",
+    "app/javascript/ats/src/views/sessions/components/SignupForm.tsx",
+    "app/javascript/shared/queryHooks/useSession.ts",
+    "app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx",
+    "node_modules/query-string/index.js (6.1.0, traced)",
+    "node_modules/decode-uri-component/index.js (0.2.0, traced)",
+    "app/javascript/ats/src/lib/utils/structure.js (allKeysToSnake, traced)",
+    "app/javascript/shared/queryHooks/api.ts (apiPost, traced)"
+  ],
+  "findings": [
+    {
+      "id": "B1",
+      "severity": "HIGH",
+      "file": "app/javascript/shared/lib/utils.js",
+      "line": 33,
+      "title": "255-char truncation can split a UTF-16 surrogate pair, producing a lone surrogate that makes Rails reject the entire signup request with a 400",
+      "detail": "sanitizeTrackingValue truncates with firstValue.slice(0, TRACKING_VALUE_MAX_LENGTH). String.prototype.slice counts UTF-16 code units, so when a tracking value longer than 255 units has an astral character (emoji, many CJK-extension chars) straddling indices 254/255, the kept string ends in a lone high surrogate. JSON.stringify (well-formed stringify, verified in node) emits it as an escaped \\ud83d in the request body; Ruby's JSON parser rejects that. Verified against the app's bundled gems (json 2.6.1): JSON.parse('{\"v\":\"\\ud83d\"}') raises JSON::ParserError: 521: incomplete surrogate pair. Rails body parsing (ActionDispatch::Http::Parameters) converts that to ParseError -> 400 Bad Request, so the whole POST to /magic_login (AuthForm) or /sign_up (SignupForm) fails -- the visitor cannot sign up via either email path, not merely a lost attribution value. The SSO path is unaffected (browser form encoding replaces lone surrogates with U+FFFD). Trigger is narrow (a >255-char utm value with a surrogate pair exactly at the boundary) but the failure is total signup breakage and the fix is one line: after slicing, drop a trailing high surrogate (e.g. strip if /[\\uD800-\\uDBFF]$/ matches the last kept unit).",
+      "trace": "AuthForm.tsx:41/81-84 -> useSession.ts magicLink -> api.ts:52 allKeysToSnake -> axios JSON.stringify -> Rails JSON parse (json 2.6.1, verified raise)"
+    },
+    {
+      "id": "B2",
+      "severity": "MED",
+      "file": "app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx",
+      "line": 77,
+      "title": "utmData keys flow verbatim into Rails-nested SSO input names; bracket-containing keys make Rack raise ParameterTypeError -> 400 on the Google SSO POST (tradeoff edge case, crafted input only)",
+      "detail": "The per-key hidden inputs use name={\"utm_data[\" + key + \"]\"} where key is the URL-decoded param name from sanitizeTrackingParams -- the sanitizer restricts keys only by the utm_ prefix, so decoded brackets pass through. A landing URL like ?utm_x=1&utm_x%5By%5D=2 produces inputs utm_data[utm_x]=1 and utm_data[utm_x[y]]=2; verified against the app's bundled rack 2.2.9: Rack::Utils.parse_nested_query on that pair raises Rack::QueryParser::ParameterTypeError: expected Hash (got String) for param `utm_x'. Rails turns this into a 400, so a visitor arriving on such a (crafted or link-builder-mangled) URL gets an error page instead of Google SSO for the whole visit. The JSON paths are unaffected (keys ride inside the JSON body). This is a new exposure class: the referral/partner analog uses fixed input names, so this feature introduces user-controlled input NAMES into a form POST for the first time. Values are safe (typeof string guard + React attribute escaping -- no XSS); only key content is the problem. Minimal fix options for Jessica's call: skip keys containing [ or ] when rendering SSO inputs, or exclude such keys at capture in sanitizeTrackingParams (the latter also changes JSON-path behavior).",
+      "trace": "utils.js:63-78 (keys kept verbatim) -> AuthForm.tsx:133 -> GoogleSSOButton.tsx:74-80 -> rack 2.2.9 parse_nested_query (verified raise)"
+    },
+    {
+      "id": "B3",
+      "severity": "LOW",
+      "file": "app/javascript/shared/lib/utils.js",
+      "line": 63,
+      "title": "Sanitizer caps value length (255) and key count (10) but not key length, so the sanitized browser path can still overflow the SSO session cookie",
+      "detail": "utmData keys are stored unbounded (only values pass through sanitizeTrackingValue). A single multi-kilobyte utm_<garbage> key rides through the SSO hidden inputs into session[:oauth_tracking]; the 4KB cookie ceiling can be exceeded by sanitized-browser traffic, not only by the direct-POST bypass the spec's Risk 2 accepts -- that risk's ~3KB worst-case arithmetic assumed short keys. Consequence is CookieOverflow/dropped tracking for that request. Consistent with the accepted no-server-side-sanitization design, hence LOW; a key-length cap in sanitizeTrackingValue's caller would close it if desired.",
+      "trace": "utils.js:76 -> GoogleSSOButton.tsx:77 -> config/initializers/omniauth.rb setup lambda -> session[:oauth_tracking]"
+    },
+    {
+      "id": "B4",
+      "severity": "LOW",
+      "file": "app/javascript/shared/lib/utils.js",
+      "line": 40,
+      "title": "sanitizeTrackingParams throws on non-string input and silently drops utmData for inputs lacking a leading '?' -- unreachable from current callers",
+      "detail": "queryString.extract calls input.indexOf('?') with no type guard, so sanitizeTrackingParams(undefined) throws TypeError at component render, whereas the analog queryString.parse tolerates non-strings (returns {}). Separately, extract returns '' when the string has no '?', so a bare 'utm_source=x' input would populate utmSource (from parse) but never utmData (occurrence scan empty). Both are unreachable today: react-router's location.search is always a string that is empty or starts with '?', and both callers (AuthForm.tsx:41, SignupForm.tsx:26) pass location.search. Hardening note only; matters if the helper is ever reused with a raw query string.",
+      "trace": "utils.js:36-50 -> node_modules/query-string/index.js extract() (no typeof guard)"
+    },
+    {
+      "id": "B5",
+      "severity": "LOW",
+      "file": "app/javascript/shared/lib/utils.js",
+      "line": 6,
+      "title": "decode-uri-component imported directly but not declared in package.json (phantom dependency)",
+      "detail": "import decodeUriComponent from \"decode-uri-component\" resolves only because query-string 6.1.0's transitive dependency is hoisted; package.json declares query-string but not decode-uri-component. Works today and the lockfile pins 0.2.0, but a query-string upgrade or dedupe change could break the import or bind it to a different version than the one queryString.parse uses -- which would void the code comment's guarantee that the key scan uses 'the same decoder queryString.parse uses for keys'. Declaring decode-uri-component@0.2.0 in package.json (or inlining the key-decode) removes the risk. Related pre-existing note: decode-uri-component 0.2.0 carries CVE-2022-38900 (CPU-exhaustion DoS on pathological %-flood input); exposure existed before this feature because these components already ran queryString.parse(location.search) on the same string, so the new key scan adds no new exposure class.",
+      "trace": "utils.js:6 -> package.json (query-string only) -> node_modules/decode-uri-component 0.2.0"
+    }
+  ]
+}

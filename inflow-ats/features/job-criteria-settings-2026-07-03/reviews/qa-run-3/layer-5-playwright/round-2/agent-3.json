@@ -1,0 +1,27 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 3,
+  "assignment": "Both in-flight states + payloads: (1) 28058 QA In Flight first-extraction loading empty state; (2) 28059 QA Regenerating Over Success loading over old success card. Verify UI, GET /jobs/:id/ai_job_criteria payloads, and reload persistence.",
+  "steps": [
+    "Navigated http://app.lvh.me:5007/jobs -> already logged in as Rezu May (Acme Inc.), 7 seeded jobs visible.",
+    "28058: clicked 'QA In Flight' title -> /jobs/28058/stages/196351/applicants; clicked 'Job setup' -> /jobs/28058/setup/details; clicked 'Plato AI settings' -> /jobs/28058/setup/ai.",
+    "28058 Job criteria section: EmptyState with file-text (document) icon, title 'No job criteria have been generated', message 'Plato extracts scoring criteria when you publish the job, or you can generate them now.' Action row = ONLY a 'Generate criteria' button which is [disabled] and renders a loading spinner (animated dots replace the label). NO 'View criteria' button present. Screenshot confirms spinner.",
+    "28058 network: GET /api/v1/jobs/28058/ai_job_criteria => 200. Body: {\"criteria\":null,\"extracted_at\":null,\"status\":\"in_progress\",\"zero_criteria_failure\":false}. Matches expected (in_progress, criteria null, zeroCriteriaFailure false).",
+    "28058 RELOAD (navigate to /jobs/28058/setup/ai again): EmptyState + disabled loading 'Generate criteria' button persist; still no View button. Payload identical: status in_progress, criteria null, zero_criteria_failure false.",
+    "28058 console (level error): exactly the 7 known pre-existing errors (1 heap-api.com 404, 4 react-router history deprecations, 2 'Store does not have a valid reducer' Redux). No feature-referencing errors.",
+    "28059: back to /jobs, clicked 'QA Regenerating Over Success' title -> /jobs/28059/stages/196358/applicants; clicked 'Job setup'; clicked 'Plato AI settings' -> /jobs/28059/setup/ai.",
+    "28059 Job criteria section: criteria CARD shown (Plato disc icon + 'Job criteria' + 'Plato extracted these from your job description about 1 hour ago.') with count rail Core 2 / Preferred 1 / Bonus 1. Action row = 'View criteria' (active/clickable) + 'Regenerate criteria' which is [disabled] with loading spinner (animated dots). Screenshot confirms.",
+    "28059 network: GET /api/v1/jobs/28059/ai_job_criteria => 200. Body: criteria present (4 items: 2x tier_1, 1x tier_2, 1x tier_3 => Core 2 / Preferred 1 / Bonus 1), extracted_at 2026-07-09T01:46:34.293Z, status 'in_progress', zero_criteria_failure false. Matches expected (in_progress latest but old criteria retained).",
+    "28059 RELOAD: card (Core 2 / Preferred 1 / Bonus 1, 'about 1 hour ago') + 'View criteria' + disabled loading 'Regenerate criteria' all persist. Payload identical.",
+    "28059 console (level error): exactly the 7 known pre-existing errors. No feature-referencing errors.",
+    "Key distinction CONFIRMED: 28058 = EMPTY state + loading (no criteria, no View); 28059 = CARD with old criteria retained + loading (View available). Both loading states survive reload; both payloads correct."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5-r2/agent-3/28058-inflight-initial.png",
+    "/tmp/qa-run-3-l5-r2/agent-3/28058-inflight-after-reload.png",
+    "/tmp/qa-run-3-l5-r2/agent-3/28059-regenerating-initial.png",
+    "/tmp/qa-run-3-l5-r2/agent-3/28059-regenerating-after-reload.png"
+  ],
+  "findings": []
+}

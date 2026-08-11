@@ -1,0 +1,25 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 2,
+  "focus_area": "AiJobCriteria model + Job criteria methods (extract_job_criteria_immediately, extract_job_criteria_if_needed, latest_ai_job_criteria, latest_succeeded_ai_job_criteria, zero_criteria_extraction_failure?) vs AiJobApplicationSummary/AiJobApplicationSummaryStatus analog",
+  "files_reviewed": [
+    "app/models/ai_job_criteria.rb",
+    "app/models/job.rb (lines 685-747, criteria methods)",
+    "app/models/ai_job_application_summary.rb (analog)",
+    "app/models/ai_job_application_summary_status.rb (analog)",
+    "app/services/ai_job_application_action/scoring/extract_criteria.rb (constant writer sites 62,122)",
+    "app/services/ai_job_application_action/scoring/score_job_application.rb (constant writer site 43)"
+  ],
+  "findings": [
+    {
+      "id": "l2-a2-001",
+      "severity": "LOW",
+      "title": "extract_job_criteria_immediately re-queries latest_ai_job_criteria on each guard line instead of memoizing like its sibling methods",
+      "file": "app/models/job.rb",
+      "line": 732,
+      "description": "extract_job_criteria_immediately calls latest_ai_job_criteria (a fresh `ai_job_criteria.order(created_at: :desc).first` query) twice — once at line 732 (status_in_progress?) and again at line 733 (status_retrying?). When reached via extract_job_criteria_if_needed (job.rb:744 also calls latest_ai_job_criteria), that is three identical queries for one logical 'what is the latest row' question. The two sibling methods auto_extract_job_criteria (job.rb:703) and extract_job_criteria (job.rb:720) both memoize `existing_ai_job_criteria = latest_ai_job_criteria` into a local and reuse it, so _immediately is inconsistent with the established pattern in the same file. No correctness impact (no write occurs between the reads, so both return the same row; these are not hot paths). Purely a minor repeated-query / consistency observation.",
+      "recommendation": "Optionally memoize `existing = latest_ai_job_criteria` once and reuse for the in_progress/retrying guards, matching auto_extract_job_criteria/extract_job_criteria. Non-blocking."
+    }
+  ]
+}

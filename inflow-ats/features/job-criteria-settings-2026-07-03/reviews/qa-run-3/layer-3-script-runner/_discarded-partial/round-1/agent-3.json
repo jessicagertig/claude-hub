@@ -1,0 +1,30 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 3,
+  "focus_area": "AiJobCriteria#zero_criteria_failure? full truth table + constant/method verification (SPEC 4.2)",
+  "files_reviewed": [
+    "app/models/ai_job_criteria.rb"
+  ],
+  "method": "Seeded ai-org-published-job.json, then created AiJobCriteria rows on the seeded 'Senior Engineer' job in 11 (status, error_message) combinations via rails runner (RAILS_ENV=test, queue_adapter=:test, no OpenAI), reloaded each from the DB, and asserted row.zero_criteria_failure? against the expected truth value. Also asserted the three constant values, the frozen ZERO_CRITERIA_ERROR_MESSAGES array, and the method body against SPEC 4.2. All rows destroyed after (leftover count for job = 0).",
+  "verification_results": {
+    "constants_match_spec": true,
+    "zero_criteria_error_messages_frozen": true,
+    "method_body_matches_spec": true,
+    "truth_table_all_pass": true,
+    "cases": [
+      { "status": "failed", "error_message": "No criteria sections found in job description", "expected": true, "actual": true },
+      { "status": "failed", "error_message": "No criteria extracted from job description", "expected": true, "actual": true },
+      { "status": "failed", "error_message": "Criteria array is empty", "expected": true, "actual": true },
+      { "status": "failed", "error_message": "Job description is blank", "expected": false, "actual": false },
+      { "status": "failed", "error_message": "Failed to parse AI response: unexpected token", "expected": false, "actual": false },
+      { "status": "failed", "error_message": null, "expected": false, "actual": false },
+      { "status": "failed", "error_message": "", "expected": false, "actual": false },
+      { "status": "succeeded", "error_message": "No criteria sections found in job description", "expected": false, "actual": false },
+      { "status": "pending", "error_message": "No criteria sections found in job description", "expected": false, "actual": false },
+      { "status": "in_progress", "error_message": "No criteria sections found in job description", "expected": false, "actual": false },
+      { "status": "retrying", "error_message": "No criteria sections found in job description", "expected": false, "actual": false }
+    ]
+  },
+  "findings": []
+}

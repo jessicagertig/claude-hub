@@ -1,0 +1,32 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "run": 6,
+  "findings": [],
+  "dismissed": [
+    {
+      "id": "l1r2-d1",
+      "title": "Bare template literals in PlatoMark styled components",
+      "agent": 1,
+      "reason": "PlatoMark components do not access theme. Function form unnecessary when no theme values used."
+    },
+    {
+      "id": "l1r2-d2",
+      "title": "Em dash vs double hyphen in PlatoOverviewCallout subtitle",
+      "agent": 1,
+      "reason": "Same as R1 dismissal. Typographic normalization of markdown artifact."
+    }
+  ],
+  "user_directed_overrides": [
+    "Spec section 4 route gating overridden: unconditional Route, static possiblePaths, no FeatureFlipper in JobApplicationContainer",
+    "Spec section 6 onOpen URL: spec says match.url/ai but match.url at /overview route includes /overview. Implementation correctly strips last segment."
+  ],
+  "convergence": {
+    "status": "CONVERGED",
+    "consecutive_clean_rounds": 2,
+    "rounds": [
+      { "round": 1, "valid_high_findings": 0 },
+      { "round": 2, "valid_high_findings": 0 }
+    ]
+  }
+}

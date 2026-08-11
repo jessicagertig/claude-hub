@@ -1,0 +1,456 @@
+[
+  {
+    "file": "app/controllers/individual_app/careers_page_subscriptions_controller.rb",
+    "line": 15,
+    "url": "#{Variables::MARKETING_BASE_URL}?unsubscribed=false",
+    "mechanism": "`redirect_to` with interpolation of `Variables::MARKETING_BASE_URL` (config/initializers/01_variables.rb:6 = 'https://polymer.co')",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "unsubscribed=false",
+    "notes": "The ONLY use of `Variables::MARKETING_BASE_URL` in the entire app. Failure branch of the unsubscribe action lands the user on the marketing site. Already carries `?unsubscribed=false`, so an added param needs `&`. The success branch (line 13) redirects to `#{Variables::INDIVIDUAL_APP_ROOT_URL}/unsubscribed` \u2014 individual.polymer.co, untagged.",
+    "_agent": "?",
+    "_agents": [
+      "?",
+      "?",
+      "?",
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/components/modals/SubscriptionRequiredModalNew.tsx",
+    "line": 151,
+    "url": "https://polymer.co/pricing",
+    "mechanism": "raw <a href=\"https://polymer.co/pricing\" target=\"_blank\" rel=\"noopener noreferrer\">pricing page</a> inside Styled.Instructions of the CenterModal",
+    "domain": "polymer.co",
+    "user_navigable": false,
+    "already_tagged": "",
+    "notes": "DEAD COMPONENT. `grep -rln SubscriptionRequiredModal app/javascript/` returns only the three modal files themselves \u2014 nothing imports SubscriptionRequiredModalNew. The live modal is NewSubscriptionRequiredModal.tsx, which contains no polymer.co web link (only a support@polymer.co mailto mention at line 38). Reporting so an implementer does not waste a change here.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/components/modals/SubscriptionRequiredModalNewLegacy.tsx",
+    "line": 149,
+    "url": "https://polymer.co/pricing",
+    "mechanism": "raw <a href=\"https://polymer.co/pricing\" target=\"_blank\" rel=\"noopener noreferrer\">pricing page</a> inside Styled.Instructions of the CenterModal",
+    "domain": "polymer.co",
+    "user_navigable": false,
+    "already_tagged": "",
+    "notes": "DEAD COMPONENT, byte-identical link to SubscriptionRequiredModalNew.tsx:151. Not imported anywhere.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/components/shared/UserNav.tsx",
+    "line": 39,
+    "url": "https://polymer.co/changelog",
+    "mechanism": "window.open(url, \"_blank\") inside handleChangelogClick; wired to <button onClick={handleChangelogClick}> labeled \"Changelog\" at UserNav.tsx:108",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Same user dropdown as the Support link.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/components/shared/UserNav.tsx",
+    "line": 43,
+    "url": "https://help.polymer.co",
+    "mechanism": "window.open(url, \"_blank\") inside handleHelpClick; wired to <button onClick={handleHelpClick}> labeled \"Support\" at UserNav.tsx:103",
+    "domain": "help.polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Top-right user dropdown, present on every authenticated ATS page. Highest-traffic help.polymer.co entry point in the subapp.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/components/shared/UserNav.tsx",
+    "line": 47,
+    "url": "https://polymer.co/#pricing",
+    "mechanism": "window.open(url, \"_blank\") inside handlePricingClick",
+    "domain": "polymer.co",
+    "user_navigable": false,
+    "already_tagged": "",
+    "notes": "DEAD CODE. handlePricingClick has zero callsites \u2014 grep for handlePricingClick in UserNav.tsx returns only the definition at line 46. No UI element invokes it. Report included so an implementer doing a blind grep-and-tag knows to skip (or delete) it.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/AccountApiKeys.tsx",
+    "line": 161,
+    "url": "https://developer.polymer.co/#introduction",
+    "mechanism": "Button type=\"externalLink\" link= prop \u2192 shared Button (app/javascript/ats/src/components/shared/Button/index.js:229-241) renders <a href={link} target={props.target || \"_blank\"} rel=\"noopener noreferrer\">. \"View docs\" button in the SettingsContainer actions slot.",
+    "domain": "developer.polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Only developer.polymer.co link in the ATS subapp. URL has a #introduction fragment \u2014 a UTM query string must be inserted BEFORE the fragment (https://developer.polymer.co/?utm_...#introduction), not appended after it.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/AccountCommentTemplates.tsx",
+    "line": 194,
+    "url": "https://help.polymer.co/en/articles/5506525-using-review-templates",
+    "mechanism": "Button type=\"externalLink\" link= prop \u2192 <a href={link} target=\"_blank\" rel=\"noopener noreferrer\"> via components/shared/Button/index.js:229-241. \"View docs\" button.",
+    "domain": "help.polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/accountBilling/AccountBilling.tsx",
+    "line": 95,
+    "url": "https://polymer.co/pricing",
+    "mechanism": "Button type=\"externalLink\" link= prop \u2192 <a href={link} target=\"_blank\" rel=\"noopener noreferrer\">. \"View pricing page\" in the billing settings actions slot.",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Live pricing-page link (unlike the two dead SubscriptionRequiredModal* copies below). High-intent surface for attribution.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsDiscord.tsx",
+    "line": 134,
+    "url": "https://help.polymer.co/en/articles/5721747-have-new-candidate-notifications-show-up-in-a-discord-server",
+    "mechanism": "Button type=\"externalLink\" link= prop \u2192 <a href={link} target=\"_blank\" rel=\"noopener noreferrer\">. Inside the `ViewLink` fragment.",
+    "domain": "help.polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsLinkedIn.tsx",
+    "line": 226,
+    "url": "https://help.polymer.co/en/articles/8828635-post-your-jobs-to-linkedin",
+    "mechanism": "Button type=\"externalLink\" link= prop \u2192 <a href={link} target=\"_blank\" rel=\"noopener noreferrer\">. Inside the `ViewLink` fragment.",
+    "domain": "help.polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsSlack.tsx",
+    "line": 125,
+    "url": "https://help.polymer.co/en/articles/5721143-have-new-candidate-notifications-show-up-in-a-slack-workspace",
+    "mechanism": "Button type=\"externalLink\" link= prop \u2192 <a href={link} target=\"_blank\" rel=\"noopener noreferrer\">. Inside the `ViewLink` fragment.",
+    "domain": "help.polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Two other type=\"externalLink\" Buttons in this file (lines 139, 157) are inside JSX comments \u2014 excluded.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsWebflow.tsx",
+    "line": 536,
+    "url": "https://polymer.co/blog/use-webflow-cms-to-display-your-wrk-job-posts-on-your-webflow-site",
+    "mechanism": "Button type=\"externalLink\" link= prop \u2192 <a href={link} target=\"_blank\" rel=\"noopener noreferrer\">. \"View docs\" button in the `ViewLink` fragment.",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Only marketing-blog link in the ATS subapp outside the commented-out Login.tsx one. Sibling Buttons at lines 545/554 point at webflow.com with existing rfsn/utm_medium affiliate params \u2014 out of scope.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsXHiring.tsx",
+    "line": 109,
+    "url": "https://help.polymer.co/en/articles/9415910-post-your-jobs-to-x-hiring",
+    "mechanism": "Button type=\"externalLink\" link= prop \u2192 <a href={link} target=\"_blank\" rel=\"noopener noreferrer\">. Inside the `ViewLink` fragment passed to SettingsContainer.",
+    "domain": "help.polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/accountIntegrations/AccountIntegrationsZapier.tsx",
+    "line": 24,
+    "url": "https://help.polymer.co/en/articles/6218084-trigger-automated-workflows-in-zapier",
+    "mechanism": "Button type=\"externalLink\" link= prop \u2192 <a href={link} target=\"_blank\" rel=\"noopener noreferrer\">. Inside the `ViewLink` fragment.",
+    "domain": "help.polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Same fragment also contains a non-polymer link (https://zapier.com/ at line 31) \u2014 out of scope.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/accountJobBoard/AccountJobBoardCustomDomain.tsx",
+    "line": 162,
+    "url": "https://help.polymer.co/en/articles/10250419-configuring-a-custom-domain",
+    "mechanism": "Button type=\"externalLink\" link= prop \u2192 <a href={link} target=\"_blank\" rel=\"noopener noreferrer\">. \"View docs\" button.",
+    "domain": "help.polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/accountPlatoAi/PurchaseAiCreditTopUpConfirmModal.tsx",
+    "line": 50,
+    "url": "https://polymer.co/terms",
+    "mechanism": "raw <a href=\"...\" target=\"_blank\" rel=\"noopener noreferrer\"> inside Styled.Terms",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "AI credit one-off purchase confirmation modal. Legal-consent link \u2014 check with Jessica before adding UTM params to /terms and /privacy; tracking params on a consent link is a product decision, not a mechanical one.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/accountPlatoAi/PurchaseAiCreditTopUpConfirmModal.tsx",
+    "line": 51,
+    "url": "https://polymer.co/privacy",
+    "mechanism": "raw <a href=\"...\" target=\"_blank\" rel=\"noopener noreferrer\"> inside Styled.Terms",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Same legal-consent caveat as line 50.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/accountPlatoAi/UpdateAiCreditSubscriptionConfirmModal.tsx",
+    "line": 122,
+    "url": "https://polymer.co/terms",
+    "mechanism": "raw <a href=\"...\" target=\"_blank\" rel=\"noopener noreferrer\"> inside Styled.Terms",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "AI credit subscription change confirmation modal. Same legal-consent caveat.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/accountAdmin/accountPlatoAi/UpdateAiCreditSubscriptionConfirmModal.tsx",
+    "line": 123,
+    "url": "https://polymer.co/privacy",
+    "mechanism": "raw <a href=\"...\" target=\"_blank\" rel=\"noopener noreferrer\"> inside Styled.Terms",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Same legal-consent caveat.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/sessions/components/FormLogoHeader.tsx",
+    "line": 9,
+    "url": "https://polymer.co",
+    "mechanism": "raw <a href=\"https://polymer.co\" className=\"app-header__logo\" rel=\"noopener noreferrer\"> wrapping <LogoWithBackground />. No target attr, so it navigates in the same tab.",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Logo on every sessions/auth form page (Login, register, password reset). Root marketing URL \u2014 appending a UTM query string here is straightforward.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/ats/src/views/sessions/components/HeaderBar.tsx",
+    "line": 26,
+    "url": "https://polymer.co",
+    "mechanism": "raw <a href=\"https://polymer.co\" className=\"app-header__logo\" rel=\"noopener noreferrer\"> wrapping <Logo /> + the text \"Polymer\". No target attr \u2014 same-tab navigation.",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Second logo-to-marketing-root link, on the sessions header bar. Duplicate of FormLogoHeader.tsx:9 \u2014 both need tagging.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/job_board/src/components/shared/Footer/index.js",
+    "line": 14,
+    "url": "https://www.polymer.co?utm_source=polymerJobsPage",
+    "mechanism": "`href` attr on <a className=\"footer__link\"> wrapping the Polymer wordmark SVG",
+    "domain": "www.polymer.co",
+    "user_navigable": true,
+    "already_tagged": "utm_source=polymerJobsPage",
+    "notes": "DEAD CODE \u2014 this React Footer class is exported but never imported anywhere in app/javascript (verified by grepping the whole tree for `Footer` imports; the only matches are its own definition and export). The live job-board footer is the ERB partial app/views/job_board/partials/_footer.html.erb:4, which carries the identical URL and identical utm_source=polymerJobsPage (that file belongs to the Rails-views angle). Reporting it because a literal user-navigable marketing URL is present in source and would be inconsistent if the ERB copy gets retagged and this one does not. Mechanical note: the URL uses `?` with no path, so any additional param must be appended with `&`, not `?`.",
+    "_agent": "?",
+    "_agents": [
+      "?",
+      "?",
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/shared/components/PolymerBar.tsx",
+    "line": 132,
+    "url": "https://polymer.co/changelog",
+    "mechanism": "window.open(url, \"_blank\") in handleChangelogClick, bound to the \"Changelog\" <button> in the user dropdown (line 199)",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "PolymerBar is rendered by app/javascript/shared/layouts/AppAuthedWrapper.tsx:53, which wraps BOTH the account subapp (app/javascript/account/src/App.tsx:10) and the connect subapp (app/javascript/connect/src/App.tsx:10). It is also rendered by the ats subapp at app/javascript/ats/src/views/layouts/AppContainer.tsx:84, so one edit here covers all three apps. NOTE: app/javascript/ats/src/components/shared/UserNav.tsx:39 has a byte-identical duplicate of this window.open call (ats angle) \u2014 the two must be changed together or the tagging will be inconsistent.",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/javascript/shared/components/PolymerBar.tsx",
+    "line": 136,
+    "url": "https://help.polymer.co",
+    "mechanism": "window.open(url, \"_blank\") in handleHelpClick, bound to the \"Help docs\" <button> in the user dropdown (line 195)",
+    "domain": "help.polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Same render path as line 132 (AppAuthedWrapper \u2192 account + connect; AppContainer \u2192 ats). Bare host with no path and no trailing slash \u2014 appending a query string yields https://help.polymer.co?utm_... which Intercom resolves, but a trailing slash before the ? is the safer form. Duplicate at app/javascript/ats/src/components/shared/UserNav.tsx:43 (ats angle).",
+    "_agent": "?",
+    "_agents": [
+      "?"
+    ]
+  },
+  {
+    "file": "app/services/generate_xml/linkedin_feed.rb",
+    "line": 55,
+    "url": "https://www.polymer.co/",
+    "mechanism": "`xml.publisherURL 'https://www.polymer.co/'` in the Nokogiri XML feed builder",
+    "domain": "www.polymer.co",
+    "user_navigable": false,
+    "already_tagged": "",
+    "notes": "UNSURE. Feed metadata consumed by LinkedIn's job ingestion, not an in-app anchor \u2014 but LinkedIn may surface it as a publisher link on job cards. Adding a UTM to a feed-spec field risks the feed being rejected. Flagging so someone decides deliberately rather than by accident.",
+    "_agent": "?",
+    "_agents": [
+      "?",
+      "?",
+      "?",
+      "?"
+    ]
+  },
+  {
+    "file": "app/services/generate_xml/x_hiring_feed.rb",
+    "line": 54,
+    "url": "https://www.polymer.co/",
+    "mechanism": "`xml.publisherURL 'https://www.polymer.co/'` in the Nokogiri XML feed builder",
+    "domain": "www.polymer.co",
+    "user_navigable": false,
+    "already_tagged": "",
+    "notes": "UNSURE \u2014 identical to the LinkedIn feed case. Same decision applies.",
+    "_agent": "?",
+    "_agents": [
+      "?",
+      "?",
+      "?",
+      "?"
+    ]
+  },
+  {
+    "file": "app/views/job_board/partials/_footer.html.erb",
+    "line": 4,
+    "url": "https://www.polymer.co?utm_source=polymerJobsPage",
+    "mechanism": "`href` attr on `<a class=\"footer__logo\">` in ERB partial (literal URL, no interpolation)",
+    "domain": "www.polymer.co",
+    "user_navigable": true,
+    "already_tagged": "utm_source=polymerJobsPage",
+    "notes": "THE primary marketing-site link in the server-rendered layer. Rendered by app/views/layouts/job_board_application.html.erb:103 on every job board page (index, show, preview, privacy, 404/500) unless `@organization.white_label_job_board_enabled`. Note the URL has NO path and NO trailing slash before the `?` \u2014 `https://www.polymer.co?utm_source=...`. Any code that appends more params must use `&`, not `?`. Exact twin of the dead React footer at app/javascript/job_board/src/components/shared/Footer/index.js:14 (see below) \u2014 change both or explicitly decide not to.",
+    "_agent": "?",
+    "_agents": [
+      "?",
+      "?",
+      "?"
+    ]
+  },
+  {
+    "file": "config/initializers/01_variables.rb",
+    "line": 6,
+    "url": "https://polymer.co",
+    "mechanism": "constant definition `MARKETING_BASE_URL = 'https://polymer.co'` in module Variables",
+    "domain": "polymer.co",
+    "user_navigable": false,
+    "already_tagged": "",
+    "notes": "MARKETING SITE. Not a link itself, but the only marketing-site base constant in the Ruby layer. Exactly one consumer: app/controllers/individual_app/careers_page_subscriptions_controller.rb:15. Natural home for a tagging helper if the implementer wants one server-side.",
+    "_agent": "?",
+    "_agents": [
+      "?",
+      "?"
+    ]
+  },
+  {
+    "file": "config/routes.rb",
+    "line": 37,
+    "url": "URI::Parser.new.escape(\"https://polymer.co/#{path_params[:path]}\")",
+    "mechanism": "`redirect { |path_params, request| ... }` block, status 301, constrained to `req.domain == 'wrk.xyz'`",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "Legacy wrk.xyz -> polymer.co 301 map, gated behind `ENV['REDIRECT_TO_POLYMER'] == 'enabled'` (routes.rb:29). Sibling branches in the same block build *.polymer.co hosts: line 40 `https://#{subdomain.gsub('hire','app')}.polymer.co/...` and line 43 `https://#{subdomain}.polymer.co/...`. UNSURE whether this is live \u2014 depends on a Heroku env var I cannot read.",
+    "_agent": "?",
+    "_agents": [
+      "?",
+      "?",
+      "?",
+      "?"
+    ]
+  },
+  {
+    "file": "config/routes.rb",
+    "line": 704,
+    "url": "https://polymer.co",
+    "mechanism": "`root to: redirect('https://polymer.co'), as: nil` inside `constraints SubdomainJobsConstraints`",
+    "domain": "polymer.co",
+    "user_navigable": true,
+    "already_tagged": "",
+    "notes": "A user hitting https://jobs.polymer.co/ with no org slug is 301'd to the marketing site. Real inbound path from a polymer.co property to the marketing site, currently untagged. (Outside my views/public angle strictly, but it is a server-emitted user-navigable URL and I found no other agent's angle that obviously covers routes.rb.)",
+    "_agent": "?",
+    "_agents": [
+      "?",
+      "?",
+      "?",
+      "?"
+    ]
+  }
+]

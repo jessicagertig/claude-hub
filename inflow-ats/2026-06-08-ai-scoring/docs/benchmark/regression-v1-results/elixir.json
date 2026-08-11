@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "version": 1,
+    "name": "elixir",
+    "kind": "problematic",
+    "title": "Elixir Developer",
+    "description": "Sparse JD — few sections, bonus markers",
+    "cost": 0.000923
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Select, a leading US consumer brand marketing firm, is designing and building a highly innovative go-to-market operating system for world class consumer brands in food, beverage and lifestyle.\nWe're seeking purpose-led, results oriented technology professionals for remote location opportunities to help bring to life an exciting platform that changes how brands activate in market. The successful candidates will apply an agile methodology and simple test and learn toolkit to solving challenges as our application evolves in the market. Thousands of client users on the product allow a unique opportunity to iterate and make progress with both thought and pace."
+      },
+      {
+        "heading": "Base Requirements",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Knowledge of Elixir and OTP at the level that allows you to write working, high-quality code\nAble to fine-tune Postgres queries with Ecto or SQL\nAbility to write clear and maintainable tests\nGood understanding of common architectural patterns and design principles\nSolid understanding of modern web applications and API deisgn\n(bonus) Experience with mentoring or pair programming\n(bonus) DevOps understanding and ability to set up CI pipeline and deployment"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Knowledge of Elixir and OTP at the level that allows you to write working, high-quality code",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Knowledge of Elixir and OTP at the level that allows you to write working, high-quality code"
+      },
+      {
+        "text": "Able to fine-tune Postgres queries with Ecto or SQL",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Able to fine-tune Postgres queries with Ecto or SQL"
+      },
+      {
+        "text": "Ability to write clear and maintainable tests",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Ability to write clear and maintainable tests"
+      },
+      {
+        "text": "Good understanding of common architectural patterns and design principles",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Good understanding of common architectural patterns and design principles"
+      },
+      {
+        "text": "Solid understanding of modern web applications and API deisgn",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Solid understanding of modern web applications and API deisgn"
+      },
+      {
+        "text": "Experience with mentoring or pair programming",
+        "tier": "tier_3",
+        "tier_reasoning": "bonus",
+        "binary": false,
+        "source_text": "(bonus) Experience with mentoring or pair programming"
+      },
+      {
+        "text": "DevOps understanding and ability to set up CI pipeline and deployment",
+        "tier": "tier_3",
+        "tier_reasoning": "bonus",
+        "binary": false,
+        "source_text": "(bonus) DevOps understanding and ability to set up CI pipeline and deployment"
+      }
+    ]
+  }
+}

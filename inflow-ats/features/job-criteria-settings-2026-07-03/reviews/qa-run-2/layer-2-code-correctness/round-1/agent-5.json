@@ -1,0 +1,20 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 5,
+  "focus_area": "Frontend data layer — query hooks, websocket payload types + handler, cache invalidation, toast, shared tier metadata",
+  "files_reviewed": [
+    "app/javascript/shared/queryHooks/useAiJobCriteria.ts",
+    "app/javascript/shared/types/aiSummaryWebsocketPayloads.ts",
+    "app/javascript/ats/src/websockets/WebsocketGlobalChannelHandler.tsx",
+    "app/javascript/ats/src/views/jobApplications/jobSetup/jobCriteriaTiers.ts"
+  ],
+  "cross_boundary_verification": {
+    "query_key_consistency": "Hook query key [\"aiJobCriteria\", jobId] (jobId = numeric job.id, JobCriteriaSection.tsx:31 passes job.id). Mutation onSuccess invalidates [\"aiJobCriteria\", variables.jobId] (number). Websocket handler invalidates [\"aiJobCriteria\", Number(payload.jobId)] (number). Backend broadcasts jobId = ai_job_criteria.job_id (integer). All three keys are the same numeric Job primary key — deep-equality match, no stale-UI-after-completion mismatch.",
+    "payload_type_vs_backend_broadcast": "JobCriteriaExtractionCompletePayload (status/jobId/jobTitle/zeroCriteriaFailure/errorMessage?) matches extract_job_criteria_job.rb#broadcast_completion (lines 51-57) field-for-field. Backend builds literal camelCase symbol keys (jobId/jobTitle/zeroCriteriaFailure/errorMessage) with NO key transform on the WebSocket boundary — verified identical to the AI_SUMMARY_COMPLETE analog (generate_ai_job_application_summary_job.rb:68-72 -> AiSummaryCompletePayload). status is only ever 'succeeded'|'failed' (broadcast gated on status_succeeded? || status_failed?, line 49); zeroCriteriaFailure is always present (built unconditionally); errorMessage is conditionally added, matching the optional TS field.",
+    "serializer_vs_hook_response_type": "AiJobCriteriaPayload (criteria/extractedAt/status/zeroCriteriaFailure) matches JobAiJobCriteriaSerializer (criteria/extracted_at/status/zero_criteria_failure) after apiGet's allKeysToCamel (api.ts:22) camelCases KEYS only. status union pending|in_progress|succeeded|failed|retrying exactly matches the AiJobCriteria enum (ai_job_criteria.rb:21-27); enum string values and tier values stay snake_case because allKeysToCamel does not transform string values. Nested criterion source_heading -> sourceHeading; tier values tier_1/tier_2/tier_3 preserved.",
+    "tier_metadata": "JOB_CRITERIA_TIERS keys tier_1/tier_2/tier_3 (labels Core/Preferred/Bonus; icons check-circle/plus-circle/star) match the stored tier values written by extract_criteria.rb (tier_1/tier_2/tier_3) and the AiJobCriterion tier union. Complete 3-tier set, correct order, no off-by-one. Glossary copy honors copy rules (\"count most/less toward the score\", no em dashes, sentence case).",
+    "no_fabricated_fallback": "useAiJobCriteria uses enabled: jobId != undefined (loose !=, disables for both null and undefined) with no || 0 / || [] fallback that would fire a bogus request. Matches the useAiJobApplicationSummary analog's enabled convention."
+  },
+  "findings": []
+}

@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "batch": 2,
+    "criteria_prompt_version": 10,
+    "job_id": 25398,
+    "title": "Software Engineering Intern (2023)",
+    "organization": "Ever International, Inc",
+    "cost": 0.000297
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Hey! We are looking for a general software engineering intern for a new retail delivery startup based in NYC. This posting is a general catch-all for many backend and frontend roles. Due to the nature of the startup, the amount of information that can be posted here is limited but feel free to apply if interested if you would like to learn more!"
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Time commitment is minimal each week (~10 hrs or less)\nJob within company after internship is possible\nExperience with ANY of the following is required: Typescript, React, K8S (non swe), go, python"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Time commitment is minimal each week (~10 hrs or less)",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Time commitment is minimal each week (~10 hrs or less)"
+      },
+      {
+        "text": "Job within company after internship is possible",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Job within company after internship is possible"
+      },
+      {
+        "text": "Experience with ANY of the following is required: Typescript, React, K8S (non swe), go, python",
+        "tier": "tier_1",
+        "tier_reasoning": "signal word: required",
+        "binary": false,
+        "source_text": "Experience with ANY of the following is required: Typescript, React, K8S (non swe), go, python"
+      }
+    ]
+  }
+}

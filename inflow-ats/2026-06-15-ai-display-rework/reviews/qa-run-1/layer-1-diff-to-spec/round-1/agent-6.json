@@ -1,0 +1,34 @@
+{
+  "agent": 6,
+  "round": 1,
+  "focus": "PlatoTab.tsx and JobApplicationActivity.tsx — data source switchover",
+  "specs_checked": ["S10", "S11", "S15", "S16", "S17"],
+  "findings": [],
+  "verdicts": {
+    "S10": {
+      "status": "PASS",
+      "evidence": "PlatoTab.tsx: line 39 assigns `const summaryStatus = jobApplication.aiJobApplicationSummaryStatus`. All downstream reads (headline at line 95, scorePercentage at line 97, updatedAt at line 98, stale at line 107 via fullSummary) use either `summaryStatus` or `fullSummary` (the fetched record). Zero references to the old `jobApplication.aiJobApplicationSummary` remain in PlatoTab.tsx (confirmed via grep). JobApplicationActivity.tsx: all five references on lines 399, 401, 402, 403, 404, 409 use `jobApplication.aiJobApplicationSummaryStatus`. Zero references to the old `jobApplication.aiJobApplicationSummary` remain (confirmed via grep)."
+    },
+    "S11": {
+      "status": "PASS",
+      "evidence": "PlatoTab.tsx lines 42-45: `useAiJobApplicationSummary` is called with `aiJobApplicationSummaryId: summaryStatus?.aiJobApplicationSummaryId`. The hook definition (useAiJobApplicationSummary.ts line 44) has `enabled: aiJobApplicationSummaryId != undefined` — it fires whenever the status record has an aiJobApplicationSummaryId, with no 'succeeded' gate. This matches the spec requirement that the hook fires on render and uses the summaryStatus ID."
+    },
+    "S15": {
+      "status": "PASS",
+      "evidence": "JobApplicationActivity.tsx line 399: the condition checks `jobApplication.aiJobApplicationSummaryStatus?.status` (both `=== \"current\"` and `=== \"regenerating\"`). The old `aiJobApplicationSummary?.status` is fully replaced."
+    },
+    "S16": {
+      "status": "PASS",
+      "evidence": "JobApplicationActivity.tsx lines 399-413: when status is `\"current\"` OR `\"regenerating\"`, renders `PlatoGeneratedReviewCallout` (lines 400-406). The else branch (lines 407-413) renders `PlatoOverviewCallout`. This matches the spec exactly."
+    },
+    "S17": {
+      "status": "PASS",
+      "evidence": "JobApplicationActivity.tsx lines 401-404: `headline` reads from `aiJobApplicationSummaryStatus?.headline`, `roleFit` reads from `aiJobApplicationSummaryStatus?.integratedRoleAnalysis`, `scorePct` reads from `aiJobApplicationSummaryStatus?.scorePercentage`, `generatedAgo` calls `distanceInWords(jobApplication.aiJobApplicationSummaryStatus?.updatedAt)` — using `updatedAt` not `createdAt`. All props source from `aiJobApplicationSummaryStatus`, not the full summary record. The `summaryText` fallback was correctly removed since the status record does not carry `summaryText`."
+    }
+  },
+  "notes": [
+    "PlatoTab.tsx renderBody (lines 118-164): 'regenerating' status with fullSummary renders via renderSucceeded(), showing existing summary content during regeneration. This is consistent with the spec's intent that regenerating shows existing data.",
+    "PlatoTab.tsx line 49: structuredData is only populated when statusValue === 'current', not when 'regenerating'. This is correct — during regeneration the old structured data may be stale, but the denormalized fields (headline, scorePercentage) on the status record still display via renderSucceeded.",
+    "PlatoOverviewCallout prop rename from 'summaryStatus' to 'summaryStatusValue' in JobApplicationActivity (line 409) is consistent with the component's interface definition (PlatoOverviewCallout.tsx line 13)."
+  ]
+}

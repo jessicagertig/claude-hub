@@ -1,0 +1,22 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 1,
+  "focus": "ga_client_id chain",
+  "findings": [],
+  "chain_verified": [
+    "1 capture rule in sanitizeTrackingParams (utils.js): PASS — getCookieEntries splits document.cookie on '; ', name = substring before first '=' (indexOf), value = substring after first '=', empty value skipped (treated as absent); getCookieValue matches by strict equality (cookieEntry.name === '_ga', so _ga_<CONTAINER> cannot shadow _ga); split('.') with gaSegments.length >= 4 ? slice(2).join('.') : raw cookie value (SPEC-PROPOSED <4-segment edge rule honored); 1024 cap (ATTRIBUTION_IDENTIFIER_MAX_LENGTH) applied via sanitizeTrackingValue to the FINAL post-strip value, surrogate-safe (trailing lone high surrogate dropped); field set only inside if (gaCookieValue !== undefined) — absent, never null/'' fabrication",
+    "2 AuthForm.tsx: PASS — gaClientId: trackingParams.gaClientId in the magicLink payload inside handleAuth and gaClientId={trackingParams.gaClientId} on GoogleSSOButton; trackingParams still React.useState(sanitizeTrackingParams(location.search))",
+    "3 SignupForm.tsx: PASS — gaClientId: trackingParams.gaClientId in the register mutation payload",
+    "4 GoogleSSOButton.tsx: PASS — gaClientId?: string in Props, destructured, hidden input name='ga_client_id' rendered only under typeof gaClientId === 'string' && gaClientId.length > 0",
+    "5 useSession.ts: PASS — gaClientId destructured in BOTH register and magicLink, typed gaClientId?: string | null in the magicLink inline type, present in BOTH apiPost variables objects; apiPost (queryHooks/api.ts:52) runs allKeysToSnake, lodash snakeCase('gaClientId') verified = 'ga_client_id'",
+    "6 Api::V1::RegistrationsController#sign_up_params: PASS — :ga_client_id permitted as plain scalar before the trailing utm_data: {} hash permit (which remains last)",
+    "7 #magic_create: PASS — ga_client_id: sign_up_params[:ga_client_id] merged in BOTH branches of the two-branch user_params conditional (verified in committed file, connect-and-no-org branch and else branch)",
+    "8 config/initializers/omniauth.rb: PASS — ga_client_id in allowed_keys",
+    "9 User.from_omniauth: PASS — nil-defaulted ga_client_id: keyword in the 16-keyword signature; omniauth_user.ga_client_id = ga_client_id assigned inside the first_or_create block only (verified in committed user.rb; post-block behavior unchanged)",
+    "10 OmniauthCallbacksController#google_oauth2: PASS — ga_client_id: merged_tracking['ga_client_id'] (string key) passed to from_omniauth",
+    "11 Api::V1::OrganizationsController#create: PASS — @organization.ga_client_id = current_user.ga_client_id in the copy block",
+    "12 migrations: PASS — add_column :users, :ga_client_id, :string (20260724183710) and add_column :organizations, :ga_client_id, :string (20260724183711), bare add_column (nullable, no default, no index), ActiveRecord::Migration[6.1], frozen_string_literal; committed schema.rb (git show a0d59115d:db/schema.rb) carries ga_client_id on both tables",
+    "13 four spec files: PASS — registrations_controller_spec (ga_client_id raw persistence magic_create + create, nil when absent, existing-user branches untouched, login_intent 'hire' kept); user_from_omniauth_spec (persists on creation, nil when omitted, existing user untouched); omniauth_callbacks_controller_spec (session seeded ga_client_id → have_received(:from_omniauth) exhaustive keyword match, nil example extended); organizations_controller_spec (copied from current_user, nil→nil, request-body values ignored)"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 8,
+  "focus": "Regenerate/GET authorization gate: JobPolicy#update? (POST create) and #show? (GET) — hiring-team member OR admin, NOT gated by AI-credits control (Jessica mid-QA design change). SPEC.md §9 + DECISIONS.md.",
+  "trace": "app/controllers/api/v1/ai_job_criteria_controller.rb (authorize :show?/:update?) -> app/controllers/api/v1/base_controller.rb (current_user = current_api_v1_user, no pundit_user override -> Pundit user is a User) -> app/policies/job_policy.rb (show?, update?, on_hiring_team?) -> app/policies/application_policy.rb (is_org_admin?, is_org_user?) -> app/policies/ai_job_application_summary_policy.rb (can_use_ai_credits?, hiring_team_ai_credits_control_enabled?) -> app/models/job.rb (has_many :users through :organization_users through :hiring_team_memberships) -> app/models/organization_user.rb (has_many :jobs through :hiring_team_memberships) -> app/models/hiring_team_membership.rb (check_organization_user_role bars org_interviewer) -> app/models/user.rb (current_organization_user belongs_to)",
+  "scenarios_run": [
+    "Confirmed Pundit user resolution: BaseController aliases current_user to current_api_v1_user and no pundit_user override exists, so JobPolicy's `user` is a User. Passing an OrganizationUser to JobPolicy#update? raises NoMethodError (policy calls user.current_organization_user), confirming user must be a User.",
+    "Built ONE isolated org (unique hex suffix) with 3 actors: (1) admin = org_admin NOT on hiring team; (2) member = org_user ON job.hiring_team_memberships, org credits-control OFF; (3) outsider = org_user in same org, neither admin nor on hiring team. Verified membership wiring: member in job.users=true, admin/outsider in job.users=false; member_ou.jobs includes job=true, outsider_ou.jobs=false.",
+    "JobPolicy#update? (POST create/regenerate gate): admin=true, member=true, outsider=FALSE. Falsifiable: outsider false while member+admin true — gate discriminates.",
+    "JobPolicy#show? (GET gate): admin=true, member=true, outsider=FALSE. Same effective results as update? for all three actors.",
+    "Proved regenerate is NOT gated by AI-credits control: for the hiring-team member, AiJobApplicationSummaryPolicy#can_use_ai_credits?=false and JobPolicy#update_ai_settings?=false (the stricter pre-change gate would block them), yet JobPolicy#update?=true. Confirms the mid-QA switch from update_ai_settings? to update? works.",
+    "Edge case (show? vs update? divergence): show? has an is_org_user? precondition that update?/on_hiring_team? lacks. Tested adding an org_interviewer to the hiring team — HiringTeamMembership#check_organization_user_role raises RecordInvalid ('Organization user cannot have an Interviewer role'). Only org_interviewer is barred; all permitted hiring-team roles (org_user/org_admin/org_owner/god_admin) satisfy is_org_user?. Therefore record.users.include?(user) always implies is_org_user? true, and show? and update? yield the same effective set. SPEC's 'same effective set' claim holds; no divergence in practice."
+  ],
+  "findings": []
+}

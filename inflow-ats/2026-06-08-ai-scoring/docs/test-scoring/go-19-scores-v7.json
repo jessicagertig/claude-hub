@@ -1,0 +1,207 @@
+{
+  "scores": [
+    {
+      "criterion_text": "Help architect, deploy, and maintain multi cloud racks and environments inside customers' accounts or in our managed environment.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The resume focuses on internal microservice migration and backend development rather than managing external cloud infrastructure for customers."
+    },
+    {
+      "criterion_text": "Ensure high reliability, scalability, and security of the platform by implementing monitoring, logging, alerting, rollback capabilities, and multi cloud failover strategies.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience with monitoring and logging (Grafana, Prometheus) and system reliability/scalability improvements, but lacks evidence for multi-cloud failover strategies."
+    },
+    {
+      "criterion_text": "Strong programming experience in Go (Golang) for production backend systems.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate lists Golang in tech skills and has experience with production systems, supported by a course certificate in Go."
+    },
+    {
+      "criterion_text": "Solid understanding of Kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate holds a certificate in Kubernetes but does not explicitly demonstrate practical work experience with it in the professional experience section."
+    },
+    {
+      "criterion_text": "Experience working with Terraform or a similar IaC tool to define and manage infrastructure across cloud providers.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "The resume does not mention Terraform or any IaC tools."
+    },
+    {
+      "criterion_text": "Hands on experience in one or more major cloud platforms such as AWS, GCP, or Azure including managing services, network, compute, storage, and security.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience using S3 Minio, which is an S3-compatible storage, but lacks broad management experience with major public cloud providers."
+    },
+    {
+      "criterion_text": "A good understanding of how a PaaS product works and what it means to abstract away infrastructure for developers while still giving control.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate has worked on a cloud platform (MTS Evolve) which involves internal services, providing indirect experience with platform-level abstraction."
+    },
+    {
+      "criterion_text": "Excellent communication skills",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate mentions creating technical documentation and team lead responsibilities, which imply communication skills, but does not provide specific evidence of 'excellent' communication."
+    },
+    {
+      "criterion_text": "Ability to work cross functionally",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The resume mentions teamwork and leadership/planning responsibilities, which imply cross-functional interaction."
+    },
+    {
+      "criterion_text": "Thrive within a fast moving product engineering environment.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has 3 years of experience in a cloud platform company with tasks like migrating services and acting in a team lead capacity."
+    },
+    {
+      "criterion_text": "Experience publishing or integrating software or solutions on cloud marketplaces such as AWS Marketplace, GCP Marketplace, or Azure Marketplace.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No experience with cloud marketplaces is documented."
+    },
+    {
+      "criterion_text": "Experience working in multi cloud or hybrid cloud environments or customer facing deployment scenarios.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "The work experience is focused on a single internal platform rather than multi-cloud/hybrid-cloud or direct customer deployments."
+    },
+    {
+      "criterion_text": "Familiarity with system design for high availability, multi region, and multi tenant architectures.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Experience migrating to microservices and improving system reliability shows familiarity with design concepts, but specific multi-region/multi-tenant architecture is not explicitly mentioned."
+    },
+    {
+      "criterion_text": "Experience with open source projects or distributed systems.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate has experience with microservices, gRPC, and ClickHouse, which are components of distributed systems."
+    },
+    {
+      "criterion_text": "Familiarity with monitoring and logging tools and observability such as Prometheus, Grafana, or ELK stack.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The candidate lists Grafana and Prometheus in tech skills and describes creating dashboards and enhancing logging processes."
+    },
+    {
+      "criterion_text": "Ability to design backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate has experience building and migrating services in Go, but there is no specific evidence of building schedulers, orchestrators, or cloud integrations."
+    },
+    {
+      "criterion_text": "Ability to build backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Similar to the design criteria; technical building skills are present, but specific domain knowledge (orchestrators/schedulers) is missing."
+    },
+    {
+      "criterion_text": "Ability to maintain backend services in Go that power our PaaS including APIs, scheduler and orchestrator logic, integrations with cloud providers, and internal tooling.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate explicitly mentions maintaining services and documentation, but lacks specific evidence for the listed components (schedulers, orchestrators)."
+    },
+    {
+      "criterion_text": "Ability to work closely with the infrastructure team to integrate with Kubernetes.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No mention of working with an infrastructure team for Kubernetes integration."
+    },
+    {
+      "criterion_text": "Ability to integrate with Kubernetes components such as clusters, deployments, and autoscaling.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of hands-on integration with Kubernetes."
+    },
+    {
+      "criterion_text": "Ability to integrate with Terraform as infrastructure as code.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No experience with Terraform mentioned."
+    },
+    {
+      "criterion_text": "Ability to work across AWS, GCP, Azure, and other cloud platforms.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence of work across these cloud providers."
+    },
+    {
+      "criterion_text": "Ability to collaborate with product and UX teams to deliver features for developers.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Teamwork and collaboration skills are mentioned, but specific collaboration with product/UX is not defined."
+    },
+    {
+      "criterion_text": "Ability to improve CLI usage for developers.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence provided."
+    },
+    {
+      "criterion_text": "Ability to enhance CI/CD workflows for developers.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "The candidate mentions performing releases in pre-production/production, implying CI/CD familiarity, but does not claim the ability to enhance these workflows."
+    },
+    {
+      "criterion_text": "Ability to enable marketplace and cloud provider integrations for developers.",
+      "tier": "tier_2",
+      "score": "not_found",
+      "reasoning": "No evidence provided."
+    },
+    {
+      "criterion_text": "Ability to create better observability and logging experiences for developers.",
+      "tier": "tier_2",
+      "score": "full_match",
+      "reasoning": "The resume explicitly states: 'Enhanced monitoring and logging processes, thereby improving error detection speed' and 'Created Grafana dashboards'."
+    },
+    {
+      "criterion_text": "Ability to participate in code reviews for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Team lead responsibilities imply code reviews, but specific experience with Go infrastructure or cloud deployments is not stated."
+    },
+    {
+      "criterion_text": "Ability to mentor others in backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Mentioned onboarding and knowledge sharing, but no explicit mentoring of Go infrastructure or cloud deployments."
+    },
+    {
+      "criterion_text": "Ability to help define best practices for backend infrastructure, Go services, and cloud deployments.",
+      "tier": "tier_2",
+      "score": "partial_match",
+      "reasoning": "Improving microservice architecture and internal documentation shows an ability to define best practices, but it is limited to internal service logic."
+    },
+    {
+      "criterion_text": "Familiarity with CI/CD pipelines is a strong plus.",
+      "tier": "tier_1",
+      "score": "full_match",
+      "reasoning": "The candidate has experience performing releases in pre-production/production environments."
+    },
+    {
+      "criterion_text": "Familiarity with developer tooling is a strong plus.",
+      "tier": "tier_1",
+      "score": "partial_match",
+      "reasoning": "The candidate uses Jira, GitLab, and Git, which are developer tools, though they haven't explicitly built them."
+    },
+    {
+      "criterion_text": "Some exposure to marketplace or cloud provider integrations is a strong plus.",
+      "tier": "tier_1",
+      "score": "not_found",
+      "reasoning": "No evidence of marketplace or cloud integration work."
+    }
+  ],
+  "computed_score": {
+    "points": 100.0,
+    "max": 208,
+    "percentage": 48.1
+  }
+}

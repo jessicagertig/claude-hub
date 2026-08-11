@@ -1,0 +1,20 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 5,
+  "focus_area": "WebSocket completion broadcast job — SPEC §7 (app/jobs/extract_job_criteria_job.rb)",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §7 signature: perform(ai_job_criteria_id, requesting_organization_user_id = nil)",
+      "SPEC §7 broadcast after extract in perform",
+      "SPEC §7 retry_on exhaustion-block broadcast",
+      "SPEC §7 StandardError-rescue broadcast",
+      "SPEC §7 broadcast_completion private helper (fresh-read + payload)",
+      "SPEC §7 analog generate_ai_job_application_summary_job.rb untouched"
+    ],
+    "implemented": 6,
+    "missing": 0,
+    "notes": "Chain traced: app/jobs/extract_job_criteria_job.rb -> app/models/ai_job_criteria.rb (zero_criteria_failure?, status enum _prefix) -> app/channels/global_channel.rb (broadcast_to, ActionCable boundary). Analog app/jobs/generate_ai_job_application_summary_job.rb read for structural comparison and confirmed NOT in the diff (git diff develop...HEAD --stat has no entry for it) — its identical latent NoMethodError in the exhaustion block is deliberately out of scope. All six checkpoints match SPEC §7 exactly. (1) Signature is optional POSITIONAL (line 15) — adjudicated flag 4, not a finding. (2) Line 23 broadcasts after .extract only when requesting_organization_user_id present; skipped when CustomErrorAiSummary propagates (raise occurs inside .extract, before line 23) — matches analog. (3) Exhaustion block (lines 5-13) looks up AiJobCriteria.find_by(id: job.arguments.first), broadcasts ONLY inside `if ai_job_criteria`, reads args via job.arguments.first/.second, and uses job.send(:broadcast_completion, ...) — the adjudicated qa-run-1 fix (self is the class in a retry_on exhaustion block); correct, not a finding. (4) StandardError rescue (lines 28-34) broadcasts with guard `if ai_job_criteria && requesting_organization_user_id`, mirroring analog line 45. (5) Private helper (lines 39-64) matches SPEC §7's block byte-for-byte on logic: OrganizationUser.find_by -> user guard -> fresh-read AiJobCriteria.find_by(id: ai_job_criteria.id) -> return unless succeeded/failed -> payload keys status/jobId/jobTitle/zeroCriteriaFailure with conditional errorMessage -> GlobalChannel.broadcast_to(user, action: 'JOB_CRITERIA_EXTRACTION_COMPLETE', payload:). The only difference from the spec block is the omitted explanatory comment `# (amended post-conventions-pass ...)`, which is a spec annotation, not code — correctly omitted per no-unnecessary-comments rule; not a deviation. All identifiers resolve: AiJobCriteria#zero_criteria_failure? (ai_job_criteria.rb:17), status_succeeded?/status_failed? (enum _prefix, lines 21-27), belongs_to :job -> job_id/job.title, error_message column, OrganizationUser#user, GlobalChannel.broadcast_to (ActionCable). No scope creep: every changed line traces to SPEC §7 or the adjudicated qa-run-1 fix."
+  }
+}

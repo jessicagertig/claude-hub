@@ -1,0 +1,23 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 8,
+  "assignment": "ALL-STAGES modal (RunPlatoReviewAllModal) on Senior Engineer (63 candidates, 5 reviewed) — unchecked + checked shortfall copy, display only. SPEC 1.5. Cancel without running.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc.). Senior Engineer shows Total candidates 63.",
+    "Clicked 'Senior Engineer' — job page opened (Inbox 3, Screen 5, Interview 55). 'Plato Reviews' card present in stages column with text 'Plato βeta scores every candidate on role fit and skills.' and 'Run Plato' button.",
+    "Clicked 'Run Plato' — 'Review all candidates' modal (RunPlatoReviewAllModal) opened in UNCHECKED state.",
+    "UNCHECKED state, verified via DOM innerHTML (byte-level): body paragraph = '58 candidates in this job don't have a Plato review yet. Each successful review uses one AI credit. You are short <b>38</b> credits. The first 20 candidates will get reviews generated; the rest will be skipped.' Lead sentence exact; shortfall sentence exact; 38 rendered as <b>38</b> (bold). Displayed balance = 20 (embedded as 'The first 20 candidates'), matching expected balance 20 — no recompute needed (58 - 20 = 38). 'Review all' submit button disabled=false (ENABLED); Cancel enabled; checkbox name='rescore' unchecked, enabled.",
+    "Statement block byte-exact via textContent: 'The hiring team gets an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' — hiring-team first sentence + new skip-reasons second sentence, with mail icon (svg envelope) present, matching SPEC 1.5.",
+    "Screenshot of unchecked state saved.",
+    "Clicked the 'Also re-review candidates that already have a review' checkbox (label 'Recommended if you've changed the candidate requirements in the job description.'). CHECKED state verified via DOM innerHTML: body paragraph = '63 candidates in this job will be reviewed, including candidates that already have a review. Each successful review uses one AI credit. You are short <b>43</b> credits. The first 20 candidates will get reviews generated; the rest will be skipped.' First sentence begins '63 candidates...' — NO leading 'The' (SPEC 1.5 requirement met). Shortfall recomputed to 43 = 63 - 20, rendered as <b>43</b> (bold). 'Review all' button disabled=false (ENABLED). Statement block unchanged and byte-exact.",
+    "Screenshot of checked state saved.",
+    "Clicked Cancel — modal closed (verified header gone from DOM). No Plato run submitted.",
+    "Console check: 7 total error-level entries, all known pre-existing noise per navigation map — 4x react-router history deprecation warnings, 2x 'Store does not have a valid reducer' Redux warnings, 1x heap-api.com 404. Zero new feature-referencing errors (no rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summaries/React errors)."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-8/01-all-stages-modal-unchecked.png",
+    "/tmp/qa-run-3-l5/agent-8/02-all-stages-modal-checked.png"
+  ],
+  "findings": []
+}

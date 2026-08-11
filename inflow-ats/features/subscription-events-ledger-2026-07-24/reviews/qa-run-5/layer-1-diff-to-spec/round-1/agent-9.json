@@ -1,0 +1,75 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 5,
+  "agent_index": 9,
+  "slice": "mechanism matrix re-verification",
+  "reviewed_commit": "33dffbe3e",
+  "diff_range": "a0d59115d..33dffbe3e",
+  "findings": [
+    {
+      "id": "r5-l1-a9-001",
+      "severity": "HIGH",
+      "title": "The two §5.2/§5.3 'appended at the END of the branch' placement rows (former r4-l1-a9-005) are STILL UNPINNED — the fold into r4-l1-a9-002 did not close them",
+      "detail": "Run 4 folded a9-005 into a9-002 and the FAILURE-REPORT's fix #2 claims the subscription.deleted ledger-failure example 'also closes a9-005'. It does not, and neither does any other example at 33dffbe3e. Both ledger-failure examples stub CreateSubscriptionEvent.call to raise WITH the insertion's own begin/rescue intact: the inner rescue catches, execution continues, and every earlier existing line runs regardless of where the block sits. Moving the invoice.paid block (stripe_webhook_handler_job.rb:315-333) above organization_ai_credit_balance&.reset_ai_credits — or even above the organization.update — leaves all 8 invoice.paid examples green (assertions are effect-based: period-end written, payment-method received, reset_ai_credits received, logger regex, row attributes; none order-sensitive). Moving the deleted block (:213-226) above organization&.sync_with_stripe leaves all 4 deleted-path examples green for the same reason. The original a9-005 fix shape (stub an EXISTING line — reset_ai_credits / EngagementReport::GeneratorJob.perform_later — to raise and assert NO row is written, which fails iff the block sits below the raising line) was never implemented. Production delta unchanged from run 4 (narrow): reordered, a conversion row would be written for a delivery whose branch failed, and the once-ever uniqueness index would classify the successful Stripe redelivery as a duplicate. Residual structural backstop, stated for orchestrator adjudication: the D11 delicacy diff-read (matrix row 55, re-verified this round: the webhook file's full-range diff is 34 pure insertions, both blocks sitting at the end of their else-branch bodies) verifies placement per QA round by reading, not by a falsifiable example — the same status the two N/A rows hold. Orchestrator options: implement the original a9-005 fix shape, or reclassify both rows as diff-read-verified/accepted with the fold's 'also closes' claim corrected.",
+      "fix_shape": "invoice.paid: stub organization.organization_ai_credit_balance.reset_ai_credits to raise StandardError, deliver a positive-amount invoice, assert not_to raise_error AND SubscriptionEvent.count unchanged (outer UNEXPECTED tier logs; the insertion below the raise never runs). subscription.deleted: stub EngagementReport::GeneratorJob to receive(:perform_later).and_raise, deliver, assert no row.",
+      "mechanism_ref": "stripe_webhook_handler_job.rb:315-333 (invoice.paid block), :213-226 (deleted block)"
+    }
+  ],
+  "matrix_reverification": {
+    "formerly_unpinned_now_pinned": 11,
+    "formerly_unpinned_total": 13,
+    "still_unpinned": [
+      "§5.2 insertion appended at the END of the else-branch (after reset_ai_credits) — former r4-l1-a9-005, see r5-l1-a9-001",
+      "§5.3 insertion appended at the END of the else-branch (after EngagementReport::GeneratorJob) — former r4-l1-a9-005, see r5-l1-a9-001"
+    ],
+    "now_pinned_rows": {
+      "§5.1 organization_ai_credit_balance&.reset_ai_credits stays in the trial branch (r4-l1-a9-001)": "organization_subscription_events_spec.rb:26-27,40 — stubs the memoized association instance on the same organization the callback runs on (organization.rb:1134 reads the same reader) and asserts have_received(:reset_ai_credits) after nil->trialing; deleting the line fails it. Balance exists: create_credit_test_organization with_balance: true default (ai_credits_test_helpers.rb:68-70)",
+      "§5.3 own begin/rescue ledger-failure isolation (r4-l1-a9-002)": "webhook spec 'does not break the existing branch behavior when the ledger write raises' (deleted path) — CreateSubscriptionEvent stubbed to raise; asserts both job enqueues, subscription_canceled_at written, sync_with_stripe received, have_received(:call), and Rails.logger.error with /\\AStripe subscription\\.deleted SubscriptionEvent ledger error:/. Deleting the inner begin/rescue routes the raise to the branch's outer rescue, which logs the bare exception object (stripe_webhook_handler_job.rb:228-230) — the regex assertion fails",
+      "§1.2 enum integer mappings 0-8 (r4-l1-a9-003)": "subscription_event_fanout_spec.rb 'pins the exact stored integer for every event_type' — SubscriptionEvent.event_types eq the full 9-pair hash; any renumbering/rename/deletion (including the 0/1 swap threat from the previously-reversed comment) fails it. Committed model comment now labels 0/1 correctly (subscription_event.rb:10-11 match the enum at :20-21)",
+      "§5.2 stripe_subscription_id sourced from object.subscription (r4-l1-a9-004a)": "webhook spec 'records the event-sourced subscription id, not the organization column, when they differ' — invoice subscription: 'sub_evt_distinct' distinct from the org column, Stripe::Subscription.retrieve stub keyed .with('sub_evt_distinct') matching production retrieve(object.subscription); asserts row eq 'sub_evt_distinct' AND not_to eq organization.stripe_subscription_id. Swapping the writer arg to the org column fails it",
+      "§5.3 stripe_subscription_id sourced from branch-local object.id (r4-l1-a9-004b)": "webhook spec 'records the event subscription id and skips sync_with_stripe when the event subscription is not the organization current one' — deleted double id: 'sub_evt_stale_distinct'; asserts row carries the event id, not_to eq the org column, and sync_with_stripe NOT received (equality guard at stripe_webhook_handler_job.rb:205 intentionally skips — bonus pin on that guard). Swapping the writer arg fails it",
+      "§5.3 `if organization` nil-guard (r4-l1-a3-001, previously accepted)": "webhook spec nil-org example now asserts Rails.logger not_to have_received(:error).with(/\\AStripe subscription\\.deleted SubscriptionEvent ledger error:/) — deleting the guard makes nil.plan raise NoMethodError inside the writer's argument list, the insertion's own rescue logs that exact line, assertion fails",
+      "§6 check-first conversion guard (r4-l1-a5-001, previously accepted)": "create_subscription_event_spec.rb both cross-type guard examples now assert Rails.logger not_to have_received(:error).with(/\\ACreateSubscriptionEvent raced conversion uniqueness index/) — deleting conversion_duplicate_exists? routes the insert into the partial index, the RecordNotUnique rescue logs that exact line (create_subscription_event.rb:49), assertion fails. Message text verified against the committed rescue",
+      "§6 CONVERSION_EVENT_TYPES cross-type scope of the guard query (r4-l1-a5-001 umbrella, previously accepted)": "same two examples — each seeds the OTHER conversion type; narrowing the guard query to same-type makes the check miss, the insert hits the index, the raced-index log fires, the not_to logger assertion fails",
+      "§7 `on: :create` scoping (r4-l1-a6-001, previously accepted)": "subscription_event_fanout_spec.rb 'does not fire the fan-out on update or destroy' — create, clear_enqueued_jobs, update! + destroy!, enqueued_jobs empty. Removing on: :create fires handle_after_commit_on_create on the update! (trial_started row enqueues PostHog + Discord) — fails",
+      "§7 all 13 attribution mappings (r4-l1-a6-002, previously accepted)": "fanout attribution example now populates all 13 owner columns (12 set, utm_campaign nil for the org-fallback leg) and all 13 org columns with distinct values, and asserts every one of the 13 payload keys by exact value — deleting any mapping line (key absent) or swapping owner/org argument order fails per-key",
+      "§2 Discord enqueue removed from Notification::PaidSubscriptionDeletedJob (r4-l1-a7-001, previously accepted)": "webhook spec new describe performs the job via perform_now under the :test adapter and asserts not_to have_enqueued_job(Discord::NotifySubscriptionDeletedJob) plus slack_notifier have_received(:post). Restoring the removed discord(organization_id, ended_at) call + private method (verified at a0d59115d: body was Discord::NotifySubscriptionDeletedJob.perform_later) fails the not_to; deleting slack fails the post assertion"
+    },
+    "pinned_spot_checks": 18,
+    "pinned_spot_check_rows": [
+      "§3 both columns persist (interactor spec 'persists both new columns') — intact",
+      "§3 partial index uniqueness via RecordNotUnique backstop with conversion_duplicate_exists? stubbed false — intact",
+      "§3 index predicate covers event_type 2 and 8 (same backstop example seeds type 2, inserts type 8) — intact",
+      "§5.1 trial_started writer + args (org spec nil->trialing: row, event_type, organization_id, to_plan, stripe_subscription_id) — intact",
+      "§5.1 gate scoping (trialing->active: no row) — intact",
+      "§5.1 Discord fires exactly once via fan-out (.exactly(:once)) + Slack job stays — intact",
+      "§5.2 amount>0 predicate both directions (0/trial, 0/no-trial -> no row; 4900 -> row) — intact",
+      "§5.2 trial_end discriminator on the retrieved subscription (present -> trial_converted_to_paid, absent -> converted_to_paid) — intact",
+      "§5.2 writer args amount/to_plan/from_plan-nil — intact",
+      "§5.2 own begin/rescue isolation + run-1/run-3 survival assertions (reset_ai_credits, payment-method, period-end, logger regex, have_received(:call)) — intact",
+      "§5.2 duplicate delivery exactly-one-row with the 10-minute created_at backdate (run-3 fix) — intact",
+      "§5.3 writer + args + branch survival (sync_with_stripe run-2 fix, subscription_canceled_at, both job enqueues) — intact",
+      "§6 guard-order nil-org graceful success (success? true, count 0, not_to raise_error) — intact",
+      "§6 5-minute dedupe message + semantics (two examples) — intact",
+      "§7 per-type fan-out matrix incl. converted_to_paid no-Discord grep, canceled_subscription nil-subscription_canceled_at skip, assigned_free_plan* nothing, owner bail-out — intact",
+      "§7 .compact — the deleted not_to have_key(:fbclid) pin (fbclid now populated) is superseded by the retained not_to have_key(:amount) on the canceled row; deleting .compact yields a nil-valued :amount key and fails — still pinned",
+      "§7 default_properties not duplicated (email/organization_id/organization_name/plan not_to have_key) — intact",
+      "§2 Slack Notification::PaidSubscriptionDeletedJob still enqueued from the webhook branch with exact args — intact"
+    ],
+    "regressions": []
+  },
+  "verified": [
+    "Fix commit 33dffbe3e is spec-only: 4 files, +166/-15; all 15 deletions accounted for (8 webhook-spec helper-signature lines replaced by keyword-param equivalents with identical organization.stripe_subscription_id defaults — pre-existing example semantics unchanged; 7 fanout lines replaced by the expanded 13-field attribution version). No pinned row lost its pin",
+    "D11 delicacy re-verified at 33dffbe3e: git diff a0d59115d..33dffbe3e -- app/jobs/stripe_webhook_handler_job.rb is 34 insertions, 0 deletions; both hunks read in place — exactly the two sanctioned rescue-isolated blocks at the end of their else-branch bodies, no reordering, no attribute-access changes, no other branches touched",
+    "Rule 7, Slack::Notifier stub: instance_double(Slack::Notifier, post: true) is a verified double against slack-notifier 2.4.0 — def post payload={} exists (lib/slack-notifier.rb:40) and matches production notifier.post(attachments: [...]) (paid_subscription_deleted_job.rb:21-22)",
+    "Rule 7, careers_page_url stub: Organization#careers_page_url exists (organization.rb:1380, default_careers_page&.hire_display_url — nil for the helper-built org); the stub is load-bearing, not masking: unstubbed, blocks-building raises inside the job's slack rescue, post never fires, and the have_received(:post) assertion would fail — the stub makes the Slack-survival pin real",
+    "Rule 7, divergent-id retrieve stubs: invoice.paid stub keyed .with('sub_evt_distinct') matches production Stripe::Subscription.retrieve(object.subscription); the value is a subscription id (sub_*), not an invoice id — no ai-summaries-H1 repeat. The stubbed subscription's lookup_key 'plan_ats_tier_starter_v2_monthly' is non-AI, routing to the main-plan else-branch as intended. Deleted-path stale double provides exactly the attributes production reads (id, customer, ended_at, items chain); Organization.find_by stubbed with the stripe_customer_id: keyword production uses",
+    "Rule 7, Notification::PaidSubscriptionDeletedJob example dependencies: the job loads its own instance via find_by_id (hence allow_any_instance_of for careers_page_url); the helper org has a real owner User (full_name/email present) and nil linkedin_company_id — organization_fields builds cleanly with the stub",
+    "Rule 31: all four spec files retain the around block swapping ActiveJob::Base.queue_adapter to :test and restoring the original — verified in each file at 33dffbe3e",
+    "§9.5 hygiene: git diff --name-status a0d59115d..33dffbe3e shows exactly the four feature spec files as ADDED, zero pre-existing spec files modified, zero Cypress files touched",
+    "No new unpinned mechanism introduced by the fix commit (no app-code change; the helper keyword-param refactor introduces no mechanism)",
+    "No ghosts among the 9 new/extended examples: each was walked against the committed app code with a named mutation that fails it (see now_pinned_rows). The enum-mapping example is declarative-reflection but falsifiable on exactly the renumbering threat and was the FAILURE-REPORT's mandated fix shape",
+    "Immaterial .to_i row and the two N/A rows (model comments; D10 if/elsif/else shape) left as-is per instructions; D10 shape re-confirmed compliant at 33dffbe3e (subscription_event.rb attribution_value explicit nil else)"
+  ]
+}

@@ -1,0 +1,124 @@
+<h2>Admin Page Structure: Which direction?</h2>
+<p class="subtitle">Two opposite approaches for the Plato AI settings area. Click to select.</p>
+
+<div class="split" style="gap: 24px; align-items: stretch;">
+
+  <!-- Option A: 3 Tabs -->
+  <div class="option" data-choice="a" onclick="toggleSelect(this)" style="flex: 1; cursor: pointer; padding: 0; border-radius: 8px; overflow: hidden;">
+    <div style="padding: 16px 20px; background: rgba(99,102,241,0.08); border-bottom: 1px solid rgba(99,102,241,0.15);">
+      <div class="letter" style="margin-bottom: 8px;">A</div>
+      <h3 style="margin: 0 0 4px 0;">3 Distinct Tabs</h3>
+      <p style="margin: 0; opacity: 0.7; font-size: 13px;">Each tab earns its spot with unique, focused content</p>
+    </div>
+
+    <div style="padding: 20px;">
+      <!-- Mini mockup of 3-tab layout -->
+      <div style="display: flex; border: 1px solid rgba(128,128,128,0.2); border-radius: 6px; overflow: hidden; min-height: 260px;">
+        <!-- Sidebar -->
+        <div style="width: 35%; border-right: 1px solid rgba(128,128,128,0.2); padding: 12px 0; background: rgba(128,128,128,0.03);">
+          <div style="padding: 8px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; margin-bottom: 4px;">Plato AI</div>
+          <div style="padding: 8px 16px; font-size: 13px; background: rgba(99,102,241,0.1); border-left: 2px solid rgb(99,102,241); font-weight: 600;">??? Tab 1</div>
+          <div style="padding: 8px 16px; font-size: 13px; opacity: 0.6;">??? Tab 2</div>
+          <div style="padding: 8px 16px; font-size: 13px; opacity: 0.6;">??? Tab 3</div>
+        </div>
+        <!-- Content -->
+        <div style="flex: 1; padding: 16px;">
+          <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Tab 1 Content</div>
+          <div style="height: 10px; width: 80%; background: rgba(128,128,128,0.15); border-radius: 3px; margin-bottom: 8px;"></div>
+          <div style="height: 10px; width: 60%; background: rgba(128,128,128,0.15); border-radius: 3px; margin-bottom: 16px;"></div>
+          <div style="height: 32px; width: 100%; background: rgba(128,128,128,0.08); border: 1px solid rgba(128,128,128,0.15); border-radius: 4px; margin-bottom: 8px;"></div>
+          <div style="height: 32px; width: 100%; background: rgba(128,128,128,0.08); border: 1px solid rgba(128,128,128,0.15); border-radius: 4px; margin-bottom: 8px;"></div>
+          <div style="height: 32px; width: 100%; background: rgba(128,128,128,0.08); border: 1px solid rgba(128,128,128,0.15); border-radius: 4px;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 16px;">
+        <div class="pros-cons">
+          <div class="pros"><h4>Pros</h4><ul>
+            <li>Each tab is focused — less cognitive load per view</li>
+            <li>Room to grow content per section</li>
+            <li>Follows existing AccountIntegrationsContainer pattern</li>
+          </ul></div>
+          <div class="cons"><h4>Cons</h4><ul>
+            <li>Must justify 3 tabs — each needs distinct purpose</li>
+            <li>Current naming (Settings/Billing/Usage) is vague</li>
+            <li>Risk of thin tabs that don't earn their spot</li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: 1 Combined Page -->
+  <div class="option" data-choice="b" onclick="toggleSelect(this)" style="flex: 1; cursor: pointer; padding: 0; border-radius: 8px; overflow: hidden;">
+    <div style="padding: 16px 20px; background: rgba(16,185,129,0.08); border-bottom: 1px solid rgba(16,185,129,0.15);">
+      <div class="letter" style="margin-bottom: 8px;">B</div>
+      <h3 style="margin: 0 0 4px 0;">1 Combined Page</h3>
+      <p style="margin: 0; opacity: 0.7; font-size: 13px;">Everything in one scrollable view, organized by sections</p>
+    </div>
+
+    <div style="padding: 20px;">
+      <!-- Mini mockup of single page -->
+      <div style="border: 1px solid rgba(128,128,128,0.2); border-radius: 6px; overflow: hidden; min-height: 260px;">
+        <div style="padding: 16px;">
+          <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">Plato AI</div>
+          <div style="font-size: 12px; opacity: 0.5; margin-bottom: 16px;">Manage AI summaries, credits, and permissions</div>
+
+          <!-- Section 1 -->
+          <div style="border: 1px solid rgba(128,128,128,0.15); border-radius: 4px; padding: 12px; margin-bottom: 12px;">
+            <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Credit Balance & Subscription</div>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <div style="flex:1; background: rgba(128,128,128,0.06); border-radius: 3px; padding: 8px; text-align: center;">
+                <div style="font-size: 10px; opacity: 0.5;">Monthly</div>
+                <div style="font-size: 16px; font-weight: 600;">42</div>
+              </div>
+              <div style="flex:1; background: rgba(128,128,128,0.06); border-radius: 3px; padding: 8px; text-align: center;">
+                <div style="font-size: 10px; opacity: 0.5;">Purchased</div>
+                <div style="font-size: 16px; font-weight: 600;">10</div>
+              </div>
+              <div style="flex:1; background: rgba(128,128,128,0.06); border-radius: 3px; padding: 8px; text-align: center;">
+                <div style="font-size: 10px; opacity: 0.5;">Total</div>
+                <div style="font-size: 16px; font-weight: 600;">52</div>
+              </div>
+            </div>
+            <div style="height: 24px; width: 80px; background: rgba(99,102,241,0.1); border-radius: 3px;"></div>
+          </div>
+
+          <!-- Section 2 -->
+          <div style="border: 1px solid rgba(128,128,128,0.15); border-radius: 4px; padding: 12px; margin-bottom: 12px;">
+            <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Settings & Permissions</div>
+            <div style="height: 10px; width: 70%; background: rgba(128,128,128,0.12); border-radius: 3px; margin-bottom: 6px;"></div>
+            <div style="height: 10px; width: 50%; background: rgba(128,128,128,0.12); border-radius: 3px;"></div>
+          </div>
+
+          <!-- Section 3 -->
+          <div style="border: 1px solid rgba(128,128,128,0.15); border-radius: 4px; padding: 12px;">
+            <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px;">Usage & Alerts</div>
+            <div style="height: 10px; width: 90%; background: rgba(128,128,128,0.12); border-radius: 3px; margin-bottom: 6px;"></div>
+            <div style="height: 10px; width: 40%; background: rgba(128,128,128,0.12); border-radius: 3px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 16px;">
+        <div class="pros-cons">
+          <div class="pros"><h4>Pros</h4><ul>
+            <li>Everything visible at a glance — no hunting across tabs</li>
+            <li>No "thin tab" problem — sections scale naturally</li>
+            <li>Simpler navigation, fewer clicks</li>
+          </ul></div>
+          <div class="cons"><h4>Cons</h4><ul>
+            <li>Long page if content grows</li>
+            <li>Breaks the AccountIntegrationsContainer pattern</li>
+            <li>Billing actions mixed with settings toggles</li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top: 24px; padding: 16px; background: rgba(128,128,128,0.05); border-radius: 8px; font-size: 13px;">
+  <strong>Context:</strong> Current state is 3 tabs (Settings/Billing/Usage) but content doesn't justify the separation — billing duplicates usage data, naming is vague, UI was thrown together. We need to go fully one direction or the other.
+</div>

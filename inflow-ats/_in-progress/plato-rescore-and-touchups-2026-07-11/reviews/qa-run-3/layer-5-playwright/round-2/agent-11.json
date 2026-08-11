@@ -1,0 +1,47 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 11,
+  "assignment": "Fit-chip consistency cross-check: VALIDATE or INVALIDATE l5-med-001 (list row renders no fit chip when score_percentage is 0.0, nonzero scores render chips; suspected pre-existing falsy-zero guard in untouched list code). Display only — no Plato runs confirmed.",
+  "verdict": "VALIDATED — chip absent EXACTLY when score_percentage is 0.0, present and matching the Plato tab's fit label for all six nonzero scores, across both seeded and re-scored candidates. No re-score-specific chip defect. l5-med-001 stands as recorded (MED, pre-existing).",
+  "data_table": [
+    {"candidate": "Agnes Sipes",       "job_application_id": 20977, "stage": "Senior Engineer / Inbox",  "review_origin": "re-scored (organic)", "summary_id": 2537, "score_percentage": 0,     "list_chip": "ABSENT",        "plato_tab_fit": "Poor fit",      "consistent": false},
+    {"candidate": "Carl Dietrich",     "job_application_id": 20976, "stage": "Senior Engineer / Inbox",  "review_origin": "re-scored (organic)", "summary_id": 2540, "score_percentage": 29.41, "list_chip": "Weak fit",      "plato_tab_fit": "Weak fit",      "consistent": true},
+    {"candidate": "Emilee Hand",       "job_application_id": 20975, "stage": "Senior Engineer / Inbox",  "review_origin": "re-scored (organic)", "summary_id": 2539, "score_percentage": 88.24, "list_chip": "Good fit",      "plato_tab_fit": "Good fit",      "consistent": true},
+    {"candidate": "Yesenia Bernhard",  "job_application_id": 20979, "stage": "Senior Engineer / Screen", "review_origin": "seeded",              "summary_id": 2533, "score_percentage": 65.29, "list_chip": "Good fit",      "plato_tab_fit": "Good fit",      "consistent": true},
+    {"candidate": "Cornelius Jenkins", "job_application_id": 20978, "stage": "Senior Engineer / Screen", "review_origin": "seeded",              "summary_id": 2532, "score_percentage": 90.59, "list_chip": "Excellent fit", "plato_tab_fit": "Excellent fit", "consistent": true},
+    {"candidate": "Rowan Ellis",       "job_application_id": 21039, "stage": "Design Lead / Inbox",      "review_origin": "seeded",              "summary_id": 2535, "score_percentage": 73.33, "list_chip": "Good fit",      "plato_tab_fit": "Good fit",      "consistent": true},
+    {"candidate": "Quinn Barrett",     "job_application_id": 21038, "stage": "Design Lead / Inbox",      "review_origin": "seeded",              "summary_id": 2534, "score_percentage": 100,   "list_chip": "Excellent fit", "plato_tab_fit": "Excellent fit", "consistent": true}
+  ],
+  "mechanism_corroboration": "The list API payload (GET /api/v1/jobs/29092/job_applications?hiring_stage=203589&page=1) DOES include Agnes's ai_job_application_summary_status with status 'current', score_percentage 0, headline, and integrated_role_analysis — the data reaches the frontend. The chip absence is therefore a frontend rendering guard treating score 0 as falsy, exactly the mechanism l5-med-001 attributed. Not a backend/serializer omission.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc.).",
+    "Clicked 'Senior Engineer' → Inbox list (3 candidates). Agnes Sipes row: NO fit chip. Carl Dietrich row: 'Weak fit' chip. Emilee Hand row: 'Good fit' chip. Screenshot r2-a11-01.",
+    "Agnes Sipes → Plato tab: PlatoScoreTag 'Poor fit' + FitIndicator gauge (title 'Poor fit'), organic headline 'Quality analyst with a focus on manual testing and defect management'. API summary 2537: score_percentage 0, status succeeded, stale false. Screenshot r2-a11-02.",
+    "Carl Dietrich → Plato tab: 'Weak fit' tag + gauge, organic re-score ('13 minutes ago'). API summary 2540: score_percentage 29.41. Screenshot r2-a11-03.",
+    "Emilee Hand → Plato tab: 'Good fit' tag + gauge. API summary 2539: score_percentage 88.24. Screenshot r2-a11-04.",
+    "Clicked Screen stage (5 rows). Yesenia Bernhard: 'Good fit' chip; Cornelius Jenkins: 'Excellent fit' chip; Brent Lubowitz / Refugio Ondricka / Wally Blanda (bare, no resume): no chips — expected 'Not yet scored' rows. Screenshot r2-a11-05.",
+    "Yesenia Bernhard → Plato tab: 'Good fit' tag, seeded headline. API summary 2533: score_percentage 65.29. Screenshot r2-a11-06.",
+    "Cornelius Jenkins → Plato tab: 'Excellent fit' tag, seeded headline. API summary 2532: score_percentage 90.59. Screenshot r2-a11-07.",
+    "Navigated to /jobs → clicked 'Design Lead' → Inbox (2 candidates). Rowan Ellis: 'Good fit' chip; Quinn Barrett: 'Excellent fit' chip. Screenshot r2-a11-08.",
+    "Rowan Ellis → Plato tab: 'Good fit' tag, seeded headline. API summary 2535: score_percentage 73.33. Screenshot r2-a11-09.",
+    "Quinn Barrett → Plato tab: 'Excellent fit' tag, seeded headline. API summary 2534: score_percentage 100. Screenshot r2-a11-10.",
+    "Corroboration: fetched the SE Inbox list payload — Agnes's ai_job_application_summary_status is present with score_percentage 0 (status 'current'); chip absence is frontend-side, matching the suspected falsy-zero guard.",
+    "Console check (level error, whole session): only 2 Emotion ':first-child is potentially unsafe when doing server-side rendering' messages — known pre-existing noise per round-1 LOW. No feature-referencing errors (no rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summaries failures, no React errors).",
+    "Display-only run: no modals opened, no Plato runs confirmed, no state mutated. Balance untouched.",
+    "Cross-check conclusion: the 0.0-score chip absence is NOT specific to re-scored candidates — the two nonzero re-scored candidates (Carl 29.41, Emilee 88.24) render chips identical in behavior to the four seeded candidates. Pattern 'chip absent exactly when score is 0.0' holds 7/7. l5-med-001 VALIDATED as recorded; no new evidence, no severity change."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-11/r2-a11-01-senior-engineer-inbox-list-chips.png",
+    "/tmp/qa-run-3-l5/agent-11/r2-a11-02-agnes-sipes-plato-poor-fit-score0.png",
+    "/tmp/qa-run-3-l5/agent-11/r2-a11-03-carl-dietrich-plato-weak-fit.png",
+    "/tmp/qa-run-3-l5/agent-11/r2-a11-04-emilee-hand-plato-good-fit.png",
+    "/tmp/qa-run-3-l5/agent-11/r2-a11-05-screen-list-chips.png",
+    "/tmp/qa-run-3-l5/agent-11/r2-a11-06-yesenia-bernhard-plato-good-fit.png",
+    "/tmp/qa-run-3-l5/agent-11/r2-a11-07-cornelius-jenkins-plato-excellent-fit.png",
+    "/tmp/qa-run-3-l5/agent-11/r2-a11-08-design-lead-inbox-list-chips.png",
+    "/tmp/qa-run-3-l5/agent-11/r2-a11-09-rowan-ellis-plato-good-fit.png",
+    "/tmp/qa-run-3-l5/agent-11/r2-a11-10-quinn-barrett-plato-excellent-fit.png"
+  ],
+  "findings": []
+}

@@ -1,0 +1,22 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 2,
+  "focus_area": "Backend serializers",
+  "assigned_requirements": ["S1", "S2", "S23"],
+  "findings": [],
+  "spec_coverage": {
+    "S1": {
+      "status": "implemented",
+      "evidence": "The diff removes `has_one :ai_job_application_summary, serializer: Api::V1::AiJobApplicationSummaryShallowSerializer` and its custom method override `def ai_job_application_summary; object.latest_ai_job_application_summary; end` from JobApplicationSerializer (lines 40-44 removed). The final serializer file contains no remaining references to `ai_job_application_summary`."
+    },
+    "S2": {
+      "status": "implemented",
+      "evidence": "The diff adds `has_one :ai_job_application_summary_status, serializer: Api::V1::AiJobApplicationSummaryStatusSerializer` to JobApplicationSerializer (lines 40-41). The AiJobApplicationSummaryStatusSerializer exposes `status`, `score_percentage`, `headline`, `integrated_role_analysis` (plus `id`, `ai_job_application_summary_id`, and now `updated_at`). No custom method override is needed because `JobApplication` model already defines `has_one :ai_job_application_summary_status` at line 31 of job_application.rb. The pattern matches the analog in ShallowJobApplicationSerializer (lines 18-19) which uses the identical `has_one` declaration with the same serializer class."
+    },
+    "S23": {
+      "status": "implemented",
+      "evidence": "The diff adds `:updated_at` to the attributes list in AiJobApplicationSummaryStatusSerializer (line 6). The serializer now exposes `id`, `ai_job_application_summary_id`, `status`, `score_percentage`, `headline`, `integrated_role_analysis`, and `updated_at`. This satisfies the spec requirement that `generatedAgo` in PlatoGeneratedReviewCallout.tsx can use `updatedAt` from the status record."
+    }
+  }
+}

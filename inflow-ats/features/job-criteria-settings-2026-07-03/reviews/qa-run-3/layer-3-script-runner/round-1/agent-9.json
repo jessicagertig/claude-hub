@@ -1,0 +1,17 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 9,
+  "focus": "ExtractJobCriteriaJob#broadcast_completion (private) payload + guard logic, tested in isolation (real extractor never run). SPEC.md §7 / app/jobs/extract_job_criteria_job.rb:39-64.",
+  "scenarios_run": [
+    "Built own uniquely-suffixed org/job/requesting OrganizationUser; stubbed GlobalChannel.broadcast_to to record every call.",
+    "CASE1 succeeded row -> exactly one broadcast; action 'JOB_CRITERIA_EXTRACTION_COMPLETE'; target is requesting user; payload status 'succeeded', jobId==job.id, jobTitle==job.title, zeroCriteriaFailure==false, NO :errorMessage key.",
+    "CASE2 zero-criteria failed row (failed + ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE) -> one broadcast; status 'failed', zeroCriteriaFailure==true, :errorMessage == error_message.",
+    "CASE3 other failed row (failed + 'Job description is blank') -> one broadcast; status 'failed', zeroCriteriaFailure==false, :errorMessage == error_message.",
+    "CASE non-terminal (pending / in_progress / retrying) -> ZERO broadcasts each (terminal-status guard `return unless status_succeeded? || status_failed?`). Falsifiability anchor.",
+    "CASE7 fresh re-read: DB row failed+zero-criteria, passed-in object mutated in-memory to look 'succeeded' (unsaved) -> broadcast reflects CURRENT DB state ('failed', zeroCriteriaFailure true, DB error_message), proving AiJobCriteria.find_by(id:) re-read is authoritative.",
+    "CASE8 non-existent requesting_organization_user_id (OrganizationUser.find_by -> nil) -> ZERO broadcasts.",
+    "CASE9 OrganizationUser exists but .user is nil (stubbed find_by returns unsaved OU) -> ZERO broadcasts (`return unless user`)."
+  ],
+  "findings": []
+}

@@ -1,0 +1,118 @@
+{
+  "meta": {
+    "batch": 23,
+    "criteria_prompt_version": 8,
+    "job_id": 28996,
+    "title": "Inside Sales Executive",
+    "organization": "Deepfleet",
+    "cost": 0.000609
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Deepfleet is building interoperable, resilient technology for EV charging. Our EV Roaming technology helps EV drivers find & use 20x more EV chargers around them. We are looking for a very capable sales executive to join the team. If the idea of  making a positive social and climate impact interests you, please apply."
+      },
+      {
+        "heading": "About the Role",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "You will thrive if you have\nHigh-agency\nExcellent selling skills\nAnalytical mindset\nCuriosity to learn (especially when the learning curve is steep) & execute\nExcellent communication and teamwork skills.\nAbility to work independently and as part of a team\nProficiency with CRM software and other sales tools\nExperience in the energy or EV industry is a plus\nExperience in Business, Marketing or related field\nLanguage: English and any other regional language\nYou will be working with the founding team on the modern EV charging equipment sales. Experience in the same field helps. That said, we value learnability more than experience and skill."
+      },
+      {
+        "heading": "Team Values",
+        "inferred_section_type": "culture",
+        "type": "non_criteria",
+        "content": "Deepfleet is founded by industry leaders with vast experience in taking companies through the zero-to-one journey. We believe our team is our biggest asset.\nAt Deepfleet we discuss ferociously about how to save a rupee for our charging infra partners, how to make charging experience multiple magnitudes better for the vehicle driver or how to make dashboards easy to read. Well, you get the point.\nDeepfleet is an equal opportunity employer and welcomes candidates from all backgrounds to apply. We celebrate diversity and are committed to creating an inclusive environment for all employees."
+      },
+      {
+        "heading": "What We Offer",
+        "inferred_section_type": "benefits",
+        "type": "non_criteria",
+        "content": "Competitive salary and variable benefits package.\nThe opportunity to work in a high-impact company in the rapidly growing EV industry.\nA collaborative and innovative work environment.\nFrequent team-building activities and outings.\n(EV) Commute perks."
+      },
+      {
+        "heading": "Additional Details",
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "Openings: 2\nLocation: State of the art office in EPIP Zone, Whitefield, Bangalore, right next to purple line metro station.\nWork days: 5 days a week\nStipend: ₹15,000-24,000/month\nExperience: 6 to 24 months\nCommute Perks: NCMC Cards for Commute (Loaded Monthly)"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "High-agency",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "High-agency"
+      },
+      {
+        "text": "Excellent selling skills",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Excellent\"",
+        "binary": false,
+        "source_text": "Excellent selling skills"
+      },
+      {
+        "text": "Analytical mindset",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Analytical mindset"
+      },
+      {
+        "text": "Curiosity to learn (especially when the learning curve is steep) & execute",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Curiosity to learn (especially when the learning curve is steep) & execute"
+      },
+      {
+        "text": "Excellent communication and teamwork skills",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Excellent\"",
+        "binary": false,
+        "source_text": "Excellent communication and teamwork skills."
+      },
+      {
+        "text": "Ability to work independently and as part of a team",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"Ability to\" is a tier_2 signal",
+        "binary": false,
+        "source_text": "Ability to work independently and as part of a team"
+      },
+      {
+        "text": "Proficiency with CRM software and other sales tools",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"Proficiency\"",
+        "binary": false,
+        "source_text": "Proficiency with CRM software and other sales tools"
+      },
+      {
+        "text": "Experience in the energy or EV industry is a plus",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"is a plus\" is a tier_2 signal",
+        "binary": false,
+        "source_text": "Experience in the energy or EV industry is a plus"
+      },
+      {
+        "text": "Experience in Business, Marketing or related field",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Experience in Business, Marketing or related field"
+      },
+      {
+        "text": "Language: English and any other regional language",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": true,
+        "source_text": "Language: English and any other regional language"
+      }
+    ]
+  }
+}

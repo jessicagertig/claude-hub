@@ -1,0 +1,27 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 2,
+  "agent_index": 3,
+  "slice": "subscription.deleted cancellation insertion",
+  "findings": [
+    {
+      "id": "r2-l1-a3-001",
+      "severity": "HIGH",
+      "title": "sync_with_stripe stubbed but never asserted in the subscription.deleted spec example — assertion gap on existing branch behavior around insertion 2",
+      "spec_requirement": "SPEC §9.1 item 1: \"and — load-bearing — existing branch behavior byte-identical around the insertions\". The subscription.deleted else-branch's existing behavior is four effects: (1) organization&.sync_with_stripe if stripe_subscription_id == organization&.stripe_subscription_id, (2) update_column(:subscription_canceled_at, ...), (3) Notification::PaidSubscriptionDeletedJob, (4) EngagementReport::GeneratorJob.",
+      "evidence": "spec/jobs/stripe_webhook_handler_subscription_events_spec.rb:161 (`allow(organization).to receive(:sync_with_stripe)`) stubs the call but the example ('creates a canceled_subscription row and keeps the existing branch behavior intact', lines 160-186) asserts only effects 2-4 (have_enqueued_job for both jobs, subscription_canceled_at present) plus the ledger row. No `expect(organization).to have_received(:sync_with_stripe)` exists. No other spec asserts this call fires in the main branch (grep: the only other sync_with_stripe reference is the credit-pack NEGATIVE assertion at spec/jobs/stripe_webhook_handler_ai_credits_spec.rb:550). A regression deleting or breaking the `organization&.sync_with_stripe if stripe_subscription_id == organization&.stripe_subscription_id` line (app/jobs/stripe_webhook_handler_job.rb:205 @7574df408) would pass the suite. Same defect class as the run-1 HIGH (missing reset_ai_credits assertion in the invoice.paid ledger-failure example, fixed in 7574df408).",
+      "recommendation": "Add `expect(organization).to have_received(:sync_with_stripe)` to the subscription.deleted example (the stub at line 161 already enables it). One line; no production code change."
+    }
+  ],
+  "verified": [
+    "Insertion placement: the ledger block is appended at the END of the existing else-branch body, immediately after `EngagementReport::GeneratorJob.perform_later(organization&.id, trigger: 'subscription_canceled')` (app/jobs/stripe_webhook_handler_job.rb:210-226 @7574df408), inside the branch's outer begin/rescue. SPEC §5.3 placement exact.",
+    "Own begin/rescue StandardError with context logging: `Rails.logger.error \"Stripe subscription.deleted SubscriptionEvent ledger error: org=#{organization&.id} subscription=#{stripe_subscription_id} msg=#{e.message}\"` + `ap e`. Ledger failure never reaches the branch's existing outer rescue.",
+    "Writer call exact per SPEC §5.3: CreateSubscriptionEvent.call(organization: organization, event_type: 'canceled_subscription', to_plan: organization.plan, stripe_subscription_id: stripe_subscription_id). NO amount param. `stripe_subscription_id` local = object.id (line 173, pre-existing). 'canceled_subscription' exists in the enum at value 3, unchanged.",
+    "Nil-organization handling: plain `if organization` conditional inside the rescue-wrapped block; nil org (Organization.find_by miss at line 174) skips the ledger write entirely. Confirmed nothing else in the subscription.deleted branch changed: git diff a0d59115d..7574df408 for the file contains exactly the two sanctioned insertion hunks (+14 and +20 lines = the full +34 stat); the entire file has zero other changes (D11 satisfied for this slice).",
+    "§6 guard-order fix: at a0d59115d, `ap organization.stripe_subscription_in_good_standing` executed before `return unless organization` (NoMethodError on nil); at 7574df408 the guard sits immediately after `organization = context.organization`, above both ap lines. Backstop works for any nil-organization caller; `context.fail!` paths raise only Interactor::Failure, absorbed by the non-bang .call — the webhook caller never sees a raise.",
+    "Backstop chain: CONVERSION_EVENT_TYPES = %w[converted_to_paid trial_converted_to_paid] (subscription_event.rb) excludes canceled_subscription, so conversion_duplicate_exists? is skipped for this writer; the partial unique index (db/migrate/20260725033136, where event_type IN (2,8)) does not block repeated cancellations — matches §5.3 'No uniqueness index coverage'; the 5-minute dedupe (event_params now includes stripe_subscription_id) covers redelivery.",
+    "Tests §9.1: 'creates a canceled_subscription row and keeps the existing branch behavior intact' asserts change(SubscriptionEvent, :count).by(1), event_type, stripe_subscription_id, to_plan, both job enqueues with exact args, and subscription_canceled_at written — non-vacuous (deleting the insertion fails the count assertion). Nil-org example asserts no raise and no row. Queue adapter :test around-block present (pipeline rule 31). Ledger-failure isolation example exists for invoice.paid only; §9.1's parenthetical ('the org update, payment-method call, reset_ai_credits ... a ledger failure does not break them') enumerates invoice.paid behaviors, so no subscription.deleted failure example is strictly required — noted, not a finding.",
+    "SPEC §11.6 open question not treated as a finding per instructions."
+  ]
+}

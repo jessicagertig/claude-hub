@@ -1,0 +1,256 @@
+{
+  "meta": {
+    "version": 9,
+    "name": "host",
+    "kind": "problematic",
+    "title": "Host",
+    "description": "ALL_DECOMPOSED: 32/32, hospitality role",
+    "cost": 0.000554
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "NOT currently hiring for this position. Please submit your resume for future consideration."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "We are looking for a courteous, outgoing individual to make and confirm reservations and perform feedback calls by phone. A polite and friendly phone presence is a must. Host responsibilities include learning our computer reservation system (OpenTable), managing reservations, seating guests, answering phone calls, making reservations and light cleaning in the host and surrounding areas. Our host will also show guests how to leave the restaurant and answer questions regarding events, layout of the restaurant and history."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "We want to meet you if you enjoy talking to people and thrive in a fast-paced workplace. Your ultimate goal will be to provide high-quality service that will help us maintain and attract customers. Restaurant experience is nice but not required. A friendly, positive attitude is required."
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "We are looking for night shift positions with some day shifts possible. Please see schedule below."
+      },
+      {
+        "heading": "Responsibilities",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Make and confirm reservations\nManage table availability\nManage a wait list (if needed)\nCall guests for feedback\nCollaborate with other restaurant staff\nDeal with complaints or problems with a positive attitude\nSeat guests in the appropriate section\nMaintain a manageable reservation spread"
+      },
+      {
+        "heading": "Skills",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Knowing OpenTable reservation system a plus\nAttention to cleanliness and safety\nPatience and customer-oriented approach\nExcellent people skills with a friendly attitude\nResponsible and trustworthy\nAbility to communicate effectively on the phone and in person\nHigh school diploma is a plus but not required"
+      },
+      {
+        "heading": "Schedule:",
+        "inferred_section_type": "non_criteria",
+        "type": "non_criteria",
+        "content": "Vernon’s Speakeasy is open from Wednesday - Sunday. We take reservations between 4:00 pm - 8:30 pm. A typical day shift would be from 10:30 am - 3:30 pm. A typical night shift would be from 3:30 pm - 9:00 pm Wednesday - Sunday."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Make and confirm reservations",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "We are looking for a courteous, outgoing individual to make and confirm reservations and perform feedback calls by phone."
+      },
+      {
+        "text": "Perform feedback calls by phone",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "We are looking for a courteous, outgoing individual to make and confirm reservations and perform feedback calls by phone."
+      },
+      {
+        "text": "Polite and friendly phone presence is a must",
+        "tier": "tier_1",
+        "tier_reasoning": "Signal word: 'is a must'",
+        "binary": false,
+        "source_text": "A polite and friendly phone presence is a must."
+      },
+      {
+        "text": "Learning our computer reservation system (OpenTable)",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Host responsibilities include learning our computer reservation system (OpenTable), managing reservations, seating guests, answering phone calls, making reservations and light cleaning in the host and surrounding areas."
+      },
+      {
+        "text": "Managing reservations",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Host responsibilities include learning our computer reservation system (OpenTable), managing reservations, seating guests, answering phone calls, making reservations and light cleaning in the host and surrounding areas."
+      },
+      {
+        "text": "Seating guests",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Host responsibilities include learning our computer reservation system (OpenTable), managing reservations, seating guests, answering phone calls, making reservations and light cleaning in the host and surrounding areas."
+      },
+      {
+        "text": "Answering phone calls",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Host responsibilities include learning our computer reservation system (OpenTable), managing reservations, seating guests, answering phone calls, making reservations and light cleaning in the host and surrounding areas."
+      },
+      {
+        "text": "Light cleaning in the host and surrounding areas",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Host responsibilities include learning our computer reservation system (OpenTable), managing reservations, seating guests, answering phone calls, making reservations and light cleaning in the host and surrounding areas."
+      },
+      {
+        "text": "Show guests how to leave the restaurant",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Our host will also show guests how to leave the restaurant and answer questions regarding events, layout of the restaurant and history."
+      },
+      {
+        "text": "Answer questions regarding events, layout of the restaurant and history",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Our host will also show guests how to leave the restaurant and answer questions regarding events, layout of the restaurant and history."
+      },
+      {
+        "text": "Friendly, positive attitude is required",
+        "tier": "tier_1",
+        "tier_reasoning": "Signal word: 'is required'",
+        "binary": false,
+        "source_text": "A friendly, positive attitude is required."
+      },
+      {
+        "text": "Restaurant experience",
+        "tier": "tier_2",
+        "tier_reasoning": "Signal phrase: 'nice but not required'",
+        "binary": false,
+        "source_text": "Restaurant experience is nice but not required."
+      },
+      {
+        "text": "Night shift positions with some day shifts possible",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": true,
+        "source_text": "We are looking for night shift positions with some day shifts possible."
+      },
+      {
+        "text": "Make and confirm reservations",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Make and confirm reservations"
+      },
+      {
+        "text": "Manage table availability",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Manage table availability"
+      },
+      {
+        "text": "Manage a wait list (if needed)",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Manage a wait list (if needed)"
+      },
+      {
+        "text": "Call guests for feedback",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Call guests for feedback"
+      },
+      {
+        "text": "Collaborate with other restaurant staff",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Collaborate with other restaurant staff"
+      },
+      {
+        "text": "Deal with complaints or problems with a positive attitude",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Deal with complaints or problems with a positive attitude"
+      },
+      {
+        "text": "Seat guests in the appropriate section",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Seat guests in the appropriate section"
+      },
+      {
+        "text": "Maintain a manageable reservation spread",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Maintain a manageable reservation spread"
+      },
+      {
+        "text": "Knowing OpenTable reservation system a plus",
+        "tier": "tier_2",
+        "tier_reasoning": "Signal word: 'a plus'",
+        "binary": false,
+        "source_text": "Knowing OpenTable reservation system a plus"
+      },
+      {
+        "text": "Attention to cleanliness and safety",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Attention to cleanliness and safety"
+      },
+      {
+        "text": "Patience and customer-oriented approach",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Patience and customer-oriented approach"
+      },
+      {
+        "text": "Excellent people skills with a friendly attitude",
+        "tier": "tier_1",
+        "tier_reasoning": "Signal word: 'excellent'",
+        "binary": false,
+        "source_text": "Excellent people skills with a friendly attitude"
+      },
+      {
+        "text": "Responsible and trustworthy",
+        "tier": "tier_2",
+        "tier_reasoning": "Default - no signal word",
+        "binary": false,
+        "source_text": "Responsible and trustworthy"
+      },
+      {
+        "text": "Ability to communicate effectively on the phone and in person",
+        "tier": "tier_2",
+        "tier_reasoning": "Signal phrase: 'ability to'",
+        "binary": false,
+        "source_text": "Ability to communicate effectively on the phone and in person"
+      },
+      {
+        "text": "High school diploma is a plus but not required",
+        "tier": "tier_2",
+        "tier_reasoning": "Signal phrase: 'a plus but not required'",
+        "binary": true,
+        "source_text": "High school diploma is a plus but not required"
+      }
+    ]
+  }
+}

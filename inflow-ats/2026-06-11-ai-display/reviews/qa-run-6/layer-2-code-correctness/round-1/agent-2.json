@@ -1,0 +1,19 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 2,
+  "files_reviewed": [
+    "/Users/jessica/wrk/wrk-corp/inflow-ats.ai-display/app/javascript/ats/src/views/jobApplications/PlatoTab.tsx"
+  ],
+  "findings": [
+    {
+      "id": "H1",
+      "severity": "HIGH",
+      "file": "/Users/jessica/wrk/wrk-corp/inflow-ats.ai-display/app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "line": 41,
+      "what": "`|| 0` fabricated fallback for `aiJobApplicationSummaryId` violates Known Failure Pattern #13.",
+      "code": "aiJobApplicationSummaryId: (status === \"succeeded\" && aiSummary?.id) || 0",
+      "why": "Known Failure Pattern #13 (inflow-ats CLAUDE.md rule 13, core_critical_rules.md rule 10) explicitly prohibits `|| 0` fallbacks: 'Do not use `|| 0` [...] that substitutes a non-nil value for absent data.' This exact pattern — `aiSummary?.id || 0` passed to `useAiJobApplicationSummary` — was the motivating failure that created the rule. When `status !== \"succeeded\"` or no summary exists, the expression evaluates to `0` and is passed as a real-looking ID. The hook's `enabled: !!aiJobApplicationSummaryId && aiJobApplicationSummaryId > 0` guard happens to prevent the HTTP request from firing, but the guard's existence is not a license to pass fabricated values — the guard was added as a defensive fix to the original bug, not as permission to keep the pattern. The correct fix is a conditional call structure or passing `undefined`/`null` with the `enabled` flag controlled externally: e.g., `aiJobApplicationSummaryId: aiSummary?.id ?? undefined` with `enabled` derived from `status === \"succeeded\" && !!aiSummary?.id`."
+    }
+  ]
+}

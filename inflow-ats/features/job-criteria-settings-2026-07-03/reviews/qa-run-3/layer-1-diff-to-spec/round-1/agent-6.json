@@ -1,0 +1,13 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 6,
+  "focus_area": "Frontend data layer — useAiJobCriteria hook (SPEC §8.1), WebsocketGlobalChannelHandler JOB_CRITERIA_EXTRACTION_COMPLETE case (SPEC §8.6), JobCriteriaExtractionCompletePayload type (SPEC §8.7)",
+  "findings": [],
+  "spec_coverage": {
+    "requirements_checked": ["SPEC §8.1", "SPEC §8.6", "SPEC §8.7"],
+    "implemented": 3,
+    "missing": 0,
+    "notes": "Trace: SPEC.md §8.1/§8.6/§8.7 -> useAiJobCriteria.ts, WebsocketGlobalChannelHandler.tsx, aiSummaryWebsocketPayloads.ts. All three assigned changes match the spec verbatim; no untraceable changes exist in these files (diff shows only the assigned additions).\n\n§8.1 useAiJobCriteria.ts (new): AiJobCriterion interface (text:string; tier:\"tier_1\"|\"tier_2\"|\"tier_3\" snake_case values preserved; sourceHeading?:string|null) and AiJobCriteriaPayload interface (criteria:AiJobCriterion[]|null; extractedAt:string|null; status union of 5 enum strings incl. null; zeroCriteriaFailure:boolean|null) match §8.1 exactly. useAiJobCriteria uses useQuery<AiJobCriteriaPayload> with key [\"aiJobCriteria\", jobId] and enabled: jobId != undefined. useRegenerateAiJobCriteria POSTs apiPost({ path: `/jobs/${jobId}/ai_job_criteria`, variables: {} }); onSuccess invalidates queryClient.invalidateQueries([\"aiJobCriteria\", variables.jobId]). Double quotes throughout; grep confirms no `??` operator.\n\n§8.6 WebsocketGlobalChannelHandler.tsx (lines 250-261): new case \"JOB_CRITERIA_EXTRACTION_COMPLETE\" placed immediately after the AI_SUMMARY_FAILED block (lines 236-248), per §8.6. status===\"succeeded\" -> success toast \"Job criteria generated for ${jobTitle}\"; zeroCriteriaFailure -> warning toast \"No criteria found in the job description for ${jobTitle}\"; else -> warning toast \"Could not generate job criteria for ${jobTitle}\". All three delay: 10000. queryCache.invalidateQueries([\"aiJobCriteria\", Number(payload.jobId)]) matches. queryCache (line 11 = useQueryClient()) and addToast (line 13 = useToastContext()) are the correct in-scope variables. Copy is sentence case, no em dashes, static button-free — compliant with §8.6 copy rules.\n\n§8.7 aiSummaryWebsocketPayloads.ts: JobCriteriaExtractionCompletePayload { status:\"succeeded\"|\"failed\"; jobId:number; jobTitle:string; zeroCriteriaFailure:boolean; errorMessage?:string } matches §8.7 exactly. Header comment updated from \"AI summary WebSocket broadcasts\" to \"AI WebSocket broadcasts\" (line 1). Type is imported in the handler on line 7 alongside existing imports. (Pre-existing no-newline-at-EOF is unchanged style, not a spec concern.)"
+  }
+}

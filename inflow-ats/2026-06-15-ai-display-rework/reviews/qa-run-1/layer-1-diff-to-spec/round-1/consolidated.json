@@ -1,0 +1,36 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "total_agents": 8,
+  "findings": [],
+  "spec_coverage": {
+    "total_requirements": 23,
+    "implemented": 23,
+    "missing": 0,
+    "details": {
+      "S1": { "status": "implemented", "agent": 2, "evidence": "Removed has_one :ai_job_application_summary and custom method from JobApplicationSerializer" },
+      "S2": { "status": "implemented", "agent": 2, "evidence": "Added has_one :ai_job_application_summary_status with AiJobApplicationSummaryStatusSerializer" },
+      "S3": { "status": "implemented", "agent": 3, "evidence": "All 9 update_columns calls converted to update across 3 files (1+5+3)" },
+      "S4": { "status": "implemented", "agent": 1, "evidence": "before_update :broadcast_status_change callback registered" },
+      "S5": { "status": "implemented", "agent": 1, "evidence": "BROADCAST_STATUSES constant with all 7 specified statuses, frozen" },
+      "S6": { "status": "implemented", "agent": 1, "evidence": "Guard uses status_changed? then BROADCAST_STATUSES.include?(status)" },
+      "S7": { "status": "implemented", "agent": 1, "evidence": "JobChannel.broadcast_to with event ai_summary_status_change and correct payload" },
+      "S8": { "status": "implemented", "agent": 1, "evidence": "pending, awaiting_job_criteria, retrying excluded from BROADCAST_STATUSES" },
+      "S9": { "status": "implemented", "agent": 4, "evidence": "New case ai_summary_status_change invalidating both query keys" },
+      "S10": { "status": "implemented", "agent": 6, "evidence": "PlatoTab reads from aiJobApplicationSummaryStatus throughout" },
+      "S11": { "status": "implemented", "agent": 6, "evidence": "useAiJobApplicationSummary uses summaryStatus?.aiJobApplicationSummaryId" },
+      "S12": { "status": "implemented", "agent": 5, "evidence": "New PlatoLoadingState with 4 steps, correct mapping, monotonic Math.max" },
+      "S13": { "status": "implemented", "agent": 7, "evidence": "deriveCalloutStatus implements four-state logic correctly" },
+      "S14": { "status": "implemented", "agent": 7, "evidence": "processing, failed, noCredits removed from type, states, and rendering" },
+      "S15": { "status": "implemented", "agent": 6, "evidence": "JobApplicationActivity checks aiJobApplicationSummaryStatus?.status" },
+      "S16": { "status": "implemented", "agent": 6, "evidence": "current/regenerating -> PlatoGeneratedReviewCallout, else -> PlatoOverviewCallout" },
+      "S17": { "status": "implemented", "agent": 6, "evidence": "Props read from summaryStatus, generatedAgo uses updatedAt" },
+      "S18": { "status": "implemented", "agent": 4, "evidence": "AiJobApplicationSummaryStatus interface with all 7 fields" },
+      "S19": { "status": "implemented", "agent": 4, "evidence": "Status union updated to all 10 enum values" },
+      "S20": { "status": "implemented", "agent": 8, "evidence": "File deleted, no remaining imports in source" },
+      "S21": { "status": "implemented", "agent": 7, "evidence": "Processing icon changed to plato" },
+      "S22": { "status": "implemented", "agent": 7, "evidence": "noResume renders JobApplicationTabEmptyState with CTA, DragAndDropResumeUploader removed" },
+      "S23": { "status": "implemented", "agent": 2, "evidence": "updated_at added to AiJobApplicationSummaryStatusSerializer + Time.current in update_columns" }
+    }
+  }
+}

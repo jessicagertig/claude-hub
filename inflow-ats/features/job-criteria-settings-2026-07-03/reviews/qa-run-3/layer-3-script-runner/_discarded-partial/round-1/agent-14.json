@@ -1,0 +1,26 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 14,
+  "focus_area": "TextractResult#generate_ai_summary_with_credit_flow funnel guard (SPEC 6.2.4) — the shared defensive zero-criteria guard covering every AI-summary entry point (entry point 7).",
+  "files_reviewed": [
+    "app/models/textract_result.rb",
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/models/job_application.rb",
+    "app/models/ai_job_application_summary.rb",
+    "app/services/ai_job_application_action/orchestrate.rb",
+    "app/interactors/find_or_create_ai_job_application_summary_status.rb"
+  ],
+  "verification": {
+    "method": "Live rails runner (RAILS_ENV=test) against real seeded Acme Inc. / 'Senior Engineer' job data. AiJobApplicationAction::Orchestrate#call was globally neutralized (capture-not-execute) so no OpenAI ran; ActiveJob adapter set to :test. Per-case singleton spies recorded whether job.zero_criteria_extraction_failure?, job.extract_job_criteria_if_needed and the scoring entry (Orchestrate#call) were invoked. All created AiJobCriteria / AiJobApplicationSummary / TextractResult rows deleted; mutated status rows restored (leftover=0 confirmed).",
+    "assertions_passed": "17/17",
+    "results": {
+      "case1_zero_criteria_job": "guard `return if job_application.job.zero_criteria_extraction_failure?` fired: extract_job_criteria_if_needed NOT called (guard sits BEFORE it — no silent re-extraction on an unchanged description), Orchestrate NOT called, NO AiJobApplicationSummary created, no credit consumed.",
+      "case2_clean_job": "latest criteria succeeded -> predicate false -> method proceeds PAST the guard: extract_job_criteria_if_needed called exactly once AND the scoring entry (Orchestrate) reached exactly once. Guard blocks ONLY zero-criteria jobs.",
+      "case3_succeeded_summary_precedence": "with a succeeded, non-stale latest AiJobApplicationSummary AND a zero-criteria latest AiJobCriteria, the earlier succeeded-summary return (line 68) fired FIRST: job.zero_criteria_extraction_failure? was NOT even evaluated (zc_calls=0), extract_job_criteria_if_needed NOT called, Orchestrate NOT called, no new summary. Confirms guard order: succeeded-summary return -> zero-criteria return -> extract_job_criteria_if_needed -> scoring.",
+      "case4_job_non_nil": "job_application.job is non-nil for all tested applications (belongs_to :job required); the non-safe-nav `.job` in the guard cannot NoMethodError."
+    }
+  },
+  "findings": []
+}

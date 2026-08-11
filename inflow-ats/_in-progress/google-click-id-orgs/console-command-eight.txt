@@ -1,0 +1,47 @@
+def google_click_ids_for_the_eight_organizations
+  targets = [
+    ['Guggenheim Partners LLC', 'jessica+blocked@polymer.co', 'plan_ats_tier_apollo'],
+    ['SuperNoya LLC', 'jessica+blocked@polymer.co', 'plan_ats_tier_apollo'],
+    ['VT SEVA', 'dallas.youth@vtsworld.org', 'plan_ats_tier_apollo'],
+    ['Lazard', 'jessica+blocked@polymer.co', 'plan_ats_tier_apollo'],
+    ['Alex from Selby Jennings', 'natyralemjalte@gmail.com', 'plan_ats_tier_starter_v2'],
+    ['Niharika tours And Trvel', 'support@niharikatourstravels.com', 'plan_ats_tier_growth'],
+    ['Corporate Web Solutions', 'admin@corporatewebsolutions.in', 'plan_ats_tier_starter'],
+    ['Creative Circle', 'jessica+blocked@polymer.co', 'plan_ats_tier_growth']
+  ]
+  data = targets.map do |name, expected_owner_email, expected_plan|
+    organizations = Organization.where(name: name)
+    organization = organizations.first
+    {
+      searched_name: name,
+      organizations_found: organizations.size,
+      organization_id: organization&.id,
+      organization_name: organization&.name,
+      google_click_id: organization&.google_click_id,
+      owner_email: organization&.owner&.email,
+      owner_email_matches: organization&.owner&.email == expected_owner_email,
+      plan: organization&.plan,
+      plan_matches: organization&.plan == expected_plan,
+      stripe_subscription_status: organization&.stripe_subscription_status,
+      created_at: organization&.created_at
+    }
+  end
+  mismatches = data.reject do |organization_attributes|
+    organization_attributes[:organizations_found] == 1 &&
+      organization_attributes[:owner_email_matches] &&
+      organization_attributes[:plan_matches]
+  end
+  duplicates = data.select { |organization_attributes| organization_attributes[:google_click_id].present? }
+                   .group_by { |organization_attributes| organization_attributes[:google_click_id] }
+                   .select { |_google_click_id, sharing_organizations| sharing_organizations.size > 1 }
+  ap 'The eight organizations', color: { string: :white }
+  puts JSON.pretty_generate(data)
+  ap 'Rows that did not confirm (not found, duplicate name, wrong owner email, or wrong plan)', color: { string: :white }
+  ap mismatches.size, color: { integer: mismatches.size.positive? ? :purple : :white }
+  puts JSON.pretty_generate(mismatches)
+  ap 'Google click IDs shared by more than one of the eight', color: { string: :white }
+  ap duplicates.size, color: { integer: duplicates.size.positive? ? :purple : :white }
+  puts JSON.pretty_generate(duplicates)
+end
+
+google_click_ids_for_the_eight_organizations

@@ -1,0 +1,64 @@
+{
+  "layer": "playwright",
+  "round": 1,
+  "agent_index": 1,
+  "scope": "Basic navigation and Plato tab visibility",
+  "findings": [
+    {
+      "id": "A1-PASS-1",
+      "severity": "pass",
+      "title": "Login succeeds and redirects to /jobs",
+      "detail": "Navigated to /auth, filled email rezu.may@wrkhq.com, clicked 'Continue with email', used dev magic link workaround, page redirected to http://app.lvh.me:5007/jobs as expected."
+    },
+    {
+      "id": "A1-PASS-2",
+      "severity": "pass",
+      "title": "Software Engineer job opens candidate view",
+      "detail": "Clicking the 'Software Engineer' job title navigated to /jobs/17773/stages/124384/applicants/13501/overview, auto-selecting candidate Alonso Parker."
+    },
+    {
+      "id": "A1-PASS-3",
+      "severity": "pass",
+      "title": "Sidebar nav (column 3) shows all expected items including Plato",
+      "detail": "The candidate sidebar navigation contains: Overview, Resume, Messages, Files, Private notes, and Plato — all present. The Plato nav item contains an img element (gradient chip icon) followed by 'Plato' text, matching spec. Link href: /jobs/17773/stages/124384/applicants/13501/ai.",
+      "screenshot": ".playwright-mcp/qa-run6/layer-5/round-1/agent-1/01-sidebar-with-plato-nav.png"
+    },
+    {
+      "id": "A1-PASS-4",
+      "severity": "pass",
+      "title": "Plato nav item is marked active when Plato tab is open",
+      "detail": "After clicking the Plato nav item, the accessibility snapshot shows link 'Plato' [active], confirming the active state is correctly applied."
+    },
+    {
+      "id": "A1-PASS-5",
+      "severity": "pass",
+      "title": "Plato tab loads in column 4 with correct header",
+      "detail": "Column 4 renders with a header bar containing img (gradient chip icon) + 'Plato' text + a close/action button. URL changed to .../ai as expected.",
+      "screenshot": ".playwright-mcp/qa-run6/layer-5/round-1/agent-1/02-plato-tab-empty-state.png"
+    },
+    {
+      "id": "A1-FINDING-1",
+      "severity": "info",
+      "title": "Empty state shown is 'Plato needs a resume', not 'Plato hasn't reviewed this candidate yet'",
+      "detail": "The QA instructions expected the empty state to read 'Plato hasn't reviewed this candidate yet' with a 'Generate summary' button. The actual rendered state is 'Plato needs a resume' / 'Plato reviews a candidate from their resume. Add one to this candidate to get started.' This is because candidate Alonso Parker has no resume attached. This appears to be a correct upstream gating state (resume required before review), not a bug — but it differs from the expected test path. The 'Generate summary' empty state would require a candidate with a resume but no AI summary. No 'Generate summary' button was visible for this candidate.",
+      "screenshot": ".playwright-mcp/qa-run6/layer-5/round-1/agent-1/02-plato-tab-empty-state.png"
+    },
+    {
+      "id": "A1-CONSOLE-1",
+      "severity": "info",
+      "title": "Console errors: pre-existing third-party and Redux warnings, no Plato-specific errors",
+      "detail": "6 console errors observed, all pre-existing/unrelated to Plato: (1-3) history package deprecation warnings from legacy vendor bundle, (4-5) 'Store does not have a valid reducer' from combineReducers in vendor bundle (pre-existing Redux warning), (6) 404 for cdn.heapanalytics.com/js/heap-.js (analytics not configured in dev). 1 warning: @reach/tooltip styles not found (pre-existing). No errors related to AI summary fetching, PlatoTab rendering, or the /ai route."
+    },
+    {
+      "id": "A1-PASS-6",
+      "severity": "pass",
+      "title": "No errors from the Plato tab route or AI summary API calls",
+      "detail": "No 404/500 errors for any /ai_job_application_summaries or /ai/* API endpoints in the console. The Plato tab rendered without JavaScript errors."
+    }
+  ],
+  "summary": "Navigation and Plato tab visibility pass. All 6 sidebar nav items present including Plato with gradient chip icon. Plato tab loads in column 4 with correct header (icon + 'Plato' text). Active state on nav item works. No console errors related to the Plato feature. One informational finding: the empty state shown is the 'no resume' gate ('Plato needs a resume') rather than the 'no summary' gate ('Plato hasn't reviewed this candidate yet' + Generate summary button), because the seeded candidate has no resume. This is expected branching behavior but means the Generate summary button path was not exercised by this candidate.",
+  "screenshots": [
+    "/Users/jessica/claude-hub/inflow-ats/2026-06-11-ai-display/.playwright-mcp/qa-run6/layer-5/round-1/agent-1/01-sidebar-with-plato-nav.png",
+    "/Users/jessica/claude-hub/inflow-ats/2026-06-11-ai-display/.playwright-mcp/qa-run6/layer-5/round-1/agent-1/02-plato-tab-empty-state.png"
+  ]
+}

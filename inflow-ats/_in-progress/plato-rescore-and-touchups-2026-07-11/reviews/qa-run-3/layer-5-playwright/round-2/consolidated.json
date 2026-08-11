@@ -1,0 +1,28 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agents": 15,
+  "high_findings": [],
+  "prior_finding_status": [
+    {
+      "id": "l5-med-001",
+      "status": "VALIDATED as MED",
+      "evidence": "Round-2 agents 6/11/12 reproduced with API payloads: chip absent EXACTLY when score_percentage is 0.0 across 7 reviewed candidates; both re-scored nonzero candidates render chips identically to seeded ones, ruling out any re-score-specific defect."
+    }
+  ],
+  "med_findings": [
+    {
+      "id": "l5-r2-a9-001",
+      "severity": "MED",
+      "title": "Re-scoring a candidate with unchanged resume + criteria can produce a byte-identical headline (provider determinism); the summary row, score row, and analysis are demonstrably new (new id, rescore verified at network level). Observation, not a defect \u2014 a user may perceive 'nothing changed'."
+    }
+  ],
+  "low_findings": [
+    {
+      "id": "l5-r2-a13-001",
+      "severity": "LOW",
+      "title": "Emotion ':first-child potentially unsafe' dev warnings at first PlatoTab mount (dup of round-1 l5-low-003)"
+    }
+  ],
+  "verdict": "CLEAN round 2: 0 HIGH/BLOCKER, no prior HIGH+ findings changed (none existed). Two consecutive clean rounds -> LAYER 5 CONVERGED. No blocking-fix or batch-fix files were written during Layer 5 in this run."
+}

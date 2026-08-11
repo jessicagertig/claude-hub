@@ -1,0 +1,52 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 2,
+  "focus": "SPEC 1.6 (BulkAllStagesAiSummaryResultMailer hiring-team recipients + greeting removal), polymer-mail template diff, SPEC 1.7 (extended mailer spec), RUN 2 + RUN 3 addenda fix verification",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "1.6 complete: to: replaced with job.organization_users.actives mapped to {name,email} array, one email",
+      "1.6 failed: to: replaced with job.organization_users.actives mapped to {name,email} array, one email",
+      "1.6 recipients resolved like JobApplicationMailer#hiring_team_new_job_application (job_application_mailer.rb:19,28-32) WITHOUT receives_new_job_application_emails preference scope (owner-ruled)",
+      "1.6 bare `return unless recipients.any?` guard in both methods, matching analog",
+      "1.6 user_first_name dropped from variables in both methods",
+      "1.6 @user = User.find(user_id) load removed in both methods",
+      "1.6 user_id argument retained in both signatures (no longer read)",
+      "1.6 per-stage BulkJobApplicationAiSummaryResultMailer and its templates untouched",
+      "1.6 polymer-mail: delete <p>Hi {{user_first_name}},</p> from user-bulk-all-stages-ai-summary-complete.mjml and user-bulk-all-stages-ai-summary-failed.mjml, no replacement greeting, no other template changes",
+      "1.7a #complete example calls 6-arg signature with total added",
+      "1.7b #complete subject and tags updated to real mailer strings",
+      "1.7c #failed subject updated to real mailer string",
+      "1.7d multi-recipient falsifiable assertions (active member present, inactive member absent) in both #complete and #failed, replacing single-recipient to-assertion",
+      "1.7e variables asserted NOT to contain user_first_name in both methods",
+      "RUN 2 addendum: fix 970b0f4b2 present, minimal, test falsifiable",
+      "RUN 3 addendum: fix cca9222a5 present, minimal, assertions preserved, matches bulk analog assertion pair"
+    ],
+    "implemented": [
+      "1.6 complete: to: replaced with job.organization_users.actives mapped to {name,email} array, one email",
+      "1.6 failed: to: replaced with job.organization_users.actives mapped to {name,email} array, one email",
+      "1.6 recipients resolved like JobApplicationMailer#hiring_team_new_job_application (job_application_mailer.rb:19,28-32) WITHOUT receives_new_job_application_emails preference scope (owner-ruled)",
+      "1.6 bare `return unless recipients.any?` guard in both methods, matching analog",
+      "1.6 user_first_name dropped from variables in both methods",
+      "1.6 @user = User.find(user_id) load removed in both methods",
+      "1.6 user_id argument retained in both signatures (no longer read)",
+      "1.6 per-stage BulkJobApplicationAiSummaryResultMailer and its templates untouched",
+      "1.6 polymer-mail: delete <p>Hi {{user_first_name}},</p> from user-bulk-all-stages-ai-summary-complete.mjml and user-bulk-all-stages-ai-summary-failed.mjml, no replacement greeting, no other template changes",
+      "1.7a #complete example calls 6-arg signature with total added",
+      "1.7b #complete subject and tags updated to real mailer strings",
+      "1.7c #failed subject updated to real mailer string",
+      "1.7d multi-recipient falsifiable assertions (active member present, inactive member absent) in both #complete and #failed, replacing single-recipient to-assertion",
+      "1.7e variables asserted NOT to contain user_first_name in both methods",
+      "RUN 2 addendum: fix 970b0f4b2 present, minimal, test falsifiable",
+      "RUN 3 addendum: fix cca9222a5 present, minimal, assertions preserved, matches bulk analog assertion pair"
+    ],
+    "missing": []
+  },
+  "verification_notes": {
+    "trace": "feature-diff-run3.patch:644-707 (mailer hunks) -> app/mailers/bulk_all_stages_ai_summary_result_mailer.rb (worktree HEAD, matches patch, git diff HEAD clean) -> app/mailers/job_application_mailer.rb:19-32 (pinned analog) -> app/models/organization_user.rb:48 (scope :actives = where(is_active: true)) -> app/models/job.rb:48 (has_many :organization_users, through: :hiring_team_memberships) -> feature-diff-run3.patch:869-935 + spec/mailers/bulk_all_stages_ai_summary_result_mailer_spec.rb (worktree HEAD) -> spec/support/ai_credits_test_helpers.rb:85-92 (create_credit_test_organization_user) -> db/schema.rb organization_users.is_active default: true -> reviews/polymer-mail-diff.patch + /Users/jessica/wrk/wrk-corp/polymer-mail working tree (git diff --stat: exactly 2 files, 2 deletions; grep user_first_name across both templates: zero hits) -> git show 970b0f4b2 (+1/-1, one spec file) -> git show cca9222a5 (+5/-3, one spec file).",
+    "mailer_matches_analog": "Recipient resolution is analog line 19 minus the owner-ruled receives_new_job_application_emails scope: `.organization_users.actives.includes(:user)` (includes(:user) is in the pinned analog line). Guard `return unless recipients.any?` identical to analog line 21. Name construction `\"#{first_name} #{last_name}\".strip` identical to analog lines 28-32. No EXTRA changes in the mailer hunks: every added/removed line traces to SPEC 1.6.",
+    "falsifiability": "1.7d active-present: reverting to: to the single triggering user makes emails == [owner.email], include(active_member.user.email) fails. 1.7d inactive-absent: dropping .actives includes the is_active:false member, not_to include fails (actives = where(is_active: true); helper users default is_active true; inactive_member.update!(is_active: false) after joining the hiring team via has_many :through shovel). 1.7e: re-adding user_first_name to variables makes not_to have_key fail. 1.7a: removing total_count from variables makes eq(8) fail. have_received(:new) with block fails if the mailer early-returns before Emails::SendTemplateEmail.new; send verified separately on the instance double. No ghost assertions found.",
+    "addenda": "970b0f4b2: single line changed, payload now { irrelevant: 'x' } so the outer params.require(:ai_job_application_summary) passes and only the inner .require(:rescore_requested) raises ActionController::ParameterMissing — falsifiable. cca9222a5: one spec file +5/-3, false-path example only; existing nested expect block preserved verbatim, wrapped in outer expect { }.not_to change { job_application.ai_job_application_summaries.count } — matches the bulk analog's return-existing + no-enqueue + count-invariance assertion pair; nested form per RSpec NegationUnsupportedError on .not_to matcher.and."
+  }
+}

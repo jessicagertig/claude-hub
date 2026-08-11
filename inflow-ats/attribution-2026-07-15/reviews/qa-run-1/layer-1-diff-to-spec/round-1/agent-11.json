@@ -1,0 +1,29 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 11,
+  "focus_area": "frontend SSO + events",
+  "findings": [],
+  "spec_coverage": {
+    "assigned": [
+      "SPEC 5.3 (D7) GoogleSSOButton props + hidden inputs",
+      "SPEC 5.6 (D12) Auth.tsx email_verified effect mechanism",
+      "SPEC 5.7 (D13) OrganizationForm organization_created",
+      "SPEC 5.8 (D16) ProfileForm name-submitted events",
+      "SPEC 5.9 posthog.ts window.logger only-change",
+      "SPEC 7 constraint 7 (no PosthogTrackJob/PosthogIdentifyJob changes)",
+      "SPEC 7 constraint 8 (exact event names)"
+    ],
+    "verified": [
+      "5.3: Props extended with optional utmSource/utmCampaign/utmData/internalRef (GoogleSSOButton.tsx:13-16); utm_source/utm_campaign/internal_ref hidden inputs render only under the analog guard typeof x === \"string\" && x.length > 0 (lines 65-73); utm_data rendered as one hidden input per key with Rails-nested name \"utm_data[\" + key + \"]\" under the same per-key guard (lines 74-80); inputs sit alongside the existing referral/partner inputs in the form posting to /api/v1/users/auth/google_oauth2; no other change to the file",
+      "5.6: showEmailConfirmationBannerIfApplicable mount path unchanged (diff has zero deleted lines in Auth.tsx; only the posthog import and the new effect were added); second React.useEffect with deps [emailConfirmed] (Auth.tsx:23-31); bare-returns unless emailConfirmed is true (line 24); reads id and email from queryString.parse(props.location.search) (line 26); both-or-neither guard id != undefined && email != undefined (line 27) — stale bookmarked /auth?email_confirmed=true URL without id/email fires neither call (both parse to undefined), and a valueless ?id&email (parses to null) also fires neither under the loose != undefined check; identifyUser({ id: Number(id), email }) then trackEvent(\"email_verified\") with no properties (lines 28-29); import from @shared/lib/posthog (line 11); effect fires the pair exactly once per landing (emailConfirmed transitions false->true once, never back; email_confirmed=false leaves state false); AuthRegister.tsx and Login.tsx absent from the diff file list; behavioral trace: getPosthog gates on posthog.__loaded, identifyUser keys on String(user.id), and the setEmailConfirmed-scheduled re-render commits after the initial effect flush containing posthog.init, per the 5.6 timing rationale",
+      "5.7: trackEvent(\"organization_created\") with no properties fires in the createOrganization onSuccess before onComplete(data) (OrganizationForm.tsx:69-72); no identifyUser call added anywhere in the file (grep confirms trackEvent only); no other behavioral change to the file",
+      "5.8: exactly one of trackEvent(\"organization_owner_user_name_submitted\") / trackEvent(\"invited_user_name_submitted\") keyed on props.isNewOwner in an if/else, both plain calls with no properties, before props.onComplete() (ProfileForm.tsx:67-72); OnboardingProfile.tsx absent from the diff file list",
+      "5.9: the only diff to posthog.ts is window.logger in identifyUser's fire path and not-loaded skip path (posthog.ts:27,31); trackEvent's window.logger lines pre-exist at base commit 62dd55867 (verified via git show); explicitly excluded from findings per review instructions",
+      "7.7: grep of the full 62dd55867..8dcc2f06f diff finds zero PosthogTrackJob/PosthogIdentifyJob references — none added, removed, or modified",
+      "7.8: event names match the fixed set exactly — email_verified (Auth.tsx:29), organization_created (OrganizationForm.tsx:71), organization_owner_user_name_submitted (ProfileForm.tsx:68), invited_user_name_submitted (ProfileForm.tsx:70); user_signed_up_client_side appears at exactly the two frontend callsites (AuthForm.tsx:91, SignupForm.tsx:75); all are plain trackEvent calls with no properties",
+      "diff-to-spec: every changed line in the five focus files traces to 5.3/5.6/5.7/5.8/5.9 — no untraceable code"
+    ],
+    "missing": []
+  }
+}

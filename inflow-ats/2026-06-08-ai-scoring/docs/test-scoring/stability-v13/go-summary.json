@@ -1,0 +1,90 @@
+{
+  "job": "go",
+  "runs": 10,
+  "criteria_range": "22-30",
+  "criteria_mean": 26.4,
+  "t1_range": "2-4",
+  "decomp_delta_range": "3-10",
+  "always_present_count": 6,
+  "always_present": [
+    "a good understanding of how a paas product works and what it means to abstract away infrastructure for developers while still giving control",
+    "experience publishing or integrating software or solutions on cloud marketplaces such as aws marketplace, gcp marketplace, or azure marketplace",
+    "experience working with terraform or a similar iac tool to define and manage infrastructure across cloud providers",
+    "hands on experience in one or more major cloud platforms such as aws, gcp, or azure including managing services, network, compute, storage, and security",
+    "solid understanding of kubernetes including cluster design, deployments, autoscaling, service mesh or networking, and stateful vs stateless workloads",
+    "strong programming experience in go (golang) for production backend systems"
+  ],
+  "total_cost": 0.1421,
+  "per_run": [
+    {
+      "run": 1,
+      "count": 28,
+      "t1": 2,
+      "decomp": 8,
+      "cost": 0.014689
+    },
+    {
+      "run": 2,
+      "count": 30,
+      "t1": 2,
+      "decomp": 10,
+      "cost": 0.015633
+    },
+    {
+      "run": 3,
+      "count": 22,
+      "t1": 2,
+      "decomp": 3,
+      "cost": 0.012801
+    },
+    {
+      "run": 4,
+      "count": 27,
+      "t1": 2,
+      "decomp": 7,
+      "cost": 0.013995
+    },
+    {
+      "run": 5,
+      "count": 25,
+      "t1": 2,
+      "decomp": 5,
+      "cost": 0.013955
+    },
+    {
+      "run": 6,
+      "count": 26,
+      "t1": 2,
+      "decomp": 6,
+      "cost": 0.014448
+    },
+    {
+      "run": 7,
+      "count": 24,
+      "t1": 4,
+      "decomp": 6,
+      "cost": 0.013186
+    },
+    {
+      "run": 8,
+      "count": 28,
+      "t1": 2,
+      "decomp": 8,
+      "cost": 0.014556
+    },
+    {
+      "run": 9,
+      "count": 26,
+      "t1": 2,
+      "decomp": 6,
+      "cost": 0.014008
+    },
+    {
+      "run": 10,
+      "count": 28,
+      "t1": 2,
+      "decomp": 8,
+      "cost": 0.014869
+    }
+  ]
+}

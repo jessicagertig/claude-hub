@@ -1,0 +1,9 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 5,
+  "agent_index": 1,
+  "findings": [],
+  "notes": "Ran cleanup + seeded default-user-and-org.json, then /tmp/l3_r1_a1_from_omniauth.rb via `bash -lic 'cd /Users/jessica/wrk/wrk-corp/inflow-ats && test_frr ...'`. Called User.from_omniauth with a FRESH email (sso-fresh-1784595845-531@example.com, confirmed no pre-existing user), created_via:'created_via_signup', partner_source:'WWR', utm_source:'SomeRawValue', utm_campaign:'Camp01', utm_data:{'utm_medium'=>'cpc','utm_term'=>'hiring'}, internal_ref:'ref-99', auth built as OmniAuth::AuthHash(info: email/first_name/last_name). User.count went 1->2 (one new user created, id=39313), returned_user.persisted?=true. After User.find(id).reload the DB values were: utm_source=\"SomeRawValue\" (String, RAW not downcased), utm_campaign=\"Camp01\", internal_ref=\"ref-99\", utm_data={\"utm_term\"=>\"hiring\", \"utm_medium\"=>\"cpc\"} (class=Hash, keys are Strings) which == the expected {'utm_medium'=>'cpc','utm_term'=>'hiring'} (jsonb returned keys in a different order but Hash equality is order-independent and matched), partner_source=\"wwr\" (DOWNCASED — confirms the raw-vs-downcase distinction: partner_source is &.downcase'd inside first_or_create at app/models/user.rb:388 while the four utm values are assigned raw at lines 389-392), created_via=\"created_via_signup\". All 8 assertions PASS. Implementation at app/models/user.rb:379-410 matches spec: attribution values assigned only inside the first_or_create block (creation-time only), utm values raw, partner_source downcased. No defects; empty findings array reflects a full green runtime pass, not a lack of scrutiny.",
+  "file": "app/models/user.rb"
+}

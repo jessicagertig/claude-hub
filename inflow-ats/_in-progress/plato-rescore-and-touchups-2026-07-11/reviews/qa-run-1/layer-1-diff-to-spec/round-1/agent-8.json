@@ -1,0 +1,30 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 8,
+  "focus": "SPEC 2.4 (PlatoTab callsite wiring) + 2.5 (Regenerate button gating) in PlatoTab.tsx",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "2.4: handleGenerate gains REQUIRED boolean param rescoreRequested (no default value)",
+      "2.4: mutation call passes generate({ jobApplicationId: jobApplication.id, rescoreRequested }, ...)",
+      "2.4: three PlatoTabEmptyState onClick paths (bulkQueued, failed, ready/noCredits) are onClick={() => handleGenerate(false)} — arrow-wrapped, no bare onClick={handleGenerate}",
+      "2.4: Regenerate ConfirmationModal onConfirm calls handleGenerate(true) after existing removeModal()",
+      "2.5: header-right condition at :247 changes from `statusValue === \"current\" && fullSummary?.stale` to `statusValue === \"current\"` alone",
+      "2.5: branch internals unchanged — credits check (isLoadingCredits || totalRemaining > 0), Regenerate button vs Buy-credits fallbacks, ConfirmationModal copy",
+      "2.5: Regenerate button loading={buttonLoading} disabled={buttonLoading} pairing intact (known-failure #11)",
+      "No EXTRA/unspecced changes inside PlatoTab.tsx beyond handleGenerate signature/callsites and the :247 condition"
+    ],
+    "implemented": [
+      "2.4: handleGenerate signature is `(rescoreRequested: boolean) => {` at PlatoTab.tsx:73 — required, no default value. MATCH.",
+      "2.4: mutation body at :75 is `{ jobApplicationId: jobApplication.id, rescoreRequested }`. MATCH.",
+      "2.4: bulkQueued onClick={() => handleGenerate(false)} (:192), failed onClick={() => handleGenerate(false)} (:203), ready/noCredits else-branch onClick={() => handleGenerate(false)} (:233) — all three arrow-wrapped. Grep confirms zero bare `onClick={handleGenerate}` remain (the only non-generate onClick is the noResume path `onClick={handleNavigateToResumeTab}`, which is not a handleGenerate callsite). MATCH.",
+      "2.4: ConfirmationModal onConfirm at :106-109 is `() => { removeModal(); handleGenerate(true); }` — handleGenerate(true) after removeModal(). MATCH. Total 4 callsites (3 false + 1 true) verified by grep: definition :73, :108(true), :192/:203/:233(false).",
+      "2.5: PlatoTab.tsx:247 is `} else if (statusValue === \"current\") {` — `&& fullSummary?.stale` removed; Regenerate renders for every current review. MATCH.",
+      "2.5: inside the branch, credits check at :248 `if (isLoadingCredits || totalRemaining > 0)`, Regenerate Button (:250-252), admin PlatoHeaderNavButton nav to billing (:254-265), non-admin PlatoHeaderNavButton -> handleBuyCredits AlertModal (:266-269), and handleClickRegenerate ConfirmationModal copy (:91-118) all unchanged. MATCH.",
+      "2.5: Button at :250 passes `loading={buttonLoading} disabled={buttonLoading}` — pairing intact per known-failure #11. MATCH.",
+      "No EXTRA changes: the feature-diff.patch (f9ec4a80d) PlatoTab.tsx hunks contain exactly 6 edits (14 lines) — handleGenerate signature+mutation, onConfirm handleGenerate(true), three onClick arrow-wraps, and the :247 condition. Nothing beyond 2.4/2.5 scope. MATCH."
+    ],
+    "missing": []
+  }
+}

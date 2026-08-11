@@ -1,0 +1,20 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "agent_index": 15,
+  "focus": "Api::V1::AiJobCriteriaController#create and #show behavior (SPEC.md §5.2) — exact branches, error strings, org-scoped lookup, authorize gates, extract_job_criteria_immediately model effects, in-flight idempotency, serializer payload",
+  "scenarios_run": [
+    "Source read of app/controllers/api/v1/ai_job_criteria_controller.rb — verified line-for-line against SPEC §5.2 code block (identical): show = exists(current_organization.jobs.where(id: params[:job_id]),'no job found'){ authorize job,:show?; render_one(job, Api::V1::JobAiJobCriteriaSerializer) }; create = same exists+authorize job,:update?, then Flipper guard, then blank-description guard, then extract_job_criteria_immediately(requesting_organization_user_id: current_organization_user.id) + render_one",
+    "Confirmed exact Flipper-disabled string 'AI summaries are not enabled for this organization.' rendered via render_general_errors + explicit return; guard is exactly `unless Flipper.enabled?(:AI_APPLICANT_SUMMARY, current_organization)` (controller lines 15-18)",
+    "Confirmed exact blank-description string 'This job needs a description before Plato can extract criteria. Add one in Job setup.' via render_general_errors + explicit return (controller lines 20-23)",
+    "Confirmed render_general_errors => status :unprocessable_entity (422) and render_one => status 200 with Api::V1::JobAiJobCriteriaSerializer (application_controller.rb:40,89); exists => org-scoped where + yields first, else 'no job found' 422 (application_controller.rb:52-60); current_organization_user => current_user.current_organization_user (base_controller.rb:27-29)",
+    "test_frr runtime (isolated in-script org/user/job, queue_adapter :test): happy path extract_job_criteria_immediately(requesting_organization_user_id: owner_ou.id) => one pending AiJobCriteria row created + exactly one ExtractJobCriteriaJob enqueued with args [new_row.id, owner_ou.id]",
+    "test_frr runtime: blank description => NO row, NO enqueue (matches controller blank-description guard intent)",
+    "test_frr runtime: latest row in_progress => no-op (no new row, no enqueue); latest row retrying => no-op — proves POST-while-in-flight idempotency (controller still render_one's current payload => 200 in-flight)",
+    "test_frr runtime: latest row pending => new row IS created (deliberate absence of pending guard); latest zero-criteria failed => new row created (regenerate allowed any state); default kwarg nil => enqueue [id, nil]",
+    "test_frr runtime: Api::V1::JobAiJobCriteriaSerializer.attributes for never-ran (all null), succeeded (criteria/status succeeded/zero_criteria_failure false), and zero-fail-over-older-succeeded (criteria from older succeeded row, status failed, zero_criteria_failure true)",
+    "test_frr runtime: JobPolicy for the controller's authorize calls — admin/owner show?=true update?=true; non-admin hiring-team member show?=true update?=true; outsider org_user (not on team, not admin) show?=false update?=false. job.users returns User records via hiring_team_memberships; pundit user is a User, so record.users.include?(user) is a valid User comparison",
+    "Read-only Flipper.enabled?(:AI_APPLICANT_SUMMARY, org) => true for in-script org (global boolean); global flag never toggled"
+  ],
+  "findings": []
+}

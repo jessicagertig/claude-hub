@@ -1,0 +1,36 @@
+{
+  "layer": "script-runner",
+  "round": 1,
+  "run": 3,
+  "head": "859c85ead",
+  "server": "RAILS_ENV=test, DB=inflow_test, port 5007 (harness-managed, dev stack reaped per authorization)",
+  "agents_dispatched": 15,
+  "agents_reporting": 15,
+  "execution": "sequential (shared server+DB; each agent cleanup+seed at start; queue_adapter=:test forced to avoid inline OpenAI)",
+  "coverage": {
+    "agent-1": "Job#extract_job_criteria_immediately guard matrix (blank/in_progress/retrying no-op; pending & succeeded create; requesting_organization_user_id positional threading) — all 6 cases pass",
+    "agent-2": "Job#extract_job_criteria_if_needed delegation + guard reduction (succeeded no-op; failed/none/zero delegate; in_progress/retrying blocked by _immediately) — 6 cases pass",
+    "agent-3": "AiJobCriteria#zero_criteria_failure? full truth table + constant values — 11 cases pass",
+    "agent-4": "Job#zero_criteria_extraction_failure? latest-row semantics (pending-on-top false; older-succeeded-under-failed-zero true; no-rows nil) — 21 assertions pass",
+    "agent-5": "JobAiJobCriteriaSerializer six-state payload (never-ran null incl zcf exactly nil; succeeded jsonb passthrough; regenerating old-criteria; zero/other failure) — 64 assertions pass",
+    "agent-6": "JobPolicy update?/show? auth gate (admin/hiring-team-member allowed, outsider 403; old gate would reject Taylor, new allows; no cross-org leak; show?≡update? for all real principals) — 13 assertions pass",
+    "agent-7": "AiJobCriteriaController#create via authenticated integration session (happy path row+enqueue with org_user id; blank-desc 422; Flipper-off 422; in-flight no-op; draft job allowed) — 5 scenarios pass",
+    "agent-8": "ExtractJobCriteriaJob#broadcast_completion payloads (succeeded/zero/other-failed/nil-msg; non-terminal no-broadcast; no-user no-broadcast; fresh-read load-bearing) — 9 assertions pass",
+    "agent-9": "ExtractJobCriteriaJob retry_on + exhaustion + StandardError broadcast (retry re-enqueue no-broadcast; exhaustion failed+broadcast no NoMethodError; no-requesting-id no-broadcast; CustomError precedence) — 32 assertions pass",
+    "agent-10": "ValidateAiSummaryGeneration zero-criteria guard (3 messages fail with exact text; non-zero/pending/in-flight-over-zero pass; ordering after has_job_description?) — 9 assertions pass",
+    "agent-11": "ValidateAutoAiSummaryGeneration zero-criteria guard (auto path; same message; ordering after all preconditions) — 11 assertions pass",
+    "agent-12": "QueueBulkAiSummaryJobs zero-criteria guard + optional job input (job+zero → fail! no enqueue no claim rows; job omitted → guard skipped; clean → normal; ordering after credits) — 4 scenarios pass",
+    "agent-13": "BulkGenerateAiSummariesJob#each_iteration claim-row :failed fix (validation-fail → :failed not :processing; zero-criteria batch all :failed; on_complete STILL notifies at runtime; :failed re-queueable; update_columns not in transaction) — 5 assertions pass",
+    "agent-14": "TextractResult#generate_ai_summary_with_credit_flow funnel guard (zero-criteria → returns before Orchestrate AND before extract_job_criteria_if_needed; clean job proceeds; succeeded-summary early-return precedence; .job non-nil) — 17 assertions pass",
+    "agent-15": "END-TO-END review blocking via authenticated HTTP + real GrantAiCredits (manual create → 422 exact message no summary no credit; bulk create → 422 no enqueue no claim rows; control succeeded-criteria proceeds) — capstone pass"
+  },
+  "findings": [],
+  "high_plus_count": 0,
+  "med_count": 0,
+  "low_count": 0,
+  "observations_for_med_report": [
+    {"title": "has_many :ai_job_criteria has no dependent: option", "note": "PRE-EXISTING/out-of-scope: job.ai_job_criteria.delete_all nullifies the NOT NULL job_id. Association predates this feature. Agents used scoped AiJobCriteria.where(job_id:).delete_all. Not a feature defect."},
+    {"title": "setActivePaidSubscription seed grants 0 AI credits", "note": "test-harness/seed characteristic, not feature code — ai_credits_available? is false by default so credits guard precedes the zero-criteria guard; agents granted credits via real GrantAiCredits to isolate."}
+  ],
+  "verdict": "Round 1 COMPLETELY CLEAN — 0 findings of any severity across 15 fresh sequential agents, ~200+ runtime assertions. Every feature behavior exercised against the real RAILS_ENV=test app (models, interactors, jobs, policy, serializer, and full authenticated HTTP for controller create + end-to-end review blocking). No OpenAI was ever called (queue_adapter=:test + extractor/Orchestrate stubs). The core guarantee — a zero-criteria job blocks new AI summary reviews (manual + bulk) with the exact message, no credit consumed — is verified end-to-end through the real request stack. Need one more clean round to converge."
+}

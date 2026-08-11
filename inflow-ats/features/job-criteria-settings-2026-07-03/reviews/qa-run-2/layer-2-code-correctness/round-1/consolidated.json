@@ -1,0 +1,39 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "run": 2,
+  "head": "3e5aaf7c5",
+  "agents_dispatched": 8,
+  "agents_reporting": 8,
+  "note_on_partial": "The interrupted round-1 (only agent-1 written before the prior Fable agent died) was discarded; that file is preserved under _discarded-partial-round/agent-1.json. This is a fully fresh round-1.",
+  "coverage": {
+    "agent-1": "backend controllers + routes + serializer (authorization, params, response contract, N+1)",
+    "agent-2": "backend models (ai_job_criteria, job criteria methods, textract_result trigger)",
+    "agent-3": "backend jobs (extract_job_criteria_job, bulk_generate_ai_summaries_job) + analog structural diff",
+    "agent-4": "interactors + scoring services (zero-criteria guard chain, queue fail-fast)",
+    "agent-5": "frontend data layer + websocket (query hook, payload types, handler, tiers)",
+    "agent-6": "frontend section + sidebar (display-state precedence, isInFlight, button guards)",
+    "agent-7": "frontend modals (view + regenerate confirm; mutation ownership, double-fire, frozen-prop)",
+    "agent-8": "test correctness across all 11 spec files (ghost tests, stubs, falsifiability)"
+  },
+  "findings": [],
+  "high_plus_count": 0,
+  "med_findings": [
+    {
+      "id": "l2-a1-001",
+      "severity": "MED",
+      "title": "GET gated by hiring-team show? but POST regenerate gated by org-wide update_ai_settings?/can_use_ai_credits? — a non-hiring-team org member with hiring_team_ai_credits_control_enabled can trigger a paid regeneration on a job they cannot read",
+      "file": "app/controllers/api/v1/ai_job_criteria_controller.rb",
+      "classification": "do-not-fix: analog-consistent (mirrors BulkAiJobApplicationSummariesController), spec-directed (SPEC §9 explicitly chose this policy, precedent jobs_controller.rb:163). Product-awareness item for Jessica. Independently re-discovered by round-1 agent-1 and the discarded partial agent-1 — same finding."
+    },
+    {
+      "id": "l2-a3-001",
+      "severity": "MED",
+      "title": "Two PRE-EXISTING paths in BulkGenerateAiSummariesJob#each_iteration still leave the claim row :processing (the StandardError catch-all and the job-application-not-found early return), contradicting the file's own header comment",
+      "file": "app/jobs/bulk_generate_ai_summaries_job.rb",
+      "classification": "do-not-fix: pre-existing / out of scope. The feature's ADDED validation-failure path correctly sets :failed (adjudicated flag 6). These other two paths predate the feature and were not in its scope."
+    }
+  ],
+  "low_findings_summary": "12 LOW total across agents (a1:1 serializer unmemoized 4-query read on a single-object endpoint; a2:3 analog-consistent edge observations; a3:2 analog latent-bug/status-overwrite parity notes; a4:1 pre-existing codebase-wide ap debug statements; a6:3 dead history prop / cosmetic isFetching flicker / pre-existing Save-button gap; a7:2 static-list index keys / guarded criteria.filter). None actionable for convergence.",
+  "verdict": "CLEAN round 1 of 2 — 0 HIGH+ across 8 fresh agents. Second consecutive clean round required for Layer 2 convergence."
+}

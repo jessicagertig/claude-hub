@@ -1,0 +1,112 @@
+{
+  "agent": "agent-6",
+  "layer": "layer-2-code-correctness",
+  "round": 1,
+  "files": [
+    "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoOverviewCallout.tsx",
+    "app/javascript/ats/src/views/jobApplications/Plato/PlatoTabEmptyState.tsx"
+  ],
+  "findings": [
+    {
+      "id": "JA-ACTIVITY-RULE9-UNDEFINED",
+      "file": "app/javascript/ats/src/views/jobApplications/Plato/PlatoTabEmptyState.tsx",
+      "lines": "83-84",
+      "severity": "MED",
+      "category": "CLAUDE.md rule violation",
+      "summary": "Deliberate `undefined` set via `|| undefined` (Rule 9 violation)",
+      "detail": "In `resolveStatus`, lines 83-84 set `buttonLabel: config.buttonLabel || undefined` and `buttonIcon: config.buttonIcon || undefined`. Rule 9 says never deliberately set undefined. The config values are already `string | null`, so when null they become `undefined` via the `|| undefined` fallback. Should use `config.buttonLabel || ''` or just pass the value directly (`config.buttonLabel`). Since `JobApplicationTabEmptyState` checks `props.buttonLabel` truthily before rendering the button, passing `null` through would work identically."
+    },
+    {
+      "id": "JA-ACTIVITY-SCORE-FALLBACK",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+      "lines": "403",
+      "severity": "MED",
+      "category": "correctness",
+      "summary": "`scorePct` fallback `|| 0` silently fabricates a 0% score when `scorePercentage` is null",
+      "detail": "Line 403: `scorePct={jobApplication.aiJobApplicationSummaryStatus?.scorePercentage || 0}`. The type declares `scorePercentage: number | null`. When the status is `current`, `scorePercentage` should always be populated, so null would indicate a data bug. Falling back to 0 masks it and shows 'Poor fit' (band max 20, pct 0 matches 'poor'). Note also that `|| 0` is a no-op for the value 0 itself (0 || 0 === 0), so it does not cause a false-zero bug. The concern is that a null score in a `current` record would silently display as 'Poor fit' rather than surfacing the anomaly. This is a judgment call -- acceptable if the team prefers graceful degradation, but worth noting."
+    },
+    {
+      "id": "JA-ACTIVITY-DISTANCE-NULL",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+      "lines": "404",
+      "severity": "LOW",
+      "category": "correctness",
+      "summary": "`distanceInWords` called with potentially null `updatedAt`",
+      "detail": "Line 404: `generatedAgo={distanceInWords(jobApplication.aiJobApplicationSummaryStatus?.updatedAt)}`. The type declares `updatedAt: string | null`. If `aiJobApplicationSummaryStatus` is null, optional chaining yields `undefined`; if the record exists but `updatedAt` is null, the value is null. `distanceInWords` calls `formatDistanceToNow(new Date(null))` which returns `'over 56 years ago'` (epoch). `new Date(undefined)` returns Invalid Date, and `formatDistanceToNow` would throw. However, this path only runs when status is `current` or `regenerating`, which means the status record exists, and `updatedAt` should always be populated for a record that reached either of those statuses. Risk is very low in practice."
+    },
+    {
+      "id": "JA-ACTIVITY-CONDITIONAL-LOGIC-OK",
+      "file": "app/javascript/ats/src/views/jobApplications/JobApplicationActivity.tsx",
+      "lines": "399-413",
+      "severity": "LOW",
+      "category": "verification",
+      "summary": "Conditional logic matches spec (verified correct)",
+      "detail": "Line 399: `status === 'current' || status === 'regenerating'` renders PlatoGeneratedReviewCallout; else renders PlatoOverviewCallout. This matches the spec: 'current or regenerating -> PlatoGeneratedReviewCallout; Everything else -> PlatoOverviewCallout.' The optional chaining `jobApplication.aiJobApplicationSummaryStatus?.status` correctly handles null status records -- the condition evaluates false and falls through to PlatoOverviewCallout, which then derives the appropriate callout state. Correct."
+    },
+    {
+      "id": "PO-CALLOUT-DERIVE-FALLTHROUGH",
+      "file": "app/javascript/ats/src/views/jobApplications/Plato/PlatoOverviewCallout.tsx",
+      "lines": "35-41",
+      "severity": "LOW",
+      "category": "correctness",
+      "summary": "deriveCalloutStatus fallthrough `return 'ask'` handles unexpected status values gracefully",
+      "detail": "The function handles: `current` -> null, `regenerating` -> null, `none`/falsy + hasResume -> 'ask', `none`/falsy + !hasResume -> 'noResume', fallthrough -> 'ask'. The fallthrough on line 40 triggers when `summaryStatusValue` is some unexpected string (not 'current', 'regenerating', or 'none'/falsy). Since the type only allows 'none' | 'current' | 'regenerating' | null | undefined, this is a safe defensive default. The parent already guards against `current`/`regenerating` reaching this component (they render PlatoGeneratedReviewCallout instead), so the null-return checks on lines 36-37 are redundant but harmless defense-in-depth."
+    },
+    {
+      "id": "PO-CALLOUT-NULL-RETURN",
+      "file": "app/javascript/ats/src/views/jobApplications/Plato/PlatoOverviewCallout.tsx",
+      "lines": "36-37,49-50",
+      "severity": "LOW",
+      "category": "verification",
+      "summary": "Component correctly returns null for `current` and `regenerating` (verified correct)",
+      "detail": "Lines 36-37 in deriveCalloutStatus return null for 'current' and 'regenerating'. Line 49-50 checks `if (status == null) return null`. This means PlatoOverviewCallout renders nothing for those statuses. In practice, the parent (JobApplicationActivity) never passes these statuses to PlatoOverviewCallout (it renders PlatoGeneratedReviewCallout instead), so this is pure defense-in-depth. Correct."
+    },
+    {
+      "id": "PO-CALLOUT-UNDEFINED-INPUT",
+      "file": "app/javascript/ats/src/views/jobApplications/Plato/PlatoOverviewCallout.tsx",
+      "lines": "38",
+      "severity": "LOW",
+      "category": "verification",
+      "summary": "`summaryStatusValue === undefined` handled correctly via falsy check",
+      "detail": "Line 38: `!summaryStatusValue` is true for both `undefined` and `null`. When `aiJobApplicationSummaryStatus` is null on the job application, the parent passes `undefined` via optional chaining (`jobApplication.aiJobApplicationSummaryStatus?.status`). This correctly enters the `!summaryStatusValue` branch. When the status record exists with `status: 'none'`, the explicit `=== 'none'` check catches it. Both paths work correctly."
+    },
+    {
+      "id": "PLATO-EMPTY-CREDITS-EMPTY-STRING",
+      "file": "app/javascript/ats/src/views/jobApplications/Plato/PlatoTabEmptyState.tsx",
+      "lines": "74",
+      "severity": "LOW",
+      "category": "correctness",
+      "summary": "Credits remaining renders as empty string when undefined",
+      "detail": "Line 74: `const credits = opts.creditsRemaining !== undefined ? opts.creditsRemaining : ''`. When `creditsRemaining` is not passed, the footnote reads 'Uses 1 credit ·  remaining' (with empty string where the count should be). This is a minor display glitch. However, the parent (PlatoTab) should always pass `creditsRemaining`, so this is a defensive fallback that produces slightly odd text rather than crashing."
+    },
+    {
+      "id": "PLATO-EMPTY-NORESUME-VERIFIED",
+      "file": "app/javascript/ats/src/views/jobApplications/Plato/PlatoTabEmptyState.tsx",
+      "lines": "100-111",
+      "severity": "LOW",
+      "category": "verification",
+      "summary": "noResume branch renders correctly with correct props (verified)",
+      "detail": "The noResume branch on lines 100-111 renders `JobApplicationTabEmptyState` with `icon='plato'`, `title='Plato needs a resume'`, an appropriate message about uploading on the resume tab, `buttonLabel='Go to resume tab'`, `onClick`, and `roomy`. All props match `JobApplicationTabEmptyStateProps`. The spec says 'noResume: stop rendering DragAndDropResumeUploader, use JobApplicationTabEmptyState with CTA to navigate to resume tab' -- this implementation matches. The `icon: 'plato'` matches the spec requirement 'All states use Plato chip icon'. Correct."
+    },
+    {
+      "id": "PLATO-EMPTY-RESOLVE-STATUS",
+      "file": "app/javascript/ats/src/views/jobApplications/Plato/PlatoTabEmptyState.tsx",
+      "lines": "61-97",
+      "severity": "LOW",
+      "category": "verification",
+      "summary": "resolveStatus handles all non-noResume status values correctly (verified)",
+      "detail": "resolveStatus accepts `Exclude<JobApplicationTabEmptyStateStatus, 'noResume'>` which is 'ready' | 'processing' | 'failed' | 'noCredits'. All four are keys in PLATO_EMPTY_STATES. Each maps to a valid config. The noCredits branch conditionally adds `buttonLink` (admin) or `buttonDisabled` (member). The footnote template replacement works for ready and failed. Processing has null footnote/buttonLabel so the button and footnote don't render. Correct."
+    },
+    {
+      "id": "PLATO-EMPTY-NOCREDITS-MESSAGE",
+      "file": "app/javascript/ats/src/views/jobApplications/Plato/PlatoTabEmptyState.tsx",
+      "lines": "51",
+      "severity": "LOW",
+      "category": "correctness",
+      "summary": "noCredits config has empty string message that gets overridden",
+      "detail": "Line 51: `message: ''` in the noCredits config. Lines 68-69 override it with the admin/member-specific message. The empty string in the config is never rendered. Not a bug, just a slightly confusing pattern -- the config message is dead for this status. No action needed."
+    }
+  ],
+  "summary": "Reviewed 3 files across JobApplicationActivity.tsx Plato section, PlatoOverviewCallout.tsx, and PlatoTabEmptyState.tsx. Found 1 CLAUDE.md Rule 9 violation (MED: deliberate `|| undefined` in PlatoTabEmptyState resolveStatus). Found 1 MED correctness issue (score fallback `|| 0` fabricates a display value for null scorePercentage). The core conditional logic in JobApplicationActivity (current/regenerating -> PlatoGeneratedReviewCallout, else -> PlatoOverviewCallout) is correct per spec. PlatoOverviewCallout's deriveCalloutStatus handles all input permutations correctly including undefined. No `??` operator violations found. No string quote violations found. Theme access patterns use `const t: any = props.theme` correctly."
+}

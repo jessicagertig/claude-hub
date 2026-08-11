@@ -1,0 +1,46 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 7,
+  "focus_area": "Frontend view components — SPEC §8.2–§8.5, §10. Files: JobSetupAiSettings.tsx, components/JobCriteriaSection.tsx, JobCriteriaViewModal.tsx, RegenerateJobCriteriaConfirmModal.tsx, jobCriteriaTiers.ts.",
+  "findings": [
+    {
+      "id": "l1-a7-001",
+      "type": "VIOLATION",
+      "title": "Dead `history` prop threaded into JobCriteriaSection but never used (vestige of the superseded props.history.push navigation)",
+      "spec_requirement": "SPEC §8.3 originally specified intro-link navigation 'via props.history.push', but the adjudicated qa-run-1 fix batch item 3 superseded that with a react-router `<Link to={...}>`. No current spec/DECISIONS/adjudicated ruling calls for threading `history` into the section component. Per BRIEF Layer-1 rule: 'Diff-to-spec: every change in your assigned area must trace to SPEC / DECISIONS / Reviewed Plan / an adjudicated ruling. Untraceable = finding.'",
+      "evidence": "components/JobCriteriaSection.tsx:22 declares `history: any` in the Props interface, and JobSetupAiSettings.tsx:107 passes `history={props.history}` into `<JobCriteriaSection job={passedJob} history={props.history} />`. The component destructures only `{ job }` (JobCriteriaSection.tsx:25) and never reads `history` anywhere (grep of the file finds `history` only at line 22, the type declaration). Navigation is done entirely by `<Link to={`/jobs/${job.id}/setup/description`}>` (JobCriteriaSection.tsx:40), which does not need `history`. The prop and its threading are dead code left over from the pre-adjudication `props.history.push` approach.",
+      "recommendation": "Remove the unused `history: any` field from the Props interface (JobCriteriaSection.tsx:22) and drop `history={props.history}` from the parent call site (JobSetupAiSettings.tsx:107). Minimal, behavior-preserving cleanup of a superseded-spec remnant."
+    }
+  ],
+  "spec_coverage": {
+    "requirements_checked": [
+      "SPEC §8.2 row 0 (isLoading → LoadingIndicator label=\"Loading...\" inside FormSection) — MATCH (JobCriteriaSection.tsx:44-50)",
+      "SPEC §8.2 conventions-fix #4 query error state (isError → failure-style EmptyState, title 'Could not load job criteria', message 'Something went wrong while loading job criteria. Refresh the page to try again.', NO action buttons, priority after isLoading before payload states) — MATCH (JobCriteriaSection.tsx:52-62, early return, exact copy)",
+      "SPEC §8.2 row 1 (in-flight pending/in_progress/retrying → card-or-neverExtracted underlying + button loading) — MATCH (JobCriteriaSection.tsx:66-74; displayState = criteria ? card : neverExtracted)",
+      "SPEC §8.2 row 2 (failed && zeroCriteriaFailure → alert-triangle 'No criteria found' exact message) — MATCH (JobCriteriaSection.tsx:75-76, 121-127)",
+      "SPEC §8.2 row 3 (failed other → alert-triangle 'Criteria generation failed' exact message) — MATCH (JobCriteriaSection.tsx:77-78, 129-135)",
+      "SPEC §8.2 row 4 (criteria present → card + count rail; View + Regenerate) — MATCH (JobCriteriaSection.tsx:79-80, 89-119, 146-167)",
+      "SPEC §8.2 row 5 (status null never-ran → file-text 'No job criteria have been generated' exact message) — MATCH (JobCriteriaSection.tsx:81-82, 137-143)",
+      "SPEC §8.2 adjudicated #5 precedence (failed rows 2/3 beat older-succeeded card row 4) — MATCH (failed branches evaluated before `else if (criteria)`)",
+      "SPEC §8.2 button label (Generate only in state 5 / state 1-over-5; else Regenerate) — MATCH (JobCriteriaSection.tsx:85 displayState===neverExtracted ? Generate : Regenerate)",
+      "SPEC §8.2 action rows OUTSIDE EmptyState, section-level, below card/emptystate — MATCH (Styled.ActionRow renders after all state blocks; EmptyState receives no button/action prop)",
+      "SPEC §8.2 EmptyState standard variant (NOT roomy/borderless) — MATCH (only icon/title/message passed; verified EmptyState.tsx props)",
+      "SPEC §8.3 JobSetupAiSettings existing content untouched + JobCriteriaSection added + sidebar tier glossary via SettingsContainer sidebar prop — MATCH",
+      "SPEC §8.3 section intro copy (exact) + FormSection `intro` prop usage — MATCH (JobCriteriaSection.tsx:34-42, 46, 54, 88; FormSection renders intro at index.js:36)",
+      "SPEC §8.3 criteria card (PlatoChip size=36 radius=18, title, distanceInWords(extractedAt) description, count rail Core/Preferred/Bonus, Bonus row only when count>0, tabular figures, max-width 560px) — MATCH (JobCriteriaSection.tsx:89-119, 204-284; tier_3 count===0 returns null)",
+      "SPEC §8.3 tier grouping via shared jobCriteriaTiers constant (tier_1/tier_2/tier_3 keys, Core/Preferred/Bonus, check-circle/plus-circle/star) — MATCH (jobCriteriaTiers.ts)",
+      "SPEC §8.3 sidebar glossary leads verbatim from DECISIONS — MATCH (jobCriteriaTiers.ts glossaryLead for all three tiers)",
+      "SPEC §8.4 view modal (FullModal custom header via omitted headerTitleText, h2 'Job criteria' + x close button 28x28/16px, description paragraph exact copy, tier-grouped bordered list, empty tiers omitted, tiers-after-first top border+margin, NO tier hints, read-only, props {criteria,onCancel}) — MATCH (JobCriteriaViewModal.tsx)",
+      "SPEC §8.5 confirm modal (CenterModal headerTitleText='Regenerate job criteria?', owns useRegenerateAiJobCriteria, primary button loading={isLoading} AND disabled={isLoading} — pipeline rule 11, exact lead + statement-box copy, refresh-cw icon, error toast error?.data?.errors?.general?.[0] || fallback delay 10000, dismissModalWithAnimation(() => onCancel) matching analog, manual variant only) — MATCH (RegenerateJobCriteriaConfirmModal.tsx)",
+      "SPEC §10 Decided-OUT: no guard modals, no after-description-update variant, no tier hints, no internal_job_criteria references — MATCH (grep confirmed none)",
+      "SPEC §10 copy rules: no em dashes (grep clean in scope), sentence case, 'extract' not 'read', static button labels — MATCH",
+      "SPEC §10 pipeline rule 12 (separate styled components per variant, no conditional variant props) — MATCH (no custom boolean props on any styled element; view modal uses :not(:first-of-type) CSS, not props)",
+      "SPEC §10 pipeline rule 13 (no fabricated || [] / ?? fallbacks) — MATCH (criteria guarded by displayState==='card' && criteria; optional chaining only)",
+      "SPEC §10 visual specs (poly theme tokens exist in shared/styles/lightTheme.ts+darkTheme.ts; rounded.sm/md tokens per conventions-fix #5; text.medium per conventions-fix #7; raw px only for design-mandated non-token sizes) — MATCH"
+    ],
+    "implemented": 24,
+    "missing": 0,
+    "notes": "All assigned §8.2–§8.5 display states, copy strings, modals, styled-component variant separation, decided-OUT exclusions, and copy rules match the spec/DECISIONS/adjudicated rulings exactly. All poly.color tokens (cardCanvas, cardBorder, loudText, secondaryText, primaryText, subtleHover, canvas, border) verified present in shared/styles/lightTheme.ts (core rule 2 satisfied — the 'poly' theme namespace is the codebase's existing convention, used pre-existing in NavItem/JobApplicationSidebar/FormSection). The `dismissModalWithAnimation(() => onCancel)` form was verified to match the BulkGenerateAiSummariesConfirmModal analog verbatim (line 90) and is the spec-cited pattern — not a finding. The intro `<Link>` (not props.history.push) is the adjudicated qa-run-1 fix batch item 3 — not a finding. Only one deviation found: the vestigial unused `history` prop threaded into JobCriteriaSection (finding l1-a7-001), a leftover of the superseded props.history.push navigation. It is dead code with no runtime effect but does not trace to the current spec."
+  }
+}

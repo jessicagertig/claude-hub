@@ -1,0 +1,22 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 3,
+  "focus": "SPEC 1.5 — the three defect fixes in RunPlatoReviewAllModal.tsx (all-stages modal), plus cross-check of the 1.6 mailer recipient change that makes the retained Statement first sentence true",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "1.5-a checked-state body first sentence: rescore checked -> '{candidatesCount} candidate(s) in this job will be reviewed, including candidates that already have a review.' with NO leading 'The' (owner-ruled divergence), credit sentence unchanged, unchecked copy unchanged",
+      "1.5-b zero-state (unchecked, candidatesToScoreCount === 0): body '0 candidates in this job don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.' numeric 0, no credit sentence, button stays disabled via existing candidatesToScoreCount === 0 condition",
+      "1.5-c Statement second sentence -> 'Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' first sentence 'The hiring team gets an email with the final count when it's done.' STAYS (made true by 1.6)",
+      "1.5-x no other behavior in this modal changed (button loading/disabled pairing, hooks, trackEvent names/payloads)"
+    ],
+    "implemented": [
+      "1.5-a IMPLEMENTED string-exact. RunPlatoReviewAllModal.tsx:136-140 renders 'rescore ? ( {candidatesCount} candidate{s} in this job will be reviewed, including candidates that already have a review. {creditSentence} )'. No leading 'The'. Singular/plural via {candidatesCount === 1 ? '' : 's'}. Credit sentence content byte-identical to the pre-existing inline version (verified against the diff removed lines) — it was extracted verbatim into the shared const creditSentence (:115-131) purely as the reuse mechanism for the new checked branch; rendered output for the unchecked-processable branch is unchanged. Unchecked-processable branch preserved at :147-149 with identical count/credit copy.",
+      "1.5-b IMPLEMENTED string-exact. RunPlatoReviewAllModal.tsx:141-145 renders the zero-state with literal numeric 0 ('0 candidates in this job don't have a Plato review yet. Unless you select re-review below, no candidates will be reviewed.'), no creditSentence in that branch. Precedence correct: rescore branch is tested first, so this branch only fires when !rescore. Submit button disabled unchanged at :98 'disabled={isLoading || candidatesToScoreCount === 0}'.",
+      "1.5-c IMPLEMENTED string-exact. RunPlatoReviewAllModal.tsx:166-170 Statement span reads 'The hiring team gets an email with the final count when it's done. Candidates without a resume, one that's still processing, or those already part of another bulk operation are skipped.' Diff replaced old second sentence ('Candidates without a resume, or one that's still processing, are skipped.') with the spec text; first sentence retained. CROSS-CHECK PASSED: the 1.6 mailer change landed in bulk_all_stages_ai_summary_result_mailer.rb — in both complete and failed, recipients = '@job.organization_users.actives.includes(:user)' mapped to the full to_recipients array (whole active hiring team), with 'return unless recipients.any?' guard and user_first_name / User.find(user_id) removed. This makes the retained 'The hiring team gets an email...' sentence true.",
+      "1.5-x IMPLEMENTED. Diff touches exactly 2 hunks in this file (body restructure + creditSentence extraction; Statement second sentence). Button props unchanged (:97-98 loading={isLoading} paired with disabled={isLoading || candidatesToScoreCount === 0} — known-failure #11 pairing intact). Hooks unchanged. trackEvent('run_plato_review_all_confirmed', { job_id: jobId, candidates_count: candidatesCount }) at :64 unchanged (outside both hunks). The only structural change beyond the 3 fixes is the creditSentence const extraction, which is the necessary mechanism for fix 1 (reusing the unchanged credit sentence across the checked and unchecked-processable branches) and produces byte-identical rendered output — traceable to fix 1, not an unspecced behavior change."
+    ],
+    "missing": []
+  }
+}

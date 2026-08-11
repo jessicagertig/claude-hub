@@ -1,0 +1,151 @@
+{
+  "meta": {
+    "batch": 17,
+    "criteria_prompt_version": 9,
+    "job_id": 26486,
+    "title": "Process Engineer",
+    "organization": "Unemit",
+    "cost": 0.000696
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Join us in saving the climate by unemitting CO2; hundreds of gigatons of it!"
+      },
+      {
+        "heading": "About Unemit",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "To avoid climate disaster, emissions reductions alone will no longer be enough; Carbon Dioxide Removal (CDR) from the atmosphere is also needed. At Unemit, we’re developing a novel type of Direct Air Capture (DAC) technology to pull hundreds of gigatons of CO2 out of the atmosphere this century. We use a chemical sorbent to capture the CO2 in air contactors, and then transport the sorbent to a central regeneration system where the CO2 is extracted using low/medium-grade heat from concentrated solar. The process is highly effective, cheap, and sustainable.\n\nUnemit recently received a large grant from the Breakthrough Energy Fellows program, and we’re rapidly growing our team to commercialize this promising new technology. Breakthrough Energy was founded by Bill Gates and supports companies tackling the hardest and most impactful ways to mitigate climate change."
+      },
+      {
+        "heading": "The Role",
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "We’re building our core R&D team, seeking a hands-on process engineer to join us on our journey. You’d own design and prototyping of our solid-sorbent regeneration system, as well as overall thermal and chemical process design, working closely with the rest of the team to demonstrate the full DAC system. Our ideal candidate is team-oriented, resourceful, curious, creative, and excited to play an instrumental role on a small team trying to make a difference in the world."
+      },
+      {
+        "heading": "Responsibilities include:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Designing, prototyping, and testing the solid-sorbent regeneration system (applies low/medium-grade heat)\nWorking with the rest of the R&D team to brainstorm and ensure a well-designed full DAC system (including lots of whiteboarding!)\nProcess-modeling the integrated DAC system\nWorking with engineering services and suppliers to build a deployable system"
+      },
+      {
+        "heading": "Qualifications",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "The team is what makes a great startup, and to save the climate we’ll have to roll with the waves, inject creative brilliance, get stuff done, look out for each other, and enjoy the journey. If that sounds like an environment where you’d thrive then please apply to join us."
+      },
+      {
+        "heading": "Requirements for this role:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "B.S. and/or M.S. in chemical engineering or a related field; a plus to have a PhD and/or five years of relevant work experience\nTrack record of designing and prototyping thermochemical systems, and experience with process simulation\nPassion for what you do, driving self-starting and strong work ethic\nCreativity paired with attention to detail\nGood communication skills, both written and verbal\nInterpersonal skills facilitating effective and enjoyable working relationships\nA positive attitude and desire to make a difference"
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "We look forward to hearing from you!"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Designing, prototyping, and testing the solid-sorbent regeneration system (applies low/medium-grade heat)",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Designing, prototyping, and testing the solid-sorbent regeneration system (applies low/medium-grade heat)"
+      },
+      {
+        "text": "Working with the rest of the R&D team to brainstorm and ensure a well-designed full DAC system (including lots of whiteboarding!)",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Working with the rest of the R&D team to brainstorm and ensure a well-designed full DAC system (including lots of whiteboarding!)"
+      },
+      {
+        "text": "Process-modeling the integrated DAC system",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Process-modeling the integrated DAC system"
+      },
+      {
+        "text": "Working with engineering services and suppliers to build a deployable system",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Working with engineering services and suppliers to build a deployable system"
+      },
+      {
+        "text": "B.S. and/or M.S. in chemical engineering or a related field",
+        "tier": "tier_1",
+        "tier_reasoning": "default — section heading indicates 'Requirements'",
+        "binary": true,
+        "source_text": "B.S. and/or M.S. in chemical engineering or a related field; a plus to have a PhD and/or five years of relevant work experience"
+      },
+      {
+        "text": "PhD and/or five years of relevant work experience",
+        "tier": "tier_2",
+        "tier_reasoning": "preferred signal word: 'a plus'",
+        "binary": false,
+        "source_text": "B.S. and/or M.S. in chemical engineering or a related field; a plus to have a PhD and/or five years of relevant work experience"
+      },
+      {
+        "text": "Track record of designing and prototyping thermochemical systems",
+        "tier": "tier_1",
+        "tier_reasoning": "tier_1 signal: 'track record of'",
+        "binary": false,
+        "source_text": "Track record of designing and prototyping thermochemical systems, and experience with process simulation"
+      },
+      {
+        "text": "Experience with process simulation",
+        "tier": "tier_2",
+        "tier_reasoning": "tier_2 signal: 'experience with'",
+        "binary": false,
+        "source_text": "Track record of designing and prototyping thermochemical systems, and experience with process simulation"
+      },
+      {
+        "text": "Passion for what you do, driving self-starting and strong work ethic",
+        "tier": "tier_2",
+        "tier_reasoning": "context-dependent: 'passion for' related to work ethic",
+        "binary": false,
+        "source_text": "Passion for what you do, driving self-starting and strong work ethic"
+      },
+      {
+        "text": "Creativity paired with attention to detail",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Creativity paired with attention to detail"
+      },
+      {
+        "text": "Good communication skills, both written and verbal",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Good communication skills, both written and verbal"
+      },
+      {
+        "text": "Interpersonal skills facilitating effective and enjoyable working relationships",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Interpersonal skills facilitating effective and enjoyable working relationships"
+      },
+      {
+        "text": "A positive attitude and desire to make a difference",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "A positive attitude and desire to make a difference"
+      }
+    ]
+  }
+}

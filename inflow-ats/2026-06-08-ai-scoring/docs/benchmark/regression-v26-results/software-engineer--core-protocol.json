@@ -1,0 +1,274 @@
+{
+  "meta": {
+    "version": 26,
+    "name": "software-engineer--core-protocol",
+    "kind": "problematic",
+    "title": "Software Engineer | Core Protocol",
+    "description": "ALL_DECOMPOSED: 39/39, text rewriting",
+    "cost": 0.00559
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Berachain is a high-performance, EVM (Ethereum Virtual Machine) compatible, Layer 1 blockchain built on the Cosmos SDK. We're a young, world-class team of experts in computer science, type theory, economic game theory, risk management and enterprise development. Our team combines traditional experience in building and scaling teams at technology companies like Apple, Coinbase, IBM and Y-Combinator with crypto native experience from some of DeFi’s most impactful protocols.  We're all highly passionate about Web3, Toybox and building infrastructure to bring decentralized finance to the masses. Our core engineering team is based in Toronto. Here at Berachain, you’ll be joining a world-class team of experienced founders, engineers and researchers passionate about designing sustainable economic and blockchain systems. We’re well funded by a group of leading digital asset investors, hedge funds, centralized exchange venture arms and strategic angels.  We are looking for self-starters and mission driven individuals to join us as we build the future of decentralized finance. The ideal candidate for this role takes initiative and ownership over their work, thrives in a fast-paced and highly collaborative in-person environment, and is capable of rapidly adapting to evolving needs as required."
+      },
+      {
+        "heading": "Requirements:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "3+ years experience in software development and relevant experience in blockchain technologies.\nDegree in Computer Science, Computer Engineering, Software Engineering or related field\nSignificant experience in writing Golang programs with a good understanding of the best practices, concurrency primitives, packages go/* and reflection; and ability to write production-quality code.\nExperience with the Cosmos SDK, Tendermint etc.\nFamiliarity with blockchain technologies and concepts (smart contracts, governance, wallet transactions, Cosmos SDK, etc).\nDeep understanding of computer science fundamentals including networking, storage, operating system, data structures, transpilers/compilers, etc.;\nExperience in an agile development environment;\nKnowledge of UNIX network stack (TCP / IP, HTTP);\nExperience with gRPC;\nExperience with git.\nWe especially encourage engineers that fulfill some of the above with no prior experience of working on blockchain technologies."
+      },
+      {
+        "heading": "Nice to have:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Experience in creating microservices for such systems as Kubernetes, Ansible, Docker, Terraform;\nInterest in the topics of proof-of-stake, consensus algorithms, decentralized exchanges, public-key cryptography, etc.;\nExperience in setting up and working with CI systems;\nPast contributions to the Cosmos-SDK and/or Tendermint Core\nYou are passionate about blockchain, have used DeFi Apps and believe in the opportunity of decentralization and blockchains to change how the financial world works today."
+      },
+      {
+        "heading": "Job Responsibilities:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Write high quality and well tested Golang code, following the latest design and development patterns.\nParticipating in the design, development, and implementation of the core Berachain economic system.\nExplore Cosmos SDK projects and other projects that will be built on the cosmos Write documentation, design flow diagrams and review\nCreating tools for load testing and protocol benchmarking.\nResearch, design, scope and estimate what you need to do\nConstantly improve yourself by keeping up to date with the latest technologies trends."
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "3+ years experience in software development",
+        "tier": "tier_1",
+        "tier_reasoning": "default — no signal word (Section 1 header is 'Requirements:')",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "3+ years experience in software development and relevant experience in blockchain technologies."
+      },
+      {
+        "text": "Relevant experience in blockchain technologies",
+        "tier": "tier_1",
+        "tier_reasoning": "default — no signal word (Section 1 header is 'Requirements:')",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "3+ years experience in software development and relevant experience in blockchain technologies."
+      },
+      {
+        "text": "Degree in Computer Science, Computer Engineering, Software Engineering or related field",
+        "tier": "tier_1",
+        "tier_reasoning": "default — no signal word (Section 1 header is 'Requirements:')",
+        "binary": true,
+        "duplicate": false,
+        "source_text": "Degree in Computer Science, Computer Engineering, Software Engineering or related field"
+      },
+      {
+        "text": "Significant experience in writing Golang programs",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"significant\"",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Significant experience in writing Golang programs with a good understanding of the best practices, concurrency primitives, packages go/* and reflection; and ability to write production-quality code."
+      },
+      {
+        "text": "Good understanding of the best practices, concurrency primitives, packages go/* and reflection",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"good understanding\"",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Significant experience in writing Golang programs with a good understanding of the best practices, concurrency primitives, packages go/* and reflection; and ability to write production-quality code."
+      },
+      {
+        "text": "Ability to write production-quality code",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"ability to\"",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Significant experience in writing Golang programs with a good understanding of the best practices, concurrency primitives, packages go/* and reflection; and ability to write production-quality code."
+      },
+      {
+        "text": "Experience with the Cosmos SDK, Tendermint etc.",
+        "tier": "tier_1",
+        "tier_reasoning": "default — no signal word (Section 1 header is 'Requirements:')",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Experience with the Cosmos SDK, Tendermint etc."
+      },
+      {
+        "text": "Familiarity with blockchain technologies and concepts",
+        "tier": "tier_1",
+        "tier_reasoning": "default — no signal word (Section 1 header is 'Requirements:')",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Familiarity with blockchain technologies and concepts (smart contracts, governance, wallet transactions, Cosmos SDK, etc)."
+      },
+      {
+        "text": "Deep understanding of computer science fundamentals including networking, storage, operating system, data structures, transpilers/compilers, etc.",
+        "tier": "tier_1",
+        "tier_reasoning": "signal: \"deep understanding\"",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Deep understanding of computer science fundamentals including networking, storage, operating system, data structures, transpilers/compilers, etc.;"
+      },
+      {
+        "text": "Experience in an agile development environment",
+        "tier": "tier_1",
+        "tier_reasoning": "default — no signal word (Section 1 header is 'Requirements:')",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Experience in an agile development environment;"
+      },
+      {
+        "text": "Knowledge of UNIX network stack (TCP / IP, HTTP)",
+        "tier": "tier_1",
+        "tier_reasoning": "default — no signal word (Section 1 header is 'Requirements:')",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Knowledge of UNIX network stack (TCP / IP, HTTP);"
+      },
+      {
+        "text": "Experience with gRPC",
+        "tier": "tier_1",
+        "tier_reasoning": "default — no signal word (Section 1 header is 'Requirements:')",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Experience with gRPC;"
+      },
+      {
+        "text": "Experience with git",
+        "tier": "tier_1",
+        "tier_reasoning": "default — no signal word (Section 1 header is 'Requirements:')",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Experience with git."
+      },
+      {
+        "text": "Experience in creating microservices for such systems as Kubernetes, Ansible, Docker, Terraform",
+        "tier": "tier_2",
+        "tier_reasoning": "default — Section 2 header is 'Nice to have'",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Experience in creating microservices for such systems as Kubernetes, Ansible, Docker, Terraform;"
+      },
+      {
+        "text": "Interest in the topics of proof-of-stake, consensus algorithms, decentralized exchanges, public-key cryptography, etc.",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"interest in\"",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Interest in the topics of proof-of-stake, consensus algorithms, decentralized exchanges, public-key cryptography, etc.;"
+      },
+      {
+        "text": "Experience in setting up and working with CI systems",
+        "tier": "tier_2",
+        "tier_reasoning": "default — Section 2 header is 'Nice to have'",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Experience in setting up and working with CI systems;"
+      },
+      {
+        "text": "Past contributions to the Cosmos-SDK and/or Tendermint Core",
+        "tier": "tier_2",
+        "tier_reasoning": "default — Section 2 header is 'Nice to have'",
+        "binary": true,
+        "duplicate": false,
+        "source_text": "Past contributions to the Cosmos-SDK and/or Tendermint Core"
+      },
+      {
+        "text": "Passionate about blockchain",
+        "tier": "tier_2",
+        "tier_reasoning": "signal: \"passionate about\"",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "You are passionate about blockchain, have used DeFi Apps and believe in the opportunity of decentralization and blockchains to change how the financial world works today."
+      },
+      {
+        "text": "Used DeFi Apps",
+        "tier": "tier_2",
+        "tier_reasoning": "default — Section 2 header is 'Nice to have'",
+        "binary": true,
+        "duplicate": false,
+        "source_text": "You are passionate about blockchain, have used DeFi Apps and believe in the opportunity of decentralization and blockchains to change how the financial world works today."
+      },
+      {
+        "text": "Believe in the opportunity of decentralization and blockchains to change how the financial world works today",
+        "tier": "tier_2",
+        "tier_reasoning": "default — Section 2 header is 'Nice to have'",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "You are passionate about blockchain, have used DeFi Apps and believe in the opportunity of decentralization and blockchains to change how the financial world works today."
+      },
+      {
+        "text": "Write high quality and well tested Golang code, following the latest design and development patterns",
+        "tier": "tier_2",
+        "tier_reasoning": "default — responsibilities section",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Write high quality and well tested Golang code, following the latest design and development patterns."
+      },
+      {
+        "text": "Participating in the design, development, and implementation of the core Berachain economic system",
+        "tier": "tier_2",
+        "tier_reasoning": "default — responsibilities section",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Participating in the design, development, and implementation of the core Berachain economic system."
+      },
+      {
+        "text": "Explore Cosmos SDK projects and other projects that will be built on the cosmos",
+        "tier": "tier_2",
+        "tier_reasoning": "default — responsibilities section",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Explore Cosmos SDK projects and other projects that will be built on the cosmos Write documentation, design flow diagrams and review"
+      },
+      {
+        "text": "Write documentation",
+        "tier": "tier_2",
+        "tier_reasoning": "default — responsibilities section",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Explore Cosmos SDK projects and other projects that will be built on the cosmos Write documentation, design flow diagrams and review"
+      },
+      {
+        "text": "Design flow diagrams",
+        "tier": "tier_2",
+        "tier_reasoning": "default — responsibilities section",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Explore Cosmos SDK projects and other projects that will be built on the cosmos Write documentation, design flow diagrams and review"
+      },
+      {
+        "text": "Review code and designs",
+        "tier": "tier_2",
+        "tier_reasoning": "default — responsibilities section",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Explore Cosmos SDK projects and other projects that will be built on the cosmos Write documentation, design flow diagrams and review"
+      },
+      {
+        "text": "Creating tools for load testing and protocol benchmarking",
+        "tier": "tier_2",
+        "tier_reasoning": "default — responsibilities section",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Creating tools for load testing and protocol benchmarking."
+      },
+      {
+        "text": "Research, design, scope and estimate what you need to do",
+        "tier": "tier_2",
+        "tier_reasoning": "default — responsibilities section",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Research, design, scope and estimate what you need to do"
+      },
+      {
+        "text": "Constantly improve yourself by keeping up to date with the latest technologies trends",
+        "tier": "tier_2",
+        "tier_reasoning": "default — responsibilities section",
+        "binary": false,
+        "duplicate": false,
+        "source_text": "Constantly improve yourself by keeping up to date with the latest technologies trends."
+      }
+    ]
+  }
+}

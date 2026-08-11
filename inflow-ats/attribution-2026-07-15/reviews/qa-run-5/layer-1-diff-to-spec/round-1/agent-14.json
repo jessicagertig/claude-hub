@@ -1,0 +1,190 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 14,
+  "run": 5,
+  "focus_area": "REVERSE MAPPING SWEEP — entire diff, hunk by hunk, diff-to-spec direction exclusively; primary verification site for prior finding l1-run4-001",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "Every hunk in the 1057-line diff dump traces to a specific SPEC.md section as amended",
+      "l1-run4-001 verification: surrogate-truncation lines in utils.js now trace to amended §5.1 rule 2 (and §7 constraint 1 / §11 note 4 amendments are accurate)",
+      "Universe check: changed-file list of 62dd55867..fc3f047f9 equals §2 file list + two §3 migrations + schema.rb + five §9 spec files, nothing extra, nothing missing"
+    ],
+    "verified": [
+      "All 22 changed files enumerated by `git diff --name-only 62dd55867..fc3f047f9` match the legitimate universe exactly: 5 backend app files (§2), 9 frontend files (§2), 2 migrations + schema.rb (§3), 5 spec files (§9). No extra files; nothing §2 requires is absent.",
+      "KNOWN BASELINES confirmed: Auth.tsx and app/controllers/hire/confirmations_controller.rb absent from the diff (D19); app/javascript/shared/lib/utils.test.js absent (Jessica's no-Jest ruling, §9); the `ap` debug lines in from_omniauth are pre-existing context lines, not diff content.",
+      "l1-run4-001 VERIFIED RESOLVED: utils.js sanitizeTrackingValue (`.slice(0, 255)`, `charCodeAt(length - 1)`, drop when 0xD800–0xDBFF via `.slice(0, -1)`) traces cleanly to amended §5.1 rule 2, whose text now states exactly this mechanism including the 254-code-unit result. §7 constraint 1 ('surrogate-safe truncation to 255 code units per value (254 when the slice would split a surrogate pair — 5.1 rule 2)') and §11 note 4 ('255-code-unit surrogate-safe cap (5.1 rule 2)') are amended consistently. All three amendment sites present, accurate, and complete; the shipped code was not changed (HEAD fc3f047f9, branch attribution-work-qa, confirmed).",
+      "Every hunk in every file assigned a mandating spec section — see mapping_table. No untraceable content found anywhere in the diff.",
+      "Occurrence-order key scan in sanitizeTrackingParams (`param.replace(/\\+/g, \" \").split(\"=\")[0]` then decodeUriComponent) verified against node_modules/query-string/index.js v6.1.0: parse derives keys via the identical `param.replace(/\\+/g, ' ').split('=')` + decodeComponent sequence, so the scan's keys match parse's keys byte-for-byte; mechanism is §5.1's blessed plan-level `queryString.extract(search).split(\"&\")` key scan (order from raw string, values from parse).",
+      "Both magic_create user_params branches (connect-intent and default) carry the four keys, verified at HEAD registrations_controller.rb lines 88–114 (§4.2 'both branches' requirement).",
+      "sign_up_params hash-permit `utm_data: {}` is the trailing argument of permit (§4.1 requirement)."
+    ],
+    "missing": []
+  },
+  "mapping_table": [
+    {
+      "file": "app/controllers/api/v1/organizations_controller.rb",
+      "hunks": [
+        {"hunk": "@@ -29,6 +29,10 @@ #create: four @organization.<col> = current_user.<col> copy lines after created_via copy", "spec": "§4.4 (D5) — exact match to the spec's code block; organization_params untouched"}
+      ]
+    },
+    {
+      "file": "app/controllers/api/v1/registrations_controller.rb",
+      "hunks": [
+        {"hunk": "@@ -93,7 +93,11 @@ magic_create connect-intent branch: four utm/internal_ref keys merged into user_params", "spec": "§4.2 (D3) — keys required in both branches"},
+        {"hunk": "@@ -102,7 +106,11 @@ magic_create default branch: same four keys merged", "spec": "§4.2 (D3)"},
+        {"hunk": "@@ -299,7 +307,7 @@ sign_up_params: adds :utm_source, :utm_campaign, :internal_ref, utm_data: {} (trailing)", "spec": "§4.1 (D3) — questions_controller.rb options: {} analog; hash-permit trailing"}
+      ]
+    },
+    {
+      "file": "app/controllers/api/v1/users/omniauth_callbacks_controller.rb",
+      "hunks": [
+        {"hunk": "@@ -19,7 +19,15 @@ google_oauth2: from_omniauth call converted to keyword form with four merged_tracking['<key>'] string-key reads", "spec": "§4.7 (D9) — exact match to the spec's code block; nothing else in the action changed"}
+      ]
+    },
+    {
+      "file": "app/javascript/ats/src/views/sessions/OnboardingProfile.tsx",
+      "hunks": [
+        {"hunk": "import { trackEvent } from \"@shared/lib/posthog\"", "spec": "§5.6 (D18)"},
+        {"hunk": "mount React.useEffect([], eslint-disable-next-line) firing organization_owner_email_verified / invited_user_email_verified keyed on isNewOwner, no properties", "spec": "§5.6 (D18) — house pattern AuthRegister.tsx:53-56; event names per §7 constraint 8"}
+      ]
+    },
+    {
+      "file": "app/javascript/ats/src/views/sessions/components/AuthForm.tsx",
+      "hunks": [
+        {"hunk": "imports sanitizeTrackingParams (@shared/lib/utils) and trackEvent (@shared/lib/posthog)", "spec": "§5.2 (D1, D14)"},
+        {"hunk": "const [trackingParams] = React.useState(sanitizeTrackingParams(location.search)) — raw search string, no setter", "spec": "§5.2 capture (D1) + §5.1 input contract (raw location.search)"},
+        {"hunk": "magicLink payload gains utmSource/utmCampaign/utmData/internalRef; onSuccess fires trackEvent(\"user_signed_up_client_side\") before onComplete", "spec": "§5.2 (D2 payload; D14 step-2 event, plain call, no properties)"},
+        {"hunk": "GoogleSSOButton gains utmSource/utmCampaign/utmData/internalRef props", "spec": "§5.2 SSO props (D7)"}
+      ]
+    },
+    {
+      "file": "app/javascript/ats/src/views/sessions/components/GoogleSSOButton.tsx",
+      "hunks": [
+        {"hunk": "Props interface + destructure gain utmSource?/utmCampaign?/utmData?: Record<string, any>/internalRef?", "spec": "§5.3 (D7)"},
+        {"hunk": "hidden inputs utm_source/utm_campaign/internal_ref under typeof-string && length>0 guard; utm_data as one input per key name=\"utm_data[<key>]\" under the same per-key guard, outer `utmData != undefined` iteration guard, React key={key}", "spec": "§5.3 (D7) — analog render-only-when-present pattern; Rails-nested naming; `!= undefined` is the house null/undefined idiom; key= is mechanical React list requirement"}
+      ]
+    },
+    {
+      "file": "app/javascript/ats/src/views/sessions/components/OrganizationForm.tsx",
+      "hunks": [
+        {"hunk": "import trackEvent", "spec": "§5.7 (D13)"},
+        {"hunk": "createOrganization onSuccess fires trackEvent(\"organization_created\") before onComplete(data)", "spec": "§5.7 (D13) — no properties; no identify call added"}
+      ]
+    },
+    {
+      "file": "app/javascript/ats/src/views/sessions/components/ProfileForm.tsx",
+      "hunks": [
+        {"hunk": "import trackEvent", "spec": "§5.8 (D16)"},
+        {"hunk": "updateMe onSuccess fires organization_owner_user_name_submitted / invited_user_name_submitted keyed on props.isNewOwner, before props.onComplete()", "spec": "§5.8 (D16) — else-branch catches wasInvited and neither-true edge as specified"}
+      ]
+    },
+    {
+      "file": "app/javascript/ats/src/views/sessions/components/SignupForm.tsx",
+      "hunks": [
+        {"hunk": "imports sanitizeTrackingParams and trackEvent", "spec": "§5.5 (D10, D14)"},
+        {"hunk": "const [trackingParams] = React.useState(sanitizeTrackingParams(props.location.search))", "spec": "§5.5 capture (D10) + §5.1 input contract"},
+        {"hunk": "register payload gains the four fields; onSuccess fires trackEvent(\"user_signed_up_client_side\") before props.onComplete()", "spec": "§5.5 (D10 payload; D14 event)"}
+      ]
+    },
+    {
+      "file": "app/javascript/shared/lib/posthog.ts",
+      "hunks": [
+        {"hunk": "identifyUser: window.logger on the not-loaded skip path and the fire path", "spec": "§1 'Already applied on the branch' + §5.9 — committed as part of this PR, no further change"}
+      ]
+    },
+    {
+      "file": "app/javascript/shared/lib/utils.js",
+      "hunks": [
+        {"hunk": "imports queryString and decodeUriComponent", "spec": "§5.1 — helper parses internally via queryString.parse; decodeUriComponent is the same decoder v6.1.0 parse uses for keys (settled LOW: phantom-dependency, not re-flagged)"},
+        {"hunk": "TRACKING_VALUE_MAX_LENGTH = 255 / UTM_DATA_MAX_KEYS = 10 constants", "spec": "§5.1 rules 2 and 3 (D4)"},
+        {"hunk": "sanitizeTrackingValue: array→first element; non-string passthrough; slice(0, 255); drop trailing lone high surrogate 0xD800–0xDBFF via slice(0, -1)", "spec": "§5.1 rules 1 and 2 AS AMENDED (l1-run4-001 site — now traces cleanly); null passthrough per §5.1 absence semantics"},
+        {"hunk": "sanitizeTrackingParams: queryString.parse for values; extract(search).split(\"&\") occurrence-order key scan with +→space and decodeUriComponent matching parse's own key derivation; utmSource/utmCampaign/internalRef set only when parsed value !== undefined; utmData = first 10 utm_* keys by occurrence order excluding utm_source/utm_campaign, object present only when non-empty", "spec": "§5.1 input contract, output shape, rule 3, absence semantics (D2, D3, D4, D6)"}
+      ]
+    },
+    {
+      "file": "app/javascript/shared/queryHooks/useSession.ts",
+      "hunks": [
+        {"hunk": "register: four fields added to destructured params and variables", "spec": "§5.4 (D2, D10)"},
+        {"hunk": "magicLink: four fields added to destructured params, inline TS type, and variables", "spec": "§5.4 (D2)"}
+      ]
+    },
+    {
+      "file": "app/models/user.rb",
+      "hunks": [
+        {"hunk": "from_omniauth signature → all-keyword form in the spec's exact declared order (auth:, created_via:, partner_source: nil, utm_source: nil, utm_campaign: nil, utm_data: nil, internal_ref: nil)", "spec": "§4.6 (D9)"},
+        {"hunk": "four omniauth_user.<col> = <kw> assignments inside the first_or_create block, raw (no downcase), alongside created_via/partner_source", "spec": "§4.6 (D9) + §7 constraint 5 creation-time only"}
+      ]
+    },
+    {
+      "file": "config/initializers/omniauth.rb",
+      "hunks": [
+        {"hunk": "allowed_keys = %w[partner referral utm_source utm_campaign utm_data internal_ref]", "spec": "§4.5 (D8) — sole change to the lambda, as required"}
+      ]
+    },
+    {
+      "file": "db/migrate/20260715233505_add_attribution_columns_to_users.rb",
+      "hunks": [
+        {"hunk": "new file: AddAttributionColumnsToUsers — add_column users utm_source/utm_campaign string, utm_data jsonb, internal_ref string; no defaults, no null constraints, no indexes", "spec": "§3 (D6) — spec-proposed file/class naming followed"}
+      ]
+    },
+    {
+      "file": "db/migrate/20260715233506_add_attribution_columns_to_organizations.rb",
+      "hunks": [
+        {"hunk": "new file: AddAttributionColumnsToOrganizations — identical column set", "spec": "§3 (D6)"}
+      ]
+    },
+    {
+      "file": "db/schema.rb",
+      "hunks": [
+        {"hunk": "version bump to 2026_07_15_233506; four columns on organizations table; four columns on users table — all nullable, no defaults", "spec": "§3 (D6) — mechanical schema dump of the two migrations"}
+      ]
+    },
+    {
+      "file": "spec/controllers/api/v1/organizations_controller_spec.rb",
+      "hunks": [
+        {"hunk": "file comment + describe scaffold; queue-adapter around block; stubs authenticate_api_v1_user!/current_user/authorize/set_sentry_context", "spec": "§9 item 4 (stub auth/Pundit per the ai-credit spec pattern) + §9 preamble suite conventions — around block and set_sentry_context stub match the cited precedent bulk_ai_job_application_summaries_controller_spec.rb (lines 9–14, 36)"},
+        {"hunk": "example: copies all four attribution values from current_user onto the organization", "spec": "§9 item 4"},
+        {"hunk": "example: ignores attribution values sent in the request body", "spec": "§4.4 sentence 'organization_params is NOT modified — the values never come from the request' + §6 — extra example pinning a cited spec sentence"},
+        {"hunk": "example: creates an organization with nil in all four columns", "spec": "§9 item 4 ('current_user with nils → Organization nils')"}
+      ]
+    },
+    {
+      "file": "spec/controllers/api/v1/registrations_controller_spec.rb",
+      "hunks": [
+        {"hunk": "file comment; include Devise::Test::ControllerHelpers; devise.mapping = Devise.mappings[:api_v1_user]; queue-adapter around block; login_intent: 'hire' on every magic_create POST", "spec": "§9 item 1 (both Devise lines and the login_intent requirement explicit) + §9 preamble conventions for the around block"},
+        {"hunk": "magic_create new-user: stores the four values raw (SomeRawValue verbatim; utm_data hash round-trip)", "spec": "§9 item 1 bullet 2"},
+        {"hunk": "magic_create new-user: all four nil when params absent (utm_data nil, not {})", "spec": "§9 item 1 bullet 3"},
+        {"hunk": "magic_create existing-confirmed-user: columns not modified", "spec": "§9 item 1 bullet 4"},
+        {"hunk": "magic_create existing-unconfirmed-user (resend path): columns not modified", "spec": "§9 item 1 bullet 5"},
+        {"hunk": "create (password path): four values persisted raw; nils when absent", "spec": "§9 item 1 bullet 6 + §4.3 (D10)"}
+      ]
+    },
+    {
+      "file": "spec/controllers/api/v1/users/omniauth_callbacks_controller_spec.rb",
+      "hunks": [
+        {"hunk": "file comment; include Devise::Test::ControllerHelpers; devise.mapping assignment; queue-adapter around block; omniauth.auth stub; from_omniauth stub returning a persisted user", "spec": "§9 item 3 (helpers explicit) + §9 preamble ('Devise-controller specs opt in per-file, see items 1 and 3') for the mapping line + §9 preamble conventions for the around block"},
+        {"hunk": "example: seeded session[:oauth_tracking] six string keys → from_omniauth received keyword args with the four values; redirect asserted unchanged", "spec": "§9 item 3 (pins keyword call-site conversion and string-key session read) + §4.7 'redirect stays as it is'"},
+        {"hunk": "example: no tracking in session → from_omniauth received nil for all four", "spec": "§4.6 keyword nil defaults + §7 constraint 2 (nil for absent at every layer) — extra example pinning cited spec sentences"}
+      ]
+    },
+    {
+      "file": "spec/controllers/hire/confirmations_controller_spec.rb",
+      "hunks": [
+        {"hunk": "file comment; queue-adapter around block; success example: redirect to bare '/auth?email_confirmed=true' (no id/email params); failure example: '/auth?email_confirmed=false' unchanged", "spec": "§9 item 5 + §4.8 (D19) — coverage-only, controller itself untouched (confirmed absent from diff)"}
+      ]
+    },
+    {
+      "file": "spec/models/user_from_omniauth_spec.rb",
+      "hunks": [
+        {"hunk": "file comment; queue-adapter around block", "spec": "§9 item 2 + §9 preamble conventions (from_omniauth → enqueue_complete_user_setup runs inline under the :inline test adapter)"},
+        {"hunk": "example: creates a user with the four values stored raw; partner_source still downcased", "spec": "§9 item 2 bullets 1 and 3"},
+        {"hunk": "example: all four nil when keywords omitted", "spec": "§9 item 2 bullet 1"},
+        {"hunk": "example: existing user untouched, no new row (not_to change(User, :count))", "spec": "§9 item 2 bullet 2 + §7 constraint 5"},
+        {"hunk": "example: auth:/created_via: required keywords raise ArgumentError", "spec": "§9 item 2 bullet 3"}
+      ]
+    }
+  ],
+  "notes": "REVERSE MAPPING COMPLETE — 0 findings. Every hunk in all 22 files traces to a SPEC.md section as amended; the mapping_table is exhaustive at hunk level (spec files at example-group granularity). PRIOR FINDING l1-run4-001 VERIFIED RESOLVED: in qa-run-4 the sanitizeTrackingValue surrogate-drop lines (utils.js: charCodeAt check for 0xD800–0xDBFF, slice(0, -1)) were the only untraceable content; amended §5.1 rule 2 now states the exact shipped mechanism ('.slice(0, 255)', then drop a trailing lone high surrogate 0xD800–0xDBFF, 254 code units in that case, with the JSON.stringify/Rails-json-2.6.1 rationale and the fa51c91a5 sanction note), and §7 constraint 1 plus §11 note 4 carry consistent amended language — all three amendment sites accurate and complete; the code is unchanged and HEAD is still fc3f047f9 (verified). No OTHER untraceable content exists. Universe check: git diff --name-only 62dd55867..fc3f047f9 returns exactly the 22 legitimate files; §2's 'not touched' list holds (no serializer/policy/job/api.ts/context/Cypress changes; the only model edited is user.rb); Auth.tsx, hire/confirmations_controller.rb, and utils.test.js correctly absent per KNOWN BASELINES. Mechanism verifications performed against the repo at HEAD: (a) query-string v6.1.0 parse derives keys via param.replace(/\\+/g, ' ').split('=') + decodeComponent — identical to the helper's occurrence scan, so scan keys always match parse keys; (b) both magic_create user_params branches carry the four keys (registrations_controller.rb 88–114); (c) the queue-adapter around blocks and the set_sentry_context stub match §9's cited precedent files verbatim (bulk_ai_job_application_summaries_controller_spec.rb lines 9–14 and 36; ai-credit spec stubs at lines 40–43 of organization_ai_credit_purchases_purchase_top_up_spec.rb) — test-infrastructure mechanics required by the mandated examples, tracing to the §9 preamble's suite-conventions citations, not unspecced scope. Settled rulings respected: nothing from M1–M4 or the 9 LOWs re-reported (decode-uri-component import and non-string passthrough in sanitizeTrackingValue are settled LOW siblings, mapped but not flagged)."
+}

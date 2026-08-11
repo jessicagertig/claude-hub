@@ -1,0 +1,18 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agent_index": 3,
+  "slice": "subscription.deleted cancellation insertion",
+  "findings": [],
+  "verified": [
+    "Placement: the canceled_subscription block is appended at the END of the subscription.deleted else-branch body, immediately after the EngagementReport::GeneratorJob line (committed stripe_webhook_handler_job.rb:210, insertion 212-225), inside the branch's pre-existing outer begin/rescue",
+    "Isolation: the insertion carries its OWN begin/rescue StandardError; the rescue logs with context (org id, stripe_subscription_id, e.message via Rails.logger.error at line 222, plus ap e) so ledger failure never surfaces as a subscription.deleted handling failure",
+    "Writer call exact per SPEC 5.3: CreateSubscriptionEvent.call(organization: organization, event_type: 'canceled_subscription', to_plan: organization.plan, stripe_subscription_id: stripe_subscription_id) - no amount param; stripe_subscription_id is the branch's pre-existing local (= object.id, the deleted subscription's id)",
+    "Nil-organization handling: plain `if organization` conditional inside the rescue-wrapped block (line 213); nil organization skips the ledger write entirely; surrounding pre-existing organization&. lines untouched",
+    "Delicacy (D11): git diff a0d59115d..89286fba8 for app/jobs/stripe_webhook_handler_job.rb is exactly two purely-additive hunks (34 insertions, 0 deletions) - NOTHING else in the subscription.deleted branch (or the file) changed: no reordering, no attribute-access changes, credit-pack branch byte-identical, if/else structure intact",
+    "Backstop (SPEC 6 guard-order fix): committed create_subscription_event.rb has `return unless organization` moved ABOVE the two ap logging lines (ap 'Stripe subscription in good standing?' / ap organization.stripe_subscription_in_good_standing), so a nil organization no-ops gracefully for any caller; only pre-existing production caller (log_assigned_free_plan_event, passes organization: self) unaffected",
+    "Backstop tested non-vacuously: spec/interactors/create_subscription_event_spec.rb 'nil organization guard order' calls with organization: nil and asserts not_to raise_error + success + zero rows - fails against the pre-fix ordering (NoMethodError on organization.stripe_subscription_in_good_standing)",
+    "Tests (SPEC 9.1): spec/jobs/stripe_webhook_handler_subscription_events_spec.rb 'customer.subscription.deleted main branch' - a canceled_subscription row is created (change count by 1; event_type/stripe_subscription_id/to_plan asserted on the row - fails if the insertion is deleted, not a ghost test); existing branch behavior asserted intact in the same example (Notification::PaidSubscriptionDeletedJob enqueued with organization.id + subscription_ended_at, EngagementReport::GeneratorJob enqueued with trigger: 'subscription_canceled', subscription_canceled_at written); nil-organization delivery asserted to create no row and not raise; queue adapter :test around-block per pipeline rule 31",
+    "No uniqueness-index coverage for canceled_subscription per SPEC 5.3: migration partial index is WHERE event_type IN (2, 8) only, and the interactor's conversion_duplicate_exists? guard covers SubscriptionEvent::CONVERSION_EVENT_TYPES (converted_to_paid, trial_converted_to_paid) only - canceled rows rely on the pre-existing 5-minute dedupe, unchanged"
+  ]
+}

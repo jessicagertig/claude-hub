@@ -1,0 +1,30 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 2,
+  "run": 5,
+  "focus_area": "Api::V1::RegistrationsController (app/controllers/api/v1/registrations_controller.rb)",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "SPEC.md §4.1 sign_up_params permit shape (three scalars + utm_data: {} trailing, questions_controller analog, pre-existing params retained)",
+      "SPEC.md §4.2 magic_create both-branch merge from sign_up_params, raw, absent→nil, new-user-branch-only persistence, zero response-shape/identify/track/redirect changes (full-method read at HEAD)",
+      "SPEC.md §4.3 create needs nothing beyond the permit; no other edit to create",
+      "SPEC.md §7 constraint 4 (raw storage) within this controller",
+      "SPEC.md §7 constraint 5 (creation-time only) within this controller"
+    ],
+    "verified": [
+      "§4.1 — HEAD fc3f047f9 registrations_controller.rb:310: params.permit(:name, :first_name, :last_name, :email, :password, :beta_token, :registration_stripe_plan, :referral, :partner, :organization_slug, :login_intent, :utm_source, :utm_campaign, :internal_ref, utm_data: {}). All 11 pre-existing params retained in original order (removed line matches the spec's 'Current (line 300-303)' quote character-for-character); three new scalars present; utm_data: {} is the trailing argument of permit. Analog confirmed at HEAD questions_controller.rb:50 (permit(..., options: {}) → questions.options jsonb) — identical trailing arbitrary-key hash form.",
+      "§4.2 both-branch merge — connect branch (HEAD lines 96-100) and default branch (HEAD lines 109-113) each merge exactly the four keys in the spec's exact form: utm_source: sign_up_params[:utm_source], utm_campaign: sign_up_params[:utm_campaign], utm_data: sign_up_params[:utm_data], internal_ref: sign_up_params[:internal_ref]. The connect-branch hunk's only other change is the syntactically required trailing comma after connect_login_intent_organization_id: organization.id (comment preserved).",
+      "§4.2 raw — values pass straight from sign_up_params with no &.downcase and no get_created_via-style mapping; the pre-existing partner_source: params[:partner]&.downcase (lines 91/105) is untouched, preserving the deliberate contrast.",
+      "§4.2 absent→nil — ActionController::Parameters#[] returns nil for a param not sent; with the utm_data: {} hash-permit, an absent utm_data param yields sign_up_params[:utm_data] == nil (no {} fabrication anywhere in the method).",
+      "§4.2 new-user-branch-only persistence — full magic_create read at HEAD (lines 73-215): only the else branch (lines 158-214) calls build_resource(user_params) (166) / resource.save (167). The existing-confirmed branch (119-145) reads user_params only at line 117 (find_by email) and line 126 (MagicLink.generate email:) — the four merged keys are inert there; add_connect_user (248-258) writes only current_connect_user/connect_users; accept_invite (260-270) calls resource.accept_invite with no utm data. The existing-unconfirmed branch (146-157) calls send_confirmation_instructions / accept_invite / sign_in — no attribute writes of the four.",
+      "§4.2 zero response/identify/track/redirect changes — all three JSON responses (lines 137-145 confirmed-user, line 157 resend-confirmation, lines 195-199 new-user success) plus the unprocessable_entity renders (203, 212) and PosthogIdentifyJob/PosthogTrackJob 'user_signed_up' method: 'magic_link' (189-190) are context lines outside every hunk — byte-identical to base. Independent git diff 62dd55867..fc3f047f9 on the file shows exactly three hunks (@@ -93,7, @@ -102,7, @@ -299,7), matching the pre-dumped diff exactly.",
+      "§4.3 — no hunk touches create (hunks are confined to magic_create's two branches and sign_up_params). create at HEAD lines 10-22 already does expanded_params = sign_up_params.merge(created_via:, partner_source:) → build_resource(expanded_params), so the permit addition alone threads the four onto the new User. No other edit to create.",
+      "§7 constraint 4 (this controller) — no downcasing, trimming, or mapping applied to any of the four values anywhere in the file; get_created_via (324+) unchanged.",
+      "§7 constraint 5 (this controller) — the four are assigned only via build_resource at creation (create line 20; magic_create line 166). Neither existing-user branch of magic_create writes them, and the update action's sanitized_account_update_params (lines 313-318) permits only first_name/last_name/email/time_zone/password/password_confirmation/avatar/current_password — no update-path leakage of the four."
+    ],
+    "missing": []
+  },
+  "notes": "Both directions clean. Diff-to-spec: hunk 1 (@@ -93,7) → §4.2 connect branch; hunk 2 (@@ -102,7) → §4.2 default branch; hunk 3 (@@ -299,7) → §4.1; the independent repo diff confirms these are the only changes to the file in 62dd55867..fc3f047f9 (single diff entry for the file in the dump, verified by direct git diff). Spec-to-diff: every assigned requirement traced to concrete HEAD lines as listed in verified. Settled rulings respected: the connect-branch merge keys being correct-but-dormant (M2 nil crash) is not re-flagged — the spec explicitly requires the keys in BOTH branches and they are present. Repo confirmed at branch attribution-work-qa, HEAD fc3f047f960cc7eda5bdee8141ad7443bfebefef; read-only git commands only. l1-run4-001 amendment sites (§5.1 rule 2 / §7 constraint 1 / §11 note 4) are outside this focus area (assigned §7 constraints are 4 and 5); no duty triggered, nothing re-reported."
+}

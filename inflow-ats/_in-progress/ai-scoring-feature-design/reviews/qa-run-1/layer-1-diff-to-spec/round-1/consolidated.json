@@ -1,0 +1,103 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "findings": [
+    {
+      "id": "l1-001",
+      "type": "UNSPEC_CHANGE",
+      "title": "Frontend changes in scope despite spec saying 'Frontend is out of scope'",
+      "spec_requirement": "Spec intro: 'Frontend is out of scope.'",
+      "evidence": "Diff modifies BulkGenerateAiSummariesConfirmModal.tsx (93 lines changed), JobStageMenu.tsx (35 lines changed), useBulkGenerateAiSummaries.ts (8 lines changed). These change the bulk generate UI from passing raw job_application_ids to using job_id + hiring_stage_id + included/excluded pattern.",
+      "recommendation": "These changes accompany the backend BulkAiJobApplicationSummariesController refactor (analog structural fix from Known Failure Pattern #14). The frontend must match the backend API contract change. However, the spec explicitly says frontend is out of scope. Classify as HIGH per Layer 1 rules: every change must trace to a spec requirement.",
+      "severity_rationale": "The spec says frontend is out of scope. The diff includes frontend changes. This is a spec-implementation mismatch. However, these changes are mechanically coupled to the backend API change (the old frontend API contract no longer works). The real question is whether the bulk controller refactor should have been in the spec."
+    },
+    {
+      "id": "l1-002",
+      "type": "UNSPEC_CHANGE",
+      "title": "BulkAiJobApplicationSummariesController refactored to analog pattern (not in spec)",
+      "spec_requirement": "No spec section covers bulk controller API changes",
+      "evidence": "Diff adds resolve_job_application_ids method, changes params from job_application_ids[] to job_id + hiring_stage_id + included_job_application_ids[] + excluded_job_application_ids[]. This is a pre-existing analog deviation fix from Known Failure Pattern #14.",
+      "recommendation": "This was a pre-work fix identified before implementation. It should have been included in the spec as a prerequisite change. The change itself is correct (matches the bulk move/bulk message analog pattern), but it is not spec'd."
+    },
+    {
+      "id": "l1-003",
+      "type": "UNSPEC_CHANGE",
+      "title": "GenerateAiJobApplicationSummaryJob retry/exhaustion block significantly modified",
+      "spec_requirement": "Spec section 3 mentions updating status enum references in the job. Spec does not mention adding an exhaustion block, changing error handling behavior, or removing broadcast on retry.",
+      "evidence": "Diff adds exhaustion block (lines 4-10 of new code), removes broadcast on CustomErrorAiSummary retry (removed line: broadcast_completion... if textract_result && requesting_organization_user_id), adds ai_summary failed status setting + broadcast in StandardError rescue, adds exhaustion status setting to failed. These are behavioral changes beyond simple enum reference updates.",
+      "recommendation": "The exhaustion block addition follows the analog pattern (Known Failure Pattern #14 - ExtractJobCriteriaJob and GetResumeTextFromTextractJob both have exhaustion blocks). The broadcast removal on retry is a behavioral change: previously, each retry attempt would broadcast; now only exhaustion/StandardError does. This changes user-visible behavior (fewer error toasts during retries, toast only on final failure). This is a significant behavioral change not covered by the spec."
+    },
+    {
+      "id": "l1-004",
+      "type": "UNSPEC_CHANGE",
+      "title": "OpenAI provider: temperature=0 and timeout settings added",
+      "spec_requirement": "None. Spec does not mention provider configuration changes.",
+      "evidence": "app/services/ai_providers/openai.rb: Added temperature: 0 to all chat requests, conn.options.timeout = 120, conn.options.open_timeout = 30.",
+      "recommendation": "temperature=0 affects ALL OpenAI calls in the application (summaries and scoring), not just the new scoring calls. This is a global behavioral change. The timeout additions are reasonable defaults but also affect all calls."
+    },
+    {
+      "id": "l1-005",
+      "type": "UNSPEC_CHANGE",
+      "title": "AiClient pricing table expanded with new model entries",
+      "spec_requirement": "None. Spec does not mention AiClient pricing changes.",
+      "evidence": "app/services/ai_client.rb: Added pricing for gpt-4o-2024-08-06, gpt-4o-mini-2024-07-18, gpt-4.1-mini-2025-04-14, gemini-3.1-flash-lite, gemini-3.5-flash. Original gpt-4o-mini pricing removed.",
+      "recommendation": "Necessary for cost tracking of the new scoring calls. The removal of the generic gpt-4o-mini key could affect cost tracking if any existing code references that model string."
+    },
+    {
+      "id": "l1-006",
+      "type": "UNSPEC_CHANGE",
+      "title": "Summary::Generate date parsing fix added",
+      "spec_requirement": "None. Spec Section 3 covers Summary::Generate status changes, not date parsing.",
+      "evidence": "app/services/ai_job_application_action/summary/generate.rb line +253: Added return if str.downcase.in?(%w[null none n/a na unknown]) as a guard in parse_date_string.",
+      "recommendation": "Bug fix for date parsing edge case. Not in spec. The change is a defensive guard that prevents RangeError on invalid date strings."
+    },
+    {
+      "id": "l1-007",
+      "type": "UNSPEC_CHANGE",
+      "title": "Five rake task files added (936 lines total)",
+      "spec_requirement": "None. Spec does not mention rake tasks.",
+      "evidence": "lib/tasks/ai_scoring.rake (181 lines), ai_scoring_batch.rake (136 lines), ai_scoring_candidate.rake (103 lines), ai_scoring_pipeline.rake (516 lines), ai_scoring_regression.rake (116 lines). These are development/benchmarking tools for the scoring prompts.",
+      "recommendation": "These rake tasks reference AiJobApplicationAction::Scoring::Prompts::CriteriaReview in ai_scoring_pipeline.rake (line 2985, 3177) which does NOT exist in the diff or codebase. This would cause a NameError at runtime."
+    },
+    {
+      "id": "l1-008",
+      "type": "UNSPEC_CHANGE",
+      "title": "Data migration made reversible in development",
+      "spec_requirement": "Spec Section 3 discusses rolling back migrations but does not mention modifying data migrations.",
+      "evidence": "db/data/20260408040802_add_ai_settings_to_existing_organizations.rb: Changed IrreversibleMigration to development-only reversible down method.",
+      "recommendation": "Required for the rollback-and-edit approach in Spec Section 3 (rolling back migrations to edit the summaries table). Necessary but not explicitly spec'd."
+    },
+    {
+      "id": "l1-009",
+      "type": "UNSPEC_CHANGE",
+      "title": "db/schema.rb contains many unrelated schema changes from base branch divergence",
+      "spec_requirement": "Schema changes should reflect only feature-related additions.",
+      "evidence": "schema.rb diff includes: removed board_crypto_jobs_list_listings table, removed vector extension, added connect_oauth_authentications/connect_requirements/connect_users tables, removed channels.created_by_user_id, removed hiring_stage_visits.time_in_stage_seconds, removed careers_pages footer fields, removed resume_chunk_embeddings table, removed taggings.tenant, various column reorderings.",
+      "recommendation": "These are base branch divergence artifacts. The feature branch base (feature-ai-credits-summaries-scoring-qa-qa) is ahead of develop in schema.rb. This is expected per the user's instructions about the branch base. Not a feature defect."
+    },
+    {
+      "id": "l1-010",
+      "type": "SPEC_DEVIATION",
+      "title": "ExtractCriteria sets failed status on CustomErrorAiSummary rescue instead of retrying",
+      "spec_requirement": "Spec Section 4: 'Error handling: same pattern as AiJobApplicationAction::Summary::Generate'. Summary::Generate sets retrying on CustomErrorAiSummary.",
+      "evidence": "In extract_criteria.rb, the rescue CustomErrorAiSummary block sets status: :failed (line 971: @ai_job_criteria&.update_columns(status: :failed, error_message: e&.message)). But AiJobCriteria has no retrying status. The spec says 'same pattern as Summary::Generate'. Summary::Generate sets retrying on CustomErrorAiSummary. However, AiJobCriteria's enum only has pending/in_progress/succeeded/failed (no retrying), so failed is the only option.",
+      "recommendation": "The spec says to follow Summary::Generate's error handling pattern. Summary::Generate sets retrying on CustomErrorAiSummary and re-raises for the job to retry. ExtractCriteria sets failed and re-raises. Since AiJobCriteria has no retrying status, the job will retry but find a failed record. ExtractJobCriteriaJob loads by ID and calls extract, which will hit the update_columns(status: :in_progress) early in the extract method, effectively resetting from failed. The behavior is functionally correct but deviates from the spec's stated pattern. The spec could be interpreted as 'adapt the pattern to the model's enum', but the deviation should be noted."
+    }
+  ],
+  "spec_coverage": {
+    "total_requirements": 42,
+    "implemented": 42,
+    "missing": 0,
+    "details": [
+      "Section 1 (ai_job_criteria table): FULLY IMPLEMENTED - table, model, enum, callback all match spec",
+      "Section 2 (ai_job_application_summary_statuses): FULLY IMPLEMENTED - table, model, lifecycle match spec",
+      "Section 3 (ai_job_application_summaries modifications): FULLY IMPLEMENTED - new columns, redesigned enum, serialization, status_succeeded? references, Summary::Generate updates all match spec",
+      "Section 4 (Scoring services): FULLY IMPLEMENTED - ExtractCriteria, ScoreJobApplication, Calculate, IntegrateAnalysis, integrated_analysis.rb prompt all match spec. Four frozen prompt files added (new files, not modified)",
+      "Section 5 (Orchestrator): FULLY IMPLEMENTED - pipeline sequence, resume points, criteria gap handling all match spec",
+      "Section 6 (Integration): FULLY IMPLEMENTED - generate_ai_summary replaced with Orchestrate, method made private",
+      "Section 7 (Job lifecycle): FULLY IMPLEMENTED - extract_job_criteria, handle_description_change, description_meaningfully_changed?, ExtractJobCriteriaJob all match spec",
+      "Section 8 (Credit/Flipper/Broadcasting): FULLY IMPLEMENTED - Flipper reuse, credit gating, broadcast timing all match spec",
+      "Section 9 (Tests): SUBSTANTIALLY IMPLEMENTED - all model specs, service specs, job specs present. Serializer spec noted as not created in IMPL-REVIEW-COMPLETE.md"
+    ]
+  }
+}

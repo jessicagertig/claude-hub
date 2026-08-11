@@ -1,0 +1,41 @@
+{
+  "layer": "code-correctness",
+  "round": 2,
+  "agent_index": 3,
+  "focus_area": "API surface (controllers, serializer, routes) + authorization model in depth",
+  "files_reviewed": [
+    "app/controllers/api/v1/ai_job_criteria_controller.rb",
+    "app/controllers/api/v1/bulk_ai_job_application_summaries_controller.rb",
+    "app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+    "config/routes.rb",
+    "app/policies/job_policy.rb",
+    "app/policies/ai_job_application_summary_policy.rb",
+    "app/policies/application_policy.rb",
+    "app/controllers/api/v1/base_controller.rb",
+    "app/controllers/application_controller.rb",
+    "app/models/job.rb",
+    "app/models/ai_job_criteria.rb",
+    "app/controllers/api/v1/jobs_controller.rb",
+    "app/controllers/api/v1/ai_job_application_summaries_controller.rb"
+  ],
+  "findings": [
+    {
+      "id": "l2-a3-001",
+      "severity": "MED",
+      "title": "VALIDATES round-1 l2-a1-001: POST regenerate is authorized org-wide (update_ai_settings?/can_use_ai_credits?) while GET is hiring-team-scoped (show?); a non-hiring-team org member can regenerate criteria on a job they cannot read. Spec-directed and analog-consistent; MED confirmed (do-not-fix).",
+      "file": "app/controllers/api/v1/ai_job_criteria_controller.rb",
+      "line": 13,
+      "description": "INDEPENDENT VERDICT ON l2-a1-001: VALID, severity MED (agree with round-1). Traced fully. GET #show (line 6) -> authorize job, :show? -> JobPolicy#show? (job_policy.rb:12-14) = (is_org_user? && user.current_organization_user.jobs.where(id: record.id).any?) || is_org_admin? -- requires hiring-team membership on THIS job, or org admin. POST #create (line 13) -> authorize job, :update_ai_settings? -> JobPolicy#update_ai_settings? (job_policy.rb:24-26) -> AiJobApplicationSummaryPolicy.new(user, record).can_use_ai_credits? (ai_job_application_summary_policy.rb:16-18) = is_org_admin? || (is_org_user? && hiring_team_ai_credits_control_enabled?). can_use_ai_credits? never references `record`, so passing a Job as record is safe (no NoMethodError) but it also means the POST gate has NO per-job hiring-team check. Concrete asymmetry confirmed: in an org with settings['hiring_team_ai_credits_control_enabled'] == true, a plain org_user NOT on Job X's hiring team is 403 on GET but PASSES POST and triggers extract_job_criteria_immediately -- a paid OpenAI extraction that changes what all future reviews on Job X score against (mutate-what-you-cannot-read). CODE-VS-SPEC: the code matches SPEC §9 literally ('authorize job, :update_ai_settings?', 'No new policy methods') -- there is NO spec-implementation mismatch, so the 'mismatch is never MED' rule does not force HIGH. ANALOG CHECK (one imprecision, does not change severity): SPEC §9 cites jobs_controller.rb:163 as the precedent, but that update_ai_settings? call sits BEHIND a preceding bare `authorize job` (= JobPolicy#update? = on_hiring_team?) at jobs_controller.rb:162, so jobs_controller#update is actually MORE restrictive (requires hiring-team AND credit control) than this new #create, which has no on_hiring_team? gate. However the TRUER paid-action analogs in the AI-summary domain share the identical asymmetry this controller has: ai_job_application_summaries_controller.rb:6 `authorize :ai_job_application_summary, :create?` and bulk_ai_job_application_summaries_controller.rb:7,33 `:bulk_create?` both resolve to can_use_ai_credits? (org-wide, no job/hiring-team scoping), while the corresponding reads gate on hiring-team/interviewer (ai_job_application_summary_policy.rb:8-9). So a paid AI create action gated solely on org-wide can_use_ai_credits? IS the established pattern; the read/write asymmetry is pre-existing and systemic, not introduced by this feature. Reachability is further bounded: the endpoint is only surfaced from Job Setup -> AI settings (a hiring-team-scoped view), so the gap is exploitable only via direct API by an org member the org already trusts with AI credits via the org-owner opt-in setting.",
+      "recommendation": "No code change for spec/analog compliance -- confirm MED, do-not-fix. If the org owner wants write not to exceed read, the fix would be adding `authorize job, :show?` (or `:update?`) before `:update_ai_settings?` in #create, but that is a product/policy decision spanning the whole AI-summary domain (single + bulk create share the same asymmetry), not a scoped fix here. Optional doc nit: SPEC §9 should cite the AI-summary create/bulk-create controllers as the analog rather than jobs_controller.rb:163, since the latter is gated by an extra on_hiring_team? check that this controller intentionally does not replicate."
+    },
+    {
+      "id": "l2-a3-002",
+      "severity": "LOW",
+      "title": "Serializer re-queries latest/latest-succeeded rows four times without memoization; narrow, self-correcting torn-read window between the `status` and `zero_criteria_failure` lookups (no persistent self-contradiction).",
+      "file": "app/serializers/api/v1/job_ai_job_criteria_serializer.rb",
+      "line": 4,
+      "description": "The serializer issues four independent, un-memoized queries per render: latest_succeeded_ai_job_criteria for `criteria` (line 7) and again for `extracted_at` (line 11), and latest_ai_job_criteria for `status` (line 15, direct) and again inside zero_criteria_extraction_failure? for `zero_criteria_failure` (line 19 -> job.rb:697). ActiveModel::Serializer evaluates attributes in declaration order (criteria, extracted_at, status, zero_criteria_failure), so a concurrent write (e.g., a rapid second regenerate POST inserting a new pending row, or a background extraction completing) landing BETWEEN two of these queries can make the paired reads reflect different 'latest' rows. Analysis of consequence against the frontend state machine (SPEC §8.2): the UI keys primarily off `status`; `zeroCriteriaFailure` is only consulted when status === 'failed' (priority 2 vs 3), and `criteria` only when status is succeeded/in-flight. Therefore the ONLY consequential tear is status(q3)='failed' + zeroCriteriaFailure(q4)=false because a non-failed row was inserted between q3 and q4, briefly rendering the generic-failure empty state instead of the in-flight loading state (and the criteria/extracted_at pair can briefly show a timestamp from a newer succeeded row than the criteria). All such tears are microsecond concurrent-write races that self-correct on the very next refetch -- which is imminent, because any state change able to cause the tear also triggers the query invalidation (regenerate onSuccess / websocket JOB_CRITERIA_EXTRACTION_COMPLETE). No PERSISTENT self-contradictory payload is producible: e.g., status='succeeded' + zeroCriteriaFailure=true renders the card (zeroCriteriaFailure ignored when status != 'failed'), so it is harmless. The un-memoized multi-query shape is consistent with the codebase's computed-serializer convention (serializers.md §7 delegates computation to model methods) and is not an N+1 (single-record settings endpoint, intentionally kept off the app-wide JobSerializer per SPEC §5.1).",
+      "recommendation": "Optional, do-not-fix for correctness: memoize the two lookups in the serializer (e.g., a private `latest` / `latest_succeeded` helper with ||=) to both halve the query count and make status/zero_criteria_failure derive from a single row read, eliminating even the transient tear. Not required -- the tears are narrow and self-correcting."
+    }
+  ]
+}

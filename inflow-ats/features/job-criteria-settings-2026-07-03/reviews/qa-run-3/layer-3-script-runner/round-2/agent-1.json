@@ -1,0 +1,18 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 1,
+  "focus": "NEW ANGLE: exhaustion-block (retry_on) + StandardError-rescue + CustomErrorAiSummary re-raise BROADCAST WIRING in app/jobs/extract_job_criteria_job.rb (SPEC §7). Round 1 (agent-9) tested broadcast_completion in isolation; this agent tests how the job's rescue PATHS CALL it. Independent confirmation + rescue-path wiring.",
+  "scenarios_run": [
+    "Built own uniquely-suffixed org/user/job/OrganizationUser (additive isolation, no shared Acme, no cleanup). Set ActiveJob::Base.queue_adapter = :test (test-env default is :inline). Stubbed GlobalChannel.broadcast_to to capture calls. NEVER ran real extraction — every StandardError/CustomError case stubbed AiJobApplicationAction::Scoring::ExtractCriteria.new(...).extract to RAISE before any AI call.",
+    "SANITY: job responds to rescue_with_handler (private); CustomErrorAiSummary < StandardError.",
+    "CASE A (exhaustion block, real row): drove the retry_on exhaustion handler via job.rescue_with_handler(CustomErrorAiSummary) with exception_executions seeded Hash.new(2) so executions_for -> 3 >= attempts(3) (verified against activejob-6.1.7.7 exceptions.rb). Result: `if ai_job_criteria` true -> update_columns(status: :failed, error_message: error.message='exhausted-boom-A') + job.send(:broadcast_completion, row, job.arguments.second). Row set :failed; EXACTLY ONE broadcast; target==requesting user; action=='JOB_CRITERIA_EXTRACTION_COMPLETE'; payload status 'failed', jobId==job.id, zeroCriteriaFailure==false, errorMessage=='exhausted-boom-A'. Confirms exhaustion writes the RAISED error's message and broadcasts via the two-arg job.arguments.first/second wiring.",
+    "CASE A2 (exhaustion block, ZC error message): exhaustion error message = AiJobCriteria::ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE -> row :failed, one broadcast, payload zeroCriteriaFailure==true. Confirms zero_criteria_failure? reads the freshly-written error_message.",
+    "CASE B (exhaustion block, NIL row): job.arguments.first = non-existent id -> AiJobCriteria.find_by returns nil -> `if ai_job_criteria` guard skips update+broadcast. NO NoMethodError raised, ZERO broadcasts. Confirms the nil-row guard (SPEC §7 line 293).",
+    "CASE C (perform StandardError rescue, real row + req_id): stubbed extract to raise RuntimeError. perform(row.id, req_id) -> `rescue StandardError` re-looks-up row, update_columns(status: :failed, error_message='generic-extract-boom-C'), broadcast_completion gated on `ai_job_criteria && requesting_organization_user_id`. perform did NOT raise; row :failed; EXACTLY ONE broadcast (status 'failed', target==requesting user).",
+    "CASE D (perform StandardError rescue, req_id NIL): perform(row.id, nil) -> row STILL set :failed (failure write is unconditional) but ZERO broadcasts (the `&& requesting_organization_user_id` gate). Confirms failure write independent of req_id; broadcast gated on req_id (mirrors analog `if textract_result && requesting_organization_user_id`).",
+    "CASE E (perform CustomErrorAiSummary re-raise / retry path): stubbed extract to raise CustomErrorAiSummary. perform RE-RAISED CustomErrorAiSummary (so retry_on catches it); row NOT written to :failed (stays :in_progress); error_message nil; ZERO broadcasts. Confirms the retry path performs no premature failure write and no broadcast (SPEC §7 line 292).",
+    "CASE F (falsifiability anchor): broadcast_completion on a non-terminal (:in_progress) row -> ZERO broadcasts; same row set :failed -> ONE broadcast. Proves the assertions flip and are falsifiable (terminal-status guard is load-bearing)."
+  ],
+  "findings": []
+}

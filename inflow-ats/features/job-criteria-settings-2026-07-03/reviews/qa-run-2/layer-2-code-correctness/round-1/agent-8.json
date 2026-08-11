@@ -1,0 +1,21 @@
+{
+  "layer": "code-correctness",
+  "round": 1,
+  "agent_index": 8,
+  "focus_area": "TEST CORRECTNESS — ghost tests, tautological assertions, stubs that mask real bugs (all NEW/MODIFIED spec files)",
+  "files_reviewed": [
+    "spec/controllers/api/v1/ai_job_criteria_controller_spec.rb",
+    "spec/controllers/api/v1/bulk_ai_job_application_summaries_controller_spec.rb",
+    "spec/interactors/queue_bulk_ai_summary_jobs_spec.rb",
+    "spec/interactors/validate_ai_summary_generation_spec.rb",
+    "spec/interactors/validate_auto_ai_summary_generation_spec.rb",
+    "spec/jobs/bulk_generate_ai_summaries_job_spec.rb",
+    "spec/jobs/extract_job_criteria_job_spec.rb",
+    "spec/models/ai_job_criteria_spec.rb",
+    "spec/models/job_criteria_lifecycle_spec.rb",
+    "spec/models/textract_result_ai_trigger_spec.rb",
+    "spec/serializers/api/v1/job_ai_job_criteria_serializer_spec.rb"
+  ],
+  "findings": [],
+  "notes": "No ghost tests, tautological assertions, or masking stubs found in any assigned spec. Every KEY behavior the brief called out is BEHAVIORAL and FALSIFIABLE, verified by tracing each spec against its production counterpart: (1) extract_job_criteria_job_spec exhaustion-broadcast (lines 156-172) actually raises CustomErrorAiSummary and runs the real retry_on (attempts:3) via perform_enqueued_jobs, then asserts BOTH the failed broadcast (status:'failed') AND ai_job_criteria.reload.status == 'failed' — the only path that fires the broadcast/failed-write is the exhaustion block, so a pass proves the block ran; not reflection on the class. (2) The zero-criteria review guard specs (validate_ai_summary_generation_spec 41-77, validate_auto_ai_summary_generation_spec 61-77, queue_bulk_ai_summary_jobs_spec 203-236, both controller specs, textract_result_ai_trigger_spec 150-171) all drive real code and assert on result.success?/error/HTTP status/collaborator-not-called; each is falsifiable if the guard were removed. The 'in-flight row on top of zero-criteria' cases correctly exercise latest_ai_job_criteria = ai_job_criteria.order(created_at: :desc).first. (3) bulk_generate_ai_summaries_job_spec claim-row :failed transition (72-83) and the zero-criteria batch (102-133) assert claim_row.reload.status == 'failed' end-to-end; would fail if BulkGenerateAiSummariesJob#each_iteration's update_columns(status: :failed) were absent. Masking checks passed: (a) create_credit_test_job defaults description:'Test job description' (spec/support/ai_credits_test_helpers.rb:96), so the in_progress/retrying no-op tests in job_criteria_lifecycle_spec are genuinely gated by the status guards, not silently short-circuited by the blank-description guard (proven internally consistent because the sibling 'pending -> row IS created' and enqueue tests require a present description to pass). (b) Rule 7: ExtractCriteria.new is stubbed with the same kwarg/int type production passes (ai_job_criteria_id: <integer id>), and the extract stubs mutate the same row by id that broadcast_completion re-reads — matching production semantics. (c) Rule 4: mailer delivery is verified correctly — mailers are stubbed to return instance_double(ActionMailer::MessageDelivery) and each test asserts have_received(:deliver_later) (bulk_generate_ai_summaries_job_spec 118/131, 139/184, and the on_complete block), so a dropped delivery call would fail. (d) The AiJobCriteria model has no criteria-presence validation on succeeded rows (only validates :status, presence: true), so the ai_job_criteria_spec truth-table rows that create succeeded/pending rows with a zero-criteria error_message create cleanly and legitimately assert zero_criteria_failure? is false when status is non-failed. Excluded per brief: the 9 pre-existing #on_complete failures in bulk_generate_ai_summaries_job_spec (develop-base breakage)."
+}

@@ -1,0 +1,22 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 2,
+  "agent_index": 4,
+  "slice": "migration + enum + uniqueness invariant",
+  "findings": [],
+  "verified": [
+    "Migration db/migrate/20260725033136_add_stripe_subscription_id_and_amount_to_subscription_events.rb: add_column :subscription_events, :stripe_subscription_id, :string and add_column :subscription_events, :amount, :integer — both nullable, no defaults (bare add_column); no backfill, no currency column; frozen_string_literal + Migration[6.1] matching the 20260723222212_add_adroll_click_id_to_users.rb analog shape",
+    "Partial unique index is SINGLE-COLUMN on stripe_subscription_id with where: 'event_type IN (2, 8)' (schema dump: event_type = ANY (ARRAY[2, 8])), unique: true; index name idx_subscription_events_conversion_stripe_sub_id is SPEC-PROPOSED free choice",
+    "Committed db/schema.rb diff (a0d59115d..7574df408 -- db/schema.rb) contains exactly: version bump 2026_07_24_183711 -> 2026_07_25_033136, t.string stripe_subscription_id, t.integer amount, the partial unique index line — nothing else",
+    "Enum in app/models/subscription_event.rb at 7574df408: trial_started: 7 and trial_converted_to_paid: 8 added; converted_to_paid: 2 byte-identical; assigned_free_plan_on_creation: 0 / assigned_free_plan: 1 untouched; canceled_subscription: 3, downgraded_to_free: 4, upgraded_plan: 5, downgraded_plan: 6 untouched (only a trailing comma added to downgraded_plan: 6)",
+    "Grepped the full committed diff for downgraded_to_free / upgraded_plan / downgraded_plan: only comment-block and enum-declaration lines — NO writers for values 4/5/6 anywhere in the diff",
+    "Stale comment block corrected: old mislabeled numbering (duplicate '1:', wrong values for 2-5) replaced with accurate 0-8 listing including '(no writer yet)' on 4/5/6; D2 main-plan-only comment present ('MAIN subscription events only. AI-credit subscription events live in OrganizationAiCreditPurchase / AiCreditBalanceTransaction.')",
+    "SubscriptionEvent::CONVERSION_EVENT_TYPES = %w[converted_to_paid trial_converted_to_paid].freeze — maps to exactly {2, 8}, matching the index condition",
+    "Interactor guard conversion_duplicate_exists? (app/interactors/create_subscription_event.rb) queries SubscriptionEvent.where(event_type: CONVERSION_EVENT_TYPES).where(stripe_subscription_id: ...) — by stripe_subscription_id ALONE (no organization scope), matching the single-column index; guard runs BEFORE the dedupe check and build; check-first with rescue ActiveRecord::RecordNotUnique backstop treating a raced insert as the same graceful context.fail!",
+    "Uniqueness tests non-vacuous: spec/interactors/create_subscription_event_spec.rb covers both cross-type directions (converted_to_paid blocks trial_converted_to_paid and vice versa, asserting failure? plus row count 1) and a RecordNotUnique backstop test that stubs conversion_duplicate_exists? false so the DB index itself is exercised — deleting the index makes that test fail; spec/jobs/stripe_webhook_handler_subscription_events_spec.rb:111-118 delivers the same invoice.paid twice and asserts change(SubscriptionEvent, :count).by(1) plus conversion-type count == 1 — deleting both guard and index makes it fail; no pending/skip markers",
+    "Interactor spec around-block swaps queue adapter to :test per pipeline rule 31; create_credit_test_organization helper exists at spec/support/ai_credits_test_helpers.rb:21",
+    "D11 glance (not my slice): git diff a0d59115d..7574df408 -- app/jobs/stripe_webhook_handler_job.rb is exactly two additive begin/rescue StandardError blocks at the ends of the subscription.deleted and invoice.paid main-branch else bodies — no reordering, no attribute-access changes, no other lines touched",
+    "Missing trailing newline on create_subscription_event.rb is pre-existing at a0d59115d (verified byte-identical tails) — not introduced by this diff"
+  ]
+}

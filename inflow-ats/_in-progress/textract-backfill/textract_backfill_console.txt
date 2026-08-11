@@ -1,0 +1,118 @@
+# run_textract_backfill_dry_run(org_limit: 5)                    preview bulk
+# run_textract_backfill(org_limit: 5, delay_seconds: 15)         enqueue bulk
+# run_textract_backfill_for_org_dry_run(11781, limit: 1000)      preview one org
+# run_textract_backfill_for_org(11781, limit: 1000)              enqueue one org
+# add exclude: [123, 456] to either bulk function for runtime exclusions
+
+def run_textract_backfill_dry_run(org_limit: 5, exclude: [])
+  excluded_ids = [11_781, 12_498, 8_876, 6_701] + Array(exclude).map(&:to_i)
+  bucket_for = lambda do |plan|
+    case plan
+    when /scale/, /growth/ then 1
+    when /starter/ then 2
+    when /apollo/ then 3
+    when 'plan_simple_ats_per_job' then 4
+    else 5
+    end
+  end
+  paid_orgs = Organization.claimed
+    .where(plan: Stripe::SubscriptionStatusChecker::PAID_PLANS)
+    .where.not(id: excluded_ids)
+    .where.not(stripe_subscription_id: nil)
+    .where.not(stripe_current_period_end_at: nil)
+    .where('stripe_current_period_end_at > ?', DateTime.now - 2.days)
+    .where(stripe_subscription_status: %w[trialing active past_due])
+  per_job_unpublished_ids = paid_orgs.where(plan: 'plan_simple_ats_per_job').where(published_jobs_count: 0).pluck(:id)
+  ordered_orgs = paid_orgs.where.not(id: per_job_unpublished_ids).to_a.sort_by { |org| [bucket_for.call(org.plan), org.id] }
+  selected = []
+  ordered_orgs.each do |org|
+    break if selected.size >= org_limit
+    rel = JobApplication.joins(:job).where(jobs: { organization_id: org.id }).with_resume
+      .where.not(id: TextractResult.where(textract_job_status: :succeeded).select(:job_application_id)).distinct
+    rel = rel.where('job_applications.updated_at >= ?', 12.months.ago) if rel.count > 5_000
+    app_ids = rel.order(:id).pluck(:id)
+    next if app_ids.empty?
+    selected << { org: org, app_ids: app_ids }
+  end
+  total_apps = selected.sum { |s| s[:app_ids].size }
+  ap "Eligible orgs: #{ordered_orgs.size}, org_limit: #{org_limit}"
+  selected.each { |s| ap "Org #{s[:org].id} (#{s[:org].plan}): #{s[:app_ids].size} resumes" }
+  ap "Selected orgs: #{selected.size}, resumes: #{total_apps}, est cost USD: #{(total_apps * 2 * 0.0015).round(2)}, DRY RUN: nothing enqueued"
+end
+
+def run_textract_backfill(org_limit: 5, delay_seconds: 3, exclude: [])
+  excluded_ids = [11_781, 12_498, 8_876, 6_701] + Array(exclude).map(&:to_i)
+  bucket_for = lambda do |plan|
+    case plan
+    when /scale/, /growth/ then 1
+    when /starter/ then 2
+    when /apollo/ then 3
+    when 'plan_simple_ats_per_job' then 4
+    else 5
+    end
+  end
+  paid_orgs = Organization.claimed
+    .where(plan: Stripe::SubscriptionStatusChecker::PAID_PLANS)
+    .where.not(id: excluded_ids)
+    .where.not(stripe_subscription_id: nil)
+    .where.not(stripe_current_period_end_at: nil)
+    .where('stripe_current_period_end_at > ?', DateTime.now - 2.days)
+    .where(stripe_subscription_status: %w[trialing active past_due])
+  per_job_unpublished_ids = paid_orgs.where(plan: 'plan_simple_ats_per_job').where(published_jobs_count: 0).pluck(:id)
+  ordered_orgs = paid_orgs.where.not(id: per_job_unpublished_ids).to_a.sort_by { |org| [bucket_for.call(org.plan), org.id] }
+  selected = []
+  ordered_orgs.each do |org|
+    break if selected.size >= org_limit
+    rel = JobApplication.joins(:job).where(jobs: { organization_id: org.id }).with_resume
+      .where.not(id: TextractResult.where(textract_job_status: :succeeded).select(:job_application_id)).distinct
+    rel = rel.where('job_applications.updated_at >= ?', 12.months.ago) if rel.count > 5_000
+    app_ids = rel.order(:id).pluck(:id)
+    next if app_ids.empty?
+    selected << { org: org, app_ids: app_ids }
+  end
+  total_apps = selected.sum { |s| s[:app_ids].size }
+  ap "Eligible orgs: #{ordered_orgs.size}, org_limit: #{org_limit}"
+  selected.each { |s| ap "Org #{s[:org].id} (#{s[:org].plan}): #{s[:app_ids].size} resumes" }
+  ap "Selected orgs: #{selected.size}, resumes: #{total_apps}, est cost USD: #{(total_apps * 2 * 0.0015).round(2)}"
+  i = 0
+  selected.each { |s| s[:app_ids].each { |app_id| SubmitResumeToTextractJob.set(wait: (i * delay_seconds).seconds).perform_later(app_id); i += 1 } }
+  ap "Enqueued #{i} jobs #{delay_seconds}s apart, last fires ~#{i.positive? ? (Time.current + ((i - 1) * delay_seconds).seconds) : nil}"
+end
+
+def run_textract_backfill_for_org_dry_run(org_id, limit: 5_000)
+  organization = Organization.find_by(id: org_id)
+  return ap("Organization #{org_id} not found") unless organization
+  rel = JobApplication.joins(:job).where(jobs: { organization_id: organization.id }).with_resume
+    .where.not(id: TextractResult.where(textract_job_status: :succeeded).select(:job_application_id)).distinct
+  rel = rel.where('jobs.status = ? OR job_applications.updated_at >= ?', Job.statuses[:published], 12.months.ago) if rel.count > 5_000
+  eligible = rel.order(created_at: :asc)
+  total = [eligible.count, limit].min
+  ap "Org: #{organization.name} (#{organization.id}, #{organization.plan}), eligible: #{eligible.count}, would enqueue: #{total}, DRY RUN: nothing enqueued"
+end
+
+def run_textract_backfill_for_org(org_id, limit: 5_000, delay_seconds: 2)
+  organization = Organization.find_by(id: org_id)
+  return ap("Organization #{org_id} not found") unless organization
+  rel = JobApplication.joins(:job).where(jobs: { organization_id: organization.id }).with_resume
+    .where.not(id: TextractResult.where(textract_job_status: :succeeded).select(:job_application_id)).distinct
+  rel = rel.where('jobs.status = ? OR job_applications.updated_at >= ?', Job.statuses[:published], 12.months.ago) if rel.count > 5_000
+  eligible = rel.order(created_at: :asc)
+  total = [eligible.count, limit].min
+  ap "Org: #{organization.name} (#{organization.id}, #{organization.plan}), eligible: #{eligible.count}, enqueuing: #{total}"
+  eligible.limit(limit).find_each.with_index { |ja, index| SubmitResumeToTextractJob.set(wait: (index * delay_seconds).seconds).perform_later(ja.id) }
+  ap "Enqueued #{total} jobs #{delay_seconds}s apart"
+end
+
+# delete_scheduled_textract_backfill   then re-run: run_textract_backfill(org_limit: 5, delay_seconds: 3)
+
+def delete_scheduled_textract_backfill
+  require 'sidekiq/api'
+  total = 0
+  20.times do
+    entries = Sidekiq::ScheduledSet.new.select { |j| j['wrapped'] == 'SubmitResumeToTextractJob' }
+    break if entries.empty?
+    entries.each(&:delete)
+    total += entries.size
+  end
+  ap "Deleted #{total} scheduled SubmitResumeToTextractJob"
+end

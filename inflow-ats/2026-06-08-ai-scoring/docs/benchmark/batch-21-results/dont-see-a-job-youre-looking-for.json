@@ -1,0 +1,71 @@
+{
+  "meta": {
+    "batch": 21,
+    "criteria_prompt_version": 7,
+    "job_id": 28094,
+    "title": "Don't see a job you're looking for? ",
+    "organization": "Bunsen",
+    "cost": 0.000462
+  },
+  "call_1": {
+    "sections": [
+      {
+        "heading": null,
+        "inferred_section_type": "company_about",
+        "type": "non_criteria",
+        "content": "Don’t see a role you’re into, but dig the sound of helping companies solve some of the world’s most challenging problems? We get that. So we created this general interest form. For those of you who like to geek on deep tech, are giddy about science and design, and thrive when collaborating with teams that are small in size but big on insights—this is for you.\n\nAt Bunsen, we help deep tech companies communicate their science with clarity to the investors, talent, partners, and people who matter most. From brand identity to messaging to website building, we’re dedicated to telling the stories of the companies tackling the toughest and most important work. We’re always looking for strong talent to help us do that, both full-time and freelance."
+      },
+      {
+        "heading": "We get along with people who are:",
+        "inferred_section_type": "criteria",
+        "type": "criteria",
+        "content": "Known from crafting clarity\nCurious and ignited by intrigue\nDriven by momentum and taking action\nBrave enough to make waves (and risk mistakes)\nExcited about influencing change"
+      },
+      {
+        "heading": null,
+        "inferred_section_type": "process_meta",
+        "type": "non_criteria",
+        "content": "Whether you’re a magician in Figma, a sage in storytelling, a master translator of AI, or a lord of sales, we want to hear from you. Tell us about the work that you do—and why it matters to you. We’ll get in touch if something aligns with your extra-special skills.\n\nHow about we get to know each other in the meantime? Start a conversation with us on Twitter, LinkedIn, or both!"
+      }
+    ]
+  },
+  "call_2": {
+    "criteria": [
+      {
+        "text": "Known from crafting clarity",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Known from crafting clarity"
+      },
+      {
+        "text": "Curious and ignited by intrigue",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Curious and ignited by intrigue"
+      },
+      {
+        "text": "Driven by momentum and taking action",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Driven by momentum and taking action"
+      },
+      {
+        "text": "Brave enough to make waves (and risk mistakes)",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Brave enough to make waves (and risk mistakes)"
+      },
+      {
+        "text": "Excited about influencing change",
+        "tier": "tier_2",
+        "tier_reasoning": "default — no signal word",
+        "binary": false,
+        "source_text": "Excited about influencing change"
+      }
+    ]
+  }
+}

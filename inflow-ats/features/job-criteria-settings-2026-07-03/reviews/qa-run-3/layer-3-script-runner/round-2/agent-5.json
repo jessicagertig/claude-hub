@@ -1,0 +1,17 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 5,
+  "focus": "Re-verify the zero-criteria review guard at ALL FOUR sites (ValidateAiSummaryGeneration, ValidateAutoAiSummaryGeneration, QueueBulkAiSummaryJobs, TextractResult#generate_ai_summary_with_credit_flow) with REAL AI credits granted (positive OrganizationAiCreditBalance) instead of stubbing ai_credits_available?, so the guard is reached through the genuine precondition chain. Plus succeeded-row control.",
+  "scenarios_run": [
+    "Built isolated org (SecureRandom-suffixed) + published job with description + candidate/job_application; granted REAL credits by setting OrganizationAiCreditBalance#addon_credits_remaining=100. Verified org.ai_credits_available? == true and org.total_ai_credits_remaining == 100 WITHOUT stubbing (real balance record). Verified Flipper.enabled?(:AI_APPLICANT_SUMMARY, org) true (read-only).",
+    "Set latest AiJobCriteria row to terminal zero-criteria failure (status: failed, error_message: 'Criteria array is empty'); confirmed job.zero_criteria_extraction_failure? == true.",
+    "SITE 1 ValidateAiSummaryGeneration.call(job_application: ja, organization: org) with has_resume stub true + real credits + description present: result.failure? == true, result.error == exact zero-criteria message. The interactor's own ap logs printed credits_available? true / total_ai_credits_remaining 100, confirming the credits precondition passed and the guard fired on the real chain.",
+    "SITE 2 ValidateAutoAiSummaryGeneration.call(job_application: ja) (org derived internally, real credits): result.failure? == true, result.error == exact zero-criteria message.",
+    "SITE 3 QueueBulkAiSummaryJobs.call(organization: org, user: u, job: job, job_application_ids: [ja.id], params: {}) with real credits: result.failure? == true, result.error == exact zero-criteria message, ActiveJob (:test adapter) enqueued_jobs empty (fail-fast before any perform_later).",
+    "SITE 4 TextractResult#generate_ai_summary_with_credit_flow with zero-criteria latest row: early return before generate_ai_summary (probe stayed empty via safety stub), 0 new AiJobApplicationSummary, no new AiJobCriteria row (count 1->1).",
+    "CONTROL: added newer succeeded AiJobCriteria row (latest = succeeded) -> job.zero_criteria_extraction_failure? == false. Re-ran all four: S1 success (error nil, != zero msg), S2 success, S3 success (error nil), S4 execution passed the guard and reached generate_ai_summary (safety-stubbed no-op, probe2 == [:called]) with no real AI call.",
+    "SAFETY: ActiveJob queue_adapter = :test; generate_ai_summary stubbed on the TextractResult instance in both zero and control cases so AiJobApplicationAction::Orchestrate (real AI) never executed; no cleanup run; own uniquely-suffixed org; global flag read-only; script in /tmp only."
+  ],
+  "findings": []
+}

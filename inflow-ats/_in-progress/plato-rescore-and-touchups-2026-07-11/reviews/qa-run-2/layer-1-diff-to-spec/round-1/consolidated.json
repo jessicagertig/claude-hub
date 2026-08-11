@@ -1,0 +1,24 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "agents": 6,
+  "findings": [
+    {
+      "id": "l1-3-001",
+      "severity": "HIGH",
+      "title": "Interactor spec false-path example omits the bulk analog's count-unchanged assertion (SPEC 2.8 'same assertion pairs')",
+      "spec_requirement": "SPEC 2.8: \"false returns the existing summary and enqueues nothing \u2014 the same assertion pairs create_bulk_ai_summary_generation_spec.rb makes for the bulk interactor.\" The bulk analog's rescore-path false example (create_bulk_ai_summary_generation_spec.rb:96-112) wraps the call in expect { ... }.not_to change { job_application.ai_job_application_summaries.count } in addition to asserting result.ai_summary.id eq existing.id.",
+      "file": "spec/interactors/create_ai_summary_generation_spec.rb",
+      "evidence": "The new spec's false-path example (lines 55-63) asserts result.ai_summary.id eq existing.id and .not_to have_enqueued_job(GenerateAiJobApplicationSummaryJob), but does NOT assert that ai_job_application_summaries.count is unchanged. The bulk analog's corresponding example asserts both id-equality and count-invariance. Mitigating context (reported per Layer 1 rule, not rationalized away): the SPEC's explicitly named behaviors \u2014 existing summary returned, nothing enqueued \u2014 ARE both asserted; the substituted not_to have_enqueued_job assertion has no bulk counterpart because the bulk interactor never enqueues; and the false path IS falsifiable against a gate revert/removal (removing the gate entirely makes both existing assertions fail: new row id != existing.id and a job is enqueued). The only defect class the omission leaves uncovered is code that returns the existing summary in context yet also silently persists an extra row without enqueuing. The true-path example carries the full analog assertion set (success?, id not eq, status pending, existing.reload.status succeeded, existing.reload.stale false) plus the SPEC-mandated have_enqueued_job(GenerateAiJobApplicationSummaryJob).",
+      "recommendation": "Add .not_to change { job_application.ai_job_application_summaries.count } (compound with the existing not_to have_enqueued_job) to the false-path example so the assertion pair matches the bulk analog exactly, or obtain an owner ruling that the enqueue-substitution satisfies 'same assertion pairs'."
+    }
+  ],
+  "spec_coverage": {
+    "total_requirements": 16,
+    "implemented": 16,
+    "missing": 0,
+    "details": [
+      "All requirements implemented; finding is an assertion-pair gap in the new interactor spec vs the SPEC 2.8 pinned analog assertions."
+    ]
+  }
+}

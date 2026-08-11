@@ -1,0 +1,21 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 1,
+  "assignment": "The THREE empty states (never-ran 28054, zero-criteria failure 28056, other failure 28057) in one pass: verify icon + exact title + exact message + correct action buttons, and the discrimination between them. Round 1 was clean; re-confirming with fresh eyes.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs. Already logged in as Rezu May (org Acme Inc.). Jobs list showed all 6 QA jobs + Senior Engineer, 7 published.",
+    "STATE 1 NEVER-RAN (28054): clicked 'QA Never Ran' -> Job setup -> Plato AI settings. URL /jobs/28054/setup/ai. Job criteria section EmptyState: file-text (document) icon [confirmed via screenshot], heading (h2) 'No job criteria have been generated', paragraph 'Plato extracts scoring criteria when you publish the job, or you can generate them now.', single action button 'Generate criteria' (NO View, NO Regenerate). Console: exactly the 7 known pre-existing errors (1 heap-api 404, 4 react-router history deprecations, 2 Redux 'Store does not have a valid reducer'). No feature errors.",
+    "STATE 2 ZERO-CRITERIA FAILURE (28056): clicked back -> 'QA Zero Criteria Failure' -> Job setup -> Plato AI settings. URL /jobs/28056/setup/ai. EmptyState: alert-triangle icon [confirmed via screenshot], heading (h2) 'No criteria found', paragraph 'No scoring criteria were found in the job description. Plato won’t review candidates until it has criteria to score against.', single action button 'Regenerate criteria' (NO card, NO View). Console on setup/ai page: 0 new errors.",
+    "STATE 3 OTHER FAILURE (28057): clicked back -> 'QA Other Failure' -> Job setup -> Plato AI settings. URL /jobs/28057/setup/ai. EmptyState: alert-triangle icon [confirmed via screenshot], heading (h2) 'Criteria generation failed', paragraph 'Something went wrong while extracting criteria from the job description. Regenerate to try again.', single action button 'Regenerate criteria' (NO View). Console on setup/ai page: 0 new errors.",
+    "DISCRIMINATION: all three states are DISTINCT. Never-ran differs by icon (file-text vs alert-triangle) AND button (Generate vs Regenerate). Zero-criteria vs other-failure share the alert-triangle icon and Regenerate button but differ by title ('No criteria found' vs 'Criteria generation failed') and by message. All titles/messages verbatim match nav map / SPEC §8.2.",
+    "COPY RULES (SPEC §10): no em dashes in any title/message; titles are sentence case; 'extract' vocabulary used ('extracts scoring criteria', 'extracting criteria'); button labels are static ('Generate criteria', 'Regenerate criteria') with no interpolated counts. All pass.",
+    "Did NOT open or click any Generate/Regenerate confirm modal; no mutation triggered; no cleanup run."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5-r2/agent-1/state1-never-ran-28054.png",
+    "/tmp/qa-run-3-l5-r2/agent-1/state2-zero-criteria-28056.png",
+    "/tmp/qa-run-3-l5-r2/agent-1/state3-other-failure-28057.png"
+  ],
+  "findings": []
+}

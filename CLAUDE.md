@@ -36,13 +36,13 @@ Do NOT repeat upstream rules in downstream files.
 ## Universal rules
 
 1. **Never write files into source repos from a hub session.** Outputs go in the pipeline scratchpad subdir, not into the source code.
-2. **Always create a subdirectory for new work** (`<pipeline>/<workflow>/<dated-slug>/`) — never dump files at a pipeline root.
+2. **Always create a subdirectory for new work** (`<pipeline>/<workflow>/<slug-date>/`) — never dump files at a pipeline root.
 3. **The source repo's own `CLAUDE.md` and `cursor_rules/` are authoritative for code conventions.** The hub does not duplicate them.
 
 ## Naming
 
 - Workflow subdirs: lowercase hyphenated (`features/`, `investigations/`, `pr-reviews/`)
-- Dated work items: `YYYY-MM-DD-kebab-slug/`
+- Dated work items: `kebab-slug-YYYY-MM-DD/` (date at the end — tab-complete by feature name, not date)
 - Instructions/playbooks (UPPERCASE): `INSTRUCTIONS.md`, `PLAYBOOK.md`
 - Work outputs (kebab-case): `plan.md`, `pr-description.md`, `investigation.md`
 - Agent prompt templates: `<name>-agent.md` in `_templates/`

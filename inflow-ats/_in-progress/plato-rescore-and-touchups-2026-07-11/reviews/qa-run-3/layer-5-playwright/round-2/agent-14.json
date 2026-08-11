@@ -1,0 +1,25 @@
+{
+  "layer": "playwright",
+  "round": 2,
+  "agent_index": 14,
+  "assignment": "Overestimate exactness semantics: the 'This count may be an overestimate.' info block must disappear and the 'Up to ' prefix must drop once all 55 Interview rows are client-loaded (isProcessableCountExact true when jobApplications.length >= selectableCount). Display only — never submit. SPEC 1.2 state 3 + SPEC 1.3 render condition.",
+  "steps": [
+    "Navigated to http://app.lvh.me:5007/jobs — already logged in as rezu.may@wrkhq.com (Acme Inc.). Clicked 'Senior Engineer' (job 29092), then the Interview stage (55 candidates).",
+    "WITHOUT scrolling: page 1 rendered 50 rows (applicants 21037 down to 20988). Clicked the stage-name Select-All checkbox (#toggleAllCheckbox) — checked.",
+    "Opened the Bulk options three-dot menu (JobStageMenu dropdown toggle) → clicked 'Run Plato reviews'. Modal 'Review candidates' opened.",
+    "BEFORE-SCROLL modal, unchecked: lead sentence byte-exact 'Up to 55 of the 55 candidates selected from this hiring stage don't have a Plato review yet.' — 'Up to ' prefix PRESENT.",
+    "BEFORE-SCROLL shortfall copy byte-exact: 'Each successful review uses one AI credit. You are short 40 credits. The first 15 candidates will get reviews generated; the rest will be skipped.' — 40 bold. Displayed balance basis: 'The first 15 candidates' confirms available=15, matching the stated current balance 15; shortfall 55-15=40 as expected.",
+    "BEFORE-SCROLL overestimate info block PRESENT: alert-circle icon + 'This count may be an overestimate.' directly beneath the body copy (SPEC 1.3). Screenshot taken. Clicked Cancel.",
+    "Scrolled the candidate list container to the bottom repeatedly until row count stabilized: 55 row links loaded (21037 down to 20983) — page 2 loaded, whole stage client-loaded.",
+    "Selection survived the page-2 load: all 55 row checkboxes checked, Select-All still checked (no re-select needed).",
+    "Reopened Bulk options → 'Run Plato reviews'. AFTER-SCROLL modal, unchecked: lead sentence byte-exact '55 of the 55 candidates selected from this hiring stage don't have a Plato review yet.' — NO 'Up to ' prefix. isProcessableCountExact became true with all rows loaded (SPEC 1.2 state 3 / SPEC 1.3 render condition verified from the loaded side).",
+    "AFTER-SCROLL overestimate info block GONE: no element matching [class*=BulkGenerateAiSummariesConfirmModal_Info] in the DOM and the string 'This count may be an overestimate.' absent from the page.",
+    "AFTER-SCROLL shortfall unchanged: 'Each successful review uses one AI credit. You are short 40 credits. The first 15 candidates will get reviews generated; the rest will be skipped.' — 40 bold. Screenshot taken. Clicked Cancel (never submitted).",
+    "Console check across the whole session: 0 errors / 0 warnings beyond known pre-existing noise (react-router history deprecations, 'Store does not have a valid reducer' Redux warning, heap-api.com 404, @reach/tooltip styles warning, Stripe HTTP notice). No rescore/BulkGenerateAiSummaries/PlatoTab/ai_job_application_summaries errors."
+  ],
+  "screenshots": [
+    "/tmp/qa-run-3-l5/agent-14/before-scroll-modal-overestimate-present.png",
+    "/tmp/qa-run-3-l5/agent-14/after-scroll-modal-overestimate-absent.png"
+  ],
+  "findings": []
+}

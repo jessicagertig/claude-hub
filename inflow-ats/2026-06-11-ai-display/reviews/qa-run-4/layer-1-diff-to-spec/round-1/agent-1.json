@@ -1,0 +1,26 @@
+{
+  "agent": 1,
+  "round": 1,
+  "pass": false,
+  "findings": [
+    {
+      "severity": "HIGH",
+      "file": "app/javascript/ats/src/views/jobApplications/PlatoTab.tsx",
+      "lines": "151-154",
+      "summary": "Stale banner admin buy-credits link uses raw <a> tag instead of React Router, causing full page reload",
+      "details": "The stale banner's zero-credits admin path at line 152 uses `<Styled.StaleAction as=\"a\" href=\"/hire/settings/ai-billing\">`. This renders a raw HTML anchor element, which causes a full page reload when clicked. The header bar's identical admin path at line 365 correctly uses `<Button styleType=\"text\" type=\"internalLink\" link=\"/hire/settings/ai-billing\">`, which renders a React Router `<Link>` for client-side navigation. The `renderCreditsAction` helper at line 97 also correctly uses `<Button type=\"internalLink\" link=\"/hire/settings/ai-billing\">`. The stale banner is the only location that uses a raw anchor. The spec says (line 87): 'show the existing buy-credits pattern from AiSummaryState.tsx lines 58-91 (admin link to `/hire/settings/ai-billing`, non-admin modal)'. The AiSummaryState analog at line 66 uses `<Button type=\"internalLink\" link=\"/hire/settings/ai-billing\">`. The stale banner should use the same Button+internalLink pattern for consistency and to avoid a full page reload that destroys React state.",
+      "spec_ref": "Spec section 'Credit balance display' and 'Stale banner'",
+      "fix": "Replace `<Styled.StaleAction as=\"a\" href=\"/hire/settings/ai-billing\">Buy credits</Styled.StaleAction>` with a Button element using the internalLink pattern, or use React Router's Link component. Since the stale banner uses custom styled elements rather than the Button component, one approach is to import Link from react-router-dom and use `<Styled.StaleAction as={Link} to=\"/hire/settings/ai-billing\">Buy credits</Styled.StaleAction>`. Alternatively, restructure to use `<Button type=\"internalLink\" link=\"/hire/settings/ai-billing\" styleType=\"text\">Buy credits</Button>` with appropriate sizing to fit the stale banner."
+    }
+  ],
+  "notes": [
+    "The Layer 2 code-correctness fixes (zero-credits branching on header Regenerate/stale banner, and useEffect else-branch resetting currentViewPath) do not introduce spec violations. The branching logic correctly mirrors the renderCreditsAction pattern (admin link vs non-admin modal) in both the header and the stale banner, aside from the raw-anchor finding above.",
+    "The onOpen callback in JobApplicationActivity uses match.url.replace(/\\/[^/]+$/, '') instead of the spec's match.url directly. This is correct -- the spec's suggestion would produce a broken URL like /overview/ai. The regex strips the current sub-path before appending /ai.",
+    "The Route for /ai uses {isAiEnabled && <Route>} instead of <FeatureFlipper> -- known justified deviation.",
+    "The useAiJobApplicationSummary.ts enabled guard -- known justified deviation.",
+    "The useEffect else-branch (setCurrentViewPath('overview')) -- known justified code-correctness fix.",
+    "All 6 state machine states in both PlatoTab and PlatoOverviewCallout match the spec's evaluation order and content.",
+    "NavItem linkStyles were copied verbatim from NavItem.tsx and adapted only for the icon slot as specified.",
+    "All accessibility requirements verified: aria-hidden on SVG in PlatoMark, button element for callout card with reset CSS, prefers-reduced-motion on all animations, NavLink for Plato nav item."
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "layer": "diff-to-spec",
+  "round": 1,
+  "run": 3,
+  "agent_index": 7,
+  "slice": "Discord enqueue moves + Slack untouched",
+  "findings": [],
+  "verified": [
+    "Removal 1 (organization.rb subscription_started_trial_after_commit? branch): Discord::NotifyFreeTrialStartedJob.perform_later(id) removed, replaced by CreateSubscriptionEvent.call(organization: self, event_type: 'trial_started', to_plan: plan, stripe_subscription_id: stripe_subscription_id); Notification::FreeTrialStartedJob and organization_ai_credit_balance&.reset_ai_credits byte-identical (SPEC §5.1)",
+    "Removal 2 (organization.rb trial_converted_to_paid_after_commit? branch): only Discord::NotifyTrialConvertedToPaidJob.perform_later(id) removed; Notification::TrialConvertedToPaidJob line stays; organization.rb diff is exactly these two hunks (1 addition, 2 deletions)",
+    "Removal 3 (app/jobs/notification/paid_subscription_deleted_job.rb): full-file comparison of a0d59115d vs e850c74fe — only the discord(organization_id, ended_at) call and the private discord method (containing Discord::NotifySubscriptionDeletedJob.perform_later) removed; ended_at param and @ended_at assignment stay; blocks still reads @ended_at (timestamp = @ended_at || Time.now.to_i); slack method and everything else byte-identical",
+    "Fan-out enqueue sites (subscription_event.rb handle_after_commit_on_create) match SPEC §7 exactly: NotifyFreeTrialStartedJob.perform_later(organization_id) for trial_started; NotifyTrialConvertedToPaidJob.perform_later(organization_id) for trial_converted_to_paid; no Discord for converted_to_paid; NotifySubscriptionDeletedJob.perform_later(organization_id, organization.subscription_canceled_at.to_i) for canceled_subscription guarded by organization.subscription_canceled_at.present? (skip on nil, PostHog still fires); assigned_free_plan* enqueue nothing",
+    "git grep at e850c74fe (app/ lib/ config/): exactly ONE perform_later site per Discord job, all three in app/models/subscription_event.rb; the only other hits are the three class-definition files — no double-enqueue",
+    "The three app/jobs/discord/notify_*_job.rb files untouched: git diff --name-only a0d59115d..e850c74fe -- app/jobs/discord/ is empty",
+    "Slack untouched: only Notification file in the diff is paid_subscription_deleted_job.rb (Discord-only removals); Notification::FreeTrialStartedJob / TrialConvertedToPaidJob / PaidSubscriptionDeletedJob enqueue lines are unchanged context lines; every Slack/Notification:: line in the full diff is a spec-file assertion (positive Slack-still-fires assertions), none in app code",
+    "Enqueue accounting over the app/+db/ diff: removed = exactly the 3 Discord lines; added = the 3 Discord fan-out enqueues + PosthogTrackJob.perform_later(organization.owner.id, event_type, posthog_properties); no other perform_later/perform_async added or removed",
+    "Webhook path ordering: update_column(:subscription_canceled_at, ...) precedes the ledger write in the committed subscription.deleted branch, so the fan-out's subscription_canceled_at read is populated on the webhook path (SPEC §7 note holds)",
+    "Tests non-vacuous for the moves: spec/models/organization_subscription_events_spec.rb asserts Discord::NotifyFreeTrialStartedJob enqueued .exactly(:once) on nil->trialing (fails if the callback line had stayed, double-enqueue) and Discord::NotifyTrialConvertedToPaidJob not_to have_been_enqueued on trialing->active (fails if that removal is reverted), with Slack asserted still enqueued in both; spec/models/subscription_event_fanout_spec.rb asserts each Discord job enqueues from row creation (fails if the fan-out is deleted), the nil-subscription_canceled_at skip, and no-Discord-for-converted_to_paid; both specs use the :test queue-adapter around block (pipeline rule 31)",
+    "D11 delicacy audit of app/jobs/stripe_webhook_handler_job.rb: the diff is exactly two purely additive, begin/rescue StandardError-isolated blocks at the two sanctioned insertion points (34 added lines, 0 removed) — end of the invoice.paid main-plan else branch after organization_ai_credit_balance&.reset_ai_credits, and end of the subscription.deleted else branch after EngagementReport::GeneratorJob, with the plain `if organization` guard per §5.3; no if/else reordering, no other changes in the file",
+    "Reviewed committed code only (git show / git diff a0d59115d..e850c74fe); working-tree db/schema.rb residue ignored"
+  ]
+}

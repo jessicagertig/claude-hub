@@ -1,0 +1,39 @@
+{
+  "layer": "script-runner",
+  "round": 2,
+  "agent_index": 2,
+  "focus_area": "AiJobCriteria#zero_criteria_failure? full truth table + constant values/frozen set (SPEC §4.2)",
+  "files_reviewed": [
+    "app/models/ai_job_criteria.rb"
+  ],
+  "runtime_verification": {
+    "job": "Senior Engineer (seeded, id 27623, ai-org-published-job seed plan)",
+    "queue_adapter": "test",
+    "constant_values_verbatim_vs_spec_4_2": {
+      "ZERO_CRITERIA_NO_SECTIONS_ERROR_MESSAGE": "PASS ('No criteria sections found in job description')",
+      "ZERO_CRITERIA_NONE_EXTRACTED_ERROR_MESSAGE": "PASS ('No criteria extracted from job description')",
+      "ZERO_CRITERIA_EMPTY_ARRAY_ERROR_MESSAGE": "PASS ('Criteria array is empty')"
+    },
+    "ZERO_CRITERIA_ERROR_MESSAGES": {
+      "frozen": true,
+      "equals_exactly_the_three_order_sensitive": true,
+      "length": 3
+    },
+    "method_body": "status_failed? && ZERO_CRITERIA_ERROR_MESSAGES.include?(error_message) (ai_job_criteria.rb:17-19) — matches SPEC §4.2 verbatim",
+    "truth_table_persisted_and_reloaded": [
+      {"status": "failed", "error_message": "No criteria sections found in job description", "expected": true, "actual": true, "result": "PASS"},
+      {"status": "failed", "error_message": "No criteria extracted from job description", "expected": true, "actual": true, "result": "PASS"},
+      {"status": "failed", "error_message": "Criteria array is empty", "expected": true, "actual": true, "result": "PASS"},
+      {"status": "failed", "error_message": "Job description is blank", "expected": false, "actual": false, "result": "PASS"},
+      {"status": "failed", "error_message": "Failed to parse AI response: x", "expected": false, "actual": false, "result": "PASS"},
+      {"status": "failed", "error_message": null, "expected": false, "actual": false, "result": "PASS"},
+      {"status": "failed", "error_message": "", "expected": false, "actual": false, "result": "PASS"},
+      {"status": "succeeded", "error_message": "No criteria sections found in job description", "expected": false, "actual": false, "result": "PASS"},
+      {"status": "pending", "error_message": "No criteria sections found in job description", "expected": false, "actual": false, "result": "PASS"},
+      {"status": "in_progress", "error_message": "No criteria sections found in job description", "expected": false, "actual": false, "result": "PASS"},
+      {"status": "retrying", "error_message": "No criteria sections found in job description", "expected": false, "actual": false, "result": "PASS"}
+    ],
+    "cleanup": "11 rows created then AiJobCriteria.where(job_id: 27623).delete_all -> 0 remaining"
+  },
+  "findings": []
+}

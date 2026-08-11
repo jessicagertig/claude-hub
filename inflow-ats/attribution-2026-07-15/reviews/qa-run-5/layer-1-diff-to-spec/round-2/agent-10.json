@@ -1,0 +1,39 @@
+{
+  "layer": "diff-to-spec",
+  "round": 2,
+  "agent_index": 10,
+  "run": 5,
+  "focus_area": "useSession.ts (§5.4) + SignupForm.tsx (§5.5) + §5.2 four-field name trace end-to-end",
+  "findings": [],
+  "spec_coverage": {
+    "assigned_requirements": [
+      "§5.4 magicLink: four fields added to destructured params, inline TS type, and variables object; optional/nullable per referral pattern",
+      "§5.4 register: four fields added to destructured params and variables object",
+      "§5.4 no changes to useMagicLink/useRegister hook wrappers",
+      "§5.5 capture: raw props.location.search → sanitizeTrackingParams → component state, referral analog",
+      "§5.5 payload: four fields alongside the six existing register keys",
+      "§5.5 D14 event: trackEvent(\"user_signed_up_client_side\") plain/no properties, before props.onComplete(), logger line unchanged, correct import",
+      "Parent fact: Signup.tsx renders SignupForm at /register and is not in the diff",
+      "§5.2 name trace: state → call → destructure → variables → wire → permit, both paths",
+      "Complete diff-to-spec trace of every changed line in useSession.ts and SignupForm.tsx"
+    ],
+    "verified": [
+      "§5.4 magicLink destructure: useSession.ts:65-68 adds utmSource, utmCampaign, utmData, internalRef after partner (diff hunk @@ -47,6 +62,10 @@)",
+      "§5.4 magicLink inline TS type: useSession.ts:78-81 — utmSource?: string | null; utmCampaign?: string | null; utmData?: Record<string, any> | null; internalRef?: string | null — matches the referral?: string | null optional/nullable pattern (object type for utmData, appropriate)",
+      "§5.4 magicLink variables: useSession.ts:103-106 adds the four camelCase keys to the /magic_login apiPost variables (path `/magic_login` at line 92, no skipKeysToSnake)",
+      "§5.4 register destructure: useSession.ts:27-38 — six existing keys + the four; register had no inline TS type before and gains none, matching the spec's destructure+variables-only requirement",
+      "§5.4 register variables: useSession.ts:48-51 adds the four to the /sign_up apiPost variables (path `/sign_up` at line 40, no skipKeysToSnake)",
+      "§5.4 wrappers untouched: useRegister (useSession.ts:168-179) and useMagicLink (181-193) at HEAD fc3f047f9 contain no diff hunks and no trackEvent; diff stat for useSession.ts is 28 insertions + 1 deletion, fully accounted for by the five request-function hunks",
+      "§5.5 capture: SignupForm.tsx adds `const [trackingParams] = React.useState(sanitizeTrackingParams(props.location.search));` directly below the existing referral state (line 23 analog, same React.useState mechanism, raw search string not the parsed object, no setter — spec says none needed)",
+      "§5.5 payload: register call gains utmSource/utmCampaign/utmData/internalRef from trackingParams alongside firstName, lastName, email, password, inviteToken, referral",
+      "§5.5 D14 event: `trackEvent(\"user_signed_up_client_side\");` inserted in the register onSuccess after the pre-existing window.logger line (context line, unchanged, typo 'onScucess' preserved) and before props.onComplete(); plain call, no properties; import `{ trackEvent } from \"@shared/lib/posthog\"` — trackEvent is a named export at posthog.ts:59",
+      "Parent fact: AppAuthRouter.tsx:454 Route path `/register` → handleRegisterRoute (line 375) → <Signup {...props} {...renderProps} /> (line 382); Signup.tsx:5,25 imports and renders <SignupForm onComplete={signupComplete} {...props} />; Signup.tsx and Auth.tsx are both absent from the 22-file diff stat for 62dd55867..fc3f047f9",
+      "§5.2 name trace, magic-link path: AuthForm.tsx trackingParams state (sanitizeTrackingParams output fields utmSource/utmCampaign/internalRef/utmData, utils.js diff) → magicLink call fields utmSource/utmCampaign/utmData/internalRef → useSession.ts destructure (65-68) → type (78-81) → variables (103-106) → apiPost → apiMutate `allKeysToSnake(variables)` (api.ts, skipKeysToSnake defaults false) → lodash snakeCase: utmSource→utm_source, utmCampaign→utm_campaign, utmData→utm_data, internalRef→internal_ref; allKeysToSnake recurses into nested objects (structure.js:104) so canonical utm_* inner keys pass through unchanged → POST /api/v1/magic_login → routes.rb:82 registrations#magic_create → sign_up_params permits :utm_source, :utm_campaign, :internal_ref, utm_data: {} (trailing hash-permit) → user_params merges utm_source: sign_up_params[:utm_source] etc. in BOTH conditional branches → build_resource(user_params) at registrations_controller.rb:166. Every hop name-consistent",
+      "§5.2 name trace, register path: SignupForm.tsx trackingParams state → register call → useSession.ts destructure (34-37) → variables (48-51) → same allKeysToSnake wire conversion → POST /api/v1/sign_up → routes.rb:81 registrations#create → expanded_params = sign_up_params.merge(...) → build_resource(expanded_params) (registrations_controller.rb:13-20), four params flow via the amended sign_up_params permit with no further code needed (§4.3). Every hop name-consistent",
+      "Diff-to-spec, SignupForm.tsx: 8 inserted lines — 2 imports (sanitizeTrackingParams, trackEvent), 1 state line (§5.5 capture), 4 payload lines (§5.5 payload/D10), 1 trackEvent line (D14). All trace to spec; nothing extra",
+      "Diff-to-spec, useSession.ts: 28 inserted / 1 deleted line — register destructure rewrite (12 lines, §5.4), register variables (4), magicLink destructure (4), magicLink type (4), magicLink variables (4). All trace to §5.4; nothing extra; magicLink's window.logger object untouched"
+    ],
+    "missing": []
+  },
+  "notes": "Verified in repo at HEAD fc3f047f960cc7eda5bdee8141ad7443bfebefef against the pre-dumped diff (hunks match `git diff 62dd55867..fc3f047f9` stat exactly). Event-name grep check (§9): `git grep user_signed_up_client_side -- app/` matches exactly two callsites, AuthForm.tsx:91 and SignupForm.tsx:75. Prior finding l1-run4-001 verified resolved: my area reaches §5.1 through the SignupForm capture — the amended §5.1 rule 2 ('truncate to 255 code units via .slice(0, 255), then drop a trailing lone high surrogate (0xD800–0xDBFF)... 254 code units in that case'), §7 constraint 1, and §11 note 4 all now describe exactly what the shipped sanitizeTrackingValue does (slice(0, 255), charCodeAt check 0xd800–0xdbff, slice(0, -1)); no residual mismatch. Absence semantics honored at my hops: sanitizeTrackingParams sets utmSource/utmCampaign/internalRef/utmData only when present (no || fallbacks), so absent fields are undefined in the payload, drop out of the JSON body, and sign_up_params[<key>] is nil — consistent with §5.1 absence semantics and repo rule 10. No findings."
+}
