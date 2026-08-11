@@ -4,13 +4,20 @@ SETTING UP THE OTHER COMPUTER  —  generated 2026-08-10
 Everything committed in these four repos is pushed as of now:
   claude-hub, wrk-marketing, inflow-ats, polymer-mail
 
-All four repos already exist on the MacBook Air. These steps UPDATE them.
-Nothing here clones.
+Run every line below in order. It works whether or not a repo is already
+on the machine: if one exists, its clone line fails harmlessly with
+"destination path already exists" and the fetch/pull still updates it.
 
 
 ------------------------------------------------------------------------
-STEP 1 — UPDATE THE FOUR REPOS
+STEP 1 — GET THE FOUR REPOS
 ------------------------------------------------------------------------
+mkdir -p ~/wrk/wrk-corp
+git clone https://github.com/jessicagertig/claude-hub.git ~/claude-hub
+git clone https://github.com/wrk-corp/wrk-marketing.git ~/wrk/wrk-corp/wrk-marketing
+git clone https://github.com/wrk-corp/inflow-ats.git ~/wrk/wrk-corp/inflow-ats
+git clone https://github.com/wrk-corp/polymer-mail.git ~/wrk/wrk-corp/polymer-mail
+
 fetch --all downloads the commits for every branch, including all 34
 pushed on 2026-08-10. After this, `git checkout <branch>` materializes
 any branch instantly and offline — no per-branch setup needed.
