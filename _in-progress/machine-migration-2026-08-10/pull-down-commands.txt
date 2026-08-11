@@ -4,28 +4,33 @@ SETTING UP THE OTHER COMPUTER  —  generated 2026-08-10
 Everything committed in these four repos is pushed as of now:
   claude-hub, wrk-marketing, inflow-ats, polymer-mail
 
-Run the steps in order. Paths match the current machine exactly so that
-Warp sessions and CLAUDE.md references resolve the same way.
+All four repos already exist on the MacBook Air. These steps UPDATE them.
+Nothing here clones.
 
 
 ------------------------------------------------------------------------
-STEP 1 — CLONE THE FOUR REPOS
+STEP 1 — UPDATE THE FOUR REPOS
 ------------------------------------------------------------------------
-mkdir -p ~/wrk/wrk-corp
+fetch --all downloads the commits for every branch, including all 34
+pushed on 2026-08-10. After this, `git checkout <branch>` materializes
+any branch instantly and offline — no per-branch setup needed.
 
-git clone https://github.com/jessicagertig/claude-hub.git ~/claude-hub
-git clone https://github.com/wrk-corp/wrk-marketing.git ~/wrk/wrk-corp/wrk-marketing
-git clone https://github.com/wrk-corp/inflow-ats.git ~/wrk/wrk-corp/inflow-ats
-git clone https://github.com/wrk-corp/polymer-mail.git ~/wrk/wrk-corp/polymer-mail
-
-
-------------------------------------------------------------------------
-STEP 2 — FETCH EVERY BRANCH
-------------------------------------------------------------------------
 git -C ~/claude-hub fetch --all --prune
+git -C ~/claude-hub checkout main
+git -C ~/claude-hub pull
+
 git -C ~/wrk/wrk-corp/wrk-marketing fetch --all --prune
+git -C ~/wrk/wrk-corp/wrk-marketing pull
+
 git -C ~/wrk/wrk-corp/inflow-ats fetch --all --prune
+git -C ~/wrk/wrk-corp/inflow-ats pull
+
 git -C ~/wrk/wrk-corp/polymer-mail fetch --all --prune
+git -C ~/wrk/wrk-corp/polymer-mail pull
+
+If a `pull` reports local changes in the way, the Air has uncommitted
+work on that branch. The fetch already succeeded, so every branch is
+present either way — deal with the local edit, then pull again.
 
 
 ------------------------------------------------------------------------
